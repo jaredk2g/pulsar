@@ -1,0 +1,34 @@
+{
+	"name": "pulsar/pulsar",
+	"description": "ORM implementing the Active Record pattern in PHP",
+	"type": "library",
+	"keywords": ["pulsar","database","orm","activerecord"],
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "jaredtking",
+			"email": "j@jaredtking.com",
+			"homepage": "http://jaredtking.com"
+		}
+	],
+	"support": {
+		"issues": "https://github.com/jaredtking/pulsar/issues",
+		"source": "https://github.com/jaredtking/pulsar"
+	},
+    "autoload": {
+        "psr-4": {"Pulsar\\": "src/"}
+    },
+	"require": {
+		"php": ">=5.4.0",
+		"icanboogie/inflector": "v1.3.2",
+		"pimple/pimple": ">=v2.1.0",
+		"symfony/event-dispatcher": "~2.7",
+		"jaqb/jaqb": "~1.1",
+		"infuse/libs": "dev-master"
+	},
+	"require-dev": {
+		"satooshi/php-coveralls": "dev-master",
+		"mockery/mockery": "~0.9",
+		"tedivm/stash": "0.12.*"
+	}
+}
