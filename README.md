@@ -11,11 +11,11 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 
 ## Requirements
 
-- PHP 5.4+ or HHVM 3.3+
+- PHP 5.4+, PHP 7, or HHVM 3.3+
 
 ## Installation
 
-The easiest way to install JAQB is with [composer](http://getcomposer.org):
+The easiest way to install Pulsar is with [composer](http://getcomposer.org):
 
 ```
 composer require pulsar/pulsar
