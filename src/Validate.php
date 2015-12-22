@@ -94,7 +94,7 @@ class Validate
      */
     private static function alpha(&$value, array $parameters)
     {
-        return preg_match('/^[A-Za-z]*$/', $value) && strlen($value) >= Utility::array_value($parameters, 0);
+        return preg_match('/^[A-Za-z]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
 
     /**
@@ -108,7 +108,7 @@ class Validate
      */
     private static function alpha_numeric(&$value, array $parameters)
     {
-        return preg_match('/^[A-Za-z0-9]*$/', $value) && strlen($value) >= Utility::array_value($parameters, 0);
+        return preg_match('/^[A-Za-z0-9]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
 
     /**
@@ -122,7 +122,7 @@ class Validate
      */
     private static function alpha_dash(&$value, array $parameters)
     {
-        return preg_match('/^[A-Za-z0-9_-]*$/', $value) && strlen($value) >= Utility::array_value($parameters, 0);
+        return preg_match('/^[A-Za-z0-9_-]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
 
     /**
@@ -164,7 +164,7 @@ class Validate
      */
     private static function enum(&$value, array $parameters)
     {
-        $enum = explode(',', Utility::array_value($parameters, 0));
+        $enum = explode(',', array_value($parameters, 0));
 
         return in_array($value, $enum);
     }
@@ -232,7 +232,7 @@ class Validate
      */
     private static function numeric(&$value, array $parameters)
     {
-        $check = 'is_'.Utility::array_value($parameters, 0);
+        $check = 'is_'.array_value($parameters, 0);
 
         return (!isset($parameters[0])) ? is_numeric($value) : $check($value);
     }
@@ -254,7 +254,7 @@ class Validate
             return false;
         }
 
-        $value = Utility::encrypt_password($value, self::$config['salt']);
+        $value = Utility::encryptPassword($value, self::$config['salt']);
 
         return true;
     }
@@ -311,8 +311,8 @@ class Validate
         }
 
         $len = strlen($value);
-        $min = Utility::array_value($parameters, 0);
-        $max = Utility::array_value($parameters, 1);
+        $min = array_value($parameters, 0);
+        $max = array_value($parameters, 1);
 
         return $len >= $min && (!$max || $len <= $max);
     }
@@ -336,7 +336,7 @@ class Validate
         }
         unset($valid['']);
 
-        return !!Utility::array_value($valid, $value);
+        return !!array_value($valid, $value);
     }
 
     /**

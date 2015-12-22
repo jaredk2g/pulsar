@@ -11,7 +11,6 @@
 namespace Pulsar;
 
 use ICanBoogie\Inflector;
-use Infuse\Utility;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Relation\HasOne;
 use Pulsar\Relation\BelongsTo;
@@ -465,7 +464,7 @@ abstract class Model implements \ArrayAccess
      */
     public static function getProperty($property)
     {
-        return Utility::array_value(static::$properties, $property);
+        return array_value(static::$properties, $property);
     }
 
     /**
@@ -797,19 +796,19 @@ abstract class Model implements \ArrayAccess
         // apply namespacing to $exclude
         $namedExc = [];
         foreach ($exclude as $e) {
-            Utility::array_set($namedExc, $e, true);
+            array_set($namedExc, $e, true);
         }
 
         // apply namespacing to $include
         $namedInc = [];
         foreach ($include as $e) {
-            Utility::array_set($namedInc, $e, true);
+            array_set($namedInc, $e, true);
         }
 
         // apply namespacing to $expand
         $namedExp = [];
         foreach ($expand as $e) {
-            Utility::array_set($namedExp, $e, true);
+            array_set($namedExp, $e, true);
         }
 
         // remove excluded properties
@@ -856,14 +855,14 @@ abstract class Model implements \ArrayAccess
                 continue;
             }
 
-            $subExc = Utility::array_value($namedExc, $k);
-            $subInc = Utility::array_value($namedInc, $k);
+            $subExc = array_value($namedExc, $k);
+            $subInc = array_value($namedInc, $k);
 
             // convert exclude, include, and expand into dot notation
             // then take the keys for a flattened dot notation
-            $flatExc = is_array($subExc) ? array_keys(Utility::array_dot($subExc)) : [];
-            $flatInc = is_array($subInc) ? array_keys(Utility::array_dot($subInc)) : [];
-            $flatExp = is_array($subExp) ? array_keys(Utility::array_dot($subExp)) : [];
+            $flatExc = is_array($subExc) ? array_keys(array_dot($subExc)) : [];
+            $flatInc = is_array($subInc) ? array_keys(array_dot($subInc)) : [];
+            $flatExp = is_array($subExp) ? array_keys(array_dot($subExp)) : [];
 
             $relation = $this->relation($k);
             $result[$k] = $relation->toArrayDeprecated($flatExc, $flatInc, $flatExp);
@@ -1534,6 +1533,6 @@ abstract class Model implements \ArrayAccess
      */
     private function getPropertyDefault(array $property)
     {
-        return Utility::array_value($property, 'default');
+        return array_value($property, 'default');
     }
 }
