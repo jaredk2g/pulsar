@@ -948,7 +948,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testSetFailWithNoId()
     {
         $this->setExpectedException('BadMethodCallException');
-        
+
         $model = new TestModel();
         $this->assertFalse($model->set(['answer' => 42]));
     }
@@ -1055,6 +1055,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithNoId()
     {
+        $this->setExpectedException('BadMethodCallException');
+        
         $model = new TestModel();
         $this->assertFalse($model->delete());
     }

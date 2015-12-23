@@ -955,7 +955,7 @@ abstract class Model implements \ArrayAccess
     public function delete()
     {
         if ($this->_id === false) {
-            return false;
+            throw new BadMethodCallException('Can only call delete() on an existing model');
         }
 
         // dispatch the model.deleting event
