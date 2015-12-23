@@ -10,6 +10,7 @@
 
 namespace Pulsar;
 
+use BadMethodCallException;
 use ICanBoogie\Inflector;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Relation\HasOne;
@@ -569,11 +570,13 @@ abstract class Model implements \ArrayAccess
      * @param array $data optional key-value properties to set
      *
      * @return bool
+     *
+     * @throws BadMethodCallException when called on an existing model
      */
     public function create(array $data = [])
     {
         if ($this->_id !== false) {
-            return false;
+            throw new BadMethodCallException('Cannot call create() on an existing model');
         }
 
         if (!empty($data)) {
