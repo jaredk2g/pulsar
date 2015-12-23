@@ -880,11 +880,13 @@ abstract class Model implements \ArrayAccess
      * @param array $data optional key-value properties to set
      *
      * @return bool
+     *
+     * @throws BadMethodCallException when not called on an existing model
      */
     public function set(array $data = [])
     {
         if ($this->_id === false) {
-            return false;
+            throw new BadMethodCallException('Can only call set() on an existing model');
         }
 
         // not updating anything?
