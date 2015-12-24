@@ -23,7 +23,7 @@
 		"icanboogie/inflector": "v1.3.2",
 		"pimple/pimple": ">=v2.1.0",
 		"symfony/event-dispatcher": "~2.7",
-		"jaqb/jaqb": "~1.1",
+		"jaqb/jaqb": "~1.2",
 		"infuse/libs": "~0.5"
 	},
 	"require-dev": {
