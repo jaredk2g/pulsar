@@ -586,7 +586,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // dispatch the model.creating event
-        if (!$this->beforeCreate()) {
+        if (!$this->handleDispatch(ModelEvent::CREATING)) {
             return false;
         }
 
@@ -654,7 +654,7 @@ abstract class Model implements \ArrayAccess
             $this->clearCache();
 
             // dispatch the model.created event
-            if (!$this->afterCreate()) {
+            if (!$this->handleDispatch(ModelEvent::CREATED)) {
                 return false;
             }
         }
@@ -774,11 +774,6 @@ abstract class Model implements \ArrayAccess
         // get the values for the properties
         $result = $this->get($properties);
 
-        // apply the transformation hook
-        if (method_exists($this, 'toArrayHook')) {
-            $this->toArrayHook($result, [], [], []);
-        }
-
         return $result;
     }
 
@@ -810,7 +805,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // dispatch the model.updating event
-        if (!$this->beforeUpdate($data)) {
+        if (!$this->handleDispatch(ModelEvent::UPDATING)) {
             return false;
         }
 
@@ -847,7 +842,7 @@ abstract class Model implements \ArrayAccess
             $this->clearCache();
 
             // dispatch the model.updated event
-            if (!$this->afterUpdate()) {
+            if (!$this->handleDispatch(ModelEvent::UPDATED)) {
                 return false;
             }
         }
@@ -867,7 +862,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // dispatch the model.deleting event
-        if (!$this->beforeDelete()) {
+        if (!$this->handleDispatch(ModelEvent::DELETING)) {
             return false;
         }
 
@@ -875,7 +870,7 @@ abstract class Model implements \ArrayAccess
 
         if ($deleted) {
             // dispatch the model.deleted event
-            if (!$this->afterDelete()) {
+            if (!$this->handleDispatch(ModelEvent::DELETED)) {
                 return false;
             }
 
@@ -1228,125 +1223,17 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Dispatches the model.creating event.
+     * Dispatches the given event and checks if it was successful.
+     *
+     * @param string $eventName
      *
      * @return bool
      */
-    private function beforeCreate()
+    private function handleDispatch($eventName)
     {
-        $event = $this->dispatch(ModelEvent::CREATING);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'preCreateHook') && !$this->preCreateHook($this->_unsaved)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Dispatches the model.created event.
-     *
-     * @return bool
-     */
-    private function afterCreate()
-    {
-        $event = $this->dispatch(ModelEvent::CREATED);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'postCreateHook') && $this->postCreateHook() === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Dispatches the model.updating event.
-     *
-     * @param array $data
-     *
-     * @return bool
-     */
-    private function beforeUpdate(array &$data)
-    {
-        $event = $this->dispatch(ModelEvent::UPDATING);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'preSetHook') && !$this->preSetHook($data)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Dispatches the model.updated event.
-     *
-     * @return bool
-     */
-    private function afterUpdate()
-    {
-        $event = $this->dispatch(ModelEvent::UPDATED);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'postSetHook') && $this->postSetHook() === false) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Dispatches the model.deleting event.
-     *
-     * @return bool
-     */
-    private function beforeDelete()
-    {
-        $event = $this->dispatch(ModelEvent::DELETING);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'preDeleteHook') && !$this->preDeleteHook()) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Dispatches the model.created event.
-     *
-     * @return bool
-     */
-    private function afterDelete()
-    {
-        $event = $this->dispatch(ModelEvent::DELETED);
-        if ($event->isPropagationStopped()) {
-            return false;
-        }
-
-        // TODO deprecated
-        if (method_exists($this, 'postDeleteHook') && $this->postDeleteHook() === false) {
-            return false;
-        }
-
-        return true;
+        $event = $this->dispatch($eventName);
+        
+        return !$event->isPropagationStopped();
     }
 
     /////////////////////////////

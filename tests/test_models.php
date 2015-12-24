@@ -45,49 +45,6 @@ class TestModel extends Model
         parent::initialize();
     }
 
-    public function preCreateHook()
-    {
-        $this->preCreate = true;
-
-        return true;
-    }
-
-    public function postCreateHook()
-    {
-        $this->postCreate = true;
-    }
-
-    public function preSetHook()
-    {
-        $this->preSet = true;
-
-        return true;
-    }
-
-    public function postSetHook()
-    {
-        $this->postSet = true;
-    }
-
-    public function preDeleteHook()
-    {
-        $this->preDelete = true;
-
-        return true;
-    }
-
-    public function postDeleteHook()
-    {
-        $this->postDelete = true;
-    }
-
-    public function toArrayHook(array &$result, array $exclude, array $include, array $expand)
-    {
-        if (!isset($exclude['toArray'])) {
-            $result['toArray'] = true;
-        }
-    }
-
     public static function query()
     {
         if ($query = self::$query) {
@@ -184,13 +141,6 @@ class TestModel2 extends Model
 
     public static $query;
 
-    public function toArrayHook(array &$result, array $exclude, array $include, array $expand)
-    {
-        if (isset($include['toArrayHook'])) {
-            $result['toArrayHook'] = true;
-        }
-    }
-
     public static function query()
     {
         if ($query = self::$query) {
@@ -211,24 +161,6 @@ class TestModel2 extends Model
 class TestModelNoPermission extends ACLModel
 {
     protected function hasPermission($permission, Model $requester)
-    {
-        return false;
-    }
-}
-
-class TestModelHookFail extends Model
-{
-    public function preCreateHook()
-    {
-        return false;
-    }
-
-    public function preSetHook()
-    {
-        return false;
-    }
-
-    public function preDeleteHook()
     {
         return false;
     }
