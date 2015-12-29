@@ -22,6 +22,8 @@ interface DriverInterface
      * @param array         $parameters
      *
      * @return mixed result
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function createModel(Model $model, array $parameters);
 
@@ -33,6 +35,8 @@ interface DriverInterface
      * @param string        $propertyName
      *
      * @return mixed
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function getCreatedID(Model $model, $propertyName);
 
@@ -41,7 +45,9 @@ interface DriverInterface
      *
      * @param \Pulsar\Model $model
      *
-     * @return array
+     * @return array|false
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function loadModel(Model $model);
 
@@ -52,6 +58,8 @@ interface DriverInterface
      * @param array         $parameters
      *
      * @return bool
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function updateModel(Model $model, array $parameters);
 
@@ -61,6 +69,8 @@ interface DriverInterface
      * @param \Pulsar\Model $model
      *
      * @return bool
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function deleteModel(Model $model);
 
@@ -70,6 +80,8 @@ interface DriverInterface
      * @param \Pulsar\Query $query
      *
      * @return int total
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function totalRecords(Query $query);
 
@@ -79,6 +91,8 @@ interface DriverInterface
      * @param \Pulsar\Query $query
      *
      * @return array raw data from storage
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
     public function queryModels(Query $query);
 }
