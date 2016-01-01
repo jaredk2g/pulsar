@@ -143,7 +143,7 @@ abstract class Model implements \ArrayAccess
     private static $initialized = [];
 
     /**
-     * @staticvar Model\Driver\DriverInterface
+     * @staticvar DriverInterface
      */
     private static $driver;
 
@@ -269,7 +269,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Sets the driver for all models.
      *
-     * @param Model\Driver\DriverInterface $driver
+     * @param DriverInterface $driver
      */
     public static function setDriver(DriverInterface $driver)
     {
@@ -279,7 +279,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Gets the driver for all models.
      *
-     * @return Model\Driver\DriverInterface
+     * @return DriverInterface
      *
      * @throws DriverMissingException
      */
