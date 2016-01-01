@@ -12,7 +12,11 @@ namespace Pulsar;
 
 use BadMethodCallException;
 use ICanBoogie\Inflector;
+use Infuse\ErrorStack;
+use InvalidArgumentException;
 use Pulsar\Driver\DriverInterface;
+use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\NotFoundException;
 use Pulsar\Relation\HasOne;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\HasMany;
@@ -276,9 +280,15 @@ abstract class Model implements \ArrayAccess
      * Gets the driver for all models.
      *
      * @return Model\Driver\DriverInterface
+     *
+     * @throws DriverMissingException
      */
     public static function getDriver()
     {
+        if (!self::$driver) {
+            throw new DriverMissingException('A model driver has not been set yet.');
+        }
+
         return self::$driver;
     }
 

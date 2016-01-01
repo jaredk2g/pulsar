@@ -52,6 +52,13 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($c, $model->getApp());
     }
 
+    public function testDriverMissing()
+    {
+        $this->setExpectedException('Pulsar\Exception\DriverMissingException');
+        Model::clearDriver();
+        Model::getDriver();
+    }
+
     public function testDriver()
     {
         $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
