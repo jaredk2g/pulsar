@@ -13,6 +13,7 @@ use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Query;
@@ -1040,6 +1041,66 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $query = TestModel::where(['name' => 'Bob']);
 
         $this->assertInstanceOf(Query::class, $query);
+    }
+
+    public function testFind()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('loadModel')
+                ->andReturn(['id' => 100, 'answer' => 42])
+                ->once();
+
+        TestModel::setDriver($driver);
+
+        $model = TestModel::find(100);
+        $this->assertInstanceOf('TestModel', $model);
+        $this->assertEquals(100, $model->id());
+        $this->assertEquals(42, $model->answer);
+    }
+
+    public function testFindFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('loadModel')
+                ->andReturn(false)
+                ->once();
+
+        TestModel::setDriver($driver);
+
+        $this->assertFalse(TestModel::find(101));
+    }
+
+    public function testFindOrFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('loadModel')
+                ->andReturn(['id' => 100, 'answer' => 42])
+                ->once();
+
+        TestModel::setDriver($driver);
+
+        $model = TestModel::findOrFail(100);
+        $this->assertInstanceOf('TestModel', $model);
+        $this->assertEquals(100, $model->id());
+        $this->assertEquals(42, $model->answer);
+    }
+
+    public function testFindOrFailNotFound()
+    {
+        $this->setExpectedException(ModelNotFoundException::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('loadModel')
+                ->andReturn(false)
+                ->once();
+
+        TestModel::setDriver($driver);
+
+        $this->assertFalse(TestModel::findOrFail(101));
     }
 
     public function testTotalRecords()

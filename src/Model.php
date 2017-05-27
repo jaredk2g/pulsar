@@ -16,6 +16,7 @@ use ICanBoogie\Inflector;
 use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
@@ -929,6 +930,43 @@ abstract class Model implements \ArrayAccess
         $model = new static();
 
         return new Query($model);
+    }
+
+    /**
+     * Finds a single instance of a model given it's ID.
+     *
+     * @param mixed $id
+     *
+     * @return Model|false
+     */
+    public static function find($id)
+    {
+        $model = new static($id);
+        $values = self::getDriver()->loadModel($model);
+        if (!is_array($values)) {
+            return false;
+        }
+
+        return $model->refreshWith($values);
+    }
+
+    /**
+     * Finds a single instance of a model given it's ID or throws an exception.
+     *
+     * @param mixed $id
+     *
+     * @return Model
+     *
+     * @throws ModelNotFoundException when a model could not be found
+     */
+    public static function findOrFail($id)
+    {
+        $model = static::find($id);
+        if (!$model) {
+            throw new ModelNotFoundException('Could not find the requested '.static::modelName());
+        }
+
+        return $model;
     }
 
     /**

@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added error stack service for Infuse Framework.
 - Added `Model::saved()` and `Model::saving()` shortcuts for listening to any write operation.
 - Added integer and float property types.
+- Added `Model::find()` and `Model::findOrFail()` for loading models from the data layer.
 
 ### Changed
 - All model-related exceptions inherit from `ModelException`.
