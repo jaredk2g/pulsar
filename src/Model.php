@@ -1016,6 +1016,8 @@ abstract class Model implements \ArrayAccess
     /////////////////////////////
 
     /**
+     * @deprecated
+     *
      * Gets the model object corresponding to a relation
      * WARNING no check is used to see if the model returned actually exists.
      *
@@ -1025,7 +1027,6 @@ abstract class Model implements \ArrayAccess
      */
     public function relation($propertyName)
     {
-        // TODO deprecated
         $property = static::getProperty($propertyName);
 
         if (!isset($this->_relationships[$propertyName])) {
