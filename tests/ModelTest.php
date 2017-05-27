@@ -976,6 +976,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($model->delete());
         $this->assertFalse($model->persisted());
+        $this->assertEquals(true, $model->test);
     }
 
     public function testDeleteWithNoId()
