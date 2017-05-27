@@ -188,6 +188,18 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['name' => 'John'], $driver->loadModel($model));
     }
 
+    public function testLoadModelNotFound()
+    {
+        $db = Mockery::mock();
+        $db->shouldReceive('select->from->where->one')
+            ->andReturn(false);
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+
+        $model = new Person(12);
+        $this->assertFalse($driver->loadModel($model));
+    }
+
     public function testLoadModelFail()
     {
         $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when loading an instance of Person: error');

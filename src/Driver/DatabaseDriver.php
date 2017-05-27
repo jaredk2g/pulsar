@@ -83,11 +83,11 @@ class DatabaseDriver implements DriverInterface
             throw $e;
         }
 
-        if (is_array($row)) {
-            $row = $this->unserialize($row, $model::getProperties());
+        if (!is_array($row)) {
+            return false;
         }
 
-        return $row;
+        return $this->unserialize($row, $model::getProperties());
     }
 
     public function updateModel(Model $model, array $parameters)
