@@ -12,7 +12,6 @@ namespace Pulsar;
 
 use BadMethodCallException;
 use ICanBoogie\Inflector;
-use Infuse\ErrorStack;
 use InvalidArgumentException;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
@@ -307,10 +306,8 @@ abstract class Model implements \ArrayAccess
      */
     public static function modelName()
     {
-        $class_name = get_called_class();
-
         // strip namespacing
-        $paths = explode('\\', $class_name);
+        $paths = explode('\\', get_called_class());
 
         return end($paths);
     }
