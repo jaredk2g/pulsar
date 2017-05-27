@@ -943,6 +943,8 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * @deprecated
+     * 
      * Checks if the model exists in the database.
      *
      * @return bool
