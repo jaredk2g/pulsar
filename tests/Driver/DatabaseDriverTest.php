@@ -1,17 +1,18 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
-use Pulsar\Model;
-use Pulsar\Driver\DatabaseDriver;
-use Pulsar\Query;
 use Pimple\Container;
+use Pulsar\Driver\DatabaseDriver;
+use Pulsar\Exception\DriverException;
+use Pulsar\Model;
+use Pulsar\Query;
 
 class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 {
@@ -108,6 +109,19 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($driver->createModel($model, ['answer' => 42, 'array' => ['test' => true]]));
     }
 
+    public function testCreateModelFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when creating the Person: error');
+        $db = Mockery::mock();
+        $db->shouldReceive('insert')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        Person::setDriver($driver);
+        $model = new Person();
+        $driver->createModel($model, []);
+    }
+
     public function testGetCreatedID()
     {
         $db = Mockery::mock('JAQB\QueryBuilder');
@@ -120,6 +134,18 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
         $model = new Person();
         $this->assertEquals(1, $driver->getCreatedID($model, 'id'));
+    }
+
+    public function testGetCreatedIDFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when getting the ID of the new Person: error');
+        $db = Mockery::mock();
+        $db->shouldReceive('getPDO->lastInsertId')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        $model = new Person();
+        $driver->getCreatedID($model, 'id');
     }
 
     public function testLoadModel()
@@ -147,6 +173,18 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
         $model = new Person(12);
         $this->assertEquals(['name' => 'John'], $driver->loadModel($model));
+    }
+
+    public function testLoadModelFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when loading an instance of Person: error');
+        $db = Mockery::mock();
+        $db->shouldReceive('select->from->where->one')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        $model = new Person(12);
+        $driver->loadModel($model);
     }
 
     public function testUpdateModel()
@@ -181,6 +219,20 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($driver->updateModel($model, $parameters));
     }
 
+    public function testUpdateModelFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when updating the Person: error');
+        // update query mock
+        $db = Mockery::mock();
+        $db->shouldReceive('update')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        Person::setDriver($driver);
+        $model = new Person(11);
+        $driver->updateModel($model, ['name' => 'John']);
+    }
+
     public function testDeleteModel()
     {
         $stmt = Mockery::mock('PDOStatement');
@@ -195,6 +247,20 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
         $model = new Person(10);
         $this->assertTrue($driver->deleteModel($model));
+    }
+
+    public function testDeleteModelFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while deleting the Person: error');
+        $stmt = Mockery::mock(PDOStatement::class);
+        $db = Mockery::mock();
+        $db->shouldReceive('delete->where->execute')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        Person::setDriver($driver);
+        $model = new Person(10);
+        $driver->deleteModel($model);
     }
 
     public function testTotalRecords()
@@ -224,6 +290,20 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         Person::setDriver($driver);
 
         $this->assertEquals(1, $driver->totalRecords($query));
+    }
+
+    public function testTotalRecordsFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while getting the number of Person objects');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock();
+        $db->shouldReceive('select')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        Person::setDriver($driver);
+        $driver->totalRecords($query);
     }
 
     public function testQueryModels()
@@ -272,5 +352,19 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         Person::setDriver($driver);
 
         $this->assertEquals([['test' => true]], $driver->queryModels($query));
+    }
+
+    public function testQueryModelsFail()
+    {
+        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while performing the Person query: error');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock('JAQB\Query\SelectQuery[all]');
+        $db->shouldReceive('all')
+            ->andThrow(new PDOException('error'));
+        self::$app['db'] = $db;
+        $driver = new DatabaseDriver(self::$app);
+        Person::setDriver($driver);
+        $driver->queryModels($query);
     }
 }

@@ -12,8 +12,10 @@
 namespace Pulsar\Driver;
 
 use ICanBoogie\Inflector;
+use PDOException;
 use PDOStatement;
 use Pimple\Container;
+use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
 
@@ -39,15 +41,28 @@ class DatabaseDriver implements DriverInterface
     {
         $values = $this->serialize($parameters);
         $tablename = $this->getTablename($model);
+        $db = $this->app['db'];
 
-        return $this->app['db']->insert($values)
-            ->into($tablename)
-            ->execute() instanceof PDOStatement;
+        try {
+            return $db->insert($values)
+                      ->into($tablename)
+                      ->execute() instanceof PDOStatement;
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
     }
 
     public function getCreatedID(Model $model, $propertyName)
     {
-        $id = $this->app['db']->getPDO()->lastInsertId();
+        try {
+            $id = $this->app['db']->getPDO()->lastInsertId();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
 
         return $this->unserializeValue($model::getProperty($propertyName), $id);
     }
@@ -55,11 +70,18 @@ class DatabaseDriver implements DriverInterface
     public function loadModel(Model $model)
     {
         $tablename = $this->getTablename($model);
+        $db = $this->app['db'];
 
-        $row = $this->app['db']->select('*')
-            ->from($tablename)
-            ->where($model->ids())
-            ->one();
+        try {
+            $row = $db->select('*')
+                      ->from($tablename)
+                      ->where($model->ids())
+                      ->one();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
 
         if (is_array($row)) {
             $row = $this->unserialize($row, $model::getProperties());
@@ -76,20 +98,34 @@ class DatabaseDriver implements DriverInterface
 
         $values = $this->serialize($parameters);
         $tablename = $this->getTablename($model);
+        $db = $this->app['db'];
 
-        return $this->app['db']->update($tablename)
-            ->values($values)
-            ->where($model->ids())
-            ->execute() instanceof PDOStatement;
+        try {
+            return $db->update($tablename)
+                      ->values($values)
+                      ->where($model->ids())
+                      ->execute() instanceof PDOStatement;
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
     }
 
     public function deleteModel(Model $model)
     {
         $tablename = $this->getTablename($model);
+        $db = $this->app['db'];
 
-        return $this->app['db']->delete($tablename)
-            ->where($model->ids())
-            ->execute() instanceof PDOStatement;
+        try {
+            return $db->delete($tablename)
+                      ->where($model->ids())
+                      ->execute() instanceof PDOStatement;
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
     }
 
     public function queryModels(Query $query)
@@ -115,7 +151,13 @@ class DatabaseDriver implements DriverInterface
             $dbQuery->join($foreignTablename, $condition);
         }
 
-        $data = $dbQuery->all();
+        try {
+            $data = $dbQuery->all();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
 
         $properties = $model::getProperties();
         foreach ($data as &$row) {
@@ -129,11 +171,18 @@ class DatabaseDriver implements DriverInterface
     {
         $model = $query->getModel();
         $tablename = $this->getTablename($model);
+        $db = $this->app['db'];
 
-        return (int) $this->app['db']->select('count(*)')
-            ->from($tablename)
-            ->where($query->getWhere())
-            ->scalar();
+        try {
+            return (int) $db->select('count(*)')
+                            ->from($tablename)
+                            ->where($query->getWhere())
+                            ->scalar();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while getting the number of '.$model::modelName().' objects: '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
     }
 
     /**
