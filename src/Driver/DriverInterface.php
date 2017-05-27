@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -13,13 +14,16 @@ namespace Pulsar\Driver;
 use Pulsar\Model;
 use Pulsar\Query;
 
+/**
+ * Interface DriverInterface.
+ */
 interface DriverInterface
 {
     /**
      * Creates a model.
      *
-     * @param \Pulsar\Model $model
-     * @param array         $parameters
+     * @param Model $model
+     * @param array $parameters
      *
      * @return mixed result
      *
@@ -31,8 +35,8 @@ interface DriverInterface
      * Gets the last inserted ID. Used for drivers that generate
      * IDs for models after creation.
      *
-     * @param \Pulsar\Model $model
-     * @param string        $propertyName
+     * @param Model  $model
+     * @param string $propertyName
      *
      * @return mixed
      *
@@ -43,7 +47,7 @@ interface DriverInterface
     /**
      * Loads a model.
      *
-     * @param \Pulsar\Model $model
+     * @param Model $model
      *
      * @return array|false
      *
@@ -54,8 +58,8 @@ interface DriverInterface
     /**
      * Updates a model.
      *
-     * @param \Pulsar\Model $model
-     * @param array         $parameters
+     * @param Model $model
+     * @param array $parameters
      *
      * @return bool
      *
@@ -66,7 +70,7 @@ interface DriverInterface
     /**
      * Deletes a model.
      *
-     * @param \Pulsar\Model $model
+     * @param Model $model
      *
      * @return bool
      *
@@ -75,11 +79,11 @@ interface DriverInterface
     public function deleteModel(Model $model);
 
     /**
-     * Gets the toal number of records matching the given query.
+     * Gets the total number of records matching the given query.
      *
-     * @param \Pulsar\Query $query
+     * @param Query $query
      *
-     * @return int total
+     * @return int
      *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
@@ -88,7 +92,7 @@ interface DriverInterface
     /**
      * Performs a query to find models of the given type.
      *
-     * @param \Pulsar\Query $query
+     * @param Query $query
      *
      * @return array raw data from storage
      *

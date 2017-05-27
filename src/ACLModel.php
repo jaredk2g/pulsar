@@ -1,15 +1,19 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
 
 namespace Pulsar;
 
+/**
+ * Class ACLModel.
+ */
 abstract class ACLModel extends Model
 {
     const ERROR_NO_PERMISSION = 'no_permission';
@@ -17,7 +21,7 @@ abstract class ACLModel extends Model
     const LISTENER_PRIORITY = 1000;
 
     /**
-     * @staticvar \Pulsar\Model
+     * @var Model
      */
     protected static $requester;
 
@@ -44,7 +48,7 @@ abstract class ACLModel extends Model
     /**
      * Gets the requester.
      *
-     * @return Model|bool
+     * @return Model|null
      */
     public static function getRequester()
     {

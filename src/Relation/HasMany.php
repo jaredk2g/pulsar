@@ -1,15 +1,19 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
 
 namespace Pulsar\Relation;
 
+/**
+ * Class HasMany.
+ */
 class HasMany extends Relation
 {
     protected function initQuery()

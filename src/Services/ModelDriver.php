@@ -3,20 +3,24 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 namespace Pulsar\Services;
 
 use Pulsar\Model;
 use Pulsar\Validate;
 
+/**
+ * Class ModelDriver.
+ */
 class ModelDriver
 {
     /**
-     * @var Pulsar\Driver\DriverInterface
+     * @var \Pulsar\Driver\DriverInterface
      */
     private $driver;
 

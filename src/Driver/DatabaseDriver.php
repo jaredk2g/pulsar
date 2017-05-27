@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -11,20 +12,23 @@
 namespace Pulsar\Driver;
 
 use ICanBoogie\Inflector;
-use Pulsar\Model;
-use Pulsar\Query;
 use PDOStatement;
 use Pimple\Container;
+use Pulsar\Model;
+use Pulsar\Query;
 
+/**
+ * Class DatabaseDriver.
+ */
 class DatabaseDriver implements DriverInterface
 {
     /**
-     * @var \Pimple\Container
+     * @var Container
      */
     private $app;
 
     /**
-     * @param \Pimple\Container $app
+     * @param Container $app
      */
     public function __construct(Container $app = null)
     {
@@ -271,7 +275,7 @@ class DatabaseDriver implements DriverInterface
      * @param string $columns
      * @param string $tablename
      *
-     * @return string
+     * @return array
      */
     private function prefixWhere(array $where, $tablename)
     {
@@ -299,7 +303,7 @@ class DatabaseDriver implements DriverInterface
      * @param string $columns
      * @param string $tablename
      *
-     * @return string
+     * @return array
      */
     private function prefixSort(array $sort, $tablename)
     {

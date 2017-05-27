@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -12,17 +13,18 @@ namespace Pulsar;
 
 use BadMethodCallException;
 use ICanBoogie\Inflector;
-use InvalidArgumentException;
+use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
-use Pulsar\Exception\NotFoundException;
-use Pulsar\Relation\HasOne;
 use Pulsar\Relation\BelongsTo;
-use Pulsar\Relation\HasMany;
 use Pulsar\Relation\BelongsToMany;
-use Pimple\Container;
+use Pulsar\Relation\HasMany;
+use Pulsar\Relation\HasOne;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * Class Model.
+ */
 abstract class Model implements \ArrayAccess
 {
     const IMMUTABLE = 0;
@@ -49,7 +51,7 @@ abstract class Model implements \ArrayAccess
     /**
      * List of model ID property names.
      *
-     * @staticvar array
+     * @var array
      */
     protected static $ids = [self::DEFAULT_ID_PROPERTY];
 
@@ -58,17 +60,17 @@ abstract class Model implements \ArrayAccess
      * property names as the keys.
      * i.e. ['enabled' => ['type' => Model::TYPE_BOOLEAN]].
      *
-     * @staticvar array
+     * @var array
      */
     protected static $properties = [];
 
     /**
-     * @staticvar \Pimple\Container
+     * @var Container
      */
     protected static $injectedApp;
 
     /**
-     * @staticvar array
+     * @var array
      */
     protected static $dispatchers;
 
@@ -78,7 +80,7 @@ abstract class Model implements \ArrayAccess
     protected $_id;
 
     /**
-     * @var \Pimple\Container
+     * @var Container
      */
     protected $app;
 
@@ -102,7 +104,7 @@ abstract class Model implements \ArrayAccess
     /////////////////////////////
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $propertyDefinitionBase = [
         'type' => self::TYPE_STRING,
@@ -113,7 +115,7 @@ abstract class Model implements \ArrayAccess
     ];
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $defaultIDProperty = [
         'type' => self::TYPE_NUMBER,
@@ -121,7 +123,7 @@ abstract class Model implements \ArrayAccess
     ];
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $timestampProperties = [
         'created_at' => [
@@ -137,22 +139,22 @@ abstract class Model implements \ArrayAccess
     ];
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $initialized = [];
 
     /**
-     * @staticvar DriverInterface
+     * @var DriverInterface
      */
     private static $driver;
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $accessors = [];
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $mutators = [];
 
@@ -248,7 +250,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Injects a DI container.
      *
-     * @param \Pimple\Container $app
+     * @param Container $app
      */
     public static function inject(Container $app)
     {
@@ -280,7 +282,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return DriverInterface
      *
-     * @throws DriverMissingException
+     * @throws DriverMissingException when a driver has not been set yet
      */
     public static function getDriver()
     {
@@ -300,7 +302,7 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Gets the name of the model without namespacing.
+     * Gets the name of the model, i.e. User.
      *
      * @return string
      */
@@ -568,7 +570,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Saves the model.
      *
-     * @return bool
+     * @return bool true when the operation was successful
      */
     public function save()
     {
@@ -584,7 +586,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @return bool
+     * @return bool true when the operation was successful
      *
      * @throws BadMethodCallException when called on an existing model
      */
@@ -771,7 +773,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Converts the model to an array.
      *
-     * @return array model array
+     * @return array
      */
     public function toArray()
     {
@@ -802,7 +804,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @return bool
+     * @return bool true when the operation was successful
      *
      * @throws BadMethodCallException when not called on an existing model
      */
@@ -878,7 +880,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Delete the model.
      *
-     * @return bool success
+     * @return bool true when the operation was successful
      */
     public function delete()
     {
@@ -915,7 +917,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Generates a new query instance.
      *
-     * @return Model\Query
+     * @return Query
      */
     public static function query()
     {
@@ -928,11 +930,11 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Gets the toal number of records matching an optional criteria.
+     * Gets the total number of records matching an optional criteria.
      *
      * @param array $where criteria
      *
-     * @return int total
+     * @return int
      */
     public static function totalRecords(array $where = [])
     {
@@ -945,7 +947,7 @@ abstract class Model implements \ArrayAccess
     /**
      * @deprecated
      *
-     * Checks if the model exists in the database.
+     * Checks if the model exists in the database
      *
      * @return bool
      */
@@ -955,7 +957,9 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * @deprecated alias for refresh()
+     * @deprecated
+     *
+     * Alias for refresh()
      */
     public function load()
     {
@@ -1021,11 +1025,11 @@ abstract class Model implements \ArrayAccess
      * @deprecated
      *
      * Gets the model object corresponding to a relation
-     * WARNING no check is used to see if the model returned actually exists.
+     * WARNING no check is used to see if the model returned actually exists
      *
      * @param string $propertyName property
      *
-     * @return \Pulsar\Model model
+     * @return Model
      */
     public function relation($propertyName)
     {
@@ -1046,7 +1050,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation
+     * @return Relation\Relation
      */
     public function hasOne($model, $foreignKey = '', $localKey = '')
     {
@@ -1071,7 +1075,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation
+     * @return Relation\Relation
      */
     public function belongsTo($model, $foreignKey = '', $localKey = '')
     {
@@ -1096,7 +1100,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation
+     * @return Relation\Relation
      */
     public function hasMany($model, $foreignKey = '', $localKey = '')
     {
@@ -1121,7 +1125,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation
+     * @return Relation\Relation
      */
     public function belongsToMany($model, $foreignKey = '', $localKey = '')
     {
@@ -1146,7 +1150,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Gets the event dispatcher.
      *
-     * @return \Symfony\Component\EventDispatcher\EventDispatcher
+     * @return EventDispatcher
      */
     public static function getDispatcher($ignoreCache = false)
     {
@@ -1241,7 +1245,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param string $eventName
      *
-     * @return Model\ModelEvent
+     * @return ModelEvent
      */
     protected function dispatch($eventName)
     {
@@ -1255,12 +1259,12 @@ abstract class Model implements \ArrayAccess
      *
      * @param string $eventName
      *
-     * @return bool
+     * @return bool true if the events were successfully propagated
      */
     private function handleDispatch($eventName)
     {
         $event = $this->dispatch($eventName);
-        
+
         return !$event->isPropagationStopped();
     }
 
@@ -1305,7 +1309,7 @@ abstract class Model implements \ArrayAccess
      * @param string $propertyName
      * @param mixed  $value
      *
-     * @return bool
+     * @return array
      */
     private function validate(array $property, $propertyName, $value)
     {

@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -15,7 +16,7 @@ use Infuse\Utility;
 class Validate
 {
     /**
-     * @staticvar array
+     * @var array
      */
     private static $config = [
         'salt' => '',
@@ -41,6 +42,8 @@ class Validate
      *
      * @param array|mixed  $data         can be key-value array matching requirements or a single value
      * @param array|string $requirements can be key-value array matching data or a string
+     *
+     * @return bool
      */
     public static function is(&$data, $requirements)
     {
@@ -338,12 +341,12 @@ class Validate
         }
         unset($valid['']);
 
-        return !!array_value($valid, $value);
+        return (bool) array_value($valid, $value);
     }
 
     /**
      * Validates a Unix timestamp. If the value is not a timestamp it will be
-     * converted to one with strtotime().
+     * converted to one with `strtotime()`.
      *
      * @param mixed $value
      *
@@ -357,7 +360,7 @@ class Validate
 
         $value = strtotime($value);
 
-        return !!$value;
+        return (bool) $value;
     }
 
     /**

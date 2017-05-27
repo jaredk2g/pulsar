@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -13,6 +14,9 @@ namespace Pulsar\Relation;
 use Pulsar\Model;
 use Pulsar\Query;
 
+/**
+ * Class Relation.
+ */
 abstract class Relation
 {
     /**
@@ -31,12 +35,12 @@ abstract class Relation
     protected $localKey;
 
     /**
-     * @var \Pulsar\Query
+     * @var Query
      */
     protected $query;
 
     /**
-     * @var \Pulsar\Model
+     * @var Model
      */
     protected $relation;
 
@@ -86,7 +90,7 @@ abstract class Relation
     /**
      * Gets the relation model.
      *
-     * @return \Pulsar\Model
+     * @return Model
      */
     public function getRelation()
     {
@@ -96,7 +100,7 @@ abstract class Relation
     /**
      * Returns the query instance for this relation.
      *
-     * @return \Pulsar\Query
+     * @return Query
      */
     public function getQuery()
     {
@@ -117,7 +121,7 @@ abstract class Relation
 
     public function __call($method, $arguments)
     {
-        // try calling any unkown methods on the query
+        // try calling any unknown methods on the query
         return call_user_func_array([$this->query, $method], $arguments);
     }
 }

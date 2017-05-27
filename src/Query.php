@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -164,12 +165,12 @@ class Query
      * Accepts the following forms:
      *   i)   where(['name' => 'Bob'])
      *   ii)  where('name', 'Bob')
-     *   iii) where('balance', 100, >)
+     *   iii) where('balance', 100, '>')
      *   iv)  where('balance > 100').
      *
      * @param array|string $where
-     * @param mixed        $value optional value
-     * @param 
+     * @param mixed        $value     optional value
+     * @param string|null  $condition optional condition
      *
      * @return self
      */
@@ -261,7 +262,7 @@ class Query
     /**
      * Creates an iterator for a search.
      *
-     * @return Model\Iterator
+     * @return Iterator
      */
     public function all()
     {
@@ -272,8 +273,8 @@ class Query
      * Executes the query against the model's driver and returns the first result.
      *
      * @param int $limit
-     * 
-     * @return array|\Pulsar\Model|null when $limit = 1, returns a single model or null, otherwise returns an array
+     *
+     * @return array|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
      */
     public function first($limit = 1)
     {

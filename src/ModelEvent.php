@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -12,6 +13,9 @@ namespace Pulsar;
 
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Class ModelEvent.
+ */
 class ModelEvent extends Event
 {
     const CREATING = 'model.creating';
@@ -22,12 +26,12 @@ class ModelEvent extends Event
     const DELETED = 'model.deleted';
 
     /**
-     * @var \Pulsar\Model
+     * @var Model
      */
     protected $model;
 
     /**
-     * @param \Pulsar\Model $model
+     * @param Model $model
      */
     public function __construct(Model $model)
     {
@@ -37,7 +41,7 @@ class ModelEvent extends Event
     /**
      * Gets the model for this event.
      *
-     * @return \Pulsar\Model
+     * @return Model
      */
     public function getModel()
     {

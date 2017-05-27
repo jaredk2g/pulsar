@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
@@ -12,20 +13,23 @@ namespace Pulsar;
 
 use Stash\Item;
 
+/**
+ * Trait Cacheable.
+ */
 trait Cacheable
 {
     /**
-     * @staticvar \Stash\Pool
+     * @var \Stash\Pool
      */
     private static $cachePool;
 
     /**
-     * @staticvar array
+     * @var array
      */
     private static $cachePrefix = [];
 
     /**
-     * @var \Stash\Item
+     * @var Item
      */
     private $_cacheItem;
 
@@ -134,7 +138,7 @@ trait Cacheable
     /**
      * Returns the cache item for this model.
      *
-     * @return \Stash\Item|null
+     * @return Item|null
      */
     public function getCacheItem()
     {
