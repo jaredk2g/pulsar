@@ -24,7 +24,7 @@
 		"pimple/pimple": ">=v2.1.0",
 		"symfony/event-dispatcher": "~2.7",
 		"jaqb/jaqb": "~1.2",
-		"infuse/libs": "~0.5"
+		"infuse/libs": "~0.6"
 	},
 	"require-dev": {
 		"satooshi/php-coveralls": "1.0.0",
