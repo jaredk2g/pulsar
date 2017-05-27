@@ -789,6 +789,11 @@ abstract class Model implements \ArrayAccess
         // get the values for the properties
         $result = $this->get($properties);
 
+        // apply the transformation hook
+        if (method_exists($this, 'toArrayHook')) {
+            $this->toArrayHook($result, [], [], []);
+        }
+
         return $result;
     }
 
