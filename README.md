@@ -1,9 +1,11 @@
 Pulsar ORM
-===========
+==========
 
+[![Latest Stable Version](https://poser.pugx.org/pulsar/pulsar/v/stable.svg?style=flat)](https://packagist.org/packages/pulsar/pulsar)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](LICENSE)
 [![Build Status](https://travis-ci.org/jaredtking/pulsar.svg?branch=master&style=flat)](https://travis-ci.org/jaredtking/pulsar)
 [![Coverage Status](https://coveralls.io/repos/jaredtking/pulsar/badge.svg?style=flat)](https://coveralls.io/r/jaredtking/pulsar)
-[![Latest Stable Version](https://poser.pugx.org/pulsar/pulsar/v/stable.svg?style=flat)](https://packagist.org/packages/pulsar/pulsar)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaredtking/pulsar/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jaredtking/pulsar/?branch=master)
 [![Total Downloads](https://poser.pugx.org/pulsar/pulsar/downloads.svg?style=flat)](https://packagist.org/packages/pulsar/pulsar)
 [![HHVM Status](http://hhvm.h4cc.de/badge/pulsar/pulsar.svg?style=flat)](http://hhvm.h4cc.de/package/pulsar/pulsar)
 
