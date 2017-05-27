@@ -6,7 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - `DriverException` represents errors that occur in the data layer.
 - Added model adapter service for Infuse Framework.
-- Imported error stack and service from Infuse Framework.
+- Added error stack service for Infuse Framework.
 - Added `Model::saved()` and `Model::saving()` shortcuts for listening to any write operation.
 
 ### Changed
@@ -15,9 +15,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Use version 0.6 of `infuse/libs`.
 - Deprecated `relation()` on model class.
 - Deprecated `exists()` on model class.
-- Deprecated `Validate::is()`.
 - Deprecated `toArrayHook()` on model class.
 - Deprecated `preSetHook()` on model class.
+- Deprecated `Validate::is()`.
+- Imported error stack library from `infuse/libs`.
 
 ### Removed
 - Removed `toArrayDeprecated()` on model class.
