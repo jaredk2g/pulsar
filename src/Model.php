@@ -32,7 +32,9 @@ abstract class Model implements \ArrayAccess
     const MUTABLE = 2;
 
     const TYPE_STRING = 'string';
-    const TYPE_NUMBER = 'number';
+    const TYPE_NUMBER = 'number'; // DEPRECATED
+    const TYPE_INTEGER = 'integer';
+    const TYPE_FLOAT = 'float';
     const TYPE_BOOLEAN = 'boolean';
     const TYPE_DATE = 'date';
     const TYPE_OBJECT = 'object';
@@ -118,7 +120,7 @@ abstract class Model implements \ArrayAccess
      * @var array
      */
     private static $defaultIDProperty = [
-        'type' => self::TYPE_NUMBER,
+        'type' => self::TYPE_INTEGER,
         'mutable' => self::IMMUTABLE,
     ];
 

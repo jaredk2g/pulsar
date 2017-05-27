@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added model adapter service for Infuse Framework.
 - Added error stack service for Infuse Framework.
 - Added `Model::saved()` and `Model::saving()` shortcuts for listening to any write operation.
+- Added integer and float property types.
 
 ### Changed
 - All model-related exceptions inherit from `ModelException`.
@@ -17,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated `exists()` on model class.
 - Deprecated `toArrayHook()` on model class.
 - Deprecated `preSetHook()` on model class.
+- Deprecated number property type.
 - Deprecated `Validate::is()`.
 - Imported error stack library from `infuse/libs`.
 

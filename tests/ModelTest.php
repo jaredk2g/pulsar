@@ -93,7 +93,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $expected = [
             'id' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'mutable' => Model::IMMUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -156,7 +156,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testGetProperty()
     {
         $expected = [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
             'mutable' => Model::IMMUTABLE,
             'null' => false,
             'unique' => false,

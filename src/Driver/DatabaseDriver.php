@@ -226,43 +226,51 @@ class DatabaseDriver implements DriverInterface
      */
     public function unserializeValue(array $property, $value)
     {
+        if ($value === null) {
+            return;
+        }
+
         // handle empty strings as null
         if ($property['null'] && $value == '') {
             return;
         }
 
-        $type = $property['type'];
-
-        // handle boolean values, they might be strings
-        if ($type == Model::TYPE_BOOLEAN && is_string($value)) {
-            return ($value == '1') ? true : false;
-        }
-
-        // cast numbers as....numbers
-        if ($type == Model::TYPE_NUMBER) {
-            return $value + 0;
-        }
-
-        // cast dates as numbers also
-        if ($type == Model::TYPE_DATE) {
-            if (!is_numeric($value)) {
-                return strtotime($value);
-            } else {
+        $type = array_value($property, 'type');
+        switch ($type) {
+            case Model::TYPE_STRING:
+                return (string) $value;
+            case Model::TYPE_NUMBER:
                 return $value + 0;
-            }
+            case Model::TYPE_INTEGER:
+                return (int) $value;
+            case Model::TYPE_FLOAT:
+                return (float) $value;
+            case Model::TYPE_BOOLEAN:
+                return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            case Model::TYPE_DATE:
+                // cast dates as unix timestamps
+                if (!is_numeric($value)) {
+                    return strtotime($value);
+                } else {
+                    return $value + 0;
+                }
+            case Model::TYPE_ARRAY:
+                // decode JSON into an array
+                if (is_string($value)) {
+                    return json_decode($value, true);
+                } else {
+                    return (array) $value;
+                }
+            case Model::TYPE_OBJECT:
+                // decode JSON into an object
+                if (is_string($value)) {
+                    return (object) json_decode($value);
+                } else {
+                    return (object) $value;
+                }
+            default:
+                return $value;
         }
-
-        // decode JSON into an array
-        if ($type == Model::TYPE_ARRAY && is_string($value)) {
-            return (array) json_decode($value, true);
-        }
-
-        // decode JSON into an object
-        if ($type == Model::TYPE_OBJECT && is_string($value)) {
-            return (object) json_decode($value);
-        }
-
-        return $value;
     }
 
     /**
