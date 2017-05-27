@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Model::saved()` and `Model::saving()` shortcuts for listening to any write operation.
 - Added integer and float property types.
 - Added `Model::find()` and `Model::findOrFail()` for loading models from the data layer.
+- Added `persisted()` method to model class.
 
 ### Changed
 - All model-related exceptions inherit from `ModelException`.

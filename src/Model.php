@@ -98,6 +98,11 @@ abstract class Model implements \ArrayAccess
     protected $_unsaved = [];
 
     /**
+     * @var bool
+     */
+    protected $_persisted = false;
+
+    /**
      * @var array
      */
     protected $_relationships = [];
@@ -904,9 +909,11 @@ abstract class Model implements \ArrayAccess
                 return false;
             }
 
+            $this->_persisted = false;
+
             // NOTE clear the local cache before the model.deleted
             // event so that fetching values forces a reload
-            // from the storage layer
+            // from the data layer
             $this->clearCache();
         }
 
@@ -997,6 +1004,18 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * Tells if this model instance has been persisted to the data layer.
+     *
+     * NOTE: this does not actually perform a check with the data layer
+     *
+     * @return bool
+     */
+    public function persisted()
+    {
+        return $this->_persisted;
+    }
+
+    /**
      * Loads the model from the storage layer.
      *
      * @return self
@@ -1028,6 +1047,7 @@ abstract class Model implements \ArrayAccess
      */
     public function refreshWith(array $values)
     {
+        $this->_persisted = true;
         $this->_values = $values;
 
         return $this;

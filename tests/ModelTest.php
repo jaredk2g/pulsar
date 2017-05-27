@@ -965,15 +965,17 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDelete()
     {
-        $model = new TestModel2(1);
+        $model = new TestModel(1);
+        $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
                ->withArgs([$model])
                ->andReturn(true);
-        TestModel2::setDriver($driver);
+        TestModel::setDriver($driver);
 
         $this->assertTrue($model->delete());
+        $this->assertFalse($model->persisted());
     }
 
     public function testDeleteWithNoId()
@@ -981,7 +983,10 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException(BadMethodCallException::class);
 
         $model = new TestModel();
+        $model->refreshWith(['test' => true]);
+
         $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
     }
 
     public function testDeletingListenerFail()
@@ -991,7 +996,10 @@ class ModelTest extends PHPUnit_Framework_TestCase
         });
 
         $model = new TestModel(100);
+        $model->refreshWith(['test' => true]);
+
         $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
     }
 
     public function testDeletedListenerFail()
@@ -1008,12 +1016,16 @@ class ModelTest extends PHPUnit_Framework_TestCase
         });
 
         $model = new TestModel(100);
+        $model->refreshWith(['test' => true]);
+
         $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
     }
 
     public function testDeleteFail()
     {
         $model = new TestModel2(1);
+        $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
@@ -1022,6 +1034,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         TestModel2::setDriver($driver);
 
         $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
     }
 
     /////////////////////////////
@@ -1277,5 +1290,13 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new TestModel2(12);
         $this->assertEquals($model, $model->refresh());
+    }
+
+    public function testPersisted()
+    {
+        $model = new TestModel(1);
+        $this->assertFalse($model->persisted());
+        $model->refreshWith(['id' => 1, 'test' => true]);
+        $this->assertTrue($model->persisted());
     }
 }
