@@ -1,18 +1,18 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use Infuse\Locale;
+use Pimple\Container;
 use Pulsar\ErrorStack;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
-use Pimple\Container;
 
 require_once 'test_models.php';
 
@@ -285,7 +285,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             ],
         ];
 
-        $model = new TestModel2; // forces initialize()
+        $model = new TestModel2(); // forces initialize()
         $this->assertEquals($expected, TestModel2::getProperties());
     }
 
@@ -912,7 +912,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testDeleteWithNoId()
     {
         $this->setExpectedException('BadMethodCallException');
-        
+
         $model = new TestModel();
         $this->assertFalse($model->delete());
     }
@@ -1124,7 +1124,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel2();
         $this->assertEquals($model, $model->refresh());
-        $this->assertEquals($model, $model->load());
 
         $model = new TestModel2(12);
 

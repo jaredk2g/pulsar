@@ -12,14 +12,15 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - All model-related exceptions inherit from `ModelException`.
 - Support Symfony 3.
 - Use version 0.6 of `infuse/libs`.
-- Deprecated `relation()`.
-- Deprecated `exists()`.
+- Deprecated `relation()` on model class.
+- Deprecated `exists()` on model class.
 - Deprecated `Validate::is()`.
-- Deprecated `toArrayHook()`.
-- Deprecated `preSetHook()`.
+- Deprecated `toArrayHook()` on model class.
+- Deprecated `preSetHook()` on model class.
 
 ### Removed
-- Removed `toArrayDeprecated()`.
+- Removed `toArrayDeprecated()` on model class.
+- Removed `load()` on model class.
 - Removed deprecated hooks for create and delete operations.
 
 ### Fixed

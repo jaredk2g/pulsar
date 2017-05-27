@@ -957,16 +957,6 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * @deprecated
-     *
-     * Alias for refresh()
-     */
-    public function load()
-    {
-        return $this->refresh();
-    }
-
-    /**
      * Loads the model from the storage layer.
      *
      * @return self
