@@ -8,9 +8,9 @@
  * @license MIT
  */
 
-use Infuse\ErrorStack;
 use Infuse\Locale;
 use Pulsar\ACLModel;
+use Pulsar\ErrorStack;
 use Pimple\Container;
 
 require_once 'tests/test_models.php';
@@ -32,6 +32,9 @@ class ACLModelTest extends PHPUnit_Framework_TestCase
         };
 
         ACLModel::inject(self::$app);
+
+        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        ACLModel::setDriver($driver);
 
         self::$requester = new Person(1);
         ACLModel::setRequester(self::$requester);
