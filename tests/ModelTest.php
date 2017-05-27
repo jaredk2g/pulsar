@@ -8,8 +8,8 @@
  * @license MIT
  */
 
-use Infuse\ErrorStack;
 use Infuse\Locale;
+use Pulsar\ErrorStack;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pimple\Container;

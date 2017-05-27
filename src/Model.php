@@ -293,6 +293,14 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * Clears the driver for all models.
+     */
+    public static function clearDriver()
+    {
+        self::$driver = null;
+    }
+
+    /**
      * Gets the name of the model without namespacing.
      *
      * @return string
