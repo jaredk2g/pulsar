@@ -863,7 +863,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel2(10);
         $driver = Mockery::mock(DriverInterface::class);
-        $driver->shouldReceive('createModel')
+        $driver->shouldReceive('updateModel')
                 ->andReturnUsing(function ($model, $params) {
                     $this->assertTrue(isset($params['updated_at']));
                     $updatedAt = strtotime($params['updated_at']);

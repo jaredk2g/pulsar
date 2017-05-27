@@ -33,6 +33,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Throw exception when calling `create()`, `set()`, or `delete()` inappropriately.
+- Mass assigned values in `set()` are now available in the `model.updating` event.
 
 ## 0.1.0 - 2015-12-22
 ### Added
