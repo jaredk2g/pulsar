@@ -136,8 +136,6 @@ abstract class Model implements \ArrayAccess
     private static $timestampProperties = [
         'created_at' => [
             'type' => self::TYPE_DATE,
-            'default' => null,
-            'null' => true,
             'validate' => 'timestamp|db_timestamp',
         ],
         'updated_at' => [
@@ -239,9 +237,9 @@ abstract class Model implements \ArrayAccess
             static::$properties[self::DEFAULT_ID_PROPERTY] = self::$defaultIDProperty;
         }
 
-        // add in the auto timestamp properties
-        if (property_exists(get_called_class(), 'autoTimestamps')) {
-            static::$properties = array_replace(self::$timestampProperties, static::$properties);
+        // generates created_at and updated_at timestamps
+        if (property_exists($this, 'autoTimestamps')) {
+            $this->installAutoTimestamps();
         }
 
         // fill in each property by extending the property
@@ -253,6 +251,24 @@ abstract class Model implements \ArrayAccess
         // order the properties array by name for consistency
         // since it is constructed in a random order
         ksort(static::$properties);
+    }
+
+    /**
+     * Installs the `created_at` and `updated_at` properties.
+     */
+    private function installAutoTimestamps()
+    {
+        static::$properties = array_replace(self::$timestampProperties, static::$properties);
+
+        self::creating(function (ModelEvent $event) {
+            $model = $event->getModel();
+            $model->created_at = time();
+            $model->updated_at = time();
+        });
+
+        self::updating(function (ModelEvent $event) {
+            $event->getModel()->updated_at = time();
+        });
     }
 
     /**

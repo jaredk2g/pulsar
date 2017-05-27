@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated `Validate::is()`.
 - Imported error stack library from `infuse/libs`.
 - Calling `delete()` no longer clears the local values cache.
+- Models with auto-timestamps now compute `created_at` and `updated_at` instead of relying on database triggers.
 
 ### Removed
 - Removed `toArrayDeprecated()` on model class.
