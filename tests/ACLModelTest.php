@@ -1,17 +1,18 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use Infuse\Locale;
-use Pulsar\ACLModel;
-use Pulsar\ErrorStack;
 use Pimple\Container;
+use Pulsar\ACLModel;
+use Pulsar\Driver\DriverInterface;
+use Pulsar\ErrorStack;
 
 require_once 'tests/test_models.php';
 
@@ -33,7 +34,7 @@ class ACLModelTest extends PHPUnit_Framework_TestCase
 
         ACLModel::inject(self::$app);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);
 
         self::$requester = new Person(1);

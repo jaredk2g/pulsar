@@ -1,13 +1,14 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
+use Pulsar\Driver\DriverInterface;
 use Pulsar\Query;
 
 class QueryTest extends PHPUnit_Framework_TestCase
@@ -77,7 +78,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('Person');
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $data = [
             [
@@ -102,7 +103,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $result);
         foreach ($result as $model) {
-            $this->assertInstanceOf('Person', $model);
+            $this->assertInstanceOf(Person::class, $model);
         }
 
         $this->assertEquals(100, $result[0]->id());
@@ -116,7 +117,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('TestModel2');
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $data = [
             [
@@ -139,7 +140,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $result);
         foreach ($result as $model) {
-            $this->assertInstanceOf('TestModel2', $model);
+            $this->assertInstanceOf(TestModel2::class, $model);
         }
 
         $this->assertEquals('100,101', $result[0]->id());
@@ -151,14 +152,14 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $query = new Query('TestModel');
 
         $all = $query->all();
-        $this->assertInstanceOf('Pulsar\Iterator', $all);
+        $this->assertInstanceOf(Iterator::class, $all);
     }
 
     public function testFirst()
     {
         $query = new Query('Person');
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $data = [
             [
@@ -176,7 +177,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $result = $query->first();
 
-        $this->assertInstanceOf('Person', $result);
+        $this->assertInstanceOf(Person::class, $result);
         $this->assertEquals(100, $result->id());
         $this->assertEquals('Sherlock', $result->name);
     }
@@ -185,7 +186,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
     {
         $query = new Query('Person');
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $data = [
             [
@@ -212,7 +213,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
         $this->assertCount(2, $result);
         foreach ($result as $model) {
-            $this->assertInstanceOf('Person', $model);
+            $this->assertInstanceOf(Person::class, $model);
         }
 
         $this->assertEquals(100, $result[0]->id());

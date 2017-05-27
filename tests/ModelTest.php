@@ -12,8 +12,14 @@ use Infuse\Locale;
 use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
+use Pulsar\Exception\DriverMissingException;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
+use Pulsar\Query;
+use Pulsar\Relation\BelongsTo;
+use Pulsar\Relation\BelongsToMany;
+use Pulsar\Relation\HasMany;
+use Pulsar\Relation\HasOne;
 
 require_once 'test_models.php';
 
@@ -55,14 +61,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDriverMissing()
     {
-        $this->setExpectedException('Pulsar\Exception\DriverMissingException');
+        $this->setExpectedException(DriverMissingException::class);
         TestModel::clearDriver();
         TestModel::getDriver();
     }
 
     public function testDriver()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         TestModel::setDriver($driver);
 
         $this->assertEquals($driver, TestModel::getDriver());
@@ -76,7 +82,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $this->assertEquals('TestModel', TestModel::modelName());
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('getTablename')
                ->withArgs(['TestModel'])
                ->andReturn('TestModels');
@@ -412,7 +418,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel(12);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->withArgs([$model])
@@ -428,7 +434,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel2(12);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn([]);
@@ -440,7 +446,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testToArray()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn([]);
@@ -491,7 +497,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $newModel = new TestModel();
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->withArgs([$newModel, [
@@ -526,7 +532,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $newModel = new TestModel();
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->withArgs([$newModel, [
@@ -554,7 +560,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateMutable()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->andReturn(true)
@@ -571,7 +577,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $newModel = new TestModel2();
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $object = new stdClass();
         $object->test = true;
@@ -604,7 +610,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $newModel = new TestModel();
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->andReturn(true);
@@ -620,7 +626,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWithId()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->setExpectedException(BadMethodCallException::class);
 
         $model = new TestModel(5);
         $this->assertFalse($model->create(['relation' => '', 'answer' => 42]));
@@ -638,7 +644,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreatedListenerFail()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->andReturn(true);
@@ -693,7 +699,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $query = TestModel2::query();
         TestModel2::setQuery($query);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(1);
@@ -736,7 +742,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateFail()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
                ->andReturn(false);
@@ -757,7 +763,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertTrue($model->set([]));
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
                ->withArgs([$model, ['answer' => 42]])
@@ -772,7 +778,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel(10);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
                ->withArgs([$model, ['answer' => 42]])
@@ -788,7 +794,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel(11);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
                ->withArgs([$model, ['answer' => 'hello', 'mutator' => 'BLAH', 'relation' => null]])
@@ -808,7 +814,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel(10);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
                ->withArgs([$model, []])
@@ -826,7 +832,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetFailWithNoId()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->setExpectedException(BadMethodCallException::class);
 
         $model = new TestModel();
         $this->assertFalse($model->set(['answer' => 42]));
@@ -844,7 +850,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testUpdatedListenerFail()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
                ->andReturn(true);
@@ -893,7 +899,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $query = TestModel2::query();
         TestModel2::setQuery($query);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(0);
@@ -914,7 +920,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetUniqueSkip()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn(['unique' => 'works']);
@@ -941,7 +947,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testSetDeprecated()
     {
         $model = new TestModel(11);
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
                ->andReturn(true);
         Model::setDriver($driver);
@@ -960,7 +966,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel2(1);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
                ->withArgs([$model])
                ->andReturn(true);
@@ -971,7 +977,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithNoId()
     {
-        $this->setExpectedException('BadMethodCallException');
+        $this->setExpectedException(BadMethodCallException::class);
 
         $model = new TestModel();
         $this->assertFalse($model->delete());
@@ -989,7 +995,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDeletedListenerFail()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('deleteModel')
                ->andReturn(true);
@@ -1008,7 +1014,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel2(1);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
                ->withArgs([$model])
                ->andReturn(false);
@@ -1025,15 +1031,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $query = TestModel::query();
 
-        $this->assertInstanceOf('Pulsar\Query', $query);
-        $this->assertInstanceOf('TestModel', $query->getModel());
+        $this->assertInstanceOf(Query::class, $query);
+        $this->assertInstanceOf(TestModel::class, $query->getModel());
     }
 
     public function testQueryStatic()
     {
         $query = TestModel::where(['name' => 'Bob']);
 
-        $this->assertInstanceOf('Pulsar\Query', $query);
+        $this->assertInstanceOf(Query::class, $query);
     }
 
     public function testTotalRecords()
@@ -1041,7 +1047,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $query = TestModel2::query();
         TestModel2::setQuery($query);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(1);
@@ -1058,7 +1064,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $query = TestModel2::query();
         TestModel2::setQuery($query);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(2);
@@ -1072,7 +1078,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testExists()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(1);
@@ -1085,7 +1091,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testNotExists()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('totalRecords')
                ->andReturn(0);
@@ -1106,7 +1112,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $model->relation = 2;
 
         $relation = $model->relation('relation');
-        $this->assertInstanceOf('TestModel2', $relation);
+        $this->assertInstanceOf(TestModel2::class, $relation);
         $this->assertEquals(2, $relation->id());
 
         // test if relation model is cached
@@ -1130,7 +1136,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $relation = $model->hasOne('TestModel2');
 
-        $this->assertInstanceOf('Pulsar\Relation\HasOne', $relation);
+        $this->assertInstanceOf(HasOne::class, $relation);
         $this->assertEquals('TestModel2', $relation->getModel());
         $this->assertEquals('test_model_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
@@ -1143,7 +1149,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $relation = $model->belongsTo('TestModel2');
 
-        $this->assertInstanceOf('Pulsar\Relation\BelongsTo', $relation);
+        $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals('TestModel2', $relation->getModel());
         $this->assertEquals('id', $relation->getForeignKey());
         $this->assertEquals('test_model2_id', $relation->getLocalKey());
@@ -1156,7 +1162,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $relation = $model->hasMany('TestModel2');
 
-        $this->assertInstanceOf('Pulsar\Relation\HasMany', $relation);
+        $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertEquals('TestModel2', $relation->getModel());
         $this->assertEquals('test_model_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
@@ -1169,7 +1175,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $relation = $model->belongsToMany('TestModel2');
 
-        $this->assertInstanceOf('Pulsar\Relation\BelongsToMany', $relation);
+        $this->assertInstanceOf(BelongsToMany::class, $relation);
         $this->assertEquals('TestModel2', $relation->getModel());
         $this->assertEquals('id', $relation->getForeignKey());
         $this->assertEquals('test_model2_id', $relation->getLocalKey());
@@ -1187,7 +1193,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new TestModel2(12);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->withArgs([$model])
@@ -1201,7 +1207,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testRefreshFail()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn(false);

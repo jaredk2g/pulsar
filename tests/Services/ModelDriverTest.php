@@ -3,14 +3,15 @@
 /**
  * @author Jared King <j@jaredtking.com>
  *
- * @link http://jaredtking.com
+ * @see http://jaredtking.com
  *
  * @copyright 2015 Jared King
  * @license MIT
  */
 use Infuse\Application;
-use Pulsar\Services\ModelDriver;
+use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Model;
+use Pulsar\Services\ModelDriver;
 
 class ModelDriverTest extends PHPUnit_Framework_TestCase
 {
@@ -18,14 +19,14 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
     {
         $config = [
             'models' => [
-                'driver' => 'Pulsar\Driver\DatabaseDriver',
+                'driver' => DatabaseDriver::class,
             ],
         ];
         $app = new Application($config);
         $service = new ModelDriver($app);
-        $this->assertInstanceOf('Pulsar\Driver\DatabaseDriver', Model::getDriver());
+        $this->assertInstanceOf(DatabaseDriver::class, Model::getDriver());
 
         $driver = $service($app);
-        $this->assertInstanceOf('Pulsar\Driver\DatabaseDriver', $driver);
+        $this->assertInstanceOf(DatabaseDriver::class, $driver);
     }
 }

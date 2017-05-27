@@ -1,14 +1,16 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use Pimple\Container;
+use Pulsar\Driver\DriverInterface;
+use Stash\Item;
 use Stash\Pool;
 
 require_once 'tests/test_models.php';
@@ -27,7 +29,7 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
 
     public function testGetCachePool()
     {
-        $cache = Mockery::mock('Stash\Pool');
+        $cache = Mockery::mock(Pool::class);
 
         CacheableModel::setCachePool($cache);
         for ($i = 0; $i < 5; ++$i) {
@@ -38,7 +40,7 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
 
     public function testNoPool()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('loadModel')
                ->andReturn(['answer' => 42]);
         CacheableModel::setDriver($driver);
@@ -73,12 +75,12 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
 
         $model = new CacheableModel(5);
         $item = $model->getCacheItem();
-        $this->assertInstanceOf('Stash\Item', $item);
+        $this->assertInstanceOf(Item::class, $item);
         $this->assertEquals('models/cacheablemodel/5', $item->getKey());
 
         $model = new CacheableModel(6);
         $item = $model->getCacheItem();
-        $this->assertInstanceOf('Stash\Item', $item);
+        $this->assertInstanceOf(Item::class, $item);
         $this->assertEquals('models/cacheablemodel/6', $item->getKey());
     }
 
@@ -89,7 +91,7 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
         $model = new CacheableModel(100);
         CacheableModel::setCachePool($cache);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn(['answer' => 42])
@@ -113,7 +115,7 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
         $model = new CacheableModel(101);
         CacheableModel::setCachePool($cache);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn(['answer' => 42]);
@@ -138,7 +140,7 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
         $cache = new Pool();
         CacheableModel::setCachePool($cache);
 
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
                ->andReturn(['answer' => 42]);

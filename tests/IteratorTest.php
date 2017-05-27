@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
 use Pulsar\Iterator;
 use Pulsar\Query;
 
@@ -23,27 +23,27 @@ class IteratorTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
                ->andReturnUsing(function ($query) {
-                    if (IteratorTest::$noResults) {
-                        return [];
-                    }
+                   if (IteratorTest::$noResults) {
+                       return [];
+                   }
 
-                    $range = range($query->getStart(), $query->getStart() + $query->getLimit() - 1);
+                   $range = range($query->getStart(), $query->getStart() + $query->getLimit() - 1);
 
-                    foreach ($range as &$i) {
-                        $i = ['id' => $i];
-                    }
+                   foreach ($range as &$i) {
+                       $i = ['id' => $i];
+                   }
 
-                    return $range;
+                   return $range;
                });
 
         $driver->shouldReceive('totalRecords')
                ->andReturnUsing(function () {
-                    return IteratorTest::$totalRecords;
-                });
+                   return IteratorTest::$totalRecords;
+               });
 
         self::$driver = $driver;
         IteratorTestModel::setDriver(self::$driver);
@@ -103,7 +103,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
         for ($i = self::$start; $i < $count + 1; ++$i) {
             $current = self::$iterator->current();
             if ($i < $count) {
-                $this->assertInstanceOf('IteratorTestModel', $current);
+                $this->assertInstanceOf(IteratorTestModel::class, $current);
                 $this->assertEquals($i, $current->id());
             } else {
                 $this->assertNull($current);
@@ -129,7 +129,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
         $n = 0;
         foreach (self::$iterator as $k => $model) {
             $this->assertEquals($i, $k);
-            $this->assertInstanceOf('IteratorTestModel', $model);
+            $this->assertInstanceOf(IteratorTestModel::class, $model);
             $this->assertEquals($i, $model->id());
             ++$i;
             ++$n;
@@ -150,7 +150,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
         $n = 0;
         foreach (self::$iterator as $k => $model) {
             $this->assertEquals($i, $k);
-            $this->assertInstanceOf('IteratorTestModel', $model);
+            $this->assertInstanceOf(IteratorTestModel::class, $model);
             $this->assertEquals($i, $model->id());
             ++$i;
             ++$n;
@@ -192,7 +192,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
         $i = $start;
         foreach ($iterator as $k => $model) {
             $this->assertEquals($i, $k);
-            $this->assertInstanceOf('IteratorTestModel', $model);
+            $this->assertInstanceOf(IteratorTestModel::class, $model);
             $this->assertEquals($i, $model->id());
             ++$i;
         }
@@ -220,21 +220,21 @@ class IteratorTest extends PHPUnit_Framework_TestCase
 
     public function testOffsetGetOOB()
     {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->setExpectedException(OutOfBoundsException::class);
 
         $fail = self::$iterator[100000];
     }
 
     public function testOffsetSet()
     {
-        $this->setExpectedException('Exception');
+        $this->setExpectedException(Exception::class);
 
         self::$iterator[0] = null;
     }
 
     public function testOffsetUnset()
     {
-        $this->setExpectedException('Exception');
+        $this->setExpectedException(Exception::class);
 
         unset(self::$iterator[0]);
     }

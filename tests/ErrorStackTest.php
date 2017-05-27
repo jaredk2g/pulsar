@@ -8,11 +8,11 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use Pulsar\ErrorStack;
 use Infuse\Locale;
 use Infuse\Test;
 use PHPUnit\Framework\TestCase;
 use Pimple\Container;
+use Pulsar\ErrorStack;
 
 class ErrorStackTest extends TestCase
 {
@@ -220,14 +220,14 @@ class ErrorStackTest extends TestCase
 
     public function testArrayGetFail()
     {
-        $this->setExpectedException('OutOfBoundsException');
+        $this->setExpectedException(OutOfBoundsException::class);
 
         echo self::$stack['invalid'];
     }
 
     public function testArraySetFail()
     {
-        $this->setExpectedException('Exception');
+        $this->setExpectedException(Exception::class);
 
         self::$stack['invalid'] = 'test';
     }

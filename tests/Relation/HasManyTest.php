@@ -1,13 +1,14 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
+use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\HasMany;
 
@@ -15,7 +16,7 @@ class HasManyTest extends PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
-        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
                ->andReturn([['id' => 'result'], ['id' => 'result2']]);
@@ -45,7 +46,7 @@ class HasManyTest extends PHPUnit_Framework_TestCase
         $this->assertCount(2, $result);
 
         foreach ($result as $m) {
-            $this->assertInstanceOf('TestModel', $m);
+            $this->assertInstanceOf(TestModel::class, $m);
         }
 
         $this->assertEquals('result', $result[0]->id());
