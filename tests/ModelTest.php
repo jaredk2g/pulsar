@@ -55,8 +55,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testDriverMissing()
     {
         $this->setExpectedException('Pulsar\Exception\DriverMissingException');
-        Model::clearDriver();
-        Model::getDriver();
+        TestModel::clearDriver();
+        TestModel::getDriver();
     }
 
     public function testDriver()
@@ -361,14 +361,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model->accessor = 'TEST';
         $this->assertEquals('test', $model->accessor);
-    }
-
-    function testGetNonExisting()
-    {
-        $this->setExpectedException('InvalidArgumentException');
-
-        $model = new TestModel;
-        $model->nonexistent_property;
     }
 
     public function testIsset()
