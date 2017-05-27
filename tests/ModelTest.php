@@ -10,6 +10,7 @@
  */
 use Infuse\Locale;
 use Pimple\Container;
+use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
@@ -655,6 +656,36 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($newModel->create([]));
     }
 
+    public function testCreateSavingListenerFail()
+    {
+        TestModel::saving(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $newModel = new TestModel();
+        $this->assertFalse($newModel->create());
+    }
+
+    public function testCreateSavedListenerFail()
+    {
+        $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+               ->andReturn(true);
+
+        $driver->shouldReceive('getCreatedID')
+               ->andReturn(1);
+
+        Model::setDriver($driver);
+
+        TestModel::saved(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $newModel = new TestModel();
+        $this->assertFalse($newModel->create());
+    }
+
     public function testCreateNotUnique()
     {
         $errorStack = self::$app['errors']->clear();
@@ -826,6 +857,35 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new TestModel(100);
         $this->assertFalse($model->set(['answer' => 42]));
+    }
+
+    public function testUpdateSavingListenerFail()
+    {
+        TestModel::saving(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(100);
+        $model->answer = 42;
+        $this->assertFalse($model->save());
+    }
+
+    public function testUpdateSavedListenerFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('updateModel')
+               ->andReturn(true);
+
+        Model::setDriver($driver);
+
+        TestModel::saved(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(100);
+        $model->answer = 42;
+        $this->assertFalse($model->save());
     }
 
     public function testSetUnique()

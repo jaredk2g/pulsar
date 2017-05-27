@@ -7,6 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `DriverException` represents errors that occur in the data layer.
 - Added model adapter service for Infuse Framework.
 - Imported error stack and service from Infuse Framework.
+- Added `Model::saved()` and `Model::saving()` shortcuts for listening to any write operation.
 
 ### Changed
 - All model-related exceptions inherit from `ModelException`.
