@@ -35,6 +35,8 @@ class TestModel extends Model
 
     public static $query;
 
+    public static $preSetHookValues;
+
     protected function initialize()
     {
         self::$properties['test_hook'] = [
@@ -73,6 +75,12 @@ class TestModel extends Model
 
     protected function getAppendedValue()
     {
+        return true;
+    }
+
+    protected function preSetHook(array &$data)
+    {
+        self::$preSetHookValues = $data;
         return true;
     }
 }

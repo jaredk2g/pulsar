@@ -876,6 +876,20 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertCount(1, $errorStack->errors());
     }
 
+    public function testSetDeprecated()
+    {
+        $model = new TestModel(11);
+        $driver = Mockery::mock('Pulsar\Driver\DriverInterface');
+        $driver->shouldReceive('updateModel')
+               ->andReturn(true);
+        Model::setDriver($driver);
+        $this->assertTrue($model->set(['answer' => 42]));
+        $expected = [
+            'answer' => 42,
+        ];
+        $this->assertEquals($expected, $model::$preSetHookValues);
+    }
+
     /////////////////////////////
     // DELETE
     /////////////////////////////

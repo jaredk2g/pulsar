@@ -824,6 +824,11 @@ abstract class Model implements \ArrayAccess
             return false;
         }
 
+        // DEPRECATED
+        if (method_exists($this, 'preSetHook') && !$this->preSetHook($data)) {
+            return false;
+        }
+
         // validate the values being saved
         $validated = true;
         $updateArray = [];
