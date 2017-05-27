@@ -32,6 +32,8 @@ class Validate
     }
 
     /**
+     * @deprecated
+     *
      * Validates one or more fields based upon certain filters. Filters may be chained and will be executed in order
      * i.e. Validate::is( 'gob@bluthfamily.com', 'email' ) or Validate::is( ['password1', 'password2'], 'matching|password:8|required' ).
      *
