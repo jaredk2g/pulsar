@@ -79,9 +79,14 @@ abstract class Model implements \ArrayAccess
     protected static $dispatchers;
 
     /**
-     * @var number|string|bool
+     * @var number|string|false
      */
     protected $_id;
+
+    /**
+     * @var array
+     */
+    protected $_ids;
 
     /**
      * @var Container
@@ -182,8 +187,7 @@ abstract class Model implements \ArrayAccess
         $this->app = self::$injectedApp;
         $this->init();
 
-        // TODO need to store the id as an array
-        // instead of a string to maintain type integrity
+        // parse the supplied model ID
         if (is_array($id)) {
             // A model can be supplied as a primary key
             foreach ($id as &$el) {
@@ -192,13 +196,26 @@ abstract class Model implements \ArrayAccess
                 }
             }
 
-            $id = implode(',', $id);
-        // A model can be supplied as a primary key
-        } elseif ($id instanceof self) {
-            $id = $id->id();
-        }
+            // The IDs come in as the same order as ::$ids.
+            // We need to match up the elements on that
+            // input into a key-value map for each ID property.
+            $ids = [];
+            $idQueue = array_reverse($id);
+            foreach (static::$ids as $k => $f) {
+                $ids[$f] = (count($idQueue) > 0) ? array_pop($idQueue) : false;
+            }
 
-        $this->_id = $id;
+            $this->_id = implode(',', $id);
+            $this->_ids = $ids;
+        } elseif ($id instanceof self) {
+            // A model can be supplied as a primary key
+            $this->_id = $id->id();
+            $this->_ids = $id->ids();
+        } else {
+            $this->_id = $id;
+            $idProperty = static::$ids[0];
+            $this->_ids = [$idProperty => $id];
+        }
 
         // load any given values
         if (count($values) > 0) {
@@ -356,21 +373,7 @@ abstract class Model implements \ArrayAccess
      */
     public function ids()
     {
-        $return = [];
-
-        // match up id values from comma-separated id string with property names
-        $ids = explode(',', $this->_id);
-        $ids = array_reverse($ids);
-
-        // TODO need to store the id as an array
-        // instead of a string to maintain type integrity
-        foreach (static::$ids as $k => $f) {
-            $id = (count($ids) > 0) ? array_pop($ids) : false;
-
-            $return[$f] = $id;
-        }
-
-        return $return;
+        return $this->_ids;
     }
 
     /////////////////////////////
@@ -685,7 +688,7 @@ abstract class Model implements \ArrayAccess
 
         if ($created) {
             // determine the model's new ID
-            $this->_id = $this->getNewID();
+            $this->getNewID();
 
             // NOTE clear the local cache before the model.created
             // event so that fetching values forces a reload
@@ -770,26 +773,27 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Gets the ID for a newly created model.
-     *
-     * @return string
+     * Populates a newly created model with its ID.
      */
     protected function getNewID()
     {
         $ids = [];
+        $namedIds = [];
         foreach (static::$ids as $k) {
             // attempt use the supplied value if the ID property is mutable
             $property = static::getProperty($k);
             if (in_array($property['mutable'], [self::MUTABLE, self::MUTABLE_CREATE_ONLY]) && isset($this->_unsaved[$k])) {
-                $ids[] = $this->_unsaved[$k];
+                $id = $this->_unsaved[$k];
             } else {
-                $ids[] = self::$driver->getCreatedID($this, $k);
+                $id = self::$driver->getCreatedID($this, $k);
             }
+
+            $ids[] = $id;
+            $namedIds[$k] = $id;
         }
 
-        // TODO need to store the id as an array
-        // instead of a string to maintain type integrity
-        return (count($ids) > 1) ? implode(',', $ids) : $ids[0];
+        $this->_id = implode(',', $ids);
+        $this->_ids = $namedIds;
     }
 
     /**
