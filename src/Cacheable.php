@@ -116,14 +116,13 @@ trait Cacheable
             // Attempt to load the model from the caching layer first.
             // If that fails, then fall through to the data layer.
             $item = $this->getCacheItem();
-            $values = $item->get();
 
             if ($item->isHit()) {
                 // load the values directly instead of using
                 // refreshWith() to prevent triggering another
                 // cache call
                 $this->_persisted = true;
-                $this->_values = $values;
+                $this->_values = $item->get();
 
                 // clear any relationships
                 $this->_relationships = [];
@@ -154,7 +153,7 @@ trait Cacheable
         // cache the local properties
         $item = $this->getCacheItem();
         $item->set($this->_values)
-             ->expiresAfter($this->getCacheTTL());
+            ->expiresAfter($this->getCacheTTL());
 
         self::$cachePool->save($item);
 
