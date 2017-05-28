@@ -26,7 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Imported error stack library from `infuse/libs`.
 - Calling `delete()` no longer clears the local values cache.
 - Models with auto-timestamps now compute `created_at` and `updated_at` instead of relying on database triggers.
-- Use PSR-6 in `Cacheable` trait.
+- Use PSR-6 in `Cacheable` trait. 
 
 ### Removed
 - Removed `toArrayDeprecated()` on model class.
@@ -36,6 +36,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Throw exception when calling `create()`, `set()`, or `delete()` inappropriately.
 - Mass assigned values in `set()` are now available in the `model.updating` event.
+- Models returned by `toArray()` will be converted to arrays.
 
 ## 0.1.0 - 2015-12-22
 ### Added

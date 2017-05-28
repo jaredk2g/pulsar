@@ -241,9 +241,14 @@ class CacheableModel extends Model
     use Cacheable;
 
     public static $cacheTTL = 10;
+}
 
-    protected function initialize()
+class RelationshipTestModel extends Model
+{
+    protected static $appended = ['person'];
+
+    protected function getPersonValue()
     {
-        parent::initialize();
+        return new Person(10, ['name' => 'Bob Loblaw', 'email' => 'bob@example.com']);
     }
 }

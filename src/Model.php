@@ -843,6 +843,14 @@ abstract class Model implements \ArrayAccess
         // get the values for the properties
         $result = $this->get($properties);
 
+        foreach ($result as $k => &$value) {
+            // convert any models to arrays
+            if ($value instanceof self) {
+                $value = $value->toArray();
+            }
+        }
+
+        // DEPRECATED
         // apply the transformation hook
         if (method_exists($this, 'toArrayHook')) {
             $this->toArrayHook($result, [], [], []);

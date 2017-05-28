@@ -476,6 +476,20 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $model->toArray());
     }
 
+    public function testToArrayWithRelationship()
+    {
+        $model = new RelationshipTestModel(5);
+        $expected = [
+            'id' => 5,
+            'person' => [
+                'id' => 10,
+                'name' => 'Bob Loblaw',
+                'email' => 'bob@example.com',
+            ],
+        ];
+        $this->assertEquals($expected, $model->toArray());
+    }
+
     public function testArrayAccess()
     {
         $model = new TestModel();
