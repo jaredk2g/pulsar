@@ -16,6 +16,7 @@ use ICanBoogie\Inflector;
 use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
@@ -796,12 +797,25 @@ abstract class Model implements \ArrayAccess
      *
      * @param array $values
      *
+     * @throws MassAssignmentException when assigning a value that is protected or not whitelisted
+     *
      * @return self
      */
     public function setValues($values)
     {
+        // check if the model has a mass assignment whitelist
+        $permitted = (property_exists($this, 'permitted')) ? static::$permitted : false;
+
+        // if no whitelist, then check for a blacklist
+        $protected = (!is_array($permitted) && property_exists($this, 'protected')) ? static::$protected : false;
+
         foreach ($values as $k => $value) {
-            // TODO check for mass assignment violations
+            // check for mass assignment violations
+            if (($permitted && !in_array($k, $permitted)) ||
+                ($protected && in_array($k, $protected))) {
+                throw new MassAssignmentException("Mass assignment of $k on ".static::modelName().' is not allowed');
+            }
+
             $this->$k = $value;
         }
 

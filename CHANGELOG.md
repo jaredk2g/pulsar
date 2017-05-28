@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added integer and float property types.
 - Added `Model::find()` and `Model::findOrFail()` for loading models from the data layer.
 - Added `persisted()` method to model class.
+- Added optional mass assignment protection via `Model::$protected` and `Model::$permitted`. 
 
 ### Changed
 - All model-related exceptions inherit from `ModelException`.

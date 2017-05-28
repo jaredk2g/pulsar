@@ -1,16 +1,16 @@
 <?php
 
 /**
- * @package Pulsar
  * @author Jared King <j@jaredtking.com>
- * @link http://jaredtking.com
+ *
+ * @see http://jaredtking.com
+ *
  * @copyright 2015 Jared King
  * @license MIT
  */
-
-use Pulsar\Model;
 use Pulsar\ACLModel;
 use Pulsar\Cacheable;
+use Pulsar\Model;
 use Pulsar\Query;
 
 class TestModel extends Model
@@ -32,6 +32,7 @@ class TestModel extends Model
 
     protected static $hidden = ['mutator', 'accessor'];
     protected static $appended = ['appended'];
+    protected static $permitted = ['id', 'relation', 'answer', 'mutator', 'accessor'];
 
     public static $query;
 
@@ -81,6 +82,7 @@ class TestModel extends Model
     protected function preSetHook(array &$data)
     {
         self::$preSetHookValues = $data;
+
         return true;
     }
 
@@ -147,10 +149,12 @@ class TestModel2 extends Model
         'mutable_create_only' => [
             'mutable' => Model::MUTABLE_CREATE_ONLY,
         ],
+        'protected' => [],
     ];
 
     protected static $autoTimestamps;
     protected static $hidden = ['validate2', 'hidden', 'person', 'array', 'object', 'mutable_create_only'];
+    protected static $protected = ['protected'];
 
     public static $query;
 

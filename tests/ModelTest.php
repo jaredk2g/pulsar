@@ -13,6 +13,7 @@ use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
@@ -274,6 +275,13 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'unique' => false,
                 'required' => false,
             ],
+            'protected' => [
+                'type' => Model::TYPE_STRING,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+            ],
             'created_at' => [
                 'type' => Model::TYPE_DATE,
                 'mutable' => Model::MUTABLE,
@@ -514,16 +522,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         TestModel::setDriver($driver);
 
-        $params = [
-            'relation' => '',
-            'answer' => 42,
-            'extra' => true,
-            'mutator' => 'blah',
-            'array' => [],
-            'object' => new stdClass(),
-        ];
+        $newModel->relation = '';
+        $newModel->answer = 42;
+        $newModel->extra = true;
+        $newModel->mutator = 'blah';
+        $newModel->array = [];
+        $newModel->object = new stdClass();
 
-        $this->assertTrue($newModel->create($params));
+        $this->assertTrue($newModel->create());
         $this->assertEquals(1, $newModel->id());
         $this->assertEquals(1, $newModel->id);
     }
@@ -556,6 +562,46 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $newModel->object = new stdClass();
 
         $this->assertTrue($newModel->save());
+    }
+
+    public function testCreateMassAssignment()
+    {
+        $newModel = new TestModel();
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->withArgs([$newModel, [
+                'mutator' => 'BLAH',
+                'relation' => null,
+                'answer' => 42,
+            ]])
+            ->andReturn(true)
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$newModel, 'id'])
+            ->andReturn(1);
+
+        TestModel::setDriver($driver);
+
+        $params = [
+            'relation' => '',
+            'answer' => 42,
+            'mutator' => 'blah',
+        ];
+
+        $this->assertTrue($newModel->create($params));
+        $this->assertEquals(1, $newModel->id());
+        $this->assertEquals(1, $newModel->id);
+    }
+
+    public function testCreateMassAssignmentFail()
+    {
+        $this->setExpectedException(MassAssignmentException::class);
+
+        $newModel = new TestModel();
+        $newModel->create(['not_allowed' => true]);
     }
 
     public function testCreateMutable()
@@ -819,35 +865,51 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($model->save());
     }
 
-    public function testSetMultiple()
+    public function testSetMassAssignment()
     {
-        $model = new TestModel(11);
+        $model = new TestModel2(11);
 
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->withArgs([$model, ['answer' => 'hello', 'mutator' => 'BLAH', 'relation' => null]])
-               ->andReturn(true);
+               ->andReturnUsing(function ($model, $params) {
+                   unset($params['updated_at']);
+                   $expected = ['id' => 'hello', 'id2' => 'world'];
+                   $this->assertEquals($expected, $params);
+
+                   return true;
+               });
 
         TestModel::setDriver($driver);
 
         $this->assertTrue($model->set([
-            'answer' => 'hello',
-            'relation' => '',
-            'mutator' => 'blah',
+            'id' => 'hello',
+            'id2' => 'world',
             'nonexistent_property' => 'whatever',
         ]));
     }
 
+    public function testSetMassAssignmentFail()
+    {
+        $this->setExpectedException(MassAssignmentException::class);
+
+        $newModel = new TestModel(2);
+        $newModel->set(['protected' => true]);
+    }
+
     public function testSetImmutableProperties()
     {
-        $model = new TestModel(10);
+        $model = new TestModel2(10);
 
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->withArgs([$model, []])
-               ->andReturn(true)
+               ->andReturnUsing(function ($model, $params) {
+                   $this->assertTrue(isset($params['id']));
+                   $this->assertFalse(isset($params['mutable_create_only']));
+
+                   return true;
+               })
                ->once();
 
         TestModel::setDriver($driver);
