@@ -11,7 +11,8 @@
 
 namespace Pulsar;
 
-use Stash\Item;
+use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 
 /**
  * Trait Cacheable.
@@ -19,7 +20,7 @@ use Stash\Item;
 trait Cacheable
 {
     /**
-     * @var \Stash\Pool
+     * @var CacheItemPoolInterface
      */
     private static $cachePool;
 
@@ -29,81 +30,32 @@ trait Cacheable
     private static $cachePrefix = [];
 
     /**
-     * @var Item
+     * @var CacheItemInterface
      */
     private $_cacheItem;
-
-    public function refresh()
-    {
-        if ($this->_id === false) {
-            return $this;
-        }
-
-        if (self::$cachePool) {
-            // First, attempts to load the model from the caching layer.
-             // If that fails, then attempts to load the model from the
-             // database layer.
-            $item = $this->getCacheItem();
-            $values = $item->get();
-
-            if ($item->isMiss()) {
-                // If the cache was a miss, then lock down the
-                // cache item, attempt to refresh the model from
-                // the database, and then update the cache.
-                // Stash calls this Stampede Protection.
-
-                // NOTE Currently disabling Stampede Protection
-                // because there is no way to unlock the item
-                // if we fail to refresh the model, whether
-                // due to a DB failure or non-existent record.
-                // This is problematic with the Redis driver
-                // because it will attempt to unlock the cache
-                // item once the script shuts down and the
-                // redis connection has closed.
-                // $item->lock();
-
-                parent::refresh();
-            } else {
-                $this->_values = $values;
-            }
-        } else {
-            parent::refresh();
-        }
-
-        // clear any relationships
-        $this->_relationships = [];
-
-        return $this;
-    }
-
-    public function refreshWith(array $values)
-    {
-        return parent::refreshWith($values)->cache();
-    }
-
-    public function clearCache()
-    {
-        if (self::$cachePool) {
-            $this->getCacheItem()->clear();
-        }
-
-        return parent::clearCache();
-    }
 
     /**
      * Sets the default cache instance used by new models.
      *
-     * @param \Stash\Pool $pool
+     * @param CacheItemPoolInterface $pool
      */
-    public static function setCachePool($pool)
+    public static function setCachePool(CacheItemPoolInterface $pool)
     {
         self::$cachePool = $pool;
     }
 
     /**
+     * Clears the default cache instance for all models.
+     */
+    public static function clearCachePool()
+    {
+        self::$cachePool = null;
+    }
+
+    /**
      * Returns the cache instance.
      *
-     * @return \Stash\Pool|false
+     * @return CacheItemPoolInterface|false
      */
     public function getCachePool()
     {
@@ -129,16 +81,16 @@ trait Cacheable
     {
         $k = get_called_class();
         if (!isset(self::$cachePrefix[$k])) {
-            self::$cachePrefix[$k] = 'models/'.strtolower(static::modelName());
+            self::$cachePrefix[$k] = 'models.'.strtolower(static::modelName());
         }
 
-        return self::$cachePrefix[$k].'/'.$this->_id;
+        return self::$cachePrefix[$k].'.'.$this->_id;
     }
 
     /**
      * Returns the cache item for this model.
      *
-     * @return Item|null
+     * @return CacheItemInterface|null
      */
     public function getCacheItem()
     {
@@ -147,10 +99,45 @@ trait Cacheable
         }
 
         if (!$this->_cacheItem) {
-            $this->_cacheItem = self::$cachePool->getItem($this->getCacheKey());
+            $k = $this->getCacheKey();
+            $this->_cacheItem = self::$cachePool->getItem($k);
         }
 
         return $this->_cacheItem;
+    }
+
+    public function refresh()
+    {
+        if ($this->_id === false) {
+            return $this;
+        }
+
+        if (self::$cachePool) {
+            // Attempt to load the model from the caching layer first.
+            // If that fails, then fall through to the data layer.
+            $item = $this->getCacheItem();
+            $values = $item->get();
+
+            if ($item->isHit()) {
+                // load the values directly instead of using
+                // refreshWith() to prevent triggering another
+                // cache call
+                $this->_persisted = true;
+                $this->_values = $values;
+
+                // clear any relationships
+                $this->_relationships = [];
+
+                return $this;
+            }
+        }
+
+        return parent::refresh();
+    }
+
+    public function refreshWith(array $values)
+    {
+        return parent::refreshWith($values)->cache();
     }
 
     /**
@@ -165,9 +152,22 @@ trait Cacheable
         }
 
         // cache the local properties
-        $this->getCacheItem()
-             ->set($this->_values, $this->getCacheTTL());
+        $item = $this->getCacheItem();
+        $item->set($this->_values)
+             ->expiresAfter($this->getCacheTTL());
+
+        self::$cachePool->save($item);
 
         return $this;
+    }
+
+    public function clearCache()
+    {
+        if (self::$cachePool) {
+            $k = $this->getCacheKey();
+            self::$cachePool->deleteItem($k);
+        }
+
+        return parent::clearCache();
     }
 }

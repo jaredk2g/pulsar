@@ -24,14 +24,15 @@
 		"pimple/pimple": ">=v2.1.0",
 		"symfony/event-dispatcher": "~2.8|~3.0",
 		"jaqb/jaqb": "~1.2",
-		"infuse/libs": "~0.6"
+		"infuse/libs": "~0.6",
+		"psr/cache": "~1.0"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "5.7.*",
 		"phpunit/php-code-coverage": "4.*",
 		"satooshi/php-coveralls": "1.0.0",
 		"mockery/mockery": "~0.9",
-		"tedivm/stash": "0.12.*",
+		"symfony/cache": "~3.1",
 		"infuse/infuse": "~1.4"
 	}
 }

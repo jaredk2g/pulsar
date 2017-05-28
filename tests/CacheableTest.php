@@ -9,13 +9,13 @@
  * @license MIT
  */
 use Pimple\Container;
+use Psr\Cache\CacheItemInterface;
 use Pulsar\Driver\DriverInterface;
-use Stash\Item;
-use Stash\Pool;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 require_once 'tests/test_models.php';
 
-class CacheablelTest extends PHPUnit_Framework_TestCase
+class CacheableTest extends PHPUnit_Framework_TestCase
 {
     public static $app;
 
@@ -27,33 +27,25 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
         CacheableModel::inject(self::$app);
     }
 
+    protected function tearDown()
+    {
+        CacheableModel::clearCachePool();
+    }
+
+    private function getCache()
+    {
+        return new ArrayAdapter();
+    }
+
     public function testGetCachePool()
     {
-        $cache = Mockery::mock(Pool::class);
+        $cache = $this->getCache();
 
         CacheableModel::setCachePool($cache);
         for ($i = 0; $i < 5; ++$i) {
             $model = new CacheableModel();
             $this->assertEquals($cache, $model->getCachePool());
         }
-    }
-
-    public function testNoPool()
-    {
-        $driver = Mockery::mock(DriverInterface::class);
-        $driver->shouldReceive('loadModel')
-               ->andReturn(['answer' => 42]);
-        CacheableModel::setDriver($driver);
-
-        CacheableModel::setCachePool(null);
-        $model = new CacheableModel(5);
-        $this->assertNull($model->getCachePool());
-        $this->assertNull($model->getCacheItem());
-        $this->assertEquals($model, $model->refresh());
-        $this->assertEquals($model, $model->cache());
-
-        $model = new CacheableModel();
-        $this->assertEquals($model, $model->refresh());
     }
 
     public function testGetCacheTTL()
@@ -65,98 +57,94 @@ class CacheablelTest extends PHPUnit_Framework_TestCase
     public function testGetCacheKey()
     {
         $model = new CacheableModel(5);
-        $this->assertEquals('models/cacheablemodel/5', $model->getCacheKey());
+        $this->assertEquals('models.cacheablemodel.5', $model->getCacheKey());
     }
 
     public function testGetCacheItem()
     {
-        $cache = new Pool();
+        $cache = $this->getCache();
         CacheableModel::setCachePool($cache);
 
         $model = new CacheableModel(5);
         $item = $model->getCacheItem();
-        $this->assertInstanceOf(Item::class, $item);
-        $this->assertEquals('models/cacheablemodel/5', $item->getKey());
+        $this->assertInstanceOf(CacheItemInterface::class, $item);
+        $this->assertEquals('models.cacheablemodel.5', $item->getKey());
 
         $model = new CacheableModel(6);
         $item = $model->getCacheItem();
-        $this->assertInstanceOf(Item::class, $item);
-        $this->assertEquals('models/cacheablemodel/6', $item->getKey());
+        $this->assertInstanceOf(CacheItemInterface::class, $item);
+        $this->assertEquals('models.cacheablemodel.6', $item->getKey());
     }
 
-    public function testCacheHit()
+    public function testRefreshCached()
     {
-        $cache = new Pool();
+        $cache = $this->getCache();
 
         $model = new CacheableModel(100);
         CacheableModel::setCachePool($cache);
 
         $driver = Mockery::mock(DriverInterface::class);
-
         $driver->shouldReceive('loadModel')
                ->andReturn(['answer' => 42])
                ->once();
 
         CacheableModel::setDriver($driver);
 
-        // load from the db first
+        // the first refresh() call should be a miss
+        // the data layer because no caching has been performed
         $this->assertEquals($model, $model->refresh());
-        // load without skipping cache
-        $this->assertEquals($model, $model->refresh());
+        $this->assertEquals(42, $model->answer);
 
-        // this should be a hit from the cache
+        // values should now be cached
+        $item = $cache->getItem($model->getCacheKey());
+        $value = $item->get();
+        $this->assertTrue($item->isHit());
+        $expected = ['answer' => 42];
+        $this->assertEquals($expected, $value);
+
+        // the next refresh() call should be a hit from the cache
+        $model = new CacheableModel(100);
+        $this->assertEquals($model, $model->refresh());
         $this->assertEquals(42, $model->answer);
     }
 
-    public function testCacheMiss()
+    public function testRefreshNoCachePool()
     {
-        $cache = new Pool();
-
-        $model = new CacheableModel(101);
-        CacheableModel::setCachePool($cache);
-
         $driver = Mockery::mock(DriverInterface::class);
-
         $driver->shouldReceive('loadModel')
-               ->andReturn(['answer' => 42]);
-
+            ->andReturn(['answer' => 42]);
         CacheableModel::setDriver($driver);
 
+        $model = new CacheableModel(5);
+        $this->assertNull($model->getCachePool());
+        $this->assertNull($model->getCacheItem());
         $this->assertEquals($model, $model->refresh());
+        $this->assertEquals(42, $model->answer);
+    }
 
-        // value should now be cached
-        $item = $cache->getItem($model->getCacheKey());
-        $value = $item->get();
-        $this->assertFalse($item->isMiss());
-        $expected = ['answer' => 42];
-        $this->assertEquals($expected, $value);
+    public function testRefreshNoId()
+    {
+        $model = new CacheableModel();
+        $this->assertEquals($model, $model->refresh());
     }
 
     public function testCache()
     {
-        $model = new CacheableModel(102);
-        $this->assertEquals($model, $model->cache());
-
-        $cache = new Pool();
+        $cache = $this->getCache();
         CacheableModel::setCachePool($cache);
 
-        $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('loadModel')
-               ->andReturn(['answer' => 42]);
-
-        CacheableModel::setDriver($driver);
+        $model = new CacheableModel(102, ['id' => 102, 'answer' => 42]);
 
         // cache
-        $this->assertEquals($model, $model->refresh()->cache());
+        $this->assertEquals($model, $model->cache());
         $item = $cache->getItem($model->getCacheKey());
         $value = $item->get();
-        $this->assertFalse($item->isMiss());
+        $this->assertTrue($item->isHit());
 
         // clear the cache
         $this->assertEquals($model, $model->clearCache());
         $item = $cache->getItem($model->getCacheKey());
         $value = $item->get();
-        $this->assertTrue($item->isMiss());
+        $this->assertFalse($item->isHit());
     }
 }
