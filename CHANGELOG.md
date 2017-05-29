@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [Unreleased]
+## 0.2.0 - 2017-05-29
 ### Added
 - `DriverException` represents errors that occur in the data layer.
 - Added model adapter service for Infuse Framework.
