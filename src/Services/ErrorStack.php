@@ -18,6 +18,12 @@ class ErrorStack
 {
     public function __invoke($app)
     {
-        return new \Pulsar\ErrorStack($app);
+        $errors = new \Pulsar\ErrorStack();
+
+        if (isset($app['locale'])) {
+            $errors->setLocale($app['locale']);
+        }
+
+        return $errors;
     }
 }

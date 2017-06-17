@@ -8,8 +8,6 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use Infuse\Locale;
-use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
 use Pulsar\Exception\DriverMissingException;
@@ -27,23 +25,8 @@ require_once 'test_models.php';
 
 class ModelTest extends PHPUnit_Framework_TestCase
 {
-    public static $app;
-
-    public static function setUpBeforeClass()
-    {
-        // set up DI
-        self::$app = new Container();
-        self::$app['locale'] = function () {
-            return new Locale();
-        };
-
-        Model::inject(self::$app);
-    }
-
     protected function tearDown()
     {
-        Model::inject(self::$app);
-
         // discard the cached dispatcher to
         // remove any event listeners
         TestModel::getDispatcher(true);
@@ -374,7 +357,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ErrorStack::class, $model->getErrors());
 
         // set a global stack
-        $stack = new ErrorStack(self::$app);
+        $stack = new ErrorStack();
         TestModel::setErrorStack($stack);
         $stack->push('test');
 
@@ -844,7 +827,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateNotUnique()
     {
-        $errorStack = new ErrorStack(self::$app);
+        $errorStack = new ErrorStack();
         TestModel2::setErrorStack($errorStack);
 
         $query = TestModel2::query();
@@ -875,7 +858,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateInvalid()
     {
-        $errorStack = new ErrorStack(self::$app);
+        $errorStack = new ErrorStack();
         TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
@@ -885,7 +868,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateMissingRequired()
     {
-        $errorStack = new ErrorStack(self::$app);
+        $errorStack = new ErrorStack();
         TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
@@ -1122,7 +1105,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetInvalid()
     {
-        $errorStack = new ErrorStack(self::$app);
+        $errorStack = new ErrorStack();
         TestModel2::setErrorStack($errorStack);
 
         $model = new TestModel2(15);

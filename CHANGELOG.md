@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Models can now maintain their own error stack instances.
 - Deprecate storing DI container on models.
 - Database driver no longer requires a DI container.
+- `ErrorStack` no longer requires a DI container or locale instance.
 
 ### Removed
 - Models no longer have `$this->app` property.

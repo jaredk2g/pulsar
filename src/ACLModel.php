@@ -117,7 +117,7 @@ abstract class ACLModel extends Model
             $model = $event->getModel();
 
             if (!$model->can('create', ACLModel::getRequester())) {
-                $model->getApp()['errors']->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
+                $model->getErrors()->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
 
                 $event->stopPropagation();
             }
@@ -129,7 +129,7 @@ abstract class ACLModel extends Model
             $model = $event->getModel();
 
             if (!$model->can('edit', ACLModel::getRequester())) {
-                $model->getApp()['errors']->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
+                $model->getErrors()->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
 
                 $event->stopPropagation();
             }
@@ -141,7 +141,7 @@ abstract class ACLModel extends Model
             $model = $event->getModel();
 
             if (!$model->can('delete', ACLModel::getRequester())) {
-                $model->getApp()['errors']->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
+                $model->getErrors()->push(['error' => ACLModel::ERROR_NO_PERMISSION]);
 
                 $event->stopPropagation();
             }

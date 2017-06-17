@@ -24,7 +24,7 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
             ],
         ];
         $app = new Application($config);
-        $errorStack = new ErrorStack($app);
+        $errorStack = new ErrorStack();
         $app['errors'] = function () use ($errorStack) {
             return $errorStack;
         };

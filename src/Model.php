@@ -1464,7 +1464,7 @@ abstract class Model implements \ArrayAccess
         if (!$this->_errors && self::$globalErrorStack) {
             $this->_errors = self::$globalErrorStack;
         } elseif (!$this->_errors) {
-            $this->_errors = new ErrorStack($this->getApp());
+            $this->_errors = new ErrorStack();
         }
 
         return $this->_errors;

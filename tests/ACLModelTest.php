@@ -8,11 +8,8 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use Infuse\Locale;
-use Pimple\Container;
 use Pulsar\ACLModel;
 use Pulsar\Driver\DriverInterface;
-use Pulsar\ErrorStack;
 
 require_once 'tests/test_models.php';
 
@@ -23,17 +20,6 @@ class ACLModelTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        // set up DI
-        self::$app = new Container();
-        self::$app['locale'] = function () {
-            return new Locale();
-        };
-        self::$app['errors'] = function ($app) {
-            return new ErrorStack($app);
-        };
-
-        ACLModel::inject(self::$app);
-
         $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);
 
@@ -87,27 +73,22 @@ class ACLModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateNoPermission()
     {
-        $errorStack = self::$app['errors']->clear();
-
         $newModel = new TestModelNoPermission();
         $this->assertFalse($newModel->create([]));
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $newModel->getErrors()->errors());
     }
 
     public function testSetNoPermission()
     {
-        $errorStack = self::$app['errors']->clear();
-
         $model = new TestModelNoPermission(5);
         $this->assertFalse($model->set(['answer' => 42]));
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $model->getErrors()->errors());
     }
 
     public function testDeleteNoPermission()
     {
-        $errorStack = self::$app['errors']->clear();
         $model = new TestModelNoPermission(5);
         $this->assertFalse($model->delete());
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $model->getErrors()->errors());
     }
 }

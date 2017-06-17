@@ -9,226 +9,297 @@
  * @license MIT
  */
 use Infuse\Locale;
-use Infuse\Test;
 use PHPUnit\Framework\TestCase;
-use Pimple\Container;
 use Pulsar\ErrorStack;
 
 class ErrorStackTest extends TestCase
 {
-    public static $app;
-    public static $stack;
-
-    public static function setUpBeforeClass()
+    private function getErrorStack()
     {
-        self::$app = new Container();
-        self::$app['locale'] = new Locale();
-        self::$stack = new ErrorStack(self::$app);
+        $stack = new ErrorStack();
+        $stack->setLocale(new Locale());
+
+        return $stack;
     }
 
-    public function testConstruct()
+    public function testGetLocale()
     {
-        $stack = new ErrorStack(self::$app);
+        $errorStack = new ErrorStack();
+        $this->assertNull($errorStack->getLocale());
+        $locale = new Locale();
+        $errorStack->setLocale($locale);
+        $this->assertEquals($locale, $errorStack->getLocale());
     }
 
-    public function testPush()
+    public function testErrors()
     {
+        $errorStack = $this->getErrorStack();
+
+        // push some errors
         $error1 = [
             'error' => 'some_error',
-            'message' => 'Something is wrong', ];
-
-        $this->assertEquals(self::$stack, self::$stack->push($error1));
+            'message' => 'Something is wrong',
+        ];
 
         $error2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
             'context' => 'user.create',
             'params' => [
-                'field' => 'username', ], ];
+                'field' => 'username',
+            ],
+        ];
 
-        $this->assertEquals(self::$stack, self::$stack->push($error2));
+        $this->assertEquals($errorStack, $errorStack->push($error1));
+        $this->assertEquals($errorStack, $errorStack->push($error2));
+        $this->assertEquals($errorStack, $errorStack->push('some_error'));
 
-        $this->assertEquals(self::$stack, self::$stack->push('some_error'));
-    }
-
-    /**
-     * @depends testPush
-     */
-    public function testErrors()
-    {
+        // check the result
         $expected1 = [
             'error' => 'some_error',
             'message' => 'Something is wrong',
             'context' => '',
-            'params' => [], ];
+            'params' => [],
+        ];
 
         $expected2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
             'context' => 'user.create',
             'params' => [
-                'field' => 'username', ], ];
+                'field' => 'username',
+            ],
+        ];
 
         $expected3 = [
             'error' => 'some_error',
             'message' => 'some_error',
             'context' => '',
-            'params' => [], ];
+            'params' => [],
+        ];
 
-        $errors = self::$stack->errors();
+        $errors = $errorStack->errors();
         $this->assertEquals(3, count($errors));
         $this->assertEquals([$expected1, $expected2, $expected3], $errors);
 
-        $errors = self::$stack->errors('user.create');
+        $errors = $errorStack->errors('user.create');
         $this->assertEquals(1, count($errors));
         $this->assertEquals([$expected2], $errors);
     }
 
-    /**
-     * @depends testPush
-     */
     public function testMessages()
     {
+        $errorStack = $this->getErrorStack();
+
+        // push some errors
+        $error1 = [
+            'error' => 'some_error',
+            'message' => 'Something is wrong',
+        ];
+
+        $error2 = [
+            'error' => 'username_invalid',
+            'message' => 'Username is invalid',
+            'context' => 'user.create',
+            'params' => [
+                'field' => 'username',
+            ],
+        ];
+
+        $this->assertEquals($errorStack, $errorStack->push($error1));
+        $this->assertEquals($errorStack, $errorStack->push($error2));
+        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+
+        // check the result
         $expected = [
             'Something is wrong',
             'Username is invalid',
             'some_error', ];
 
-        $messages = self::$stack->messages();
+        $messages = $errorStack->messages();
         $this->assertEquals(3, count($messages));
         $this->assertEquals($expected, $messages);
 
         $expected = ['Username is invalid'];
 
-        $messages = self::$stack->messages('user.create');
+        $messages = $errorStack->messages('user.create');
         $this->assertEquals(1, count($messages));
         $this->assertEquals($expected, $messages);
     }
 
-    /**
-     * @depends testPush
-     */
+    public function testMessagesWithoutLocale()
+    {
+        $errorStack = new ErrorStack();
+        $errorStack->push('Test');
+        $this->assertEquals(['Test'], $errorStack->messages());
+    }
+
     public function testFind()
     {
+        $errorStack = $this->getErrorStack();
+
+        // push some errors
+        $error1 = [
+            'error' => 'some_error',
+            'message' => 'Something is wrong',
+        ];
+
+        $error2 = [
+            'error' => 'username_invalid',
+            'message' => 'Username is invalid',
+            'context' => 'user.create',
+            'params' => [
+                'field' => 'username',
+            ],
+        ];
+
+        $this->assertEquals($errorStack, $errorStack->push($error1));
+        $this->assertEquals($errorStack, $errorStack->push($error2));
+        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+
+        // check the result
         $expected = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
             'context' => 'user.create',
             'params' => [
-                'field' => 'username', ], ];
+                'field' => 'username',
+            ],
+        ];
 
-        $this->assertEquals($expected, self::$stack->find('username'));
-        $this->assertEquals($expected, self::$stack->find('username', 'field'));
+        $this->assertEquals($expected, $errorStack->find('username'));
+        $this->assertEquals($expected, $errorStack->find('username', 'field'));
 
-        $this->assertFalse(self::$stack->find('non-existent'));
+        $this->assertFalse($errorStack->find('non-existent'));
     }
 
-    /**
-     * @depends testPush
-     */
     public function testHas()
     {
-        $this->assertTrue(self::$stack->has('username'));
-        $this->assertTrue(self::$stack->has('username', 'field'));
+        $errorStack = $this->getErrorStack();
 
-        $this->assertFalse(self::$stack->has('non-existent'));
-        $this->assertFalse(self::$stack->has('username', 'something'));
+        // push some errors
+        $error1 = [
+            'error' => 'some_error',
+            'message' => 'Something is wrong',
+        ];
+
+        $error2 = [
+            'error' => 'username_invalid',
+            'message' => 'Username is invalid',
+            'context' => 'user.create',
+            'params' => [
+                'field' => 'username',
+            ],
+        ];
+
+        $this->assertEquals($errorStack, $errorStack->push($error1));
+        $this->assertEquals($errorStack, $errorStack->push($error2));
+        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+
+        // check the result
+        $this->assertTrue($errorStack->has('username'));
+        $this->assertTrue($errorStack->has('username', 'field'));
+
+        $this->assertFalse($errorStack->has('non-existent'));
+        $this->assertFalse($errorStack->has('username', 'something'));
     }
 
-    /**
-     * @depends testErrors
-     * @depends testMessages
-     */
     public function testSetCurrentContext()
     {
-        $this->assertEquals(self::$stack, self::$stack->setCurrentContext('test.context'));
+        $errorStack = $this->getErrorStack();
 
-        $this->assertEquals(self::$stack, self::$stack->push(['error' => 'test_error']));
+        $this->assertEquals($errorStack, $errorStack->setCurrentContext('test.context'));
+
+        $this->assertEquals($errorStack, $errorStack->push(['error' => 'test_error']));
 
         $expected = [
             'error' => 'test_error',
             'context' => 'test.context',
             'params' => [],
-            'message' => 'test_error', ];
-        $this->assertEquals([$expected], self::$stack->errors('test.context'));
+            'message' => 'test_error',
+        ];
+        $this->assertEquals([$expected], $errorStack->errors('test.context'));
     }
 
-    /**
-     * @depends testErrors
-     * @depends testMessages
-     */
     public function testClearCurrentContext()
     {
-        $this->assertEquals(self::$stack, self::$stack->clearCurrentContext());
+        $errorStack = $this->getErrorStack();
 
-        $this->assertEquals(self::$stack, self::$stack->push(['error' => 'test_error']));
+        $this->assertEquals($errorStack, $errorStack->clearCurrentContext());
+
+        $this->assertEquals($errorStack, $errorStack->push(['error' => 'test_error']));
 
         $expected = [
             'error' => 'test_error',
             'context' => '',
             'params' => [],
-            'message' => 'test_error', ];
-        $errors = self::$stack->errors('');
+            'message' => 'test_error',
+        ];
+        $errors = $errorStack->errors('');
         $this->assertTrue(in_array($expected, $errors));
     }
 
-    /**
-     * @depends testErrors
-     */
     public function testClear()
     {
-        $this->assertEquals(self::$stack, self::$stack->clear());
-        $this->assertCount(0, self::$stack->errors());
+        $errorStack = $this->getErrorStack();
+        $this->assertEquals($errorStack, $errorStack->clear());
+        $this->assertCount(0, $errorStack->errors());
     }
 
     public function testIterator()
     {
-        self::$stack->clear();
+        $errorStack = $this->getErrorStack();
+
         for ($i = 1; $i <= 5; ++$i) {
-            self::$stack->push("$i");
+            $errorStack->push("$i");
         }
 
         $result = [];
-        foreach (self::$stack as $k => $v) {
+        foreach ($errorStack as $k => $v) {
             $result[$k] = $v['error'];
         }
 
         $this->assertEquals(['1', '2', '3', '4', '5'], $result);
 
-        self::$stack->next();
-        $this->assertNull(self::$stack->current());
+        $errorStack->next();
+        $this->assertNull($errorStack->current());
     }
 
     public function testCount()
     {
-        self::$stack->clear();
-        self::$stack->push('Test');
-        $this->assertCount(1, self::$stack);
+        $errorStack = $this->getErrorStack();
+
+        $errorStack->push('Test');
+        $this->assertCount(1, $errorStack);
     }
 
     public function testArrayAccess()
     {
-        self::$stack->clear();
+        $errorStack = $this->getErrorStack();
 
-        self::$stack[0] = 'test';
-        $this->assertTrue(isset(self::$stack[0]));
-        $this->assertFalse(isset(self::$stack[6]));
+        $errorStack[0] = 'test';
+        $this->assertTrue(isset($errorStack[0]));
+        $this->assertFalse(isset($errorStack[6]));
 
-        $this->assertEquals('test', self::$stack[0]['error']);
-        unset(self::$stack[0]);
+        $this->assertEquals('test', $errorStack[0]['error']);
+        unset($errorStack[0]);
     }
 
     public function testArrayGetFail()
     {
-        $this->setExpectedException(OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
-        echo self::$stack['invalid'];
+        $errorStack = $this->getErrorStack();
+
+        echo $errorStack['invalid'];
     }
 
     public function testArraySetFail()
     {
-        $this->setExpectedException(Exception::class);
+        $this->expectException(Exception::class);
 
-        self::$stack['invalid'] = 'test';
+        $errorStack = $this->getErrorStack();
+
+        $errorStack['invalid'] = 'test';
     }
 }
