@@ -1304,6 +1304,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testRelation()
     {
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('loadModel')
+               ->andReturnUsing(function ($model) {
+                   return $model->ids();
+               });
+
+        TestModel::setDriver($driver);
+
         $model = new TestModel();
         $model->relation = 2;
 
@@ -1324,6 +1332,24 @@ class ModelTest extends PHPUnit_Framework_TestCase
         unset($model->relation);
         $model->relation = 4;
         $this->assertEquals(4, $model->relation('relation')->id());
+    }
+
+    public function testRelationNoId()
+    {
+        $model = new TestModel();
+        $this->assertNull($model->relation('relation'));
+    }
+
+    public function testRelationNotFound()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('loadModel')
+                ->andReturn(false);
+
+        TestModel::setDriver($driver);
+
+        $model = new TestModel();
+        $this->assertNull($model->relation('relation'));
     }
 
     public function testHasOne()

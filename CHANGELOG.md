@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Deprecated `Model::totalRecords()`.
 - When the iterator gets a model count it reuses the same query instead of creating a new one.
+- The deprecated `relation()` method now performs a lookup on the data layer and can return null values.
 
 ## 0.2.0 - 2017-05-29
 ### Added

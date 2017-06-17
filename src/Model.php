@@ -1107,22 +1107,25 @@ abstract class Model implements \ArrayAccess
      * @deprecated
      *
      * Gets the model object corresponding to a relation
-     * WARNING no check is used to see if the model returned actually exists
      *
-     * @param string $propertyName property
+     * @param string $k property
      *
-     * @return Model
+     * @return Model|null
      */
-    public function relation($propertyName)
+    public function relation($k)
     {
-        $property = static::getProperty($propertyName);
-
-        if (!isset($this->_relationships[$propertyName])) {
-            $relationModelName = $property['relation'];
-            $this->_relationships[$propertyName] = new $relationModelName($this->$propertyName);
+        $id = $this->$k;
+        if (!$id) {
+            return;
         }
 
-        return $this->_relationships[$propertyName];
+        if (!isset($this->_relationships[$k])) {
+            $property = static::getProperty($k);
+            $relationModelClass = $property['relation'];
+            $this->_relationships[$k] = $relationModelClass::find($id);
+        }
+
+        return $this->_relationships[$k];
     }
 
     /**
