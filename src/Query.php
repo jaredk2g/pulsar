@@ -29,6 +29,11 @@ class Query
     /**
      * @var array
      */
+    private $relationships;
+
+    /**
+     * @var array
+     */
     private $where;
 
     /**
@@ -53,6 +58,7 @@ class Query
     {
         $this->model = $model;
         $this->joins = [];
+        $this->relationships = [];
         $this->where = [];
         $this->start = 0;
         $this->limit = self::DEFAULT_LIMIT;
@@ -184,10 +190,10 @@ class Query
             $args = func_num_args();
             if ($args > 2) {
                 $this->where[] = [$where, $value, $condition];
-            // handles ii.
+                // handles ii.
             } elseif ($args == 2) {
                 $this->where[$where] = $value;
-            // handles iv.
+                // handles iv.
             } else {
                 $this->where[] = $where;
             }
@@ -234,17 +240,42 @@ class Query
     }
 
     /**
+     * Marks a relationship property on the model that should be eager loaded.
+     *
+     * @param string $k local property containing the relationship
+     *
+     * @return self
+     */
+    public function with($k)
+    {
+        $this->relationships[] = $k;
+
+        return $this;
+    }
+
+    /**
+     * Gets the relationship properties that are going to be eager-loaded.
+     *
+     * @return array
+     */
+    public function getWith()
+    {
+        return $this->relationships;
+    }
+
+    /**
      * Executes the query against the model's driver.
      *
      * @return array results
      */
     public function execute()
     {
-        $model = $this->model;
-
-        $driver = $model::getDriver();
-
         $models = [];
+        $ids = array_fill_keys($this->relationships, []);
+
+        // fetch the models matching the query
+        $model = $this->model;
+        $driver = $model::getDriver();
         foreach ($driver->queryModels($this) as $row) {
             // get the model's ID
             $id = [];
@@ -254,6 +285,26 @@ class Query
 
             // create the model and cache the loaded values
             $models[] = new $model($id, $row);
+            foreach ($this->relationships as $k) {
+                if ($row[$k]) {
+                    $ids[$k][] = $row[$k];
+                }
+            }
+        }
+
+        // hydrate the eager loaded relationships
+        if (count($this->relationships) > 0) {
+            foreach ($this->relationships as $k) {
+                $property = $this->model::getProperty($k);
+                $relationModelClass = $property['relation'];
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
+
+                foreach ($ids[$k] as $j => $id) {
+                    if (isset($relationships[$id])) {
+                        $models[$j]->setRelation($k, $relationships[$id]);
+                    }
+                }
+            }
         }
 
         return $models;
@@ -313,5 +364,28 @@ class Query
     public function totalRecords(array $where = [])
     {
         return $this->where($where)->count();
+    }
+
+    /**
+     * Hydrates the eager-loaded relationships for a given set of models.
+     *
+     * @param string $modelClass
+     * @param array  $ids
+     *
+     * @return array
+     */
+    private function fetchRelationships($modelClass, array $ids)
+    {
+        $uniqueIds = array_unique($ids);
+        $in = 'id IN ('.implode(',', $uniqueIds).')';
+        $models = $modelClass::where($in)
+                             ->first(self::MAX_LIMIT);
+
+        $result = [];
+        foreach ($models as $model) {
+            $result[$model->id()] = $model;
+        }
+
+        return $result;
     }
 }

@@ -18,7 +18,7 @@ class TestModel extends Model
     protected static $properties = [
         'relation' => [
             'type' => Model::TYPE_NUMBER,
-            'relation' => 'TestModel2',
+            'relation' => TestModel2::class,
             'null' => true,
         ],
         'answer' => [
@@ -132,7 +132,7 @@ class TestModel2 extends Model
         ],
         'person' => [
             'type' => Model::TYPE_NUMBER,
-            'relation' => 'Person',
+            'relation' => Person::class,
             'default' => 20,
         ],
         'array' => [

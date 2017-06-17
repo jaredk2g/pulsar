@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Model queries now have a `count()` method to return the total number of records.
 - Added `setRelation()` method to be used with `relation()`.
+- Added `with()` for eager loading relationships.
 
 ### Changed
 - Deprecated `Model::totalRecords()`.

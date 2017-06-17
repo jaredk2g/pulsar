@@ -15,7 +15,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 {
     public function testGetModel()
     {
-        $query = new Query('TestModel');
+        $query = new Query(TestModel::class);
         $this->assertEquals('TestModel', $query->getModel());
     }
 
@@ -74,9 +74,19 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals([['Person', 'author', 'id']], $query->getJoins());
     }
 
+    public function testWith()
+    {
+        $query = new Query();
+
+        $this->assertEquals([], $query->getWith());
+
+        $this->assertEquals($query, $query->with('author'));
+        $this->assertEquals(['author'], $query->getWith());
+    }
+
     public function testExecute()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -115,7 +125,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testExecuteMultipleIds()
     {
-        $query = new Query('TestModel2');
+        $query = new Query(TestModel2::class);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -147,9 +157,63 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('102,103', $result[1]->id());
     }
 
+    public function testExecuteEagerLoading()
+    {
+        $query = new Query(TestModel2::class);
+        $query->with('person');
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+               ->andReturnUsing(function ($query) {
+                   if ($query->getModel() instanceof Person && $query->getWhere() == ['id IN (1,2)']) {
+                       return [
+                           [
+                               'id' => 2,
+                           ],
+                           [
+                               'id' => 1,
+                           ],
+                       ];
+                   } elseif ($query->getModel() == TestModel2::class) {
+                       return [
+                           [
+                               'id' => 100,
+                               'id2' => 101,
+                               'person' => 1,
+                           ],
+                           [
+                               'id' => 102,
+                               'id2' => 103,
+                               'person' => 2,
+                           ],
+                           [
+                               'id' => 102,
+                               'id2' => 103,
+                               'person' => null,
+                           ],
+                       ];
+                   }
+               });
+
+        TestModel2::setDriver($driver);
+
+        $result = $query->execute();
+
+        $this->assertCount(3, $result);
+
+        $person1 = $result[0]->relation('person');
+        $this->assertInstanceOf(Person::class, $person1);
+        $this->assertEquals(1, $person1->id());
+        $person2 = $result[1]->relation('person');
+        $this->assertInstanceOf(Person::class, $person2);
+        $this->assertEquals(2, $person2->id());
+        $this->assertNull($result[2]->relation('person'));
+    }
+
     public function testAll()
     {
-        $query = new Query('TestModel');
+        $query = new Query(TestModel::class);
 
         $all = $query->all();
         $this->assertInstanceOf(Iterator::class, $all);
@@ -157,7 +221,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testFirst()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -184,7 +248,7 @@ class QueryTest extends PHPUnit_Framework_TestCase
 
     public function testFirstLimit()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         $driver = Mockery::mock(DriverInterface::class);
 
