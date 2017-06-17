@@ -377,6 +377,10 @@ class Query
     private function fetchRelationships($modelClass, array $ids)
     {
         $uniqueIds = array_unique($ids);
+        if (count($uniqueIds) === 0) {
+            return [];
+        }
+
         $in = 'id IN ('.implode(',', $uniqueIds).')';
         $models = $modelClass::where($in)
                              ->first(self::MAX_LIMIT);

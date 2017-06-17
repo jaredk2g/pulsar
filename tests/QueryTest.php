@@ -211,6 +211,44 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertNull($result[2]->relation('person'));
     }
 
+    public function testExecuteEagerLoadingNoRelations()
+    {
+        $query = new Query(TestModel2::class);
+        $query->with('person');
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+               ->withArgs([$query])
+               ->andReturn([
+                    [
+                        'id' => 100,
+                        'id2' => 101,
+                        'person' => null,
+                    ],
+                    [
+                        'id' => 102,
+                        'id2' => 103,
+                        'person' => null,
+                    ],
+                    [
+                        'id' => 102,
+                        'id2' => 103,
+                        'person' => null,
+                    ],
+                ]);
+
+        TestModel2::setDriver($driver);
+
+        $result = $query->execute();
+
+        $this->assertCount(3, $result);
+
+        $this->assertNull($result[0]->relation('person'));
+        $this->assertNull($result[1]->relation('person'));
+        $this->assertNull($result[2]->relation('person'));
+    }
+
     public function testAll()
     {
         $query = new Query(TestModel::class);
