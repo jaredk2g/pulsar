@@ -69,14 +69,14 @@ abstract class Model implements \ArrayAccess
     protected static $properties = [];
 
     /**
-     * @var Container
-     */
-    protected static $injectedApp;
-
-    /**
      * @var array
      */
     protected static $dispatchers;
+
+    /**
+     * @var Container
+     */
+    protected static $globalContainer;
 
     /**
      * @var ErrorStack
@@ -92,11 +92,6 @@ abstract class Model implements \ArrayAccess
      * @var array
      */
     protected $_ids;
-
-    /**
-     * @var Container
-     */
-    protected $app;
 
     /**
      * @var array
@@ -194,7 +189,6 @@ abstract class Model implements \ArrayAccess
     public function __construct($id = false, array $values = [])
     {
         // initialize the model
-        $this->app = self::$injectedApp;
         $this->init();
 
         // parse the supplied model ID
@@ -302,21 +296,21 @@ abstract class Model implements \ArrayAccess
     /**
      * Injects a DI container.
      *
-     * @param Container $app
+     * @param Container $container
      */
-    public static function inject(Container $app)
+    public static function inject(Container $container)
     {
-        self::$injectedApp = $app;
+        self::$globalContainer = $container;
     }
 
     /**
      * Gets the DI container used for this model.
      *
-     * @return Container
+     * @return Container|null
      */
     public function getApp()
     {
-        return $this->app;
+        return self::$globalContainer;
     }
 
     /**
