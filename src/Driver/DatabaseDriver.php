@@ -79,6 +79,18 @@ class DatabaseDriver implements DriverInterface
         return $this;
     }
 
+    /**
+     * @deprecated
+     *
+     * Gets the DI container
+     *
+     * @return Container
+     */
+    public function getContainer()
+    {
+        return $this->container;
+    }
+
     public function createModel(Model $model, array $parameters)
     {
         $values = $this->serialize($parameters);

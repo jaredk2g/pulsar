@@ -32,6 +32,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver = new DatabaseDriver();
         $driver->setContainer($app);
         $this->assertEquals($db, $driver->getConnection());
+        $this->assertEquals($app, $driver->getContainer());
     }
 
     public function testTablename()
