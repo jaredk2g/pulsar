@@ -52,12 +52,18 @@ class DatabaseDriver implements DriverInterface
     /**
      * Gets the database connection.
      *
+     * @throws DriverException when the connection has not been set yet
+     *
      * @return QueryBuilder
      */
     public function getConnection()
     {
-        if (!$this->connection) {
+        if (!$this->connection && $this->container) {
             $this->connection = $this->container['db'];
+        }
+
+        if (!$this->connection) {
+            throw new DriverException('The database driver has not been given a connection!');
         }
 
         return $this->connection;

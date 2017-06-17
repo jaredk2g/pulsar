@@ -35,6 +35,13 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($app, $driver->getContainer());
     }
 
+    public function testGetConnectionMissing()
+    {
+        $this->expectException(DriverException::class);
+        $driver = new DatabaseDriver();
+        $driver->getConnection();
+    }
+
     public function testTablename()
     {
         $driver = new DatabaseDriver();
