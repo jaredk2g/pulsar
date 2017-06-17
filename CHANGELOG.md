@@ -2,6 +2,14 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Model queries now have a `count()` method to return the total number of records.
+
+### Changed
+- Deprecated `Model::totalRecords()`.
+- When the iterator gets a model count it reuses the same query instead of creating a new one.
+
 ## 0.2.0 - 2017-05-29
 ### Added
 - `DriverException` represents errors that occur in the data layer.

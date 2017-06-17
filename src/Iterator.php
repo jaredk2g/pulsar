@@ -223,8 +223,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
             return;
         }
 
-        $model = $this->query->getModel();
-        $newCount = $model::totalRecords($this->query->getWhere());
+        $newCount = $this->query->count();
 
         // It's possible when iterating over models that something
         // is modified or deleted that causes the model count

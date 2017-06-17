@@ -286,4 +286,32 @@ class Query
 
         return $models;
     }
+
+    /**
+     * Gets the number of models matching the query.
+     *
+     * @return int
+     */
+    public function count()
+    {
+        $model = $this->model;
+
+        $driver = $model::getDriver();
+
+        return $driver->totalRecords($this);
+    }
+
+    /**
+     * @deprecated
+     *
+     * Gets the total number of records matching an optional criteria
+     *
+     * @param array $where criteria
+     *
+     * @return int
+     */
+    public function totalRecords(array $where = [])
+    {
+        return $this->where($where)->count();
+    }
 }

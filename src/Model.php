@@ -1024,21 +1024,6 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Gets the total number of records matching an optional criteria.
-     *
-     * @param array $where criteria
-     *
-     * @return int
-     */
-    public static function totalRecords(array $where = [])
-    {
-        $query = static::query();
-        $query->where($where);
-
-        return self::getDriver()->totalRecords($query);
-    }
-
-    /**
      * @deprecated
      *
      * Checks if the model exists in the database
@@ -1047,7 +1032,7 @@ abstract class Model implements \ArrayAccess
      */
     public function exists()
     {
-        return static::totalRecords($this->ids()) == 1;
+        return static::where($this->ids())->count() == 1;
     }
 
     /**
@@ -1464,7 +1449,8 @@ abstract class Model implements \ArrayAccess
      */
     private function checkUniqueness(array $property, $propertyName, $value)
     {
-        if (static::totalRecords([$propertyName => $value]) > 0) {
+        $n = static::where([$propertyName => $value])->count();
+        if ($n > 0) {
             $this->app['errors']->push([
                 'error' => self::ERROR_NOT_UNIQUE,
                 'params' => [
