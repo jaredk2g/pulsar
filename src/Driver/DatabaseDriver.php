@@ -17,6 +17,7 @@ use PDOStatement;
 use Pimple\Container;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Query;
 
 /**
@@ -236,41 +237,13 @@ class DatabaseDriver implements DriverInterface
         }
 
         $type = array_value($property, 'type');
-        switch ($type) {
-            case Model::TYPE_STRING:
-                return (string) $value;
-            case Model::TYPE_NUMBER:
-                return $value + 0;
-            case Model::TYPE_INTEGER:
-                return (int) $value;
-            case Model::TYPE_FLOAT:
-                return (float) $value;
-            case Model::TYPE_BOOLEAN:
-                return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            case Model::TYPE_DATE:
-                // cast dates as unix timestamps
-                if (!is_numeric($value)) {
-                    return strtotime($value);
-                } else {
-                    return $value + 0;
-                }
-            case Model::TYPE_ARRAY:
-                // decode JSON into an array
-                if (is_string($value)) {
-                    return json_decode($value, true);
-                } else {
-                    return (array) $value;
-                }
-            case Model::TYPE_OBJECT:
-                // decode JSON into an object
-                if (is_string($value)) {
-                    return (object) json_decode($value);
-                } else {
-                    return (object) $value;
-                }
-            default:
-                return $value;
+        $m = 'to_'.$type;
+
+        if (!method_exists(Property::class, $m)) {
+            return $value;
         }
+
+        return Property::$m($value);
     }
 
     /**
