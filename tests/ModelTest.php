@@ -1352,6 +1352,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertNull($model->relation('relation'));
     }
 
+    public function testSetRelation()
+    {
+        $model = new TestModel();
+        $relation = new TestModel2(2);
+        $model->setRelation('relation', $relation);
+        $this->assertEquals($relation, $model->relation('relation'));
+        $this->assertEquals(2, $model->relation);
+    }
+
     public function testHasOne()
     {
         $model = new TestModel();

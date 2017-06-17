@@ -1106,7 +1106,7 @@ abstract class Model implements \ArrayAccess
     /**
      * @deprecated
      *
-     * Gets the model object corresponding to a relation
+     * Gets the model for a has-one relationship
      *
      * @param string $k property
      *
@@ -1126,6 +1126,24 @@ abstract class Model implements \ArrayAccess
         }
 
         return $this->_relationships[$k];
+    }
+
+    /**
+     * @deprecated
+     *
+     * Sets the model for a has-one relationship
+     *
+     * @param string $k
+     * @param Model  $model
+     *
+     * @return self
+     */
+    public function setRelation($k, Model $model)
+    {
+        $this->$k = $model->id();
+        $this->_relationships[$k] = $model;
+
+        return $this;
     }
 
     /**
