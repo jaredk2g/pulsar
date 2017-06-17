@@ -15,6 +15,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `Model::find()` now uses `queryModels()` on the data driver instead of using `loadModel()`.
 - Models can now maintain their own error stack instances.
 - Models no longer have `$this->app`.
+- Deprecate storing DI container on models.
 
 ## 0.2.0 - 2017-05-29
 ### Added

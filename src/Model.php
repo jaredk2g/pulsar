@@ -294,7 +294,9 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Injects a DI container.
+     * @deprecated
+     *
+     * Injects a DI container
      *
      * @param Container $container
      */
@@ -304,7 +306,9 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Gets the DI container used for this model.
+     * @deprecated
+     *
+     * Gets the DI container used for this model
      *
      * @return Container|null
      */
