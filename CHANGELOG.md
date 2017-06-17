@@ -14,9 +14,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The deprecated `relation()` method now performs a lookup on the data layer and can return null values.
 - `Model::find()` now uses `queryModels()` on the data driver instead of using `loadModel()`.
 - Models can now maintain their own error stack instances.
-- Models no longer have `$this->app`.
 - Deprecate storing DI container on models.
 - Database driver no longer requires a DI container.
+
+### Removed
+- Models no longer have `$this->app` property.
 
 ## 0.2.0 - 2017-05-29
 ### Added
