@@ -79,6 +79,11 @@ abstract class Model implements \ArrayAccess
     protected static $dispatchers;
 
     /**
+     * @var ErrorStack
+     */
+    protected static $globalErrorStack;
+
+    /**
      * @var number|string|false
      */
     protected $_id;
@@ -112,6 +117,11 @@ abstract class Model implements \ArrayAccess
      * @var array
      */
     protected $_relationships = [];
+
+    /**
+     * @var ErrorStack
+     */
+    protected $_errors;
 
     /////////////////////////////
     // Base model variables
@@ -374,6 +384,24 @@ abstract class Model implements \ArrayAccess
     public function ids()
     {
         return $this->_ids;
+    }
+
+    /**
+     * Sets the global error stack instance.
+     *
+     * @param ErrorStack $stack
+     */
+    public static function setErrorStack(ErrorStack $stack)
+    {
+        self::$globalErrorStack = $stack;
+    }
+
+    /**
+     * Clears the global error stack instance.
+     */
+    public static function clearErrorStack()
+    {
+        self::$globalErrorStack = null;
     }
 
     /////////////////////////////
@@ -699,7 +727,7 @@ abstract class Model implements \ArrayAccess
         foreach ($requiredProperties as $name) {
             if (!isset($insertArray[$name])) {
                 $property = static::$properties[$name];
-                $this->app['errors']->push([
+                $this->getErrors()->push([
                     'error' => self::ERROR_REQUIRED_FIELD_MISSING,
                     'params' => [
                         'field' => $name,
@@ -1429,6 +1457,22 @@ abstract class Model implements \ArrayAccess
     /////////////////////////////
 
     /**
+     * Gets the error stack for this model.
+     *
+     * @return ErrorStack
+     */
+    public function getErrors()
+    {
+        if (!$this->_errors && self::$globalErrorStack) {
+            $this->_errors = self::$globalErrorStack;
+        } elseif (!$this->_errors) {
+            $this->_errors = new ErrorStack($this->getApp());
+        }
+
+        return $this->_errors;
+    }
+
+    /**
      * Validates and marshals a value to storage.
      *
      * @param array  $property
@@ -1478,7 +1522,7 @@ abstract class Model implements \ArrayAccess
         }
 
         if (!$valid) {
-            $this->app['errors']->push([
+            $this->getErrors()->push([
                 'error' => self::ERROR_VALIDATION_FAILED,
                 'params' => [
                     'field' => $propertyName,
@@ -1501,7 +1545,7 @@ abstract class Model implements \ArrayAccess
     {
         $n = static::where([$propertyName => $value])->count();
         if ($n > 0) {
-            $this->app['errors']->push([
+            $this->getErrors()->push([
                 'error' => self::ERROR_NOT_UNIQUE,
                 'params' => [
                     'field' => $propertyName,

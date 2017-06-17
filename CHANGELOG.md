@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - When the iterator gets a model count it reuses the same query instead of creating a new one.
 - The deprecated `relation()` method now performs a lookup on the data layer and can return null values.
 - `Model::find()` now uses `queryModels()` on the data driver instead of using `loadModel()`.
+- Models can now maintain their own error stack instances.
 
 ## 0.2.0 - 2017-05-29
 ### Added

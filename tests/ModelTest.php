@@ -36,9 +36,6 @@ class ModelTest extends PHPUnit_Framework_TestCase
         self::$app['locale'] = function () {
             return new Locale();
         };
-        self::$app['errors'] = function ($app) {
-            return new ErrorStack($app);
-        };
 
         Model::inject(self::$app);
     }
@@ -368,6 +365,25 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $property = ['type' => 'unknown', 'null' => false];
         $this->assertEquals('blah', Model::cast($property, 'blah'));
+    }
+
+    public function testGetErrors()
+    {
+        TestModel::clearErrorStack();
+        $model = new TestModel();
+        $this->assertInstanceOf(ErrorStack::class, $model->getErrors());
+
+        // set a global stack
+        $stack = new ErrorStack(self::$app);
+        TestModel::setErrorStack($stack);
+        $stack->push('test');
+
+        $model2 = new TestModel();
+        $this->assertEquals($stack, $model2->getErrors());
+        $this->assertNotEquals($model->getErrors(), $model2->getErrors());
+
+        $model3 = new TestModel();
+        $this->assertEquals($stack, $model3->getErrors());
     }
 
     public function testId()
@@ -828,7 +844,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateNotUnique()
     {
-        $errorStack = self::$app['errors']->clear();
+        $errorStack = new ErrorStack(self::$app);
+        TestModel2::setErrorStack($errorStack);
 
         $query = TestModel2::query();
         TestModel2::setQuery($query);
@@ -858,7 +875,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateInvalid()
     {
-        $errorStack = self::$app['errors']->clear();
+        $errorStack = new ErrorStack(self::$app);
+        TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
@@ -867,7 +885,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateMissingRequired()
     {
-        $errorStack = self::$app['errors']->clear();
+        $errorStack = new ErrorStack(self::$app);
+        TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1]));
@@ -1103,7 +1122,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetInvalid()
     {
-        $errorStack = self::$app['errors']->clear();
+        $errorStack = new ErrorStack(self::$app);
+        TestModel2::setErrorStack($errorStack);
 
         $model = new TestModel2(15);
 
@@ -1453,7 +1473,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     }
 
     /////////////////////////////
-    // STORAGE
+    // Storage
     /////////////////////////////
 
     public function testRefresh()

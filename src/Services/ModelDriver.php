@@ -28,6 +28,7 @@ class ModelDriver
     {
         // make the app available to models
         Model::inject($app);
+        Model::setErrorStack($app['errors']);
 
         // set up the model driver
         $config = $app['config'];
@@ -35,7 +36,7 @@ class ModelDriver
         $this->driver = new $class($app);
         Model::setDriver($this->driver);
 
-        // used for password hasing
+        // used for password hashing
         Validate::configure(['salt' => $config->get('app.salt')]);
     }
 
