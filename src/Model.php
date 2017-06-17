@@ -991,17 +991,17 @@ abstract class Model implements \ArrayAccess
      *
      * @param mixed $id
      *
-     * @return Model|false
+     * @return Model|null
      */
     public static function find($id)
     {
-        $model = new static($id);
-        $values = self::getDriver()->loadModel($model);
-        if (!is_array($values)) {
-            return false;
+        $ids = [];
+        $id = (array) $id;
+        foreach (static::$ids as $j => $k) {
+            $ids[$k] = $id[$j];
         }
 
-        return $model->refreshWith($values);
+        return static::where($ids)->first();
     }
 
     /**

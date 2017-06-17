@@ -1181,10 +1181,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testFind()
     {
         $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('loadModel')
-                ->andReturn(['id' => 100, 'answer' => 42])
-                ->once();
+        $driver->shouldReceive('queryModels')
+               ->andReturn([['id' => 100, 'answer' => 42]]);
 
         TestModel::setDriver($driver);
 
@@ -1197,23 +1195,19 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testFindFail()
     {
         $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('loadModel')
-                ->andReturn(false)
-                ->once();
+        $driver->shouldReceive('queryModels')
+               ->andReturn([]);
 
         TestModel::setDriver($driver);
 
-        $this->assertFalse(TestModel::find(101));
+        $this->assertNull(TestModel::find(101));
     }
 
     public function testFindOrFail()
     {
         $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('loadModel')
-                ->andReturn(['id' => 100, 'answer' => 42])
-                ->once();
+        $driver->shouldReceive('queryModels')
+               ->andReturn([['id' => 100, 'answer' => 42]]);
 
         TestModel::setDriver($driver);
 
@@ -1228,10 +1222,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->setExpectedException(ModelNotFoundException::class);
 
         $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('loadModel')
-                ->andReturn(false)
-                ->once();
+        $driver->shouldReceive('queryModels')
+               ->andReturn([]);
 
         TestModel::setDriver($driver);
 
@@ -1305,33 +1297,35 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testRelation()
     {
         $driver = Mockery::mock(DriverInterface::class);
-        $driver->shouldReceive('loadModel')
-               ->andReturnUsing(function ($model) {
-                   return $model->ids();
+        $driver->shouldReceive('queryModels')
+               ->andReturnUsing(function ($query) {
+                   $id = $query->getWhere()['id'];
+
+                   return [['id' => $id]];
                });
 
-        TestModel::setDriver($driver);
+        TestModel2::setDriver($driver);
 
-        $model = new TestModel();
-        $model->relation = 2;
+        $model = new TestModel2();
+        $model->person = 2;
 
-        $relation = $model->relation('relation');
-        $this->assertInstanceOf(TestModel2::class, $relation);
-        $this->assertEquals(2, $relation->id());
+        $person = $model->relation('person');
+        $this->assertInstanceOf(Person::class, $person);
+        $this->assertEquals(2, $person->id());
 
         // test if relation model is cached
-        $relation->test = 'hello';
-        $relation2 = $model->relation('relation');
-        $this->assertEquals('hello', $relation2->test);
+        $person->name = 'Bob';
+        $person2 = $model->relation('person');
+        $this->assertEquals('Bob', $person2->name);
 
         // reset the relation
-        $model->relation = 3;
-        $this->assertEquals(3, $model->relation('relation')->id());
+        $model->person = 3;
+        $this->assertEquals(3, $model->relation('person')->id());
 
-        // check other methods for thorougness...
-        unset($model->relation);
-        $model->relation = 4;
-        $this->assertEquals(4, $model->relation('relation')->id());
+        // check other methods for thoroughness...
+        unset($model->person);
+        $model->person = 4;
+        $this->assertEquals(4, $model->relation('person')->id());
     }
 
     public function testRelationNoId()
@@ -1343,8 +1337,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testRelationNotFound()
     {
         $driver = Mockery::mock(DriverInterface::class);
-        $driver->shouldReceive('loadModel')
-                ->andReturn(false);
+        $driver->shouldReceive('queryModels')
+                ->andReturn([]);
 
         TestModel::setDriver($driver);
 
