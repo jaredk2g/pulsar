@@ -325,6 +325,51 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('getAccessorValue', TestModel::getAccessor('accessor'));
     }
 
+    public function testCast()
+    {
+        $property = ['null' => true];
+        $this->assertEquals(null, Model::cast($property, ''));
+
+        $property = ['type' => Model::TYPE_STRING, 'null' => false];
+        $this->assertEquals('string', Model::cast($property, 'string'));
+        $this->assertNull(Model::cast($property, null));
+
+        $property = ['type' => Model::TYPE_BOOLEAN, 'null' => false];
+        $this->assertTrue(Model::cast($property, true));
+        $this->assertTrue(Model::cast($property, '1'));
+        $this->assertFalse(Model::cast($property, false));
+
+        $property = ['type' => Model::TYPE_INTEGER, 'null' => false];
+        $this->assertEquals(123, Model::cast($property, 123));
+        $this->assertEquals(123, Model::cast($property, '123'));
+
+        $property = ['type' => Model::TYPE_FLOAT, 'null' => false];
+        $this->assertEquals(1.23, Model::cast($property, 1.23));
+        $this->assertEquals(123.0, Model::cast($property, '123'));
+
+        $property = ['type' => Model::TYPE_NUMBER, 'null' => false];
+        $this->assertEquals(123, Model::cast($property, 123));
+        $this->assertEquals(123, Model::cast($property, '123'));
+
+        $property = ['type' => Model::TYPE_DATE, 'null' => false];
+        $this->assertEquals(123, Model::cast($property, 123));
+        $this->assertEquals(123, Model::cast($property, '123'));
+        $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Model::cast($property, 'Aug-20-2015'));
+
+        $property = ['type' => Model::TYPE_ARRAY, 'null' => false];
+        $this->assertEquals(['test' => true], Model::cast($property, '{"test":true}'));
+        $this->assertEquals(['test' => true], Model::cast($property, ['test' => true]));
+
+        $property = ['type' => Model::TYPE_OBJECT, 'null' => false];
+        $expected = new stdClass();
+        $expected->test = true;
+        $this->assertEquals($expected, Model::cast($property, '{"test":true}'));
+        $this->assertEquals($expected, Model::cast($property, $expected));
+
+        $property = ['type' => 'unknown', 'null' => false];
+        $this->assertEquals('blah', Model::cast($property, 'blah'));
+    }
+
     public function testId()
     {
         $model = new TestModel(5);

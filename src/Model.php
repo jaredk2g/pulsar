@@ -591,6 +591,35 @@ abstract class Model implements \ArrayAccess
         return self::$accessors[$k];
     }
 
+    /**
+     * Marshals a value for a given property from storage.
+     *
+     * @param array $property
+     * @param mixed $value
+     *
+     * @return mixed type-casted value
+     */
+    public static function cast(array $property, $value)
+    {
+        if ($value === null) {
+            return;
+        }
+
+        // handle empty strings as null
+        if ($property['null'] && $value == '') {
+            return;
+        }
+
+        $type = array_value($property, 'type');
+        $m = 'to_'.$type;
+
+        if (!method_exists(Property::class, $m)) {
+            return $value;
+        }
+
+        return Property::$m($value);
+    }
+
     /////////////////////////////
     // CRUD Operations
     /////////////////////////////

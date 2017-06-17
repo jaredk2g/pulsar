@@ -12,7 +12,6 @@ use JAQB\QueryBuilder;
 use Pimple\Container;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
-use Pulsar\Model;
 use Pulsar\Query;
 
 class DatabaseDriverTest extends PHPUnit_Framework_TestCase
@@ -46,53 +45,6 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $obj = new stdClass();
         $obj->test = true;
         $this->assertEquals('{"test":true}', $driver->serializeValue($obj));
-    }
-
-    public function testUnserializeValue()
-    {
-        $driver = new DatabaseDriver(self::$app);
-
-        $property = ['null' => true];
-        $this->assertEquals(null, $driver->unserializeValue($property, ''));
-
-        $property = ['type' => Model::TYPE_STRING, 'null' => false];
-        $this->assertEquals('string', $driver->unserializeValue($property, 'string'));
-        $this->assertNull($driver->unserializeValue($property, null));
-
-        $property = ['type' => Model::TYPE_BOOLEAN, 'null' => false];
-        $this->assertTrue($driver->unserializeValue($property, true));
-        $this->assertTrue($driver->unserializeValue($property, '1'));
-        $this->assertFalse($driver->unserializeValue($property, false));
-
-        $property = ['type' => Model::TYPE_INTEGER, 'null' => false];
-        $this->assertEquals(123, $driver->unserializeValue($property, 123));
-        $this->assertEquals(123, $driver->unserializeValue($property, '123'));
-
-        $property = ['type' => Model::TYPE_FLOAT, 'null' => false];
-        $this->assertEquals(1.23, $driver->unserializeValue($property, 1.23));
-        $this->assertEquals(123.0, $driver->unserializeValue($property, '123'));
-
-        $property = ['type' => Model::TYPE_NUMBER, 'null' => false];
-        $this->assertEquals(123, $driver->unserializeValue($property, 123));
-        $this->assertEquals(123, $driver->unserializeValue($property, '123'));
-
-        $property = ['type' => Model::TYPE_DATE, 'null' => false];
-        $this->assertEquals(123, $driver->unserializeValue($property, 123));
-        $this->assertEquals(123, $driver->unserializeValue($property, '123'));
-        $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), $driver->unserializeValue($property, 'Aug-20-2015'));
-
-        $property = ['type' => Model::TYPE_ARRAY, 'null' => false];
-        $this->assertEquals(['test' => true], $driver->unserializeValue($property, '{"test":true}'));
-        $this->assertEquals(['test' => true], $driver->unserializeValue($property, ['test' => true]));
-
-        $property = ['type' => Model::TYPE_OBJECT, 'null' => false];
-        $expected = new stdClass();
-        $expected->test = true;
-        $this->assertEquals($expected, $driver->unserializeValue($property, '{"test":true}'));
-        $this->assertEquals($expected, $driver->unserializeValue($property, $expected));
-
-        $property = ['type' => 'unknown', 'null' => false];
-        $this->assertEquals('blah', $driver->unserializeValue($property, 'blah'));
     }
 
     public function testCreateModel()

@@ -65,7 +65,7 @@ class DatabaseDriver implements DriverInterface
             throw $e;
         }
 
-        return $this->unserializeValue($model::getProperty($propertyName), $id);
+        return Model::cast($model::getProperty($propertyName), $id);
     }
 
     public function loadModel(Model $model)
@@ -218,35 +218,6 @@ class DatabaseDriver implements DriverInterface
     }
 
     /**
-     * Marshals a value for a given property from storage.
-     *
-     * @param array $property
-     * @param mixed $value
-     *
-     * @return mixed unserialized value
-     */
-    public function unserializeValue(array $property, $value)
-    {
-        if ($value === null) {
-            return;
-        }
-
-        // handle empty strings as null
-        if ($property['null'] && $value == '') {
-            return;
-        }
-
-        $type = array_value($property, 'type');
-        $m = 'to_'.$type;
-
-        if (!method_exists(Property::class, $m)) {
-            return $value;
-        }
-
-        return Property::$m($value);
-    }
-
-    /**
      * Serializes an array of values.
      *
      * @param array $values
@@ -274,7 +245,7 @@ class DatabaseDriver implements DriverInterface
     {
         foreach ($values as $k => &$value) {
             if (isset($properties[$k])) {
-                $value = $this->unserializeValue($properties[$k], $value);
+                $value = Model::cast($properties[$k], $value);
             }
         }
 
