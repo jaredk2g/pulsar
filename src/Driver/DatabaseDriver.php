@@ -12,37 +12,78 @@
 namespace Pulsar\Driver;
 
 use ICanBoogie\Inflector;
+use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
 use Pimple\Container;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
-use Pulsar\Property;
 use Pulsar\Query;
 
 /**
- * Class DatabaseDriver.
+ * Driver for storing models in a database using PDO.
  */
 class DatabaseDriver implements DriverInterface
 {
     /**
-     * @var Container
+     * @var QueryBuilder
      */
-    private $app;
+    private $connection;
 
     /**
-     * @param Container $app
+     * @var Container
      */
-    public function __construct(Container $app = null)
+    private $container;
+
+    /**
+     * Sets the database connection.
+     *
+     * @param QueryBuilder $db
+     *
+     * @return self
+     */
+    public function setConnection(QueryBuilder $db)
     {
-        $this->app = $app;
+        $this->connection = $db;
+
+        return $this;
+    }
+
+    /**
+     * Gets the database connection.
+     *
+     * @return QueryBuilder
+     */
+    public function getConnection()
+    {
+        if (!$this->connection) {
+            $this->connection = $this->container['db'];
+        }
+
+        return $this->connection;
+    }
+
+    /**
+     * @deprecated
+     *
+     * Sets the DI container
+     *
+     * @param Container $container
+     *
+     * @return $this
+     */
+    public function setContainer(Container $container)
+    {
+        $this->container = $container;
+
+        return $this;
     }
 
     public function createModel(Model $model, array $parameters)
     {
         $values = $this->serialize($parameters);
         $tablename = $this->getTablename($model);
-        $db = $this->app['db'];
+        $db = $this->getConnection();
 
         try {
             return $db->insert($values)
@@ -58,7 +99,7 @@ class DatabaseDriver implements DriverInterface
     public function getCreatedID(Model $model, $propertyName)
     {
         try {
-            $id = $this->app['db']->getPDO()->lastInsertId();
+            $id = $this->getConnection()->getPDO()->lastInsertId();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -71,7 +112,7 @@ class DatabaseDriver implements DriverInterface
     public function loadModel(Model $model)
     {
         $tablename = $this->getTablename($model);
-        $db = $this->app['db'];
+        $db = $this->getConnection();
 
         try {
             $row = $db->select('*')
@@ -99,7 +140,7 @@ class DatabaseDriver implements DriverInterface
 
         $values = $this->serialize($parameters);
         $tablename = $this->getTablename($model);
-        $db = $this->app['db'];
+        $db = $this->getConnection();
 
         try {
             return $db->update($tablename)
@@ -116,7 +157,7 @@ class DatabaseDriver implements DriverInterface
     public function deleteModel(Model $model)
     {
         $tablename = $this->getTablename($model);
-        $db = $this->app['db'];
+        $db = $this->getConnection();
 
         try {
             return $db->delete($tablename)
@@ -135,7 +176,7 @@ class DatabaseDriver implements DriverInterface
         $tablename = $this->getTablename($model);
 
         // build a DB query from the model query
-        $dbQuery = $this->app['db']
+        $dbQuery = $this->getConnection()
             ->select($this->prefixSelect('*', $tablename))
             ->from($tablename)
             ->where($this->prefixWhere($query->getWhere(), $tablename))
@@ -172,7 +213,7 @@ class DatabaseDriver implements DriverInterface
     {
         $model = $query->getModel();
         $tablename = $this->getTablename($model);
-        $db = $this->app['db'];
+        $db = $this->getConnection();
 
         try {
             return (int) $db->select('count(*)')

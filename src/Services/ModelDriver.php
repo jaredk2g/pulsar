@@ -33,7 +33,10 @@ class ModelDriver
         // set up the model driver
         $config = $app['config'];
         $class = $config->get('models.driver');
-        $this->driver = new $class($app);
+        $this->driver = new $class();
+        if (method_exists($this->driver, 'setContainer')) {
+            $this->driver->setContainer($app);
+        }
         Model::setDriver($this->driver);
 
         // used for password hashing
