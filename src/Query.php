@@ -295,7 +295,7 @@ class Query
         // hydrate the eager loaded relationships
         if (count($this->relationships) > 0) {
             foreach ($this->relationships as $k) {
-                $property = $this->model::getProperty($k);
+                $property = $model::getProperty($k);
                 $relationModelClass = $property['relation'];
                 $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
 
@@ -346,7 +346,6 @@ class Query
     public function count()
     {
         $model = $this->model;
-
         $driver = $model::getDriver();
 
         return $driver->totalRecords($this);
