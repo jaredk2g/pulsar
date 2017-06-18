@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Added `delete()` method to queries.
+- Added `set()` method to queries for batch updates.
+- Added `delete()` method to queries for batch deletes.
 
 ## 0.3.0 - 2017-06-18
 ### Added

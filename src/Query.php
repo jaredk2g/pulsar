@@ -366,6 +366,24 @@ class Query
     }
 
     /**
+     * Updates all of the models matched by this query.
+     *
+     * @param array $params key-value update parameters
+     *
+     * @return int # of models updated
+     */
+    public function set(array $params)
+    {
+        $n = 0;
+        foreach ($this->all() as $model) {
+            $model->set($params);
+            ++$n;
+        }
+
+        return $n;
+    }
+
+    /**
      * Deletes all of the models matched by this query.
      *
      * @todo should be optimized to be done in a single call to the data layer
