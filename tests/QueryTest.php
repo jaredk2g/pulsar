@@ -324,4 +324,16 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('Sherlock', $result[0]->name);
         $this->assertEquals('John', $result[1]->name);
     }
+
+    public function testDelete()
+    {
+        $model = Mockery::mock();
+        $model->shouldReceive('delete')->once();
+        $model2 = Mockery::mock();
+        $model2->shouldReceive('delete')->once();
+        $query = Mockery::mock('Pulsar\Query[all]', [new TestModel()]);
+        $query->shouldReceive('all')
+            ->andReturn([$model, $model2]);
+        $this->assertEquals(2, $query->delete());
+    }
 }

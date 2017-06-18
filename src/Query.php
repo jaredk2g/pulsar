@@ -366,6 +366,24 @@ class Query
     }
 
     /**
+     * Deletes all of the models matched by this query.
+     *
+     * @todo should be optimized to be done in a single call to the data layer
+     *
+     * @return int # of models deleted
+     */
+    public function delete()
+    {
+        $n = 0;
+        foreach ($this->all() as $model) {
+            $model->delete();
+            ++$n;
+        }
+
+        return $n;
+    }
+
+    /**
      * Hydrates the eager-loaded relationships for a given set of models.
      *
      * @param string $modelClass
