@@ -206,6 +206,9 @@ class Person extends ACLModel
 
 class Group extends Model
 {
+    protected static $properties = [
+        'name' => [],
+    ];
 }
 
 class IteratorTestModel extends Model
@@ -251,4 +254,42 @@ class RelationshipTestModel extends Model
     {
         return new Person(10, ['name' => 'Bob Loblaw', 'email' => 'bob@example.com']);
     }
+}
+
+class Post extends Model
+{
+    protected static $properties = [
+        'category_id' => [
+            'type' => Model::TYPE_INTEGER,
+        ],
+    ];
+}
+
+class Category extends Model
+{
+    protected static $properties = [
+        'name' => [],
+    ];
+}
+
+class Car extends Model
+{
+    protected static $properties = [
+        'type' => [],
+        'person_id' => [
+            'type' => Model::TYPE_INTEGER,
+        ],
+    ];
+}
+
+class Balance extends Model
+{
+    protected static $properties = [
+        'person_id' => [
+            'type' => Model::TYPE_INTEGER,
+        ],
+        'amount' => [
+            'type' => Model::TYPE_FLOAT,
+        ],
+    ];
 }

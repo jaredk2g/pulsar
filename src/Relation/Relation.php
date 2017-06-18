@@ -11,23 +11,16 @@
 
 namespace Pulsar\Relation;
 
+use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
 
-/**
- * Class Relation.
- */
 abstract class Relation
 {
     /**
-     * @var string
+     * @var \Pulsar\Model
      */
-    protected $model;
-
-    /**
-     * @var string
-     */
-    protected $foreignKey;
+    protected $localModel;
 
     /**
      * @var string
@@ -35,46 +28,51 @@ abstract class Relation
     protected $localKey;
 
     /**
-     * @var Query
+     * @var string
+     */
+    protected $foreignModel;
+
+    /**
+     * @var string
+     */
+    protected $foreignKey;
+
+    /**
+     * @var \Pulsar\Query
      */
     protected $query;
 
     /**
-     * @var Model
+     * @var bool
      */
-    protected $relation;
+    protected $empty;
 
-    public function __construct($model, $foreignKey, $localKey, Model $relation)
+    /**
+     * @param Model  $localModel
+     * @param string $localKey     identifying key on local model
+     * @param string $foreignModel foreign model class
+     * @param string $foreignKey   identifying key on foreign model
+     */
+    public function __construct(Model $localModel, $localKey, $foreignModel, $foreignKey)
     {
-        $this->model = $model;
-
-        $this->foreignKey = $foreignKey;
+        $this->localModel = $localModel;
         $this->localKey = $localKey;
 
-        $this->relation = $relation;
+        $this->foreignModel = $foreignModel;
+        $this->foreignKey = $foreignKey;
 
-        $this->query = new Query($this->model);
+        $this->query = new Query(new $foreignModel());
         $this->initQuery();
     }
 
     /**
-     * Gets the model class this relation retrieves.
+     * Gets the local model of the relationship.
      *
-     * @return string
+     * @return \Pulsar\Model
      */
-    public function getModel()
+    public function getLocalModel()
     {
-        return $this->model;
-    }
-
-    /**
-     * Gets the name of the foreign key of the foreign model.
-     *
-     * @return string
-     */
-    public function getForeignKey()
-    {
-        return $this->foreignKey;
+        return $this->localModel;
     }
 
     /**
@@ -88,19 +86,29 @@ abstract class Relation
     }
 
     /**
-     * Gets the relation model.
+     * Gets the foreign model of the relationship.
      *
-     * @return Model
+     * @return string
      */
-    public function getRelation()
+    public function getForeignModel()
     {
-        return $this->relation;
+        return $this->foreignModel;
+    }
+
+    /**
+     * Gets the name of the foreign key of the foreign model.
+     *
+     * @return string
+     */
+    public function getForeignKey()
+    {
+        return $this->foreignKey;
     }
 
     /**
      * Returns the query instance for this relation.
      *
-     * @return Query
+     * @return \Pulsar\Query
      */
     public function getQuery()
     {
@@ -119,9 +127,33 @@ abstract class Relation
      */
     abstract public function getResults();
 
+    /**
+     * Saves a new relationship model and attaches it to
+     * the owning model.
+     *
+     * @param Model $model
+     *
+     * @throws ModelException when the operation fails
+     *
+     * @return Model
+     */
+    abstract public function save(Model $model);
+
+    /**
+     * Creates a new relationship model and attaches it to
+     * the owning model.
+     *
+     * @param array $values
+     *
+     * @throws ModelException when the operation fails
+     *
+     * @return Model
+     */
+    abstract public function create(array $values = []);
+
     public function __call($method, $arguments)
     {
-        // try calling any unknown methods on the query
+        // try calling any unkown methods on the query
         return call_user_func_array([$this->query, $method], $arguments);
     }
 }

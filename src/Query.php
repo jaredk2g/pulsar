@@ -368,6 +368,8 @@ class Query
     /**
      * Updates all of the models matched by this query.
      *
+     * @todo should be optimized to be done in a single call to the data layer
+     *
      * @param array $params key-value update parameters
      *
      * @return int # of models updated

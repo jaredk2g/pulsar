@@ -6,6 +6,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Added `set()` method to queries for batch updates.
 - Added `delete()` method to queries for batch deletes.
+- Added many helper methods to relationships, including `save()`, `create()`, `sync()`, `attach()`, and `detach()`.
+- Moved `getTablename()` out of database driver and into model class.
+- Added `saveOrFail()` method to models.
+
+### Fixed
+- Models are always marked as persisted immediately after saving.
 
 ## 0.3.0 - 2017-06-18
 ### Added

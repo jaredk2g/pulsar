@@ -11,7 +11,6 @@
 
 namespace Pulsar\Driver;
 
-use ICanBoogie\Inflector;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
@@ -100,7 +99,7 @@ class DatabaseDriver implements DriverInterface
     public function createModel(Model $model, array $parameters)
     {
         $values = $this->serialize($parameters);
-        $tablename = $this->getTablename($model);
+        $tablename = $model->getTablename();
         $db = $this->getConnection();
 
         try {
@@ -129,7 +128,7 @@ class DatabaseDriver implements DriverInterface
 
     public function loadModel(Model $model)
     {
-        $tablename = $this->getTablename($model);
+        $tablename = $model->getTablename();
         $db = $this->getConnection();
 
         try {
@@ -157,7 +156,7 @@ class DatabaseDriver implements DriverInterface
         }
 
         $values = $this->serialize($parameters);
-        $tablename = $this->getTablename($model);
+        $tablename = $model->getTablename();
         $db = $this->getConnection();
 
         try {
@@ -174,7 +173,7 @@ class DatabaseDriver implements DriverInterface
 
     public function deleteModel(Model $model)
     {
-        $tablename = $this->getTablename($model);
+        $tablename = $model->getTablename();
         $db = $this->getConnection();
 
         try {
@@ -190,8 +189,9 @@ class DatabaseDriver implements DriverInterface
 
     public function queryModels(Query $query)
     {
-        $model = $query->getModel();
-        $tablename = $this->getTablename($model);
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
 
         // build a DB query from the model query
         $dbQuery = $this->getConnection()
@@ -203,9 +203,10 @@ class DatabaseDriver implements DriverInterface
 
         // join conditions
         foreach ($query->getJoins() as $join) {
-            list($foreignModel, $column, $foreignKey) = $join;
+            list($foreignModelClass, $column, $foreignKey) = $join;
 
-            $foreignTablename = $this->getTablename($foreignModel);
+            $foreignModel = new $foreignModelClass();
+            $foreignTablename = $foreignModel->getTablename();
             $condition = $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
 
             $dbQuery->join($foreignTablename, $condition);
@@ -229,8 +230,9 @@ class DatabaseDriver implements DriverInterface
 
     public function totalRecords(Query $query)
     {
-        $model = $query->getModel();
-        $tablename = $this->getTablename($model);
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
         $db = $this->getConnection();
 
         try {
@@ -243,20 +245,6 @@ class DatabaseDriver implements DriverInterface
             $e->setException($original);
             throw $e;
         }
-    }
-
-    /**
-     * Generates the tablename for the model.
-     *
-     * @param string|Model $model
-     *
-     * @return string
-     */
-    public function getTablename($model)
-    {
-        $inflector = Inflector::get();
-
-        return $inflector->camelize($inflector->pluralize($model::modelName()));
     }
 
     /**

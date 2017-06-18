@@ -17,6 +17,7 @@ use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
+use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
@@ -651,6 +652,18 @@ abstract class Model implements \ArrayAccess
     /////////////////////////////
 
     /**
+     * Gets the tablename for storing this model.
+     *
+     * @return string
+     */
+    public function getTablename()
+    {
+        $inflector = Inflector::get();
+
+        return $inflector->camelize($inflector->pluralize(static::modelName()));
+    }
+
+    /**
      * Saves the model.
      *
      * @return bool true when the operation was successful
@@ -662,6 +675,18 @@ abstract class Model implements \ArrayAccess
         }
 
         return $this->set();
+    }
+
+    /**
+     * Saves the model. Throws an exception when the operation fails.
+     *
+     * @throws ModelException when the model cannot be saved
+     */
+    public function saveOrFail()
+    {
+        if (!$this->save()) {
+            throw new ModelException('Failed to save '.static::modelName());
+        }
     }
 
     /**
@@ -749,6 +774,7 @@ abstract class Model implements \ArrayAccess
             // event so that fetching values forces a reload
             // from the storage layer
             $this->clearCache();
+            $this->_persisted = true;
 
             // dispatch the model.created event
             if (!$this->handleDispatch(ModelEvent::CREATED)) {
@@ -982,6 +1008,7 @@ abstract class Model implements \ArrayAccess
             // event so that fetching values forces a reload
             // from the storage layer
             $this->clearCache();
+            $this->_persisted = true;
 
             // dispatch the model.updated event
             if (!$this->handleDispatch(ModelEvent::UPDATED)) {
@@ -1212,18 +1239,7 @@ abstract class Model implements \ArrayAccess
      */
     public function hasOne($model, $foreignKey = '', $localKey = '')
     {
-        // the default local key would look like `user_id`
-        // for a model named User
-        if (!$foreignKey) {
-            $inflector = Inflector::get();
-            $foreignKey = strtolower($inflector->underscore(static::modelName())).'_id';
-        }
-
-        if (!$localKey) {
-            $localKey = self::DEFAULT_ID_PROPERTY;
-        }
-
-        return new HasOne($model, $foreignKey, $localKey, $this);
+        return new HasOne($this, $localKey, $model, $foreignKey);
     }
 
     /**
@@ -1237,18 +1253,7 @@ abstract class Model implements \ArrayAccess
      */
     public function belongsTo($model, $foreignKey = '', $localKey = '')
     {
-        if (!$foreignKey) {
-            $foreignKey = self::DEFAULT_ID_PROPERTY;
-        }
-
-        // the default local key would look like `user_id`
-        // for a model named User
-        if (!$localKey) {
-            $inflector = Inflector::get();
-            $localKey = strtolower($inflector->underscore($model::modelName())).'_id';
-        }
-
-        return new BelongsTo($model, $foreignKey, $localKey, $this);
+        return new BelongsTo($this, $localKey, $model, $foreignKey);
     }
 
     /**
@@ -1262,43 +1267,22 @@ abstract class Model implements \ArrayAccess
      */
     public function hasMany($model, $foreignKey = '', $localKey = '')
     {
-        // the default local key would look like `user_id`
-        // for a model named User
-        if (!$foreignKey) {
-            $inflector = Inflector::get();
-            $foreignKey = strtolower($inflector->underscore(static::modelName())).'_id';
-        }
-
-        if (!$localKey) {
-            $localKey = self::DEFAULT_ID_PROPERTY;
-        }
-
-        return new HasMany($model, $foreignKey, $localKey, $this);
+        return new HasMany($this, $localKey, $model, $foreignKey);
     }
 
     /**
      * Creates the child side of a Many-To-Many relationship.
      *
      * @param string $model      foreign model class
+     * @param string $tablename  pivot table name
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation\Relation
+     * @return \Pulsar\Relation\Relation
      */
-    public function belongsToMany($model, $foreignKey = '', $localKey = '')
+    public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = '')
     {
-        if (!$foreignKey) {
-            $foreignKey = self::DEFAULT_ID_PROPERTY;
-        }
-
-        // the default local key would look like `user_id`
-        // for a model named User
-        if (!$localKey) {
-            $inflector = Inflector::get();
-            $localKey = strtolower($inflector->underscore($model::modelName())).'_id';
-        }
-
-        return new BelongsToMany($model, $foreignKey, $localKey, $this);
+        return new BelongsToMany($this, $localKey, $tablename, $model, $foreignKey);
     }
 
     /////////////////////////////

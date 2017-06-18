@@ -17,47 +17,47 @@ class RelationTest extends PHPUnit_Framework_TestCase
     public function testConstruct()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
         $this->assertTrue($relation->initQuery);
     }
 
-    public function testGetModel()
+    public function testGetLocalModel()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
-        $this->assertEquals('TestModel', $relation->getModel());
-    }
-
-    public function testGetForeignKey()
-    {
-        $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
-
-        $this->assertEquals('id', $relation->getForeignKey());
+        $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testGetLocalKey()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
         $this->assertEquals('user_id', $relation->getLocalKey());
     }
 
-    public function testGetRelation()
+    public function testGetForeignModel()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
-        $this->assertEquals($model, $relation->getRelation());
+        $this->assertEquals('TestModel', $relation->getForeignModel());
+    }
+
+    public function testGetForeignKey()
+    {
+        $model = Mockery::mock(Model::class);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
+
+        $this->assertEquals('id', $relation->getForeignKey());
     }
 
     public function testGetQuery()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
         $query = $relation->getQuery();
         $this->assertInstanceOf(Query::class, $query);
@@ -66,7 +66,7 @@ class RelationTest extends PHPUnit_Framework_TestCase
     public function testCallOnQuery()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation('TestModel', 'id', 'user_id', $model);
+        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
         $relation->where(['name' => 'Bob']);
 
@@ -84,6 +84,16 @@ class DistantRelation extends Relation
     }
 
     public function getResults()
+    {
+        // do nothing
+    }
+
+    public function save(Model $model)
+    {
+        // do nothing
+    }
+
+    public function create(array $values = [])
     {
         // do nothing
     }

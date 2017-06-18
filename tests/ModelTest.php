@@ -12,6 +12,7 @@ use Pulsar\Driver\DriverInterface;
 use Pulsar\ErrorStack;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
+use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
@@ -369,6 +370,18 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($stack, $model3->getErrors());
     }
 
+    public function testGetTablename()
+    {
+        $model = new TestModel();
+        $this->assertEquals('TestModels', $model->getTablename());
+
+        $model = new TestModel(4);
+        $this->assertEquals('TestModels', $model->getTablename());
+
+        $model = new Person();
+        $this->assertEquals('People', $model->getTablename());
+    }
+
     public function testId()
     {
         $model = new TestModel(5);
@@ -590,6 +603,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($newModel->create());
         $this->assertEquals(1, $newModel->id());
         $this->assertEquals(1, $newModel->id);
+        $this->assertTrue($newModel->persisted());
     }
 
     public function testCreateWithSave()
@@ -620,6 +634,19 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $newModel->object = new stdClass();
 
         $this->assertTrue($newModel->save());
+    }
+
+    public function testSaveOrFailCreate()
+    {
+        $this->expectException(ModelException::class);
+        $newModel = new TestModel();
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('createModel')
+               ->andReturn(false);
+        TestModel::setDriver($driver);
+
+        $newModel->saveOrFail();
     }
 
     public function testCreateMassAssignment()
@@ -908,6 +935,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         TestModel::setDriver($driver);
 
         $this->assertTrue($model->set(['answer' => 42]));
+        $this->assertTrue($model->persisted());
     }
 
     public function testSetWithSave()
@@ -924,6 +952,20 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model->answer = 42;
         $this->assertTrue($model->save());
+    }
+
+    public function testSaveOrFailUpdate()
+    {
+        $this->expectException(ModelException::class);
+        $model = new TestModel(10);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('updateModel')
+               ->andReturn(false);
+        TestModel::setDriver($driver);
+
+        $model->answer = 42;
+        $model->saveOrFail();
     }
 
     public function testSetMassAssignment()
@@ -1407,52 +1449,55 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $model = new TestModel();
 
-        $relation = $model->hasOne('TestModel2');
+        $relation = $model->hasOne(TestModel2::class);
 
         $this->assertInstanceOf(HasOne::class, $relation);
-        $this->assertEquals('TestModel2', $relation->getModel());
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('test_model_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getRelation());
+        $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testBelongsTo()
     {
         $model = new TestModel();
+        $model->test_model2_id = 1;
 
-        $relation = $model->belongsTo('TestModel2');
+        $relation = $model->belongsTo(TestModel2::class);
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
-        $this->assertEquals('TestModel2', $relation->getModel());
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('id', $relation->getForeignKey());
         $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getRelation());
+        $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testHasMany()
     {
         $model = new TestModel();
 
-        $relation = $model->hasMany('TestModel2');
+        $relation = $model->hasMany(TestModel2::class);
 
         $this->assertInstanceOf(HasMany::class, $relation);
-        $this->assertEquals('TestModel2', $relation->getModel());
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('test_model_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getRelation());
+        $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testBelongsToMany()
     {
         $model = new TestModel();
+        $model->test_model2_id = 1;
 
-        $relation = $model->belongsToMany('TestModel2');
+        $relation = $model->belongsToMany(TestModel2::class);
 
         $this->assertInstanceOf(BelongsToMany::class, $relation);
-        $this->assertEquals('TestModel2', $relation->getModel());
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('id', $relation->getForeignKey());
         $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getRelation());
+        $this->assertEquals($model, $relation->getLocalModel());
+        $this->assertEquals('TestModelTestModel2', $relation->getTablename());
     }
 
     /////////////////////////////
