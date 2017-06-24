@@ -84,7 +84,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testCreateModelFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when creating the Person: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver when creating the Person: error');
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('insert')
             ->andThrow(new PDOException('error'));
@@ -110,7 +110,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testGetCreatedIDFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when getting the ID of the new Person: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver when getting the ID of the new Person: error');
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('lastInsertId')
             ->andThrow(new PDOException('error'));
@@ -160,7 +160,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testLoadModelFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when loading an instance of Person: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver when loading an instance of Person: error');
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->from->where->one')
             ->andThrow(new PDOException('error'));
@@ -203,7 +203,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testUpdateModelFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when updating the Person: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver when updating the Person: error');
         // update query mock
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('update')
@@ -232,7 +232,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteModelFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while deleting the Person: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while deleting the Person: error');
         $stmt = Mockery::mock(PDOStatement::class);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('delete->where->execute')
@@ -274,7 +274,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testTotalRecordsFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while getting the number of Person objects');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the number of Person objects');
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
@@ -335,7 +335,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 
     public function testQueryModelsFail()
     {
-        $this->setExpectedException(DriverException::class, 'An error occurred in the database driver while performing the Person query: error');
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while performing the Person query: error');
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);

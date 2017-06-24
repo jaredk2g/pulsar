@@ -220,21 +220,21 @@ class IteratorTest extends PHPUnit_Framework_TestCase
 
     public function testOffsetGetOOB()
     {
-        $this->setExpectedException(OutOfBoundsException::class);
+        $this->expectException(OutOfBoundsException::class);
 
         $fail = self::$iterator[100000];
     }
 
     public function testOffsetSet()
     {
-        $this->setExpectedException(Exception::class);
+        $this->expectException(Exception::class);
 
         self::$iterator[0] = null;
     }
 
     public function testOffsetUnset()
     {
-        $this->setExpectedException(Exception::class);
+        $this->expectException(Exception::class);
 
         unset(self::$iterator[0]);
     }

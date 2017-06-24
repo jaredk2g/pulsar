@@ -44,7 +44,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDriverMissing()
     {
-        $this->setExpectedException(DriverMissingException::class);
+        $this->expectException(DriverMissingException::class);
         TestModel::clearDriver();
         TestModel::getDriver();
     }
@@ -683,7 +683,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateMassAssignmentFail()
     {
-        $this->setExpectedException(MassAssignmentException::class);
+        $this->expectException(MassAssignmentException::class);
 
         $newModel = new TestModel();
         $newModel->create(['not_allowed' => true]);
@@ -786,7 +786,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateWithId()
     {
-        $this->setExpectedException(BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $model = new TestModel(5);
         $this->assertFalse($model->create(['relation' => '', 'answer' => 42]));
@@ -994,7 +994,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetMassAssignmentFail()
     {
-        $this->setExpectedException(MassAssignmentException::class);
+        $this->expectException(MassAssignmentException::class);
 
         $newModel = new TestModel(2);
         $newModel->set(['protected' => true]);
@@ -1043,7 +1043,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetFailWithNoId()
     {
-        $this->setExpectedException(BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $model = new TestModel();
         $this->assertFalse($model->set(['answer' => 42]));
@@ -1192,7 +1192,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testDeleteWithNoId()
     {
-        $this->setExpectedException(BadMethodCallException::class);
+        $this->expectException(BadMethodCallException::class);
 
         $model = new TestModel();
         $model->refreshWith(['test' => true]);
@@ -1309,7 +1309,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testFindOrFailNotFound()
     {
-        $this->setExpectedException(ModelNotFoundException::class);
+        $this->expectException(ModelNotFoundException::class);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
