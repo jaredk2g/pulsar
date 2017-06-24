@@ -116,7 +116,7 @@ class DatabaseDriver implements DriverInterface
     public function getCreatedID(Model $model, $propertyName)
     {
         try {
-            $id = $this->getConnection()->getPDO()->lastInsertId();
+            $id = $this->getConnection()->lastInsertId();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);

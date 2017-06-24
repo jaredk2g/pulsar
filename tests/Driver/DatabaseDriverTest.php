@@ -98,7 +98,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
     public function testGetCreatedID()
     {
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('getPDO->lastInsertId')
+        $db->shouldReceive('lastInsertId')
             ->andReturn('1');
 
         $driver = new DatabaseDriver();
@@ -112,7 +112,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(DriverException::class, 'An error occurred in the database driver when getting the ID of the new Person: error');
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('getPDO->lastInsertId')
+        $db->shouldReceive('lastInsertId')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
