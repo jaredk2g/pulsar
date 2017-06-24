@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
 use Pimple\Container;
 use Pulsar\Driver\DatabaseDriver;
@@ -16,6 +17,18 @@ use Pulsar\Query;
 
 class DatabaseDriverTest extends PHPUnit_Framework_TestCase
 {
+    public function testGetConnectionFromManager()
+    {
+        $qb = new QueryBuilder();
+        $manager = new ConnectionManager();
+        $manager->add('test', $qb);
+        $driver = new DatabaseDriver();
+        $this->assertEquals($driver, $driver->setConnectionManager($manager));
+        $this->assertEquals($manager, $driver->getConnectionManager());
+
+        $this->assertEquals($qb, $driver->getConnection());
+    }
+
     public function testSetConnection()
     {
         $db = Mockery::mock(QueryBuilder::class);

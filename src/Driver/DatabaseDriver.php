@@ -11,6 +11,7 @@
 
 namespace Pulsar\Driver;
 
+use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
@@ -25,6 +26,11 @@ use Pulsar\Query;
 class DatabaseDriver implements DriverInterface
 {
     /**
+     * @var ConnectionManager
+     */
+    private $connections;
+
+    /**
      * @var QueryBuilder
      */
     private $connection;
@@ -33,6 +39,30 @@ class DatabaseDriver implements DriverInterface
      * @var Container
      */
     private $container;
+
+    /**
+     * Sets the connection manager.
+     *
+     * @param ConnectionManager $manager
+     *
+     * @return self
+     */
+    public function setConnectionManager(ConnectionManager $manager)
+    {
+        $this->connections = $manager;
+
+        return $this;
+    }
+
+    /**
+     * Gets the connection manager.
+     *
+     * @return ConnectionManager
+     */
+    public function getConnectionManager()
+    {
+        return $this->connections;
+    }
 
     /**
      * Sets the database connection.
@@ -59,6 +89,10 @@ class DatabaseDriver implements DriverInterface
     {
         if (!$this->connection && $this->container) {
             $this->connection = $this->container['db'];
+        }
+
+        if ($this->connections) {
+            return $this->connections->getDefault();
         }
 
         if (!$this->connection) {
