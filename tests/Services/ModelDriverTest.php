@@ -9,6 +9,7 @@
  * @license MIT
  */
 use Infuse\Application;
+use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\ErrorStack;
@@ -17,7 +18,33 @@ use Pulsar\Services\ModelDriver;
 
 class ModelDriverTest extends PHPUnit_Framework_TestCase
 {
-    public function testInvoke()
+    public function testInvokeConnectionManager()
+    {
+        $config = [
+            'models' => [
+                'driver' => DatabaseDriver::class,
+            ],
+        ];
+        $app = new Application($config);
+        $errorStack = new ErrorStack();
+        $app['errors'] = function () use ($errorStack) {
+            return $errorStack;
+        };
+        $app['database'] = function () {
+            return new ConnectionManager();
+        };
+        $service = new ModelDriver($app);
+        $this->assertInstanceOf(DatabaseDriver::class, Model::getDriver());
+
+        $driver = $service($app);
+        $this->assertInstanceOf(DatabaseDriver::class, $driver);
+        $this->assertInstanceOf(ConnectionManager::class, $driver->getConnectionManager());
+
+        $model = new TestModel();
+        $this->assertEquals($errorStack, $model->getErrors());
+    }
+
+    public function testInvokeLegacy()
     {
         $config = [
             'models' => [

@@ -36,8 +36,14 @@ class ModelDriver
         $class = $config->get('models.driver');
         $this->driver = new $class();
 
-        if ($this->driver instanceof DatabaseDriver && isset($app['db'])) {
-            $this->driver->setConnection($app['db']);
+        if ($this->driver instanceof DatabaseDriver) {
+            if (isset($app['database'])) {
+                $this->driver->setConnectionManager($app['database']);
+            } elseif (isset($app['db'])) {
+                // NOTE this is kept around for backwards compatibility
+                // but is no longer recommended
+                $this->driver->setConnection($app['db']);
+            }
         }
 
         Model::setDriver($this->driver);
