@@ -29,6 +29,17 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($qb, $driver->getConnection());
     }
 
+    public function testGetConnectionFromManagerMissing()
+    {
+        $this->expectException(DriverException::class);
+
+        $manager = new ConnectionManager();
+        $driver = new DatabaseDriver();
+        $driver->setConnectionManager($manager);
+
+        $driver->getConnection();
+    }
+
     public function testSetConnection()
     {
         $db = Mockery::mock(QueryBuilder::class);

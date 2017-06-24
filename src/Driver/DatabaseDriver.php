@@ -12,6 +12,7 @@
 namespace Pulsar\Driver;
 
 use JAQB\ConnectionManager;
+use JAQB\Exception\JAQBException;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
@@ -92,7 +93,11 @@ class DatabaseDriver implements DriverInterface
         }
 
         if ($this->connections) {
-            return $this->connections->getDefault();
+            try {
+                return $this->connections->getDefault();
+            } catch (JAQBException $e) {
+                throw new DriverException($e->getMessage());
+            }
         }
 
         if (!$this->connection) {
