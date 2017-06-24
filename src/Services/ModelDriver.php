@@ -11,6 +11,7 @@
 
 namespace Pulsar\Services;
 
+use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Model;
 use Pulsar\Validate;
 
@@ -34,9 +35,11 @@ class ModelDriver
         $config = $app['config'];
         $class = $config->get('models.driver');
         $this->driver = new $class();
-        if (method_exists($this->driver, 'setContainer')) {
-            $this->driver->setContainer($app);
+
+        if ($this->driver instanceof DatabaseDriver && isset($app['db'])) {
+            $this->driver->setConnection($app['db']);
         }
+
         Model::setDriver($this->driver);
 
         // used for password hashing

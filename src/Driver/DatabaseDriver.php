@@ -16,7 +16,6 @@ use JAQB\Exception\JAQBException;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
-use Pimple\Container;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
@@ -35,11 +34,6 @@ class DatabaseDriver implements DriverInterface
      * @var QueryBuilder
      */
     private $connection;
-
-    /**
-     * @var Container
-     */
-    private $container;
 
     /**
      * Sets the connection manager.
@@ -88,10 +82,6 @@ class DatabaseDriver implements DriverInterface
      */
     public function getConnection()
     {
-        if (!$this->connection && $this->container) {
-            $this->connection = $this->container['db'];
-        }
-
         if ($this->connections) {
             try {
                 return $this->connections->getDefault();
@@ -105,34 +95,6 @@ class DatabaseDriver implements DriverInterface
         }
 
         return $this->connection;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Sets the DI container
-     *
-     * @param Container $container
-     *
-     * @return $this
-     */
-    public function setContainer(Container $container)
-    {
-        $this->container = $container;
-
-        return $this;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Gets the DI container
-     *
-     * @return Container
-     */
-    public function getContainer()
-    {
-        return $this->container;
     }
 
     public function createModel(Model $model, array $parameters)

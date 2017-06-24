@@ -10,7 +10,6 @@
  */
 use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
-use Pimple\Container;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
@@ -46,17 +45,6 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
         $this->assertEquals($db, $driver->getConnection());
-    }
-
-    public function testGetConnectionFromContainer()
-    {
-        $app = new Container();
-        $db = Mockery::mock(QueryBuilder::class);
-        $app['db'] = $db;
-        $driver = new DatabaseDriver();
-        $driver->setContainer($app);
-        $this->assertEquals($db, $driver->getConnection());
-        $this->assertEquals($app, $driver->getContainer());
     }
 
     public function testGetConnectionMissing()

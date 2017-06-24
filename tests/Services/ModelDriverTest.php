@@ -9,6 +9,7 @@
  * @license MIT
  */
 use Infuse\Application;
+use JAQB\QueryBuilder;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\ErrorStack;
 use Pulsar\Model;
@@ -28,11 +29,15 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
         $app['errors'] = function () use ($errorStack) {
             return $errorStack;
         };
+        $app['db'] = function () {
+            return new QueryBuilder();
+        };
         $service = new ModelDriver($app);
         $this->assertInstanceOf(DatabaseDriver::class, Model::getDriver());
 
         $driver = $service($app);
         $this->assertInstanceOf(DatabaseDriver::class, $driver);
+        $this->assertInstanceOf(QueryBuilder::class, $driver->getConnection());
 
         $model = new TestModel();
         $this->assertEquals($errorStack, $model->getErrors());
