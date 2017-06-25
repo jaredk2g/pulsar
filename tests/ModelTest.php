@@ -382,6 +382,12 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('People', $model->getTablename());
     }
 
+    public function testGetConnection()
+    {
+        $model = new TestModel();
+        $this->assertFalse($model->getConnection());
+    }
+
     public function testId()
     {
         $model = new TestModel(5);

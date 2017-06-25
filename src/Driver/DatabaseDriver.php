@@ -60,7 +60,7 @@ class DatabaseDriver implements DriverInterface
     }
 
     /**
-     * Sets the database connection.
+     * Sets the default database connection.
      *
      * @param QueryBuilder $db
      *
@@ -76,15 +76,21 @@ class DatabaseDriver implements DriverInterface
     /**
      * Gets the database connection.
      *
+     * @param string|false $id connection ID
+     *
      * @throws DriverException when the connection has not been set yet
      *
      * @return QueryBuilder
      */
-    public function getConnection()
+    public function getConnection($id)
     {
         if ($this->connections) {
             try {
-                return $this->connections->getDefault();
+                if ($id) {
+                    return $this->connections->get($id);
+                } else {
+                    return $this->connections->getDefault();
+                }
             } catch (JAQBException $e) {
                 throw new DriverException($e->getMessage());
             }
@@ -101,7 +107,7 @@ class DatabaseDriver implements DriverInterface
     {
         $values = $this->serialize($parameters);
         $tablename = $model->getTablename();
-        $db = $this->getConnection();
+        $db = $this->getConnection($model->getConnection());
 
         try {
             return $db->insert($values)
@@ -117,7 +123,7 @@ class DatabaseDriver implements DriverInterface
     public function getCreatedID(Model $model, $propertyName)
     {
         try {
-            $id = $this->getConnection()->lastInsertId();
+            $id = $this->getConnection($model->getConnection())->lastInsertId();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -130,7 +136,7 @@ class DatabaseDriver implements DriverInterface
     public function loadModel(Model $model)
     {
         $tablename = $model->getTablename();
-        $db = $this->getConnection();
+        $db = $this->getConnection($model->getConnection());
 
         try {
             $row = $db->select('*')
@@ -158,7 +164,7 @@ class DatabaseDriver implements DriverInterface
 
         $values = $this->serialize($parameters);
         $tablename = $model->getTablename();
-        $db = $this->getConnection();
+        $db = $this->getConnection($model->getConnection());
 
         try {
             return $db->update($tablename)
@@ -175,7 +181,7 @@ class DatabaseDriver implements DriverInterface
     public function deleteModel(Model $model)
     {
         $tablename = $model->getTablename();
-        $db = $this->getConnection();
+        $db = $this->getConnection($model->getConnection());
 
         try {
             return $db->delete($tablename)
@@ -195,7 +201,7 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
 
         // build a DB query from the model query
-        $dbQuery = $this->getConnection()
+        $dbQuery = $this->getConnection($model->getConnection())
             ->select($this->prefixSelect('*', $tablename))
             ->from($tablename)
             ->where($this->prefixWhere($query->getWhere(), $tablename))
@@ -234,7 +240,7 @@ class DatabaseDriver implements DriverInterface
         $modelClass = $query->getModel();
         $model = new $modelClass();
         $tablename = $model->getTablename();
-        $db = $this->getConnection();
+        $db = $this->getConnection($model->getConnection());
 
         try {
             return (int) $db->select('count(*)')

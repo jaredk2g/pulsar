@@ -664,6 +664,17 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * Gets the ID of the connection in the connection manager
+     * that stores this model.
+     *
+     * @return string|false
+     */
+    public function getConnection()
+    {
+        return false;
+    }
+
+    /**
      * Saves the model.
      *
      * @return bool true when the operation was successful

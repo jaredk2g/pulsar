@@ -25,7 +25,19 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($driver, $driver->setConnectionManager($manager));
         $this->assertEquals($manager, $driver->getConnectionManager());
 
-        $this->assertEquals($qb, $driver->getConnection());
+        $this->assertEquals($qb, $driver->getConnection(false));
+    }
+
+    public function testGetConnectionById()
+    {
+        $qb = new QueryBuilder();
+        $manager = new ConnectionManager();
+        $manager->add('test', $qb);
+        $driver = new DatabaseDriver();
+        $this->assertEquals($driver, $driver->setConnectionManager($manager));
+        $this->assertEquals($manager, $driver->getConnectionManager());
+
+        $this->assertEquals($qb, $driver->getConnection('test'));
     }
 
     public function testGetConnectionFromManagerMissing()
@@ -36,7 +48,18 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver = new DatabaseDriver();
         $driver->setConnectionManager($manager);
 
-        $driver->getConnection();
+        $driver->getConnection(false);
+    }
+
+    public function testGetConnectionFromManagerDoesNotExist()
+    {
+        $this->expectException(DriverException::class);
+
+        $manager = new ConnectionManager();
+        $driver = new DatabaseDriver();
+        $driver->setConnectionManager($manager);
+
+        $driver->getConnection('test');
     }
 
     public function testSetConnection()
@@ -44,14 +67,14 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $db = Mockery::mock(QueryBuilder::class);
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
-        $this->assertEquals($db, $driver->getConnection());
+        $this->assertEquals($db, $driver->getConnection(false));
     }
 
     public function testGetConnectionMissing()
     {
         $this->expectException(DriverException::class);
         $driver = new DatabaseDriver();
-        $driver->getConnection();
+        $driver->getConnection(false);
     }
 
     public function testSerializeValue()

@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added many helper methods to relationships, including `save()`, `create()`, `sync()`, `attach()`, and `detach()`.
 - Moved `getTablename()` out of database driver and into model class.
 - Added `saveOrFail()` method to models.
+- Added support for multiple database connections.
+- Added `getConnection()` method to models for specifying the connection that a model should use. 
 
 ### Fixed
 - Models are always marked as persisted immediately after saving.

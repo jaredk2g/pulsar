@@ -64,7 +64,7 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
 
         $driver = $service($app);
         $this->assertInstanceOf(DatabaseDriver::class, $driver);
-        $this->assertInstanceOf(QueryBuilder::class, $driver->getConnection());
+        $this->assertInstanceOf(QueryBuilder::class, $driver->getConnection(false));
 
         $model = new TestModel();
         $this->assertEquals($errorStack, $model->getErrors());
