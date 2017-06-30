@@ -198,6 +198,8 @@ class Person extends ACLModel
         ],
     ];
 
+    protected static $softDelete;
+
     protected function hasPermission($permission, Model $requester)
     {
         return false;

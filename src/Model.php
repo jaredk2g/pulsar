@@ -159,6 +159,16 @@ abstract class Model implements \ArrayAccess
     /**
      * @var array
      */
+    private static $softDeleteProperties = [
+        'deleted_at' => [
+            'type' => self::TYPE_DATE,
+            'validate' => 'timestamp|db_timestamp',
+        ],
+    ];
+
+    /**
+     * @var array
+     */
     private static $initialized = [];
 
     /**
@@ -265,6 +275,11 @@ abstract class Model implements \ArrayAccess
             $this->installAutoTimestamps();
         }
 
+        // generates deleted_at timestamps
+        if (property_exists($this, 'softDelete')) {
+            $this->installSoftDelete();
+        }
+
         // fill in each property by extending the property
         // definition base
         foreach (static::$properties as &$property) {
@@ -292,6 +307,14 @@ abstract class Model implements \ArrayAccess
         self::updating(function (ModelEvent $event) {
             $event->getModel()->updated_at = time();
         });
+    }
+
+    /**
+     * Installs the `deleted_at` properties.
+     */
+    private function installSoftDelete()
+    {
+        static::$properties = array_replace(self::$softDeleteProperties, static::$properties);
     }
 
     /**

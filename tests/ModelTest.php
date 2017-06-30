@@ -285,6 +285,45 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, TestModel2::getProperties());
     }
 
+    public function testPropertiesSoftDelete()
+    {
+        $expected = [
+            'id' => [
+                'type' => Model::TYPE_STRING,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+            ],
+            'name' => [
+                'type' => Model::TYPE_STRING,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'default' => 'Jared',
+            ],
+            'email' => [
+                'type' => Model::TYPE_STRING,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+            ],
+            'deleted_at' => [
+                'type' => Model::TYPE_DATE,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'validate' => 'timestamp|db_timestamp',
+            ],
+        ];
+
+        $model = new Person(); // forces initialize()
+        $this->assertEquals($expected, Person::getProperties());
+    }
+
     public function testGetIDProperties()
     {
         $this->assertEquals(['id'], TestModel::getIDProperties());
@@ -548,6 +587,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'id' => 10,
                 'name' => 'Bob Loblaw',
                 'email' => 'bob@example.com',
+                'deleted_at' => null,
             ],
         ];
         $this->assertEquals($expected, $model->toArray());
