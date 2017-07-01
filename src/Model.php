@@ -1071,11 +1071,13 @@ abstract class Model implements \ArrayAccess
         }
 
         // perform a hard (default) or soft delete
+        $hardDelete = true;
         if (property_exists($this, 'softDelete')) {
             $t = time();
             $this->deleted_at = $t;
             $t = $this->filterAndValidate(static::getProperty('deleted_at'), 'deleted_at', $t);
             $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
+            $hardDelete = false;
         } else {
             $deleted = self::$driver->deleteModel($this);
         }
@@ -1086,10 +1088,55 @@ abstract class Model implements \ArrayAccess
                 return false;
             }
 
-            $this->_persisted = false;
+            if ($hardDelete) {
+                $this->_persisted = false;
+            }
         }
 
         return $deleted;
+    }
+
+    /**
+     * Restores a soft-deleted model.
+     *
+     * @return bool
+     */
+    public function restore()
+    {
+        if (!property_exists($this, 'softDelete') || !$this->deleted_at) {
+            throw new BadMethodCallException('Can only call restore() on a soft-deleted model');
+        }
+
+        // dispatch the model.updating event
+        if (!$this->handleDispatch(ModelEvent::UPDATING)) {
+            return false;
+        }
+
+        $this->deleted_at = null;
+        $restored = self::$driver->updateModel($this, ['deleted_at' => null]);
+
+        if ($restored) {
+            // dispatch the model.updated event
+            if (!$this->handleDispatch(ModelEvent::UPDATED)) {
+                return false;
+            }
+        }
+
+        return $restored;
+    }
+
+    /**
+     * Checks if the model has been deleted.
+     *
+     * @return bool
+     */
+    public function isDeleted()
+    {
+        if (property_exists($this, 'softDelete') && $this->deleted_at) {
+            return true;
+        }
+
+        return !$this->_persisted;
     }
 
     /////////////////////////////

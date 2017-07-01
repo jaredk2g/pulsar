@@ -1234,6 +1234,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($model->delete());
         $this->assertFalse($model->persisted());
         $this->assertEquals(true, $model->test);
+        $this->assertTrue($model->isDeleted());
     }
 
     public function testDeleteWithNoId()
@@ -1258,6 +1259,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($model->delete());
         $this->assertTrue($model->persisted());
+        $this->assertFalse($model->isDeleted());
     }
 
     public function testDeletedListenerFail()
@@ -1278,6 +1280,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($model->delete());
         $this->assertTrue($model->persisted());
+        $this->assertFalse($model->isDeleted());
     }
 
     public function testDeleteFail()
@@ -1293,6 +1296,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($model->delete());
         $this->assertTrue($model->persisted());
+        $this->assertFalse($model->isDeleted());
     }
 
     public function testSoftDelete()
@@ -1306,9 +1310,26 @@ class ModelTest extends PHPUnit_Framework_TestCase
         Person::setDriver($driver);
 
         $this->assertTrue($model->grantAllPermissions()->delete());
-        $this->assertFalse($model->persisted());
+        $this->assertTrue($model->persisted());
         $this->assertEquals(true, $model->test);
         $this->assertGreaterThan(0, $model->deleted_at);
+        $this->assertTrue($model->isDeleted());
+    }
+
+    public function testSoftDeleteRestore()
+    {
+        $model = new Person(1);
+        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('updateModel')
+            ->andReturn(true);
+        Person::setDriver($driver);
+
+        $this->assertTrue($model->grantAllPermissions()->restore());
+        $this->assertTrue($model->persisted());
+        $this->assertNull($model->deleted_at);
+        $this->assertFalse($model->isDeleted());
     }
 
     /////////////////////////////
