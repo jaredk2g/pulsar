@@ -25,13 +25,13 @@ class ErrorsTest extends TestCase
     public function testGetLocale()
     {
         $errorStack = new Errors();
-        $this->assertNull($errorStack->getLocale());
+        $this->assertInstanceOf(Locale::class, $errorStack->getLocale());
         $locale = new Locale();
         $errorStack->setLocale($locale);
         $this->assertEquals($locale, $errorStack->getLocale());
     }
 
-    public function testErrors()
+    public function testErrorsDeprecated()
     {
         $errorStack = $this->getErrorStack();
 
@@ -84,26 +84,13 @@ class ErrorsTest extends TestCase
         $errorStack = $this->getErrorStack();
 
         // push some errors
-        $error1 = [
-            'error' => 'some_error',
-            'message' => 'Something is wrong',
-        ];
-
-        $error2 = [
-            'error' => 'username_invalid',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field' => 'username',
-            ],
-        ];
-
-        $this->assertEquals($errorStack, $errorStack->push($error1));
-        $this->assertEquals($errorStack, $errorStack->push($error2));
-        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('pulsar.validation.failed', ['field_name' => 'Username']));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
 
         // check the result
         $expected = [
-            'Something is wrong',
+            'some_error',
             'Username is invalid',
             'some_error',
         ];
@@ -120,15 +107,15 @@ class ErrorsTest extends TestCase
     public function testAllWithoutLocale()
     {
         $errorStack = new Errors();
-        $errorStack->push('Test');
-        $this->assertEquals(['Test'], $errorStack->all());
-        $this->assertEquals(['Test'], $errorStack->messages());
+        $errorStack->add('pulsar.validation.failed', ['field_name' => 'test']);
+        $this->assertEquals(['test is invalid'], $errorStack->all());
+        $this->assertEquals(['test is invalid'], $errorStack->messages());
     }
 
     public function testAllFallback()
     {
         $errorStack = $this->getErrorStack();
-        $errorStack->push(['error' => 'pulsar.validation.alpha', 'params' => ['property' => 'Name']]);
+        $errorStack->add('pulsar.validation.alpha', ['field_name' => 'Name']);
         $this->assertEquals(['Name only allows letters'], $errorStack->all());
         $this->assertEquals(['Name only allows letters'], $errorStack->messages());
     }
@@ -138,28 +125,16 @@ class ErrorsTest extends TestCase
         $errorStack = $this->getErrorStack();
 
         // push some errors
-        $error1 = [
-            'error' => 'some_error',
-            'message' => 'Something is wrong',
-        ];
-
-        $error2 = [
-            'error' => 'username_invalid',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field' => 'username',
-            ],
-        ];
-
-        $this->assertEquals($errorStack, $errorStack->push($error1));
-        $this->assertEquals($errorStack, $errorStack->push($error2));
-        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('pulsar.validation.failed', ['field_name' => 'Username', 'field' => 'username']));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
 
         // check the result
         $expected = [
-            'error' => 'username_invalid',
+            'error' => 'pulsar.validation.failed',
             'message' => 'Username is invalid',
             'params' => [
+                'field_name' => 'Username',
                 'field' => 'username',
             ],
         ];
@@ -175,22 +150,9 @@ class ErrorsTest extends TestCase
         $errorStack = $this->getErrorStack();
 
         // push some errors
-        $error1 = [
-            'error' => 'some_error',
-            'message' => 'Something is wrong',
-        ];
-
-        $error2 = [
-            'error' => 'username_invalid',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field' => 'username',
-            ],
-        ];
-
-        $this->assertEquals($errorStack, $errorStack->push($error1));
-        $this->assertEquals($errorStack, $errorStack->push($error2));
-        $this->assertEquals($errorStack, $errorStack->push('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
+        $this->assertEquals($errorStack, $errorStack->add('username_invalid', ['field' => 'username']));
+        $this->assertEquals($errorStack, $errorStack->add('some_error'));
 
         // check the result
         $this->assertTrue($errorStack->has('username'));
@@ -213,7 +175,7 @@ class ErrorsTest extends TestCase
         $errorStack = $this->getErrorStack();
 
         for ($i = 1; $i <= 5; ++$i) {
-            $errorStack->push("$i");
+            $errorStack->add("$i");
         }
 
         $result = [];
@@ -228,7 +190,7 @@ class ErrorsTest extends TestCase
     {
         $errorStack = $this->getErrorStack();
 
-        $errorStack->push('Test');
+        $errorStack->add('Test');
         $this->assertCount(1, $errorStack);
     }
 

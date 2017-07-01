@@ -43,10 +43,6 @@ abstract class Model implements \ArrayAccess
     const TYPE_OBJECT = 'object';
     const TYPE_ARRAY = 'array';
 
-    const ERROR_REQUIRED_FIELD_MISSING = 'required_field_missing';
-    const ERROR_VALIDATION_FAILED = 'validation_failed';
-    const ERROR_NOT_UNIQUE = 'not_unique';
-
     const DEFAULT_ID_PROPERTY = 'id';
 
     /////////////////////////////
@@ -785,11 +781,11 @@ abstract class Model implements \ArrayAccess
         foreach ($requiredProperties as $name) {
             if (!isset($insertArray[$name])) {
                 $property = static::$properties[$name];
-                $this->getErrors()->push([
-                    'error' => self::ERROR_REQUIRED_FIELD_MISSING,
-                    'params' => [
-                        'field' => $name,
-                        'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($name), ], ]);
+                $params = [
+                    'field' => $name,
+                    'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($name),
+                ];
+                $this->getErrors()->add('pulsar.validation.required', $params);
 
                 $validated = false;
             }
@@ -1622,18 +1618,20 @@ abstract class Model implements \ArrayAccess
     {
         $valid = true;
 
+        $error = 'pulsar.validation.failed';
         if (isset($property['validate']) && is_callable($property['validate'])) {
             $valid = call_user_func_array($property['validate'], [$value]);
         } elseif (isset($property['validate'])) {
             $valid = Validate::is($value, $property['validate']);
+            $error = 'pulsar.validation.'.$property['validate'];
         }
 
         if (!$valid) {
-            $this->getErrors()->push([
-                'error' => self::ERROR_VALIDATION_FAILED,
-                'params' => [
-                    'field' => $propertyName,
-                    'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName), ], ]);
+            $params = [
+                'field' => $propertyName,
+                'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName),
+            ];
+            $this->getErrors()->add($error, $params);
         }
 
         return [$valid, $value];
@@ -1652,11 +1650,11 @@ abstract class Model implements \ArrayAccess
     {
         $n = static::where([$propertyName => $value])->count();
         if ($n > 0) {
-            $this->getErrors()->push([
-                'error' => self::ERROR_NOT_UNIQUE,
-                'params' => [
-                    'field' => $propertyName,
-                    'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName), ], ]);
+            $params = [
+                'field' => $propertyName,
+                'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName),
+            ];
+            $this->getErrors()->add('pulsar.validation.unique', $params);
 
             return false;
         }

@@ -26,25 +26,26 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      * @var array
      */
     private static $messages = [
-        'pulsar.validation.alpha' => '{{property}} only allows letters',
-        'pulsar.validation.alpha_numeric' => '{{property}} only allows letters and numbers',
-        'pulsar.validation.alpha_dash' => '{{property}} only allows letters and dashes',
-        'pulsar.validation.boolean' => '{{property}} must be yes or no',
-        'pulsar.validation.custom' => '{{property}} validation failed',
-        'pulsar.validation.email' => '{{property}} must be a valid email address',
-        'pulsar.validation.enum' => '{{property}} must be one of the allowed values',
-        'pulsar.validation.date' => '{{property}} must be a date',
-        'pulsar.validation.ip' => '{{property}} only allows valid IP addresses',
-        'pulsar.validation.matching' => '{{property}} must match',
-        'pulsar.validation.numeric' => '{{property}} only allows numbers',
-        'pulsar.validation.password' => '{{property}} must meet the password requirements',
-        'pulsar.validation.range' => '{{property}} must be within the allowed range',
-        'pulsar.validation.required' => '{{property}} is missing',
-        'pulsar.validation.string' => '{{property}} must be a string of the proper length',
-        'pulsar.validation.time_zone' => '{{property}} only allows valid time zones',
-        'pulsar.validation.timestamp' => '{{property}} only allows timestamps',
-        'pulsar.validation.unique' => 'The {{property}} you chose has already been taken. Please try a different {{property}}.',
-        'pulsar.validation.url' => '{{property}} only allows valid URLs',
+        'pulsar.validation.alpha' => '{{field_name}} only allows letters',
+        'pulsar.validation.alpha_numeric' => '{{field_name}} only allows letters and numbers',
+        'pulsar.validation.alpha_dash' => '{{field_name}} only allows letters and dashes',
+        'pulsar.validation.boolean' => '{{field_name}} must be yes or no',
+        'pulsar.validation.custom' => '{{field_name}} validation failed',
+        'pulsar.validation.email' => '{{field_name}} must be a valid email address',
+        'pulsar.validation.enum' => '{{field_name}} must be one of the allowed values',
+        'pulsar.validation.date' => '{{field_name}} must be a date',
+        'pulsar.validation.failed' => '{{field_name}} is invalid',
+        'pulsar.validation.ip' => '{{field_name}} only allows valid IP addresses',
+        'pulsar.validation.matching' => '{{field_name}} must match',
+        'pulsar.validation.numeric' => '{{field_name}} only allows numbers',
+        'pulsar.validation.password' => '{{field_name}} must meet the password requirements',
+        'pulsar.validation.range' => '{{field_name}} must be within the allowed range',
+        'pulsar.validation.required' => '{{field_name}} is missing',
+        'pulsar.validation.string' => '{{field_name}} must be a string of the proper length',
+        'pulsar.validation.time_zone' => '{{field_name}} only allows valid time zones',
+        'pulsar.validation.timestamp' => '{{field_name}} only allows timestamps',
+        'pulsar.validation.unique' => 'The {{field_name}} you chose has already been taken. Please try a different {{field_name}}.',
+        'pulsar.validation.url' => '{{field_name}} only allows valid URLs',
     ];
 
     /**
@@ -74,15 +75,39 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Gets the locale service.
      *
-     * @return Locale|null
+     * @return Locale
      */
     public function getLocale()
     {
+        if (!$this->locale) {
+            $this->locale = new Locale();
+        }
+
         return $this->locale;
     }
 
     /**
      * Adds an error message to the stack.
+     *
+     * @param $error
+     * @param array $parameters
+     *
+     * @return $this
+     */
+    public function add($error, array $parameters = [])
+    {
+        $this->stack[] = [
+            'error' => $error,
+            'params' => $parameters,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * @deprecated
+     *
+     * Adds an error message to the stack
      *
      * @param array|string $error
      *                            - error: error code
@@ -109,11 +134,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     {
         $messages = [];
         foreach ($this->stack as $error) {
-            if (isset($error['message'])) {
-                $messages[] = $error['message'];
-            } else {
-                $messages[] = $this->parse($error['error'], $locale, $error['params']);
-            }
+            $messages[] = $this->parse($error['error'], $locale, $error['params']);
         }
 
         return $messages;
@@ -232,17 +253,11 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      */
     private function parse($error, $locale, array $parameters)
     {
-        if (!$this->locale) {
-            return $error;
-        }
-
-//        $model = $this->model;
-//        $parameters['property'] = $model::getPropertyTitle($property);
-
-        // try to supply a fallback message
+        // try to supply a fallback message in case
+        // the user does not have one specified
         $fallback = array_value(self::$messages, $error);
 
-        return $this->locale->t($error, $parameters, $locale, $fallback);
+        return $this->getLocale()->t($error, $parameters, $locale, $fallback);
     }
 
     //////////////////////////

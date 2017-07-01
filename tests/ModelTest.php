@@ -399,7 +399,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         // set a global stack
         $stack = new Errors();
         TestModel::setErrorStack($stack);
-        $stack->push('test');
+        $stack->add('test');
 
         $model2 = new TestModel();
         $this->assertEquals($stack, $model2->getErrors());
@@ -924,7 +924,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($model->create($create));
 
         // verify error
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['The Unique you chose has already been taken. Please try a different Unique.'], $errorStack->all());
 
         $this->assertEquals(['unique' => 'fail'], $query->getWhere());
     }
@@ -936,7 +937,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $newModel = new TestModel2();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
     }
 
     public function testCreateMissingRequired()
@@ -946,7 +948,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $newModel = new TestModel2();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1]));
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Required is missing'], $errorStack->all());
     }
 
     public function testCreateFail()
@@ -1199,7 +1202,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $model = new TestModel2(15);
 
         $this->assertFalse($model->set(['validate2' => 'invalid']));
-        $this->assertCount(1, $errorStack->errors());
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Validate2 is invalid'], $errorStack->all());
     }
 
     public function testSetDeprecated()
