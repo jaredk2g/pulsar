@@ -1394,6 +1394,12 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertNull(TestModel::find(101));
     }
 
+    public function testFindMalformedId()
+    {
+        $this->assertNull(TestModel::find(false));
+        $this->assertNull(TestModel2::find(null));
+    }
+
     public function testFindOrFail()
     {
         $driver = Mockery::mock(DriverInterface::class);

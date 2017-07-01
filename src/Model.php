@@ -1191,7 +1191,14 @@ abstract class Model implements \ArrayAccess
         $ids = [];
         $id = (array) $id;
         foreach (static::$ids as $j => $k) {
-            $ids[$k] = $id[$j];
+            if ($_id = array_value($id, $j)) {
+                $ids[$k] = $_id;
+            }
+        }
+
+        // malformed ID
+        if (count($ids) < count(static::$ids)) {
+            return null;
         }
 
         return static::where($ids)->first();
