@@ -153,7 +153,7 @@ class DatabaseDriver implements DriverInterface
             return false;
         }
 
-        return $this->unserialize($row, $model::getProperties());
+        return $row;
     }
 
     public function updateModel(Model $model, array $parameters)
@@ -220,19 +220,12 @@ class DatabaseDriver implements DriverInterface
         }
 
         try {
-            $data = $dbQuery->all();
+            return $dbQuery->all();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage());
             $e->setException($original);
             throw $e;
         }
-
-        $properties = $model::getProperties();
-        foreach ($data as &$row) {
-            $row = $this->unserialize($row, $properties);
-        }
-
-        return $data;
     }
 
     public function totalRecords(Query $query)
@@ -282,25 +275,6 @@ class DatabaseDriver implements DriverInterface
     {
         foreach ($values as &$value) {
             $value = $this->serializeValue($value);
-        }
-
-        return $values;
-    }
-
-    /**
-     * Unserializes an array of values.
-     *
-     * @param array $values
-     * @param array $properties model properties
-     *
-     * @return array
-     */
-    private function unserialize(array $values, array $properties)
-    {
-        foreach ($values as $k => &$value) {
-            if (isset($properties[$k])) {
-                $value = Model::cast($properties[$k], $value);
-            }
         }
 
         return $values;

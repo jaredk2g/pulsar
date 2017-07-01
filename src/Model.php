@@ -1272,6 +1272,13 @@ abstract class Model implements \ArrayAccess
      */
     public function refreshWith(array $values)
     {
+        // type cast the values
+        foreach ($values as $k => &$value) {
+            if ($property = static::getProperty($k)) {
+                $value = static::cast($property, $value);
+            }
+        }
+
         $this->_persisted = true;
         $this->_values = $values;
 
