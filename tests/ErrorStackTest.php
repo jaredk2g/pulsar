@@ -260,9 +260,6 @@ class ErrorStackTest extends TestCase
         }
 
         $this->assertEquals(['1', '2', '3', '4', '5'], $result);
-
-        $errorStack->next();
-        $this->assertNull($errorStack->current());
     }
 
     public function testCount()
