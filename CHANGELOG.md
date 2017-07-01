@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Refactored `ErrorStack` class into `Errors` class.
+- Refactored `Validate` class into `Validator` class.
 - Deprecated several error methods.
 - Improved validation error messaging.
 - Renamed `totalRecords` on driver interface to `count()`.

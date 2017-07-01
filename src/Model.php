@@ -1622,8 +1622,9 @@ abstract class Model implements \ArrayAccess
         if (isset($property['validate']) && is_callable($property['validate'])) {
             $valid = call_user_func_array($property['validate'], [$value]);
         } elseif (isset($property['validate'])) {
-            $valid = Validate::is($value, $property['validate']);
-            $error = 'pulsar.validation.'.$property['validate'];
+            $validator = new Validator($property['validate']);
+            $valid = $validator->validate($value);
+            $error = 'pulsar.validation.'.$validator->getFailingRule();
         }
 
         if (!$valid) {

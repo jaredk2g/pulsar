@@ -13,7 +13,7 @@ namespace Pulsar\Services;
 
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Model;
-use Pulsar\Validate;
+use Pulsar\Validator;
 
 /**
  * Class ModelDriver.
@@ -49,7 +49,7 @@ class ModelDriver
         Model::setDriver($this->driver);
 
         // used for password hashing
-        Validate::configure(['salt' => $config->get('app.salt')]);
+        Validator::configure(['salt' => $config->get('app.salt')]);
     }
 
     public function __invoke()

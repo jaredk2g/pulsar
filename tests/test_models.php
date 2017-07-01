@@ -112,7 +112,7 @@ class TestModel2 extends Model
             'default' => 'some default value',
         ],
         'validate' => [
-            'validate' => 'email',
+            'validate' => 'email|string:5',
             'null' => true,
         ],
         'validate2' => [

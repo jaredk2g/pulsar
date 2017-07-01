@@ -185,7 +185,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             ],
             'validate' => [
                 'type' => Model::TYPE_STRING,
-                'validate' => 'email',
+                'validate' => 'email|string:5',
                 'null' => true,
                 'mutable' => Model::MUTABLE,
                 'unique' => false,
