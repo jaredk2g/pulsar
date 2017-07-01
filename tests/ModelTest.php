@@ -1351,6 +1351,24 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertInstanceOf(Query::class, $query);
     }
 
+    public function testQuerySoftDelete()
+    {
+        $query = Person::query();
+
+        $this->assertInstanceOf(Query::class, $query);
+        $this->assertInstanceOf(Person::class, $query->getModel());
+        $this->assertEquals(['deleted_at IS NOT NULL'], $query->getWhere());
+    }
+
+    public function testWithDeleted()
+    {
+        $query = Person::withDeleted();
+
+        $this->assertInstanceOf(Query::class, $query);
+        $this->assertInstanceOf(Person::class, $query->getModel());
+        $this->assertEquals([], $query->getWhere());
+    }
+
     public function testFind()
     {
         $driver = Mockery::mock(DriverInterface::class);

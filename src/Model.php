@@ -1154,6 +1154,27 @@ abstract class Model implements \ArrayAccess
         // that the model's initialize() method gets called.
         // Otherwise, the property definitions will be incomplete.
         $model = new static();
+        $query = new Query($model);
+
+        // scope soft-deleted models to only include non-deleted models
+        if (property_exists($model, 'softDelete')) {
+            $query->where('deleted_at IS NOT NULL');
+        }
+
+        return $query;
+    }
+
+    /**
+     * Generates a new query instance that includes soft-deleted models.
+     *
+     * @return Query
+     */
+    public static function withDeleted()
+    {
+        // Create a new model instance for the query to ensure
+        // that the model's initialize() method gets called.
+        // Otherwise, the property definitions will be incomplete.
+        $model = new static();
 
         return new Query($model);
     }
