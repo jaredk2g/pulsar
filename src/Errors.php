@@ -25,23 +25,12 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * @var array
      */
-    private $stack;
+    private $stack = [];
 
     /**
      * @var Locale|null
      */
     private $locale;
-
-    /**
-     * @var int
-     */
-    private $pointer;
-
-    public function __construct()
-    {
-        $this->stack = [];
-        $this->pointer = 0;
-    }
 
     /**
      * Sets the locale service.
