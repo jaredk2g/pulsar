@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Giving an invalid ID to `find()` no longer triggers a PHP error.
+- Ensure model ID is properly type cast.
 
 ## 0.4.0 - 2017-06-25
 ### Added

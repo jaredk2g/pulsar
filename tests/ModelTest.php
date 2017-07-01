@@ -448,6 +448,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('5,2', $model3->id());
     }
 
+    public function testIdTypeCast()
+    {
+        $model = new TestModel('5');
+        $this->assertTrue($model->id() === 5, 'id() type casting failed');
+
+        $model = new TestModel(5);
+        $this->assertTrue($model->id() === 5, 'id() type casting failed');
+    }
+
     public function testIds()
     {
         $model = new TestModel(3);
@@ -455,6 +464,16 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new TestModel2([5, 2]);
         $this->assertEquals(['id' => 5, 'id2' => 2], $model->ids());
+    }
+
+    public function testIdsTypeCast()
+    {
+        $model = new TestModel('3');
+        $this->assertTrue($model->ids()['id'] === 3, 'ids() type casting failed');
+
+        $model2 = new TestModel2(['5', '2']);
+        $this->assertTrue($model2->ids()['id'] === 5, 'ids() type casting failed');
+        $this->assertTrue($model2->ids()['id2'] === 2, 'ids() type casting failed');
     }
 
     public function testToString()

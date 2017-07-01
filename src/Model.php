@@ -200,34 +200,7 @@ abstract class Model implements \ArrayAccess
         $this->init();
 
         // parse the supplied model ID
-        if (is_array($id)) {
-            // A model can be supplied as a primary key
-            foreach ($id as &$el) {
-                if ($el instanceof self) {
-                    $el = $el->id();
-                }
-            }
-
-            // The IDs come in as the same order as ::$ids.
-            // We need to match up the elements on that
-            // input into a key-value map for each ID property.
-            $ids = [];
-            $idQueue = array_reverse($id);
-            foreach (static::$ids as $k => $f) {
-                $ids[$f] = (count($idQueue) > 0) ? array_pop($idQueue) : false;
-            }
-
-            $this->_id = implode(',', $id);
-            $this->_ids = $ids;
-        } elseif ($id instanceof self) {
-            // A model can be supplied as a primary key
-            $this->_id = $id->id();
-            $this->_ids = $id->ids();
-        } else {
-            $this->_id = $id;
-            $idProperty = static::$ids[0];
-            $this->_ids = [$idProperty => $id];
-        }
+        $this->parseId($id);
 
         // load any given values
         if (count($values) > 0) {
@@ -312,6 +285,55 @@ abstract class Model implements \ArrayAccess
     private function installSoftDelete()
     {
         static::$properties = array_replace(self::$softDeleteProperties, static::$properties);
+    }
+
+    /**
+     * Parses the given ID, which can be a single or composite primary key.
+     *
+     * @param mixed $id
+     */
+    private function parseId($id)
+    {
+        if (is_array($id)) {
+            // A model can be supplied as a primary key
+            foreach ($id as &$el) {
+                if ($el instanceof self) {
+                    $el = $el->id();
+                }
+            }
+
+            // The IDs come in as the same order as ::$ids.
+            // We need to match up the elements on that
+            // input into a key-value map for each ID property.
+            $ids = [];
+            $idQueue = array_reverse($id);
+            foreach (static::$ids as $k => $f) {
+                // type cast
+                if (count($idQueue) > 0) {
+                    $idProperty = static::getProperty($f);
+                    $ids[$f] = static::cast($idProperty, array_pop($idQueue));
+                } else {
+                    $ids[$f] = false;
+                }
+            }
+
+            $this->_id = implode(',', $id);
+            $this->_ids = $ids;
+        } elseif ($id instanceof self) {
+            // A model can be supplied as a primary key
+            $this->_id = $id->id();
+            $this->_ids = $id->ids();
+        } else {
+            // type cast the single primary key
+            $idName = static::$ids[0];
+            if ($id !== false) {
+                $idProperty = static::getProperty($idName);
+                $id = static::cast($idProperty, $id);
+            }
+
+            $this->_id = $id;
+            $this->_ids = [$idName => $id];
+        }
     }
 
     /**
