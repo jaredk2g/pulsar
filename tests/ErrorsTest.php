@@ -125,6 +125,14 @@ class ErrorsTest extends TestCase
         $this->assertEquals(['Test'], $errorStack->messages());
     }
 
+    public function testAllFallback()
+    {
+        $errorStack = $this->getErrorStack();
+        $errorStack->push(['error' => 'pulsar.validation.alpha', 'params' => ['property' => 'Name']]);
+        $this->assertEquals(['Name only allows letters'], $errorStack->all());
+        $this->assertEquals(['Name only allows letters'], $errorStack->messages());
+    }
+
     public function testFind()
     {
         $errorStack = $this->getErrorStack();
