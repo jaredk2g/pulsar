@@ -89,6 +89,26 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
      *
      * @param string $locale optional locale
      *
+     * @return array error messages
+     */
+    public function all($locale = '')
+    {
+        $messages = [];
+        foreach ($this->stack as $error) {
+            $messages[] = $this->parse($error, $locale)['message'];
+        }
+
+        return $messages;
+    }
+
+    /**
+     * @deprecated
+     *
+     * Gets all of the errors on the stack and also attempts
+     * translation using the Locale class
+     *
+     * @param string $locale optional locale
+     *
      * @return array errors
      */
     public function errors($locale = '')
@@ -102,7 +122,9 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * Gets the messages of errors on the stack.
+     * @deprecated
+     *
+     * Gets the messages of errors on the stack
      *
      * @param string $locale optional locale
      *
@@ -110,12 +132,7 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
      */
     public function messages($locale = '')
     {
-        $messages = [];
-        foreach ($this->errors($locale) as $error) {
-            $messages[] = $error['message'];
-        }
-
-        return $messages;
+        return $this->all($locale);
     }
 
     /**

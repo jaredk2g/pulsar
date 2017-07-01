@@ -79,7 +79,7 @@ class ErrorStackTest extends TestCase
         $this->assertEquals([$expected1, $expected2, $expected3], $errors);
     }
 
-    public function testMessages()
+    public function testAll()
     {
         $errorStack = $this->getErrorStack();
 
@@ -108,15 +108,20 @@ class ErrorStackTest extends TestCase
             'some_error',
         ];
 
+        $messages = $errorStack->all();
+        $this->assertEquals(3, count($messages));
+        $this->assertEquals($expected, $messages);
+
         $messages = $errorStack->messages();
         $this->assertEquals(3, count($messages));
         $this->assertEquals($expected, $messages);
     }
 
-    public function testMessagesWithoutLocale()
+    public function testAllWithoutLocale()
     {
         $errorStack = new ErrorStack();
         $errorStack->push('Test');
+        $this->assertEquals(['Test'], $errorStack->all());
         $this->assertEquals(['Test'], $errorStack->messages());
     }
 
@@ -191,7 +196,8 @@ class ErrorStackTest extends TestCase
     {
         $errorStack = $this->getErrorStack();
         $this->assertEquals($errorStack, $errorStack->clear());
-        $this->assertCount(0, $errorStack->errors());
+        $this->assertCount(0, $errorStack->all());
+        $this->assertCount(0, $errorStack->messages());
     }
 
     public function testIterator()
