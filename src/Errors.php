@@ -298,7 +298,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
             throw new \OutOfBoundsException("$offset does not exist on this ErrorStack");
         }
 
-        return $this->stack[$offset];
+        return $this->errors()[$offset];
     }
 
     public function offsetSet($offset, $error)
