@@ -44,7 +44,6 @@ class ErrorStackTest extends TestCase
         $error2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -58,14 +57,12 @@ class ErrorStackTest extends TestCase
         $expected1 = [
             'error' => 'some_error',
             'message' => 'Something is wrong',
-            'context' => '',
             'params' => [],
         ];
 
         $expected2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -74,17 +71,12 @@ class ErrorStackTest extends TestCase
         $expected3 = [
             'error' => 'some_error',
             'message' => 'some_error',
-            'context' => '',
             'params' => [],
         ];
 
         $errors = $errorStack->errors();
         $this->assertEquals(3, count($errors));
         $this->assertEquals([$expected1, $expected2, $expected3], $errors);
-
-        $errors = $errorStack->errors('user.create');
-        $this->assertEquals(1, count($errors));
-        $this->assertEquals([$expected2], $errors);
     }
 
     public function testMessages()
@@ -100,7 +92,6 @@ class ErrorStackTest extends TestCase
         $error2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -114,16 +105,11 @@ class ErrorStackTest extends TestCase
         $expected = [
             'Something is wrong',
             'Username is invalid',
-            'some_error', ];
+            'some_error',
+        ];
 
         $messages = $errorStack->messages();
         $this->assertEquals(3, count($messages));
-        $this->assertEquals($expected, $messages);
-
-        $expected = ['Username is invalid'];
-
-        $messages = $errorStack->messages('user.create');
-        $this->assertEquals(1, count($messages));
         $this->assertEquals($expected, $messages);
     }
 
@@ -147,7 +133,6 @@ class ErrorStackTest extends TestCase
         $error2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -161,7 +146,6 @@ class ErrorStackTest extends TestCase
         $expected = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -186,7 +170,6 @@ class ErrorStackTest extends TestCase
         $error2 = [
             'error' => 'username_invalid',
             'message' => 'Username is invalid',
-            'context' => 'user.create',
             'params' => [
                 'field' => 'username',
             ],
@@ -202,41 +185,6 @@ class ErrorStackTest extends TestCase
 
         $this->assertFalse($errorStack->has('non-existent'));
         $this->assertFalse($errorStack->has('username', 'something'));
-    }
-
-    public function testSetCurrentContext()
-    {
-        $errorStack = $this->getErrorStack();
-
-        $this->assertEquals($errorStack, $errorStack->setCurrentContext('test.context'));
-
-        $this->assertEquals($errorStack, $errorStack->push(['error' => 'test_error']));
-
-        $expected = [
-            'error' => 'test_error',
-            'context' => 'test.context',
-            'params' => [],
-            'message' => 'test_error',
-        ];
-        $this->assertEquals([$expected], $errorStack->errors('test.context'));
-    }
-
-    public function testClearCurrentContext()
-    {
-        $errorStack = $this->getErrorStack();
-
-        $this->assertEquals($errorStack, $errorStack->clearCurrentContext());
-
-        $this->assertEquals($errorStack, $errorStack->push(['error' => 'test_error']));
-
-        $expected = [
-            'error' => 'test_error',
-            'context' => '',
-            'params' => [],
-            'message' => 'test_error',
-        ];
-        $errors = $errorStack->errors('');
-        $this->assertTrue(in_array($expected, $errors));
     }
 
     public function testClear()

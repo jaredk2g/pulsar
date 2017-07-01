@@ -28,11 +28,6 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     private $stack;
 
     /**
-     * @var string
-     */
-    private $context;
-
-    /**
      * @var Locale|null
      */
     private $locale;
@@ -45,7 +40,6 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     public function __construct()
     {
         $this->stack = [];
-        $this->context = '';
         $this->pointer = 0;
     }
 
@@ -79,9 +73,6 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
      * @param array|string $error
      *                            - error: error code
      *                            - params: array of parameters to be passed to message
-     *                            - context: (optional) the context which the error message occured in
-     *                            - class: (optional) the class invoking the error
-     *                            - function: (optional) the function invoking the error
      *
      * @return self
      */
@@ -93,47 +84,18 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * Sets the current default error context.
-     *
-     * @param string $context
-     *
-     * @return self
-     */
-    public function setCurrentContext($context = '')
-    {
-        $this->context = $context;
-
-        return $this;
-    }
-
-    /**
-     * Clears the current default error context.
-     *
-     * @return self
-     */
-    public function clearCurrentContext()
-    {
-        $this->context = '';
-
-        return $this;
-    }
-
-    /**
      * Gets all of the errors on the stack and also attempts
      * translation using the Locale class.
      *
-     * @param string $context optional context
-     * @param string $locale  optional locale
+     * @param string $locale optional locale
      *
      * @return array errors
      */
-    public function errors($context = '', $locale = '')
+    public function errors($locale = '')
     {
         $errors = [];
         foreach ($this->stack as $error) {
-            if (!$context || $error['context'] == $context) {
-                $errors[] = $this->parse($error, $locale);
-            }
+            $errors[] = $this->parse($error, $locale);
         }
 
         return $errors;
@@ -142,15 +104,14 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Gets the messages of errors on the stack.
      *
-     * @param string $context optional context
-     * @param string $locale  optional locale
+     * @param string $locale optional locale
      *
      * @return array errors
      */
-    public function messages($context = '', $locale = '')
+    public function messages($locale = '')
     {
         $messages = [];
-        foreach ($this->errors($context, $locale) as $error) {
+        foreach ($this->errors($locale) as $error) {
             $messages[] = $error['message'];
         }
 
@@ -212,10 +173,6 @@ class ErrorStack implements IteratorAggregate, Countable, ArrayAccess
     {
         if (!is_array($error)) {
             $error = ['error' => $error];
-        }
-
-        if (!isset($error['context'])) {
-            $error['context'] = $this->context;
         }
 
         if (!isset($error['params'])) {
