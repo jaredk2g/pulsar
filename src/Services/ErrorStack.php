@@ -11,14 +11,16 @@
 
 namespace Pulsar\Services;
 
+use Pulsar\Errors;
+
 /**
- * Class ErrorStack.
+ * Error stack for Infuse framework.
  */
 class ErrorStack
 {
     public function __invoke($app)
     {
-        $errors = new \Pulsar\ErrorStack();
+        $errors = new Errors();
 
         if (isset($app['locale'])) {
             $errors->setLocale($app['locale']);

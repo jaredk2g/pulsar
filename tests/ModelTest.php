@@ -9,7 +9,7 @@
  * @license MIT
  */
 use Pulsar\Driver\DriverInterface;
-use Pulsar\ErrorStack;
+use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
@@ -394,10 +394,10 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         TestModel::clearErrorStack();
         $model = new TestModel();
-        $this->assertInstanceOf(ErrorStack::class, $model->getErrors());
+        $this->assertInstanceOf(Errors::class, $model->getErrors());
 
         // set a global stack
-        $stack = new ErrorStack();
+        $stack = new Errors();
         TestModel::setErrorStack($stack);
         $stack->push('test');
 
@@ -900,7 +900,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateNotUnique()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         TestModel2::setErrorStack($errorStack);
 
         $query = TestModel2::query();
@@ -931,7 +931,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateInvalid()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
@@ -941,7 +941,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testCreateMissingRequired()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         TestModel2::setErrorStack($errorStack);
 
         $newModel = new TestModel2();
@@ -1193,7 +1193,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
     public function testSetInvalid()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         TestModel2::setErrorStack($errorStack);
 
         $model = new TestModel2(15);

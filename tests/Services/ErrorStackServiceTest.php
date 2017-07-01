@@ -18,6 +18,6 @@ class ErrorStackServiceTest extends PHPUnit_Framework_TestCase
         $app = new Application();
         $service = new ErrorStack();
         $errors = $service($app);
-        $this->assertInstanceOf('Pulsar\ErrorStack', $errors);
+        $this->assertInstanceOf('Pulsar\Errors', $errors);
     }
 }

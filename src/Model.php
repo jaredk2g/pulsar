@@ -80,7 +80,7 @@ abstract class Model implements \ArrayAccess
     protected static $globalContainer;
 
     /**
-     * @var ErrorStack
+     * @var Errors
      */
     protected static $globalErrorStack;
 
@@ -115,7 +115,7 @@ abstract class Model implements \ArrayAccess
     protected $_relationships = [];
 
     /**
-     * @var ErrorStack
+     * @var Errors
      */
     protected $_errors;
 
@@ -412,9 +412,9 @@ abstract class Model implements \ArrayAccess
     /**
      * Sets the global error stack instance.
      *
-     * @param ErrorStack $stack
+     * @param Errors $stack
      */
-    public static function setErrorStack(ErrorStack $stack)
+    public static function setErrorStack(Errors $stack)
     {
         self::$globalErrorStack = $stack;
     }
@@ -1566,14 +1566,14 @@ abstract class Model implements \ArrayAccess
     /**
      * Gets the error stack for this model.
      *
-     * @return ErrorStack
+     * @return Errors
      */
     public function getErrors()
     {
         if (!$this->_errors && self::$globalErrorStack) {
             $this->_errors = self::$globalErrorStack;
         } elseif (!$this->_errors) {
-            $this->_errors = new ErrorStack();
+            $this->_errors = new Errors();
         }
 
         return $this->_errors;

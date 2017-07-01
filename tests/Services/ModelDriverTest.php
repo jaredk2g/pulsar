@@ -12,7 +12,7 @@ use Infuse\Application;
 use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
 use Pulsar\Driver\DatabaseDriver;
-use Pulsar\ErrorStack;
+use Pulsar\Errors;
 use Pulsar\Model;
 use Pulsar\Services\ModelDriver;
 
@@ -26,7 +26,7 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
             ],
         ];
         $app = new Application($config);
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         $app['errors'] = function () use ($errorStack) {
             return $errorStack;
         };
@@ -52,7 +52,7 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
             ],
         ];
         $app = new Application($config);
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         $app['errors'] = function () use ($errorStack) {
             return $errorStack;
         };

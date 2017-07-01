@@ -10,13 +10,13 @@
  */
 use Infuse\Locale;
 use PHPUnit\Framework\TestCase;
-use Pulsar\ErrorStack;
+use Pulsar\Errors;
 
-class ErrorStackTest extends TestCase
+class ErrorsTest extends TestCase
 {
     private function getErrorStack()
     {
-        $stack = new ErrorStack();
+        $stack = new Errors();
         $stack->setLocale(new Locale());
 
         return $stack;
@@ -24,7 +24,7 @@ class ErrorStackTest extends TestCase
 
     public function testGetLocale()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         $this->assertNull($errorStack->getLocale());
         $locale = new Locale();
         $errorStack->setLocale($locale);
@@ -119,7 +119,7 @@ class ErrorStackTest extends TestCase
 
     public function testAllWithoutLocale()
     {
-        $errorStack = new ErrorStack();
+        $errorStack = new Errors();
         $errorStack->push('Test');
         $this->assertEquals(['Test'], $errorStack->all());
         $this->assertEquals(['Test'], $errorStack->messages());
