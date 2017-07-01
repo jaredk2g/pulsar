@@ -79,7 +79,7 @@ interface DriverInterface
     public function deleteModel(Model $model);
 
     /**
-     * Gets the total number of records matching the given query.
+     * Gets the count matching the given query.
      *
      * @param Query $query
      *
@@ -87,7 +87,7 @@ interface DriverInterface
      *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function totalRecords(Query $query);
+    public function count(Query $query);
 
     /**
      * Performs a query to find models of the given type.

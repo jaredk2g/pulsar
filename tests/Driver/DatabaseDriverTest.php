@@ -279,7 +279,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver->deleteModel($model);
     }
 
-    public function testTotalRecords()
+    public function testCount()
     {
         $query = new Query('Person');
 
@@ -304,10 +304,10 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver->setConnection($db);
         Person::setDriver($driver);
 
-        $this->assertEquals(1, $driver->totalRecords($query));
+        $this->assertEquals(1, $driver->count($query));
     }
 
-    public function testTotalRecordsFail()
+    public function testCountFail()
     {
         $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the number of Person objects');
         $query = new Query(new Person());
@@ -318,7 +318,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
         Person::setDriver($driver);
-        $driver->totalRecords($query);
+        $driver->count($query);
     }
 
     public function testQueryModels()

@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Refactored `ErrorStack` class into `Errors` class.
 - Deprecated several error methods.
 - Improved validation error messaging.
+- Renamed `totalRecords` on driver interface to `count()`.
 
 ### Fixed
 - Giving an invalid ID to `find()` no longer triggers a PHP error.

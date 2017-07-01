@@ -228,7 +228,7 @@ class DatabaseDriver implements DriverInterface
         }
     }
 
-    public function totalRecords(Query $query)
+    public function count(Query $query)
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
