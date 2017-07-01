@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated several error methods.
 - Improved validation error messaging.
 - Renamed `totalRecords` on driver interface to `count()`.
+- Model properties no longer casted to string type by default.
 
 ### Fixed
 - Giving an invalid ID to `find()` no longer triggers a PHP error.

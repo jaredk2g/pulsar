@@ -105,14 +105,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'mutator' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'null' => false,
                 'mutable' => Model::MUTABLE,
                 'unique' => false,
                 'required' => false,
             ],
             'accessor' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'null' => false,
                 'mutable' => Model::MUTABLE,
                 'unique' => false,
@@ -176,7 +176,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'default' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'default' => 'some default value',
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -184,7 +184,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'validate' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'validate' => 'email|string:5',
                 'null' => true,
                 'mutable' => Model::MUTABLE,
@@ -192,7 +192,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'validate2' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'validate' => 'validate',
                 'null' => true,
                 'mutable' => Model::MUTABLE,
@@ -200,7 +200,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'unique' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'unique' => true,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -250,14 +250,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'required' => false,
             ],
             'mutable_create_only' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'mutable' => Model::MUTABLE_CREATE_ONLY,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
             ],
             'protected' => [
-                'type' => Model::TYPE_STRING,
+                'type' => null,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,

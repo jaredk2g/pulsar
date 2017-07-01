@@ -123,7 +123,7 @@ abstract class Model implements \ArrayAccess
      * @var array
      */
     private static $propertyDefinitionBase = [
-        'type' => self::TYPE_STRING,
+        'type' => null,
         'mutable' => self::MUTABLE,
         'null' => false,
         'unique' => false,
