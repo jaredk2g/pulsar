@@ -90,6 +90,54 @@ interface DriverInterface
     public function count(Query $query);
 
     /**
+     * Gets the sum matching the given query.
+     *
+     * @param Query  $query
+     * @param string $field
+     *
+     * @return number
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     */
+    public function sum(Query $query, $field);
+
+    /**
+     * Gets the average matching the given query.
+     *
+     * @param Query  $query
+     * @param string $field
+     *
+     * @return number
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     */
+    public function average(Query $query, $field);
+
+    /**
+     * Gets the max matching the given query.
+     *
+     * @param Query  $query
+     * @param string $field
+     *
+     * @return number
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     */
+    public function max(Query $query, $field);
+
+    /**
+     * Gets the min matching the given query.
+     *
+     * @param Query  $query
+     * @param string $field
+     *
+     * @return number
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     */
+    public function min(Query $query, $field);
+
+    /**
      * Performs a query to find models of the given type.
      *
      * @param Query $query

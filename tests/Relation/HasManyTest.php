@@ -152,7 +152,7 @@ class HasManyTest extends PHPUnit_Framework_TestCase
 
         self::$driver = Mockery::mock(DriverInterface::class);
 
-        self::$driver->shouldReceive('totalRecords')
+        self::$driver->shouldReceive('count')
             ->andReturn(3);
 
         self::$driver->shouldReceive('queryModels')

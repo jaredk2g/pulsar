@@ -325,6 +325,76 @@ class QueryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('John', $result[1]->name);
     }
 
+    public function testCount()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('count')
+            ->withArgs([$query])
+            ->andReturn(10);
+
+        Person::setDriver($driver);
+
+        $this->assertEquals(10, $query->count());
+    }
+
+    public function testSum()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('sum')
+            ->withArgs([$query, 'balance'])
+            ->andReturn(50.2);
+
+        Person::setDriver($driver);
+
+        $this->assertEquals(50.2, $query->sum('balance'));
+    }
+
+    public function testAverage()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('average')
+            ->withArgs([$query, 'balance'])
+            ->andReturn(1);
+
+        Person::setDriver($driver);
+
+        $this->assertEquals(1, $query->average('balance'));
+    }
+
+    public function testMax()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('max')
+            ->withArgs([$query, 'balance'])
+            ->andReturn(2.5);
+
+        Person::setDriver($driver);
+
+        $this->assertEquals(2.5, $query->max('balance'));
+    }
+
+    public function testMin()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('min')
+            ->withArgs([$query, 'balance'])
+            ->andReturn(0);
+
+        Person::setDriver($driver);
+
+        $this->assertEquals(0, $query->min('balance'));
+    }
+
     public function testSet()
     {
         $model = Mockery::mock();

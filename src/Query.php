@@ -348,7 +348,7 @@ class Query
         $model = $this->model;
         $driver = $model::getDriver();
 
-        return $driver->totalRecords($this);
+        return $driver->count($this);
     }
 
     /**
@@ -363,6 +363,66 @@ class Query
     public function totalRecords(array $where = [])
     {
         return $this->where($where)->count();
+    }
+
+    /**
+     * Gets the sum of a property matching the query.
+     *
+     * @param string $property
+     *
+     * @return int
+     */
+    public function sum($property)
+    {
+        $model = $this->model;
+        $driver = $model::getDriver();
+
+        return $driver->sum($this, $property);
+    }
+
+    /**
+     * Gets the average of a property matching the query.
+     *
+     * @param string $property
+     *
+     * @return int
+     */
+    public function average($property)
+    {
+        $model = $this->model;
+        $driver = $model::getDriver();
+
+        return $driver->average($this, $property);
+    }
+
+    /**
+     * Gets the max of a property matching the query.
+     *
+     * @param string $property
+     *
+     * @return int
+     */
+    public function max($property)
+    {
+        $model = $this->model;
+        $driver = $model::getDriver();
+
+        return $driver->max($this, $property);
+    }
+
+    /**
+     * Gets the min of a property matching the query.
+     *
+     * @param string $property
+     *
+     * @return int
+     */
+    public function min($property)
+    {
+        $model = $this->model;
+        $driver = $model::getDriver();
+
+        return $driver->min($this, $property);
     }
 
     /**

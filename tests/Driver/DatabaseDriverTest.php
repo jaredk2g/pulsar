@@ -295,10 +295,12 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $from->shouldReceive('from')
              ->withArgs(['People'])
              ->andReturn($where);
+        $agg = Mockery::mock();
+        $agg->shouldReceive('count')
+            ->andReturn($from);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
-           ->withArgs(['count(*)'])
-           ->andReturn($from);
+            ->andReturn($agg);
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -319,6 +321,186 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver->setConnection($db);
         Person::setDriver($driver);
         $driver->count($query);
+    }
+
+    public function testSum()
+    {
+        $query = new Query('Person');
+
+        // select query mock
+        $scalar = Mockery::mock();
+        $scalar->shouldReceive('scalar')
+            ->andReturn(1);
+        $where = Mockery::mock();
+        $where->shouldReceive('where')
+            ->withArgs([[]])
+            ->andReturn($scalar);
+        $from = Mockery::mock();
+        $from->shouldReceive('from')
+            ->withArgs(['People'])
+            ->andReturn($where);
+        $agg = Mockery::mock();
+        $agg->shouldReceive('sum')
+            ->withArgs(['balance'])
+            ->andReturn($from);
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andReturn($agg);
+
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+
+        $this->assertEquals(1, $driver->sum($query, 'balance'));
+    }
+
+    public function testSumFail()
+    {
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the sum of Person balance');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andThrow(new PDOException('error'));
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+        $driver->sum($query, 'balance');
+    }
+
+    public function testAverage()
+    {
+        $query = new Query('Person');
+
+        // select query mock
+        $scalar = Mockery::mock();
+        $scalar->shouldReceive('scalar')
+            ->andReturn(1);
+        $where = Mockery::mock();
+        $where->shouldReceive('where')
+            ->withArgs([[]])
+            ->andReturn($scalar);
+        $from = Mockery::mock();
+        $from->shouldReceive('from')
+            ->withArgs(['People'])
+            ->andReturn($where);
+        $agg = Mockery::mock();
+        $agg->shouldReceive('average')
+            ->withArgs(['balance'])
+            ->andReturn($from);
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andReturn($agg);
+
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+
+        $this->assertEquals(1, $driver->average($query, 'balance'));
+    }
+
+    public function testAverageFail()
+    {
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the sum of Person balance');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andThrow(new PDOException('error'));
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+        $driver->average($query, 'balance');
+    }
+
+    public function testMax()
+    {
+        $query = new Query('Person');
+
+        // select query mock
+        $scalar = Mockery::mock();
+        $scalar->shouldReceive('scalar')
+            ->andReturn(1);
+        $where = Mockery::mock();
+        $where->shouldReceive('where')
+            ->withArgs([[]])
+            ->andReturn($scalar);
+        $from = Mockery::mock();
+        $from->shouldReceive('from')
+            ->withArgs(['People'])
+            ->andReturn($where);
+        $agg = Mockery::mock();
+        $agg->shouldReceive('max')
+            ->withArgs(['balance'])
+            ->andReturn($from);
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andReturn($agg);
+
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+
+        $this->assertEquals(1, $driver->max($query, 'balance'));
+    }
+
+    public function testMaxFail()
+    {
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the max of Person balance');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andThrow(new PDOException('error'));
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+        $driver->max($query, 'balance');
+    }
+
+    public function testMin()
+    {
+        $query = new Query('Person');
+
+        // select query mock
+        $scalar = Mockery::mock();
+        $scalar->shouldReceive('scalar')
+            ->andReturn(1);
+        $where = Mockery::mock();
+        $where->shouldReceive('where')
+            ->withArgs([[]])
+            ->andReturn($scalar);
+        $from = Mockery::mock();
+        $from->shouldReceive('from')
+            ->withArgs(['People'])
+            ->andReturn($where);
+        $agg = Mockery::mock();
+        $agg->shouldReceive('min')
+            ->withArgs(['balance'])
+            ->andReturn($from);
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andReturn($agg);
+
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+
+        $this->assertEquals(1, $driver->min($query, 'balance'));
+    }
+
+    public function testMinFail()
+    {
+        $this->expectException(DriverException::class, 'An error occurred in the database driver while getting the min of Person balance');
+        $query = new Query(new Person());
+        // select query mock
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('select')
+            ->andThrow(new PDOException('error'));
+        $driver = new DatabaseDriver();
+        $driver->setConnection($db);
+        Person::setDriver($driver);
+        $driver->min($query, 'balance');
     }
 
     public function testQueryModels()

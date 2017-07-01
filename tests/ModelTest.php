@@ -908,7 +908,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(1);
 
         TestModel2::setDriver($driver);
@@ -1161,7 +1161,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(0);
 
         $driver->shouldReceive('loadModel');
@@ -1438,7 +1438,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(1);
 
         TestModel2::setDriver($driver);
@@ -1455,7 +1455,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(2);
 
         TestModel2::setDriver($driver);
@@ -1469,7 +1469,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(1);
 
         TestModel2::setDriver($driver);
@@ -1482,7 +1482,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturn(0);
 
         TestModel2::setDriver($driver);

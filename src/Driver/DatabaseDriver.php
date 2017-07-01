@@ -236,12 +236,93 @@ class DatabaseDriver implements DriverInterface
         $db = $this->getConnection($model->getConnection());
 
         try {
-            return (int) $db->select('count(*)')
+            return (int) $db->select()
+                            ->count()
                             ->from($tablename)
                             ->where($query->getWhere())
                             ->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the number of '.$model::modelName().' objects: '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
+    }
+
+    public function sum(Query $query, $field)
+    {
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
+        $db = $this->getConnection($model->getConnection());
+
+        try {
+            return (int) $db->select()
+                            ->sum($field)
+                            ->from($tablename)
+                            ->where($query->getWhere())
+                            ->scalar();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while getting the sum of '.$model::modelName().' '.$field.': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
+    }
+
+    public function average(Query $query, $field)
+    {
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
+        $db = $this->getConnection($model->getConnection());
+
+        try {
+            return (int) $db->select()
+                            ->average($field)
+                            ->from($tablename)
+                            ->where($query->getWhere())
+                            ->scalar();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while getting the average of '.$model::modelName().' '.$field.': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
+    }
+
+    public function max(Query $query, $field)
+    {
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
+        $db = $this->getConnection($model->getConnection());
+
+        try {
+            return (int) $db->select()
+                            ->max($field)
+                            ->from($tablename)
+                            ->where($query->getWhere())
+                            ->scalar();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while getting the max of '.$model::modelName().' '.$field.': '.$original->getMessage());
+            $e->setException($original);
+            throw $e;
+        }
+    }
+
+    public function min(Query $query, $field)
+    {
+        $modelClass = $query->getModel();
+        $model = new $modelClass();
+        $tablename = $model->getTablename();
+        $db = $this->getConnection($model->getConnection());
+
+        try {
+            return (int) $db->select()
+                            ->min($field)
+                            ->from($tablename)
+                            ->where($query->getWhere())
+                            ->scalar();
+        } catch (PDOException $original) {
+            $e = new DriverException('An error occurred in the database driver while getting the min of '.$model::modelName().' '.$field.': '.$original->getMessage());
             $e->setException($original);
             throw $e;
         }

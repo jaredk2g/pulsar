@@ -18,7 +18,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
     public static $iterator;
     public static $start = 10;
     public static $limit = 50;
-    public static $totalRecords = 123;
+    public static $count = 123;
     public static $noResults;
 
     public static function setUpBeforeClass()
@@ -40,9 +40,9 @@ class IteratorTest extends PHPUnit_Framework_TestCase
                    return $range;
                });
 
-        $driver->shouldReceive('totalRecords')
+        $driver->shouldReceive('count')
                ->andReturnUsing(function () {
-                   return IteratorTest::$totalRecords;
+                   return IteratorTest::$count;
                });
 
         self::$driver = $driver;
@@ -56,7 +56,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        self::$totalRecords = 123;
+        self::$count = 123;
         self::$noResults = false;
         self::$iterator->rewind();
     }
@@ -99,7 +99,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
     {
         self::$iterator->rewind();
 
-        $count = IteratorTestModel::totalRecords();
+        $count = IteratorTestModel::count();
         for ($i = self::$start; $i < $count + 1; ++$i) {
             $current = self::$iterator->current();
             if ($i < $count) {
@@ -116,7 +116,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
     public function testNotValid()
     {
         self::$iterator->rewind();
-        for ($i = self::$start; $i < IteratorTestModel::totalRecords() + 1; ++$i) {
+        for ($i = self::$start; $i < IteratorTestModel::count() + 1; ++$i) {
             self::$iterator->next();
         }
 
@@ -136,15 +136,15 @@ class IteratorTest extends PHPUnit_Framework_TestCase
         }
 
         // last model ID that should have been produced
-        $this->assertEquals(IteratorTestModel::totalRecords(), $i);
+        $this->assertEquals(IteratorTestModel::count(), $i);
 
         // total # of records we should have iterated over
-        $this->assertEquals(IteratorTestModel::totalRecords() - self::$start, $n);
+        $this->assertEquals(IteratorTestModel::count() - self::$start, $n);
     }
 
     public function testForeachChangingCount()
     {
-        self::$totalRecords = 200;
+        self::$count = 200;
 
         $i = self::$start;
         $n = 0;
@@ -157,11 +157,11 @@ class IteratorTest extends PHPUnit_Framework_TestCase
 
             // simulate increasing the # of records midway
             if ($i == 51) {
-                self::$totalRecords = 300;
+                self::$count = 300;
                 $this->assertCount(300, self::$iterator);
             // simulate decreasing the # of records midway
             } elseif ($i == 101) {
-                self::$totalRecords = 26;
+                self::$count = 26;
                 $this->assertCount(26, self::$iterator);
 
                 // The assumption is that the deleted records were
@@ -197,7 +197,7 @@ class IteratorTest extends PHPUnit_Framework_TestCase
             ++$i;
         }
 
-        $this->assertEquals($i, IteratorTestModel::totalRecords());
+        $this->assertEquals($i, IteratorTestModel::count());
     }
 
     public function testCount()

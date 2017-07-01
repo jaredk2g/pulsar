@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - Soft deletes when model has `::$softDelete` property.
+- Added `sum()`, `average()`, `max()`, and `min()` methods to queries.
 
 ### Changed
 - Refactored `ErrorStack` class into `Errors` class.
