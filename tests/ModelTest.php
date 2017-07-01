@@ -313,7 +313,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
             'deleted_at' => [
                 'type' => Model::TYPE_DATE,
                 'mutable' => Model::MUTABLE,
-                'null' => false,
+                'null' => true,
                 'unique' => false,
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
@@ -1293,6 +1293,22 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($model->delete());
         $this->assertTrue($model->persisted());
+    }
+
+    public function testSoftDelete()
+    {
+        $model = new Person(1);
+        $model->refreshWith(['test' => true]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('updateModel')
+               ->andReturn(true);
+        Person::setDriver($driver);
+
+        $this->assertTrue($model->grantAllPermissions()->delete());
+        $this->assertFalse($model->persisted());
+        $this->assertEquals(true, $model->test);
+        $this->assertGreaterThan(0, $model->deleted_at);
     }
 
     /////////////////////////////

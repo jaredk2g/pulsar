@@ -163,6 +163,7 @@ abstract class Model implements \ArrayAccess
         'deleted_at' => [
             'type' => self::TYPE_DATE,
             'validate' => 'timestamp|db_timestamp',
+            'null' => true,
         ],
     ];
 
@@ -1069,7 +1070,15 @@ abstract class Model implements \ArrayAccess
             return false;
         }
 
-        $deleted = self::$driver->deleteModel($this);
+        // perform a hard (default) or soft delete
+        if (property_exists($this, 'softDelete')) {
+            $t = time();
+            $this->deleted_at = $t;
+            $t = $this->filterAndValidate(static::getProperty('deleted_at'), 'deleted_at', $t);
+            $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
+        } else {
+            $deleted = self::$driver->deleteModel($this);
+        }
 
         if ($deleted) {
             // dispatch the model.deleted event
