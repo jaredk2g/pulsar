@@ -6,6 +6,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Soft deletes when model has `::$softDelete` property.
 
+### Changed
+- Refactored `ErrorStack` class into `Errors` class.
+- Deprecated several error methods.
+
 ### Fixed
 - Giving an invalid ID to `find()` no longer triggers a PHP error.
 
