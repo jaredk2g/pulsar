@@ -4,10 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Added `valid()` method to models.
+- Added `valid()` method to model.
 
 ### Fixed
 - Add join conditions to aggregate queries.
+- Prefix columns used in aggregate queries.
 - Clear previous validation errors before each save.
 
 ## 0.5.0 - 2017-07-02

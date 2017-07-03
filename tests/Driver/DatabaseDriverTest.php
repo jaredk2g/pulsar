@@ -341,7 +341,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
             ->andReturn($where);
         $agg = Mockery::mock();
         $agg->shouldReceive('sum')
-            ->withArgs(['balance'])
+            ->withArgs(['People.balance'])
             ->andReturn($from);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
@@ -365,7 +365,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
         Person::setDriver($driver);
-        $driver->sum($query, 'balance');
+        $driver->sum($query, 'Person.balance');
     }
 
     public function testAverage()
@@ -386,7 +386,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
             ->andReturn($where);
         $agg = Mockery::mock();
         $agg->shouldReceive('average')
-            ->withArgs(['balance'])
+            ->withArgs(['People.balance'])
             ->andReturn($from);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
@@ -431,7 +431,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
             ->andReturn($where);
         $agg = Mockery::mock();
         $agg->shouldReceive('max')
-            ->withArgs(['balance'])
+            ->withArgs(['People.balance'])
             ->andReturn($from);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
@@ -476,7 +476,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
             ->andReturn($where);
         $agg = Mockery::mock();
         $agg->shouldReceive('min')
-            ->withArgs(['balance'])
+            ->withArgs(['People.balance'])
             ->andReturn($from);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')

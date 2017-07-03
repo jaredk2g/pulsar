@@ -230,7 +230,7 @@ class DatabaseDriver implements DriverInterface
         $dbQuery = $db->select()
             ->count()
             ->from($tablename)
-            ->where($query->getWhere());
+            ->where($this->prefixWhere($query->getWhere(), $tablename));
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -250,9 +250,9 @@ class DatabaseDriver implements DriverInterface
         $db = $this->getConnection($model->getConnection());
 
         $dbQuery = $db->select()
-            ->sum($field)
+            ->sum($this->prefixColumn($field, $tablename))
             ->from($tablename)
-            ->where($query->getWhere());
+            ->where($this->prefixWhere($query->getWhere(), $tablename));
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -272,9 +272,9 @@ class DatabaseDriver implements DriverInterface
         $db = $this->getConnection($model->getConnection());
 
         $dbQuery = $db->select()
-            ->average($field)
+            ->average($this->prefixColumn($field, $tablename))
             ->from($tablename)
-            ->where($query->getWhere());
+            ->where($this->prefixWhere($query->getWhere(), $tablename));
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -294,9 +294,9 @@ class DatabaseDriver implements DriverInterface
         $db = $this->getConnection($model->getConnection());
 
         $dbQuery = $db->select()
-            ->max($field)
+            ->max($this->prefixColumn($field, $tablename))
             ->from($tablename)
-            ->where($query->getWhere());
+            ->where($this->prefixWhere($query->getWhere(), $tablename));
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -316,9 +316,9 @@ class DatabaseDriver implements DriverInterface
         $db = $this->getConnection($model->getConnection());
 
         $dbQuery = $db->select()
-            ->min($field)
+            ->min($this->prefixColumn($field, $tablename))
             ->from($tablename)
-            ->where($query->getWhere());
+            ->where($this->prefixWhere($query->getWhere(), $tablename));
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
