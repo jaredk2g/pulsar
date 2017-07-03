@@ -1604,6 +1604,33 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * Checks if the model in its current state is valid.
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        // clear any previous errors
+        $this->getErrors()->clear();
+
+        // run the validator against the model values
+        $values = $this->_unsaved + $this->_values;
+
+        $validated = true;
+        foreach ($values as $k => $v) {
+            $property = static::getProperty($k);
+            $validated = $this->filterAndValidate($property, $k, $v) && $validated;
+        }
+
+        // add back any modified unsaved values
+        foreach (array_keys($this->_unsaved) as $k) {
+            $this->_unsaved[$k] = $values[$k];
+        }
+
+        return $validated;
+    }
+
+    /**
      * Validates and marshals a value to storage.
      *
      * @param array  $property

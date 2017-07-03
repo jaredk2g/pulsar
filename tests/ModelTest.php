@@ -1683,4 +1683,34 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $model->refreshWith(['id' => 1, 'test' => true]);
         $this->assertTrue($model->persisted());
     }
+
+    /////////////////////////////
+    // Validations
+    /////////////////////////////
+
+    public function testValid()
+    {
+        $model = new TestModel();
+        $model->relation = '';
+        $model->answer = 42;
+        $model->mutator = 'blah';
+
+        $this->assertTrue($model->valid());
+    }
+
+    public function testValidFail()
+    {
+        $model = new TestModel2();
+        $model->id = 10;
+        $model->id2 = 1;
+        $model->validate = 'notanemail';
+        $model->required = true;
+
+        $this->assertFalse($model->valid());
+        $this->assertEquals(['Validate must be a valid email address'], $model->getErrors()->all());
+
+        // repeat validations should clear error stack
+        $this->assertFalse($model->valid());
+        $this->assertEquals(['Validate must be a valid email address'], $model->getErrors()->all());
+    }
 }

@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- Added `valid()` method to models.
+
 ### Fixed
 - Add join conditions to aggregate queries.
 - Clear previous validation errors before each save.
