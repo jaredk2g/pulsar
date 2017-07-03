@@ -760,6 +760,9 @@ abstract class Model implements \ArrayAccess
         // mass assign values passed into create()
         $this->setValues($data);
 
+        // clear any previous errors
+        $this->getErrors()->clear();
+
         // dispatch the model.creating event
         if (!$this->handleDispatch(ModelEvent::CREATING)) {
             return false;
@@ -777,9 +780,6 @@ abstract class Model implements \ArrayAccess
                 $this->_unsaved[$name] = $property['default'];
             }
         }
-
-        // clear any previous errors
-        $this->getErrors()->clear();
 
         // validate the values being saved
         $validated = true;
@@ -1018,6 +1018,9 @@ abstract class Model implements \ArrayAccess
         // mass assign values passed into set()
         $this->setValues($data);
 
+        // clear any previous errors
+        $this->getErrors()->clear();
+
         // not updating anything?
         if (count($this->_unsaved) == 0) {
             return true;
@@ -1032,9 +1035,6 @@ abstract class Model implements \ArrayAccess
         if (method_exists($this, 'preSetHook') && !$this->preSetHook($this->_unsaved)) {
             return false;
         }
-
-        // clear any previous errors
-        $this->getErrors()->clear();
 
         // validate the values being saved
         $validated = true;
