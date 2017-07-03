@@ -209,15 +209,7 @@ class DatabaseDriver implements DriverInterface
             ->orderBy($this->prefixSort($query->getSort(), $tablename));
 
         // join conditions
-        foreach ($query->getJoins() as $join) {
-            list($foreignModelClass, $column, $foreignKey) = $join;
-
-            $foreignModel = new $foreignModelClass();
-            $foreignTablename = $foreignModel->getTablename();
-            $condition = $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
-
-            $dbQuery->join($foreignTablename, $condition);
-        }
+        $this->addJoins($query, $tablename, $dbQuery);
 
         try {
             return $dbQuery->all();
@@ -235,12 +227,14 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
+        $dbQuery = $db->select()
+            ->count()
+            ->from($tablename)
+            ->where($query->getWhere());
+        $this->addJoins($query, $tablename, $dbQuery);
+
         try {
-            return (int) $db->select()
-                            ->count()
-                            ->from($tablename)
-                            ->where($query->getWhere())
-                            ->scalar();
+            return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the number of '.$model::modelName().' objects: '.$original->getMessage());
             $e->setException($original);
@@ -255,12 +249,14 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
+        $dbQuery = $db->select()
+            ->sum($field)
+            ->from($tablename)
+            ->where($query->getWhere());
+        $this->addJoins($query, $tablename, $dbQuery);
+
         try {
-            return (int) $db->select()
-                            ->sum($field)
-                            ->from($tablename)
-                            ->where($query->getWhere())
-                            ->scalar();
+            return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the sum of '.$model::modelName().' '.$field.': '.$original->getMessage());
             $e->setException($original);
@@ -275,12 +271,14 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
+        $dbQuery = $db->select()
+            ->average($field)
+            ->from($tablename)
+            ->where($query->getWhere());
+        $this->addJoins($query, $tablename, $dbQuery);
+
         try {
-            return (int) $db->select()
-                            ->average($field)
-                            ->from($tablename)
-                            ->where($query->getWhere())
-                            ->scalar();
+            return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the average of '.$model::modelName().' '.$field.': '.$original->getMessage());
             $e->setException($original);
@@ -295,12 +293,14 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
+        $dbQuery = $db->select()
+            ->max($field)
+            ->from($tablename)
+            ->where($query->getWhere());
+        $this->addJoins($query, $tablename, $dbQuery);
+
         try {
-            return (int) $db->select()
-                            ->max($field)
-                            ->from($tablename)
-                            ->where($query->getWhere())
-                            ->scalar();
+            return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the max of '.$model::modelName().' '.$field.': '.$original->getMessage());
             $e->setException($original);
@@ -315,12 +315,14 @@ class DatabaseDriver implements DriverInterface
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
+        $dbQuery = $db->select()
+            ->min($field)
+            ->from($tablename)
+            ->where($query->getWhere());
+        $this->addJoins($query, $tablename, $dbQuery);
+
         try {
-            return (int) $db->select()
-                            ->min($field)
-                            ->from($tablename)
-                            ->where($query->getWhere())
-                            ->scalar();
+            return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while getting the min of '.$model::modelName().' '.$field.': '.$original->getMessage());
             $e->setException($original);
@@ -440,5 +442,25 @@ class DatabaseDriver implements DriverInterface
         }
 
         return $column;
+    }
+
+    /**
+     * Adds join conditions to a select query.
+     *
+     * @param Query        $query
+     * @param string       $tablename
+     * @param QueryBuilder $dbQuery
+     */
+    private function addJoins(Query $query, $tablename, $dbQuery)
+    {
+        foreach ($query->getJoins() as $join) {
+            list($foreignModelClass, $column, $foreignKey) = $join;
+
+            $foreignModel = new $foreignModelClass();
+            $foreignTablename = $foreignModel->getTablename();
+            $condition = $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
+
+            $dbQuery->join($foreignTablename, $condition);
+        }
     }
 }

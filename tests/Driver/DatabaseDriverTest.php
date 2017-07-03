@@ -315,7 +315,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('select')
+        $db->shouldReceive('select->count->from->where->scalar')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -360,7 +360,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('select')
+        $db->shouldReceive('select->sum->from->where->scalar')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -405,7 +405,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('select')
+        $db->shouldReceive('select->average->from->where->scalar')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -450,7 +450,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('select')
+        $db->shouldReceive('select->max->from->where->scalar')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -495,7 +495,7 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
-        $db->shouldReceive('select')
+        $db->shouldReceive('select->min->from->where->scalar')
             ->andThrow(new PDOException('error'));
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -516,11 +516,13 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
               ->start(10);
 
         // select query mock
+        $db = Mockery::mock(QueryBuilder::class);
         $all = Mockery::mock();
         $all->shouldReceive('all')
             ->andReturn([['test' => true]]);
         $all->shouldReceive('join')
              ->withArgs(['Groups', 'People.group=Groups.id'])
+             ->andReturn($db)
              ->once();
         $orderBy = Mockery::mock();
         $orderBy->shouldReceive('orderBy')
@@ -538,7 +540,6 @@ class DatabaseDriverTest extends PHPUnit_Framework_TestCase
         $from->shouldReceive('from')
              ->withArgs(['People'])
              ->andReturn($where);
-        $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
            ->withArgs(['People.*'])
            ->andReturn($from);
