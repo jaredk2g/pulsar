@@ -4,7 +4,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Fixed
-- Add join conditions to aggregate queries
+- Add join conditions to aggregate queries.
+- Clear previous validation errors before each save.
 
 ## 0.5.0 - 2017-07-02
 ### Added

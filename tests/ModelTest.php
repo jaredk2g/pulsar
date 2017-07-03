@@ -958,6 +958,11 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
+
+        // repeating the save should clear the error stack
+        $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
     }
 
     public function testCreateMissingRequired()
@@ -1220,6 +1225,11 @@ class ModelTest extends PHPUnit_Framework_TestCase
 
         $model = new TestModel2(15);
 
+        $this->assertFalse($model->set(['validate2' => 'invalid']));
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Validate2 is invalid'], $errorStack->all());
+
+        // repeating the save should reset the error stack
         $this->assertFalse($model->set(['validate2' => 'invalid']));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Validate2 is invalid'], $errorStack->all());

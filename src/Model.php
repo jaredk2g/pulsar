@@ -778,6 +778,9 @@ abstract class Model implements \ArrayAccess
             }
         }
 
+        // clear any previous errors
+        $this->getErrors()->clear();
+
         // validate the values being saved
         $validated = true;
         $insertArray = [];
@@ -1029,6 +1032,9 @@ abstract class Model implements \ArrayAccess
         if (method_exists($this, 'preSetHook') && !$this->preSetHook($this->_unsaved)) {
             return false;
         }
+
+        // clear any previous errors
+        $this->getErrors()->clear();
 
         // validate the values being saved
         $validated = true;
