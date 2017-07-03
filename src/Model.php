@@ -1623,7 +1623,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // validate
-        list($valid, $value) = $this->validate($property, $propertyName, $value);
+        list($valid, $value) = $this->validateValue($property, $propertyName, $value);
 
         // unique?
         if ($valid && $property['unique'] && ($this->_id === false || $value != $this->ignoreUnsaved()->$propertyName)) {
@@ -1642,7 +1642,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array
      */
-    private function validate(array $property, $propertyName, $value)
+    private function validateValue(array $property, $propertyName, $value)
     {
         $valid = true;
 
