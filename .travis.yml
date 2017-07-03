@@ -16,7 +16,7 @@ script:
   - vendor/bin/phpunit
 
 after_script:
-    - vendor/bin/coveralls
+    - if [ "$TRAVIS_BRANCH" == "prod" ] && [ $TRAVIS_PHP_VERSION == "7.0" ]; then vendor/bin/coveralls; fi
 
 notifications:
   email: false
