@@ -1089,6 +1089,9 @@ abstract class Model implements \ArrayAccess
             throw new BadMethodCallException('Can only call delete() on an existing model');
         }
 
+        // clear any previous errors
+        $this->getErrors()->clear();
+
         // dispatch the model.deleting event
         if (!$this->handleDispatch(ModelEvent::DELETING)) {
             return false;
