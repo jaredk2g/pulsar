@@ -1365,6 +1365,14 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($model->isDeleted());
     }
 
+    public function testRestoreNotDeleted()
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $model = new Person(1);
+        $model->restore();
+    }
+
     /////////////////////////////
     // Queries
     /////////////////////////////

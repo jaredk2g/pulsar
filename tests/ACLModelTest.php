@@ -22,12 +22,9 @@ class ACLModelTest extends PHPUnit_Framework_TestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);
-
-        self::$requester = new Person(1);
-        ACLModel::setRequester(self::$requester);
     }
 
-    public function testRequester()
+    public function testSetRequester()
     {
         $requester = new Person(2);
         ACLModel::setRequester($requester);
