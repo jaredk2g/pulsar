@@ -275,6 +275,15 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('test', $t);
     }
 
+    public function testMultipleRulesShortCircuit()
+    {
+        $validator = new Validator('matching|password:10');
+
+        $t = ['test', 'no match'];
+        $this->assertFalse($validator->validate($t));
+        $this->assertEquals('matching', $validator->getFailingRule());
+    }
+
     public function testKeyValueRules()
     {
         $test = [

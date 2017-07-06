@@ -101,17 +101,16 @@ class Validator
     }
 
     /**
-     * Validates a value according to as rule.
+     * Validates a value according to a rule or set of rules.
+     * This will short-circuit on the first failing rule.
      *
      * @param mixed  $value
-     * @param string $rule
+     * @param string $rule  rule string
      *
      * @return bool
      */
     private function validateRule(&$value, $rule)
     {
-        $validated = true;
-
         $filters = explode('|', $rule);
 
         foreach ($filters as $filterStr) {
@@ -120,12 +119,13 @@ class Validator
             $result = $this->$filter($value, array_slice($exp, 1));
 
             if (!$result) {
-                $validated = false;
                 $this->failingRule = $filter;
+
+                return false;
             }
         }
 
-        return $validated;
+        return true;
     }
 
     ////////////////////////////////

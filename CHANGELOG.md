@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Validating values with multiple validation rules short-circuits on the first failed rule.
+
 ## 0.5.1 - 2017-07-03
 ### Added
 - Added `valid()` method to model.
