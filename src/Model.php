@@ -899,23 +899,42 @@ abstract class Model implements \ArrayAccess
         // build a key-value map of the requested properties
         $return = [];
         foreach ($properties as $k) {
-            if (array_key_exists($k, $values)) {
-                $return[$k] = $values[$k];
-            // set any missing values to the default value
-            } elseif (static::hasProperty($k)) {
-                $return[$k] = $this->_values[$k] = $this->getPropertyDefault(static::$properties[$k]);
-            // use null for values of non-properties
-            } else {
-                $return[$k] = null;
-            }
-
-            // call any accessors
-            if ($accessor = self::getAccessor($k)) {
-                $return[$k] = $this->$accessor($return[$k]);
-            }
+            $return[$k] = $this->getValue($k, $values);
         }
 
         return $return;
+    }
+
+    /**
+     * Gets a property value from the model.
+     *
+     * Values are looked up in this order:
+     *  1. unsaved values
+     *  2. local values
+     *  3. default value
+     *  4. null
+     *
+     * @param string $property
+     * @param array  $values
+     *
+     * @return mixed
+     */
+    protected function getValue($property, array $values)
+    {
+        $value = null;
+
+        if (array_key_exists($property, $values)) {
+            $value = $values[$property];
+        } elseif (static::hasProperty($property)) {
+            $value = $this->_values[$property] = $this->getPropertyDefault(static::$properties[$property]);
+        }
+
+        // call any accessors
+        if ($accessor = self::getAccessor($property)) {
+            $value = $this->$accessor($value);
+        }
+
+        return $value;
     }
 
     /**
