@@ -106,6 +106,11 @@ abstract class Model implements \ArrayAccess
     protected $_persisted = false;
 
     /**
+     * @var bool
+     */
+    protected $_loaded = false;
+
+    /**
      * @var array
      */
     protected $_relationships = [];
@@ -876,10 +881,13 @@ abstract class Model implements \ArrayAccess
             $values = array_replace($values, $this->_unsaved);
         }
 
-        // attempt to load any missing values from the storage layer
         $numMissing = count(array_diff($properties, array_keys($values)));
         if ($numMissing > 0) {
-            $this->refresh();
+            // load the model from the storage layer, if needed
+            if (!$this->_loaded) {
+                $this->refresh();
+            }
+
             $values = array_replace($values, $this->_values);
 
             if (!$ignoreUnsaved) {
@@ -1313,6 +1321,7 @@ abstract class Model implements \ArrayAccess
             }
         }
 
+        $this->_loaded = true;
         $this->_persisted = true;
         $this->_values = $values;
 
