@@ -461,7 +461,10 @@ abstract class Model implements \ArrayAccess
      */
     public function __toString()
     {
-        return get_called_class().'('.$this->_id.')';
+        $values = array_merge($this->_values, $this->_unsaved, $this->_ids);
+        ksort($values);
+
+        return get_called_class().'('.json_encode($values, JSON_PRETTY_PRINT).')';
     }
 
     /**

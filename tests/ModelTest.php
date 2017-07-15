@@ -479,7 +479,12 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testToString()
     {
         $model = new TestModel(1);
-        $this->assertEquals('TestModel(1)', (string) $model);
+        $model->answer = 42;
+        $expected = 'TestModel({
+    "answer": 42,
+    "id": 1
+})';
+        $this->assertEquals($expected, (string) $model);
     }
 
     public function testSetAndGetUnsaved()
