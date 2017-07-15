@@ -1336,6 +1336,7 @@ abstract class Model implements \ArrayAccess
      */
     public function clearCache()
     {
+        $this->_loaded = false;
         $this->_unsaved = [];
         $this->_values = [];
         $this->_relationships = [];
