@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## 0.5.2 - 2017-08-04
 ### Fixed
 - Validating values with multiple validation rules short-circuits on the first failed rule.
+- ACLModel was incorrectly caching permissions.
 
 ## 0.5.1 - 2017-07-03
 ### Added

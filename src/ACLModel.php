@@ -71,7 +71,7 @@ abstract class ACLModel extends Model
         }
 
         // cache when checking permissions
-        $k = $permission.'.'.$requester;
+        $k = $permission.'.'.get_class($requester).'.'.$requester->id();
         if (!isset($this->permissionsCache[$k])) {
             $this->permissionsCache[$k] = $this->hasPermission($permission, $requester);
         }
