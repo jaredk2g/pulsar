@@ -772,7 +772,7 @@ abstract class Model implements \ArrayAccess
         $this->getErrors()->clear();
 
         // dispatch the model.creating event
-        if (!$this->handleDispatch(ModelEvent::CREATING)) {
+        if (!$this->performDispatch(ModelEvent::CREATING)) {
             return false;
         }
 
@@ -841,7 +841,7 @@ abstract class Model implements \ArrayAccess
             $this->_persisted = true;
 
             // dispatch the model.created event
-            if (!$this->handleDispatch(ModelEvent::CREATED)) {
+            if (!$this->performDispatch(ModelEvent::CREATED)) {
                 return false;
             }
         }
@@ -1055,7 +1055,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // dispatch the model.updating event
-        if (!$this->handleDispatch(ModelEvent::UPDATING)) {
+        if (!$this->performDispatch(ModelEvent::UPDATING)) {
             return false;
         }
 
@@ -1098,7 +1098,7 @@ abstract class Model implements \ArrayAccess
             $this->_persisted = true;
 
             // dispatch the model.updated event
-            if (!$this->handleDispatch(ModelEvent::UPDATED)) {
+            if (!$this->performDispatch(ModelEvent::UPDATED)) {
                 return false;
             }
         }
@@ -1121,7 +1121,7 @@ abstract class Model implements \ArrayAccess
         $this->getErrors()->clear();
 
         // dispatch the model.deleting event
-        if (!$this->handleDispatch(ModelEvent::DELETING)) {
+        if (!$this->performDispatch(ModelEvent::DELETING)) {
             return false;
         }
 
@@ -1139,7 +1139,7 @@ abstract class Model implements \ArrayAccess
 
         if ($deleted) {
             // dispatch the model.deleted event
-            if (!$this->handleDispatch(ModelEvent::DELETED)) {
+            if (!$this->performDispatch(ModelEvent::DELETED)) {
                 return false;
             }
 
@@ -1163,7 +1163,7 @@ abstract class Model implements \ArrayAccess
         }
 
         // dispatch the model.updating event
-        if (!$this->handleDispatch(ModelEvent::UPDATING)) {
+        if (!$this->performDispatch(ModelEvent::UPDATING)) {
             return false;
         }
 
@@ -1172,7 +1172,7 @@ abstract class Model implements \ArrayAccess
 
         if ($restored) {
             // dispatch the model.updated event
-            if (!$this->handleDispatch(ModelEvent::UPDATED)) {
+            if (!$this->performDispatch(ModelEvent::UPDATED)) {
                 return false;
             }
         }
@@ -1589,29 +1589,16 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * Dispatches an event.
-     *
-     * @param string $eventName
-     *
-     * @return ModelEvent
-     */
-    protected function dispatch($eventName)
-    {
-        $event = new ModelEvent($this);
-
-        return static::getDispatcher()->dispatch($eventName, $event);
-    }
-
-    /**
      * Dispatches the given event and checks if it was successful.
      *
      * @param string $eventName
      *
      * @return bool true if the events were successfully propagated
      */
-    private function handleDispatch($eventName)
+    private function performDispatch($eventName)
     {
-        $event = $this->dispatch($eventName);
+        $event = new ModelEvent($this);
+        static::getDispatcher()->dispatch($eventName, $event);
 
         return !$event->isPropagationStopped();
     }
