@@ -816,7 +816,7 @@ abstract class Model implements \ArrayAccess
                 $property = static::$properties[$name];
                 $params = [
                     'field' => $name,
-                    'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($name),
+                    'field_name' => $this->getPropertyTitle($property, $name),
                 ];
                 $this->getErrors()->add('pulsar.validation.required', $params);
 
@@ -1653,13 +1653,13 @@ abstract class Model implements \ArrayAccess
     /**
      * Validates and marshals a value to storage.
      *
-     * @param array  $property
-     * @param string $propertyName
+     * @param array  $property property definition
+     * @param string $name     property name
      * @param mixed  $value
      *
      * @return bool
      */
-    private function filterAndValidate(array $property, $propertyName, &$value)
+    private function filterAndValidate(array $property, $name, &$value)
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
@@ -1670,11 +1670,11 @@ abstract class Model implements \ArrayAccess
         }
 
         // validate
-        list($valid, $value) = $this->validateValue($property, $propertyName, $value);
+        list($valid, $value) = $this->validateValue($property, $name, $value);
 
         // unique?
-        if ($valid && $property['unique'] && ($this->_id === false || $value != $this->ignoreUnsaved()->$propertyName)) {
-            $valid = $this->checkUniqueness($property, $propertyName, $value);
+        if ($valid && $property['unique'] && ($this->_id === false || $value != $this->ignoreUnsaved()->$name)) {
+            $valid = $this->checkUniqueness($property, $name, $value);
         }
 
         return $valid;
@@ -1683,13 +1683,13 @@ abstract class Model implements \ArrayAccess
     /**
      * Validates a value for a property.
      *
-     * @param array  $property
-     * @param string $propertyName
+     * @param array  $property property definition
+     * @param string $name     property name
      * @param mixed  $value
      *
      * @return array
      */
-    private function validateValue(array $property, $propertyName, $value)
+    private function validateValue(array $property, $name, $value)
     {
         $valid = true;
 
@@ -1704,8 +1704,8 @@ abstract class Model implements \ArrayAccess
 
         if (!$valid) {
             $params = [
-                'field' => $propertyName,
-                'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName),
+                'field' => $name,
+                'field_name' => $this->getPropertyTitle($property, $name),
             ];
             $this->getErrors()->add($error, $params);
         }
@@ -1716,19 +1716,19 @@ abstract class Model implements \ArrayAccess
     /**
      * Checks if a value is unique for a property.
      *
-     * @param array  $property
-     * @param string $propertyName
+     * @param array  $property property definition
+     * @param string $name     property name
      * @param mixed  $value
      *
      * @return bool
      */
-    private function checkUniqueness(array $property, $propertyName, $value)
+    private function checkUniqueness(array $property, $name, $value)
     {
-        $n = static::where([$propertyName => $value])->count();
+        $n = static::where([$name => $value])->count();
         if ($n > 0) {
             $params = [
-                'field' => $propertyName,
-                'field_name' => (isset($property['title'])) ? $property['title'] : Inflector::get()->titleize($propertyName),
+                'field' => $name,
+                'field_name' => $this->getPropertyTitle($property, $name),
             ];
             $this->getErrors()->add('pulsar.validation.unique', $params);
 
@@ -1741,12 +1741,39 @@ abstract class Model implements \ArrayAccess
     /**
      * Gets the marshaled default value for a property (if set).
      *
-     * @param string $property
+     * @param array $property
      *
      * @return mixed
      */
     private function getPropertyDefault(array $property)
     {
         return array_value($property, 'default');
+    }
+
+    /**
+     * Gets the humanized name of a property.
+     *
+     * @param array  $property property definition
+     * @param string $name     property name
+     *
+     * @return string
+     */
+    private function getPropertyTitle(array $property, $name)
+    {
+        // look up the property from the locale service first
+        $k = 'pulsar.properties.'.static::modelName().'.'.$name;
+        $locale = $this->getErrors()->getLocale();
+        $title = $locale->t($k);
+        if ($title != $k) {
+            return $title;
+        }
+
+        // DEPRECATED
+        if (isset($property['title'])) {
+            return $property['title'];
+        }
+
+        // otherwise just attempt to title-ize the property name
+        return Inflector::get()->titleize($name);
     }
 }

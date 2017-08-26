@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Infuse\Locale;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
@@ -309,6 +310,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
                 'null' => false,
                 'unique' => false,
                 'required' => false,
+                'validate' => 'email',
+                'title' => 'Email address',
             ],
             'deleted_at' => [
                 'type' => Model::TYPE_DATE,
@@ -1725,5 +1728,33 @@ class ModelTest extends PHPUnit_Framework_TestCase
         // repeat validations should clear error stack
         $this->assertFalse($model->valid());
         $this->assertEquals(['Validate must be a valid email address'], $model->getErrors()->all());
+    }
+
+    public function testValidFailLocaleTitle()
+    {
+        $model = new Person();
+        $model->email = 'notanemail';
+
+        $this->assertFalse($model->valid());
+        $this->assertEquals(['Email address must be a valid email address'], $model->getErrors()->all());
+    }
+
+    public function testValidFailPropertyTitle()
+    {
+        $model = new Person();
+        $model->email = 'notanemail';
+
+        $locale = Mockery::mock(Locale::class);
+        $locale->shouldReceive('t')
+               ->withArgs(['pulsar.properties.Person.email'])
+               ->andReturn('Title');
+        $locale->shouldReceive('t')
+               ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false, '{{field_name}} must be a valid email address'])
+               ->andReturn('Title must be a valid email address');
+        $errors = $model->getErrors();
+        $errors->setLocale($locale);
+
+        $this->assertFalse($model->valid());
+        $this->assertEquals(['Title must be a valid email address'], $model->getErrors()->all());
     }
 }

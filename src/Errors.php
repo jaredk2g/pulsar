@@ -54,7 +54,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     private $stack = [];
 
     /**
-     * @var Locale|null
+     * @var Locale
      */
     private $locale;
 
@@ -126,11 +126,11 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      * Gets all of the errors on the stack and also attempts
      * translation using the Locale class.
      *
-     * @param string $locale optional locale
+     * @param string|bool $locale optional locale
      *
      * @return array error messages
      */
-    public function all($locale = '')
+    public function all($locale = false)
     {
         $messages = [];
         foreach ($this->stack as $error) {
@@ -146,11 +146,11 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      * Gets all of the errors on the stack and also attempts
      * translation using the Locale class
      *
-     * @param string $locale optional locale
+     * @param string|bool $locale optional locale
      *
      * @return array errors
      */
-    public function errors($locale = '')
+    public function errors($locale = false)
     {
         $errors = [];
         foreach ($this->stack as $error) {
@@ -169,11 +169,11 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * Gets the messages of errors on the stack
      *
-     * @param string $locale optional locale
+     * @param string|bool $locale optional locale
      *
      * @return array errors
      */
-    public function messages($locale = '')
+    public function messages($locale = false)
     {
         return $this->all($locale);
     }
