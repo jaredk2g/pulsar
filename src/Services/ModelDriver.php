@@ -49,7 +49,10 @@ class ModelDriver
         Model::setDriver($this->driver);
 
         // pass optional configuration to model validator
-        Validator::configure($config->get('models.validator', []));
+        $validatorParams = [
+            'salt' => $config->get('app.salt'), // DEPRECATED
+        ];
+        Validator::configure($config->get('models.validator', $validatorParams));
     }
 
     public function __invoke()
