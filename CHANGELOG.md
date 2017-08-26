@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 - Deprecated `password` validator.
+- Validator configuration has been moved to `models.validator` namespace.
 
 ## 0.5.2 - 2017-08-04
 ### Fixed
