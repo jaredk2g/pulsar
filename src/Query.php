@@ -11,6 +11,9 @@
 
 namespace Pulsar;
 
+/**
+ * Represents a query against a model type.
+ */
 class Query
 {
     const DEFAULT_LIMIT = 100;

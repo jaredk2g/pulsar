@@ -15,6 +15,9 @@ use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
 
+/**
+ * Base relationship class.
+ */
 abstract class Relation
 {
     /**

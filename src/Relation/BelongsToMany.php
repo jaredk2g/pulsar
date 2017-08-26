@@ -16,6 +16,9 @@ use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
 
+/**
+ * Represents a belongs-to-many relationship.
+ */
 class BelongsToMany extends Relation
 {
     /**

@@ -14,6 +14,9 @@ namespace Pulsar\Relation;
 use ICanBoogie\Inflector;
 use Pulsar\Model;
 
+/**
+ * Represents a has-many relationship.
+ */
 class HasMany extends Relation
 {
     /**

@@ -11,6 +11,9 @@
 
 namespace Pulsar\Exception;
 
+/**
+ * Raised when there are exceptions during mass assignment.
+ */
 class MassAssignmentException extends ModelException
 {
 }
