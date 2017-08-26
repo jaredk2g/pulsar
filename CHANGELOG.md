@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Added
+- Added `password_php` validator that uses PHP's password hashing.
+
+### Changed
+- Deprecated `password` validator.
+
 ## 0.5.2 - 2017-08-04
 ### Fixed
 - Validating values with multiple validation rules short-circuits on the first failed rule.

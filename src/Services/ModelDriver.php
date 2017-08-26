@@ -48,8 +48,8 @@ class ModelDriver
 
         Model::setDriver($this->driver);
 
-        // used for password hashing
-        Validator::configure(['salt' => $config->get('app.salt')]);
+        // pass optional configuration to model validator
+        Validator::configure($config->get('models.validator', []));
     }
 
     public function __invoke()

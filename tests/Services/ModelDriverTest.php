@@ -23,6 +23,9 @@ class ModelDriverTest extends PHPUnit_Framework_TestCase
         $config = [
             'models' => [
                 'driver' => DatabaseDriver::class,
+                'validator' => [
+                    'password_cost' => 12,
+                ],
             ],
         ];
         $app = new Application($config);

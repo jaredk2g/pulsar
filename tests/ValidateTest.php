@@ -171,6 +171,20 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($validator->validate($invalid));
     }
 
+    public function testPasswordPhp()
+    {
+        $salt = 'saltvalue';
+        Validator::configure(['password_cost' => 12]);
+
+        $validator = new Validator('password_php:8');
+        $password = 'testpassword';
+        $this->assertTrue($validator->validate($password));
+        $this->assertTrue(password_verify('testpassword', $password));
+
+        $invalid = '...';
+        $this->assertFalse($validator->validate($invalid));
+    }
+
     public function testRange()
     {
         $s = -1;

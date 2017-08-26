@@ -287,6 +287,8 @@ class Validator
     }
 
     /**
+     * @deprecated
+     *
      * Validates a password and hashes the value.
      * OPTIONAL password:10 sets the minimum length.
      *
@@ -304,6 +306,34 @@ class Validator
         }
 
         $value = Utility::encryptPassword($value, self::$config['salt']);
+
+        return true;
+    }
+
+    /**
+     * Validates a password and hashes the value using
+     * password_hash().
+     * OPTIONAL password:10 sets the minimum length.
+     *
+     * @param mixed $value
+     * @param array $parameters
+     *
+     * @return bool
+     */
+    private function password_php(&$value, array $parameters)
+    {
+        $minimumPasswordLength = (isset($parameters[0])) ? $parameters[0] : 8;
+
+        if (strlen($value) < $minimumPasswordLength) {
+            return false;
+        }
+
+        $parameters = [];
+        if (isset(self::$config['password_cost'])) {
+            $parameters['cost'] = self::$config['password_cost'];
+        }
+
+        $value = password_hash($value, PASSWORD_DEFAULT, $parameters);
 
         return true;
     }
