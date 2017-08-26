@@ -32,6 +32,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
         // discard the cached dispatcher to
         // remove any event listeners
         TestModel::getDispatcher(true);
+        Person::getDispatcher(true);
     }
 
     public function testInjectContainer()
@@ -1257,6 +1258,12 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $model::$preSetHookValues);
     }
 
+    public function testSetDeprecatedFail()
+    {
+        $model = new TestModel(11);
+        $this->assertFalse($model->set(['fail' => true]));
+    }
+
     /////////////////////////////
     // DELETE
     /////////////////////////////
@@ -1373,12 +1380,51 @@ class ModelTest extends PHPUnit_Framework_TestCase
         $this->assertFalse($model->isDeleted());
     }
 
+    public function testRestoreUnsupportedModel()
+    {
+        $this->expectException(BadMethodCallException::class);
+
+        $model = new TestModel(1);
+
+        $model->restore();
+    }
+
     public function testRestoreNotDeleted()
     {
         $this->expectException(BadMethodCallException::class);
 
         $model = new Person(1);
+        $model->refreshWith(['test' => true, 'deleted_at' => null]);
+
         $model->restore();
+    }
+
+    public function testRestoreUpdatingEventFail()
+    {
+        $model = new Person(1);
+        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+
+        Person::updating(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+        $this->assertFalse($model->restore());
+    }
+
+    public function testRestoreUpdatedEventFail()
+    {
+        $model = new Person(1);
+        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('updateModel')
+            ->andReturn(true);
+        Person::setDriver($driver);
+
+        Person::updated(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $this->assertFalse($model->restore());
     }
 
     /////////////////////////////

@@ -32,7 +32,7 @@ class TestModel extends Model
 
     protected static $hidden = ['mutator', 'accessor'];
     protected static $appended = ['appended'];
-    protected static $permitted = ['id', 'relation', 'answer', 'mutator', 'accessor'];
+    protected static $permitted = ['id', 'relation', 'answer', 'mutator', 'accessor', 'fail'];
 
     public static $query;
 
@@ -82,6 +82,10 @@ class TestModel extends Model
     protected function preSetHook(array &$data)
     {
         self::$preSetHookValues = $data;
+
+        if (isset($data['fail'])) {
+            return false;
+        }
 
         return true;
     }
