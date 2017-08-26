@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.5.3 - 2017-08-26
 ### Added
 - Added `password_php` validator that uses PHP's password hashing.
 - Property titles are now looked up from `pulsar.properties.*` locale phrases.
