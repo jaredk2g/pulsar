@@ -305,7 +305,7 @@ class Validator
             return false;
         }
 
-        $value = Utility::encryptPassword($value, self::$config['salt']);
+        $value = hash_hmac('sha512', $value, self::$config['salt']);
 
         return true;
     }
