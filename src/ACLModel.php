@@ -86,7 +86,7 @@ abstract class ACLModel extends Model
      * DANGER: this should only be used when objects are mutated from application code
      * Granting all permissions to anyone else, i.e. HTTP requests is dangerous.
      *
-     * @return self
+     * @return $this
      */
     public function grantAllPermissions()
     {
@@ -98,7 +98,7 @@ abstract class ACLModel extends Model
     /**
      * Ensures that permissions are enforced for this object.
      *
-     * @return self
+     * @return $this
      */
     public function enforcePermissions()
     {

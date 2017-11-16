@@ -852,7 +852,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Ignores unsaved values when fetching the next value.
      *
-     * @return self
+     * @return $this
      */
     public function ignoreUnsaved()
     {
@@ -968,7 +968,7 @@ abstract class Model implements \ArrayAccess
      *
      * @throws MassAssignmentException when assigning a value that is protected or not whitelisted
      *
-     * @return self
+     * @return $this
      */
     public function setValues($values)
     {
@@ -1239,7 +1239,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param mixed $id
      *
-     * @return Model|null
+     * @return static|null
      */
     public static function find($id)
     {
@@ -1264,7 +1264,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param mixed $id
      *
-     * @return Model
+     * @return static
      *
      * @throws ModelNotFoundException when a model could not be found
      */
@@ -1305,7 +1305,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Loads the model from the storage layer.
      *
-     * @return self
+     * @return $this
      */
     public function refresh()
     {
@@ -1330,7 +1330,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param array $values values
      *
-     * @return self
+     * @return $this
      */
     public function refreshWith(array $values)
     {
@@ -1351,7 +1351,7 @@ abstract class Model implements \ArrayAccess
     /**
      * Clears the cache for this model.
      *
-     * @return self
+     * @return $this
      */
     public function clearCache()
     {
@@ -1400,7 +1400,7 @@ abstract class Model implements \ArrayAccess
      * @param string $k
      * @param Model  $model
      *
-     * @return self
+     * @return $this
      */
     public function setRelation($k, Model $model)
     {

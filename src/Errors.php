@@ -63,7 +63,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @param Locale $locale
      *
-     * @return self
+     * @return $this
      */
     public function setLocale(Locale $locale)
     {
@@ -113,7 +113,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *                            - error: error code
      *                            - params: array of parameters to be passed to message
      *
-     * @return self
+     * @return $this
      */
     public function push($error)
     {
@@ -213,7 +213,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Clears the error stack.
      *
-     * @return self
+     * @return $this
      */
     public function clear()
     {

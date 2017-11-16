@@ -40,7 +40,7 @@ class DatabaseDriver implements DriverInterface
      *
      * @param ConnectionManager $manager
      *
-     * @return self
+     * @return $this
      */
     public function setConnectionManager(ConnectionManager $manager)
     {
@@ -64,7 +64,7 @@ class DatabaseDriver implements DriverInterface
      *
      * @param QueryBuilder $db
      *
-     * @return self
+     * @return $this
      */
     public function setConnection(QueryBuilder $db)
     {

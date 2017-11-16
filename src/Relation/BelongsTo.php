@@ -86,7 +86,7 @@ class BelongsTo extends Relation
      *
      * @param Model $model owning model
      *
-     * @return self
+     * @return $this
      */
     public function attach(Model $model)
     {
@@ -99,7 +99,7 @@ class BelongsTo extends Relation
     /**
      * Detaches this model from the owning model.
      *
-     * @return self
+     * @return $this
      */
     public function detach()
     {

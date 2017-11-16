@@ -87,7 +87,7 @@ class HasOne extends Relation
      *
      * @throws \Pulsar\Exception\ModelException when the operation fails
      *
-     * @return self
+     * @return $this
      */
     public function attach(Model $model)
     {
@@ -102,7 +102,7 @@ class HasOne extends Relation
      *
      * @throws \Pulsar\Exception\ModelException when the operation fails
      *
-     * @return self
+     * @return $this
      */
     public function detach()
     {

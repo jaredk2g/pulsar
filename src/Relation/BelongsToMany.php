@@ -126,7 +126,7 @@ class BelongsToMany extends Relation
      *
      * @throws ModelException when the operation fails
      *
-     * @return self
+     * @return $this
      */
     public function attach(Model $model)
     {
@@ -161,7 +161,7 @@ class BelongsToMany extends Relation
      *
      * @throws ModelException when the operation fails
      *
-     * @return self
+     * @return $this
      */
     public function detach(Model $model)
     {
@@ -179,7 +179,7 @@ class BelongsToMany extends Relation
      *
      * @throws ModelException when the operation fails
      *
-     * @return self
+     * @return $this
      */
     public function sync(array $ids)
     {

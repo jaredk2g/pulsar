@@ -142,7 +142,7 @@ trait Cacheable
     /**
      * Caches the entire model.
      *
-     * @return self
+     * @return $this
      */
     public function cache()
     {

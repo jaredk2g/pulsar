@@ -83,7 +83,7 @@ class Query
      *
      * @param int $limit
      *
-     * @return self
+     * @return $this
      */
     public function limit($limit)
     {
@@ -107,7 +107,7 @@ class Query
      *
      * @param int $start
      *
-     * @return self
+     * @return $this
      */
     public function start($start)
     {
@@ -131,7 +131,7 @@ class Query
      *
      * @param array|string $sort
      *
-     * @return self
+     * @return $this
      */
     public function sort($sort)
     {
@@ -181,7 +181,7 @@ class Query
      * @param mixed        $value     optional value
      * @param string|null  $condition optional condition
      *
-     * @return self
+     * @return $this
      */
     public function where($where, $value = null, $condition = null)
     {
@@ -223,7 +223,7 @@ class Query
      * @param string $column     name of local property
      * @param string $foreignKey
      *
-     * @return self
+     * @return $this
      */
     public function join($model, $column, $foreignKey)
     {
@@ -247,7 +247,7 @@ class Query
      *
      * @param string $k local property containing the relationship
      *
-     * @return self
+     * @return $this
      */
     public function with($k)
     {
