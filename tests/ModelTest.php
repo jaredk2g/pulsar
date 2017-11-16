@@ -713,6 +713,8 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testSaveOrFailCreate()
     {
         $this->expectException(ModelException::class);
+        $this->expectExceptionMessage('Failed to save TestModel');
+
         $newModel = new TestModel();
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -720,6 +722,15 @@ class ModelTest extends PHPUnit_Framework_TestCase
                ->andReturn(false);
         TestModel::setDriver($driver);
 
+        $newModel->saveOrFail();
+    }
+
+    public function testSaveOrFailCreateValidationError()
+    {
+        $this->expectException(ModelException::class);
+        $this->expectExceptionMessage('Failed to save TestModel2: ');
+
+        $newModel = new TestModel2();
         $newModel->saveOrFail();
     }
 
@@ -1039,6 +1050,7 @@ class ModelTest extends PHPUnit_Framework_TestCase
     public function testSaveOrFailUpdate()
     {
         $this->expectException(ModelException::class);
+        $this->expectExceptionMessage('Failed to save TestModel');
         $model = new TestModel(10);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1047,6 +1059,16 @@ class ModelTest extends PHPUnit_Framework_TestCase
         TestModel::setDriver($driver);
 
         $model->answer = 42;
+        $model->saveOrFail();
+    }
+
+    public function testSaveOrFailUpdateValidationError()
+    {
+        $this->expectException(ModelException::class);
+        $this->expectExceptionMessage('Failed to save TestModel2: ');
+        $model = new TestModel2(10);
+
+        $model->validate = 'not an email';
         $model->saveOrFail();
     }
 

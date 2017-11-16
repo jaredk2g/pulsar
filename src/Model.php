@@ -746,7 +746,12 @@ abstract class Model implements \ArrayAccess
     public function saveOrFail()
     {
         if (!$this->save()) {
-            throw new ModelException('Failed to save '.static::modelName());
+            $msg = 'Failed to save '.static::modelName();
+            if ($validationErrors = $this->getErrors()->all()) {
+                $msg .= ': '.implode(', ', $validationErrors);
+            }
+
+            throw new ModelException($msg);
         }
     }
 
@@ -1256,7 +1261,7 @@ abstract class Model implements \ArrayAccess
             return null;
         }
 
-        return static::where($ids)->first();
+        return static::query()->where($ids)->first();
     }
 
     /**
@@ -1287,7 +1292,7 @@ abstract class Model implements \ArrayAccess
      */
     public function exists()
     {
-        return static::where($this->ids())->count() == 1;
+        return static::query()->where($this->ids())->count() == 1;
     }
 
     /**
@@ -1724,7 +1729,7 @@ abstract class Model implements \ArrayAccess
      */
     private function checkUniqueness(array $property, $name, $value)
     {
-        $n = static::where([$name => $value])->count();
+        $n = static::query()->where([$name => $value])->count();
         if ($n > 0) {
             $params = [
                 'field' => $name,

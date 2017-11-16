@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Changed
+- Add more detail to saveOrFail() exception messages.
+
 ## 0.5.3 - 2017-08-26
 ### Added
 - Added `password_php` validator that uses PHP's password hashing.
