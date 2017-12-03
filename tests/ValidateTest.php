@@ -8,10 +8,10 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
-use Infuse\Utility;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Validator;
 
-class ValidateTest extends PHPUnit_Framework_TestCase
+class ValidateTest extends MockeryTestCase
 {
     public function testGetRules()
     {
@@ -155,20 +155,6 @@ class ValidateTest extends PHPUnit_Framework_TestCase
         $validator = new Validator('numeric:int');
         $s = 12345.22;
         $this->assertFalse($validator->validate($s));
-    }
-
-    public function testPassword()
-    {
-        $salt = 'saltvalue';
-        Validator::configure(['salt' => $salt]);
-
-        $validator = new Validator('password:8');
-        $password = 'testpassword';
-        $this->assertTrue($validator->validate($password));
-        $this->assertEquals(Utility::encryptPassword('testpassword', $salt), $password);
-
-        $invalid = '...';
-        $this->assertFalse($validator->validate($invalid));
     }
 
     public function testPasswordPhp()

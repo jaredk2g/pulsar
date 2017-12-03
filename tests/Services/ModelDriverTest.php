@@ -11,12 +11,13 @@
 use Infuse\Application;
 use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Errors;
 use Pulsar\Model;
 use Pulsar\Services\ModelDriver;
 
-class ModelDriverTest extends PHPUnit_Framework_TestCase
+class ModelDriverTest extends MockeryTestCase
 {
     public function testInvokeConnectionManager()
     {

@@ -8,9 +8,10 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Property;
 
-class PropertyTest extends PHPUnit_Framework_TestCase
+class PropertyTest extends MockeryTestCase
 {
     public function testToString()
     {

@@ -8,11 +8,12 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\BelongsTo;
 
-class BelongsToTest extends PHPUnit_Framework_TestCase
+class BelongsToTest extends MockeryTestCase
 {
     public static $driver;
 

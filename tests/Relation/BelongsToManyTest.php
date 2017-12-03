@@ -8,12 +8,13 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\Pivot;
 
-class BelongsToManyTest extends PHPUnit_Framework_TestCase
+class BelongsToManyTest extends MockeryTestCase
 {
     public static $driver;
 

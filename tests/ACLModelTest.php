@@ -8,12 +8,13 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\ACLModel;
 use Pulsar\Driver\DriverInterface;
 
 require_once 'tests/test_models.php';
 
-class ACLModelTest extends PHPUnit_Framework_TestCase
+class ACLModelTest extends MockeryTestCase
 {
     public static $app;
     public static $requester;

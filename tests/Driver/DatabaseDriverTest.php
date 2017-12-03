@@ -10,11 +10,12 @@
  */
 use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
 
-class DatabaseDriverTest extends PHPUnit_Framework_TestCase
+class DatabaseDriverTest extends MockeryTestCase
 {
     public function testGetConnectionFromManager()
     {

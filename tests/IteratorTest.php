@@ -8,10 +8,11 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Iterator;
 use Pulsar\Query;
 
-class IteratorTest extends PHPUnit_Framework_TestCase
+class IteratorTest extends MockeryTestCase
 {
     public static $driver;
     public static $query;

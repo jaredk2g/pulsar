@@ -7,13 +7,12 @@ Pulsar ORM
 [![Coverage Status](https://coveralls.io/repos/jaredtking/pulsar/badge.svg?style=flat)](https://coveralls.io/r/jaredtking/pulsar)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/jaredtking/pulsar/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/jaredtking/pulsar/?branch=master)
 [![Total Downloads](https://poser.pugx.org/pulsar/pulsar/downloads.svg?style=flat)](https://packagist.org/packages/pulsar/pulsar)
-[![HHVM Status](http://hhvm.h4cc.de/badge/pulsar/pulsar.svg?style=flat)](http://hhvm.h4cc.de/package/pulsar/pulsar)
 
 Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/Active_record_pattern) pattern in PHP.
 
 ## Requirements
 
-- PHP 5.6+, PHP 7+, or HHVM 3.3+
+- PHP 7+
 
 ## Installation
 

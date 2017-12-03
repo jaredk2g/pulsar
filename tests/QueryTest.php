@@ -8,10 +8,11 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Query;
 
-class QueryTest extends PHPUnit_Framework_TestCase
+class QueryTest extends MockeryTestCase
 {
     public function testGetModel()
     {

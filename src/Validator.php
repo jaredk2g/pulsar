@@ -287,30 +287,6 @@ class Validator
     }
 
     /**
-     * @deprecated
-     *
-     * Validates a password and hashes the value.
-     * OPTIONAL password:10 sets the minimum length.
-     *
-     * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
-     */
-    private function password(&$value, array $parameters)
-    {
-        $minimumPasswordLength = (isset($parameters[0])) ? $parameters[0] : 8;
-
-        if (strlen($value) < $minimumPasswordLength) {
-            return false;
-        }
-
-        $value = hash_hmac('sha512', $value, self::$config['salt']);
-
-        return true;
-    }
-
-    /**
      * Validates a password and hashes the value using
      * password_hash().
      * OPTIONAL password:10 sets the minimum length.

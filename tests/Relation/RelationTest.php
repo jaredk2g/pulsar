@@ -8,11 +8,12 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Model;
 use Pulsar\Query;
 use Pulsar\Relation\Relation;
 
-class RelationTest extends PHPUnit_Framework_TestCase
+class RelationTest extends MockeryTestCase
 {
     public function testConstruct()
     {

@@ -9,9 +9,10 @@
  * @license MIT
  */
 use Infuse\Application;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Services\ErrorStack;
 
-class ErrorStackServiceTest extends PHPUnit_Framework_TestCase
+class ErrorStackServiceTest extends MockeryTestCase
 {
     public function testInvoke()
     {

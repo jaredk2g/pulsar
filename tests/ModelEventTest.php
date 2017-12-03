@@ -8,10 +8,11 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 
-class ModelEventTest extends PHPUnit_Framework_TestCase
+class ModelEventTest extends MockeryTestCase
 {
     public function testGetModel()
     {

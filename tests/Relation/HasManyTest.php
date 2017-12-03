@@ -8,11 +8,12 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\HasMany;
 
-class HasManyTest extends PHPUnit_Framework_TestCase
+class HasManyTest extends MockeryTestCase
 {
     public static $driver;
 

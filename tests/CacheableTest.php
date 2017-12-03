@@ -8,6 +8,7 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pimple\Container;
 use Psr\Cache\CacheItemInterface;
 use Pulsar\Driver\DriverInterface;
@@ -15,7 +16,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 require_once 'tests/test_models.php';
 
-class CacheableTest extends PHPUnit_Framework_TestCase
+class CacheableTest extends MockeryTestCase
 {
     public static $app;
 

@@ -1,8 +1,9 @@
 <?php
 
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Exception\DriverException;
 
-class DriverExceptionTest extends PHPUnit_Framework_TestCase
+class DriverExceptionTest extends MockeryTestCase
 {
     public function testException()
     {

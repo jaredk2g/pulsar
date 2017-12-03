@@ -5,6 +5,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Changed
 - Support Symfony 4.
+- Require PHP 7.
+- Update infuse/libs to v1.
+
+### Removed
+- Removed `password` validator.
 
 ## 0.5.4 - 2017-11-16
 ### Changed

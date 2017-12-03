@@ -9,6 +9,7 @@
  * @license MIT
  */
 use Infuse\Locale;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
@@ -25,7 +26,7 @@ use Pulsar\Relation\HasOne;
 
 require_once 'test_models.php';
 
-class ModelTest extends PHPUnit_Framework_TestCase
+class ModelTest extends MockeryTestCase
 {
     protected function tearDown()
     {

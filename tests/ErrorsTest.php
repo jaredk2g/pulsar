@@ -9,10 +9,10 @@
  * @license MIT
  */
 use Infuse\Locale;
-use PHPUnit\Framework\TestCase;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Errors;
 
-class ErrorsTest extends TestCase
+class ErrorsTest extends MockeryTestCase
 {
     private function getErrorStack()
     {
