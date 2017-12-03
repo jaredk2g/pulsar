@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.6 - 2017-12-02
 ### Changed
 - Support Symfony 4.
 - Require PHP 7.
