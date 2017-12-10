@@ -569,6 +569,13 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals(42, $model->answer);
     }
 
+    public function testGetNonExistentPropertyDoesNotRefresh()
+    {
+        $model = new TestModel(12);
+
+        $this->assertNull($model->non_existent_property);
+    }
+
     public function testGetDefaultValue()
     {
         $model = new TestModel2(12);

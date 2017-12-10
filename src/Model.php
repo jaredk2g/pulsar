@@ -889,7 +889,12 @@ abstract class Model implements \ArrayAccess
             $values = array_replace($values, $this->_unsaved);
         }
 
-        $numMissing = count(array_diff($properties, array_keys($values)));
+        // see if there are any model properties that do not exist.
+        // when true then this means the model needs to be hydrated
+        // NOTE: only looking at model properties and excluding dynamic/non-existent properties
+        $modelProperties = array_keys(static::$properties);
+        $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
+
         if ($numMissing > 0) {
             // load the model from the storage layer, if needed
             $this->refresh();
