@@ -895,7 +895,7 @@ abstract class Model implements \ArrayAccess
         $modelProperties = array_keys(static::$properties);
         $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
 
-        if ($numMissing > 0) {
+        if ($numMissing > 0 && !$this->_loaded) {
             // load the model from the storage layer, if needed
             $this->refresh();
 
