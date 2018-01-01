@@ -10,7 +10,6 @@
  */
 use Infuse\Application;
 use JAQB\ConnectionManager;
-use JAQB\QueryBuilder;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Errors;
@@ -43,32 +42,6 @@ class ModelDriverTest extends MockeryTestCase
         $driver = $service($app);
         $this->assertInstanceOf(DatabaseDriver::class, $driver);
         $this->assertInstanceOf(ConnectionManager::class, $driver->getConnectionManager());
-
-        $model = new TestModel();
-        $this->assertEquals($errorStack, $model->getErrors());
-    }
-
-    public function testInvokeLegacy()
-    {
-        $config = [
-            'models' => [
-                'driver' => DatabaseDriver::class,
-            ],
-        ];
-        $app = new Application($config);
-        $errorStack = new Errors();
-        $app['errors'] = function () use ($errorStack) {
-            return $errorStack;
-        };
-        $app['db'] = function () {
-            return new QueryBuilder();
-        };
-        $service = new ModelDriver($app);
-        $this->assertInstanceOf(DatabaseDriver::class, Model::getDriver());
-
-        $driver = $service($app);
-        $this->assertInstanceOf(DatabaseDriver::class, $driver);
-        $this->assertInstanceOf(QueryBuilder::class, $driver->getConnection(false));
 
         $model = new TestModel();
         $this->assertEquals($errorStack, $model->getErrors());
