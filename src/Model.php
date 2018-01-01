@@ -76,11 +76,6 @@ abstract class Model implements \ArrayAccess
     protected static $globalContainer;
 
     /**
-     * @var Errors
-     */
-    protected static $globalErrorStack;
-
-    /**
      * @var number|string|false
      */
     protected $_id;
@@ -430,24 +425,6 @@ abstract class Model implements \ArrayAccess
     public function ids()
     {
         return $this->_ids;
-    }
-
-    /**
-     * Sets the global error stack instance.
-     *
-     * @param Errors $stack
-     */
-    public static function setErrorStack(Errors $stack)
-    {
-        self::$globalErrorStack = $stack;
-    }
-
-    /**
-     * Clears the global error stack instance.
-     */
-    public static function clearErrorStack()
-    {
-        self::$globalErrorStack = null;
     }
 
     /////////////////////////////
@@ -1624,9 +1601,7 @@ abstract class Model implements \ArrayAccess
      */
     public function getErrors()
     {
-        if (!$this->_errors && self::$globalErrorStack) {
-            $this->_errors = self::$globalErrorStack;
-        } elseif (!$this->_errors) {
+        if (!$this->_errors) {
             $this->_errors = new Errors();
         }
 

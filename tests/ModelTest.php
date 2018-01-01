@@ -397,21 +397,8 @@ class ModelTest extends MockeryTestCase
 
     public function testGetErrors()
     {
-        TestModel::clearErrorStack();
         $model = new TestModel();
         $this->assertInstanceOf(Errors::class, $model->getErrors());
-
-        // set a global stack
-        $stack = new Errors();
-        TestModel::setErrorStack($stack);
-        $stack->add('test');
-
-        $model2 = new TestModel();
-        $this->assertEquals($stack, $model2->getErrors());
-        $this->assertNotEquals($model->getErrors(), $model2->getErrors());
-
-        $model3 = new TestModel();
-        $this->assertEquals($stack, $model3->getErrors());
     }
 
     public function testGetTablename()
@@ -947,9 +934,6 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateNotUnique()
     {
-        $errorStack = new Errors();
-        TestModel2::setErrorStack($errorStack);
-
         $query = TestModel2::query();
         TestModel2::setQuery($query);
 
@@ -961,6 +945,7 @@ class ModelTest extends MockeryTestCase
         TestModel2::setDriver($driver);
 
         $model = new TestModel2();
+        $errorStack = $model->getErrors();
 
         $create = [
             'id' => 2,
@@ -979,10 +964,8 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateInvalid()
     {
-        $errorStack = new Errors();
-        TestModel2::setErrorStack($errorStack);
-
         $newModel = new TestModel2();
+        $errorStack = $newModel->getErrors();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
@@ -995,10 +978,8 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateMissingRequired()
     {
-        $errorStack = new Errors();
-        TestModel2::setErrorStack($errorStack);
-
         $newModel = new TestModel2();
+        $errorStack = $newModel->getErrors();
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Required is missing'], $errorStack->all());
@@ -1259,10 +1240,8 @@ class ModelTest extends MockeryTestCase
 
     public function testSetInvalid()
     {
-        $errorStack = new Errors();
-        TestModel2::setErrorStack($errorStack);
-
         $model = new TestModel2(15);
+        $errorStack = $model->getErrors();
 
         $this->assertFalse($model->set(['validate2' => 'invalid']));
         $this->assertCount(1, $errorStack->all());

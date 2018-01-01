@@ -29,7 +29,6 @@ class ModelDriver
     {
         // make the app available to models
         Model::inject($app);
-        Model::setErrorStack($app['errors']);
 
         // set up the model driver
         $config = $app['config'];

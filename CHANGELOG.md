@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 - Fetching non-existent or dynamic properties no longer calls refresh().
 
+### Removed
+- Removed global error stack support and Infuse error stack service.
+
 ## 0.6 - 2017-12-02
 ### Changed
 - Support Symfony 4.
