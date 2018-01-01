@@ -36,15 +36,6 @@ class ModelTest extends MockeryTestCase
         Person::getDispatcher(true);
     }
 
-    public function testInjectContainer()
-    {
-        $c = new \Pimple\Container();
-        Model::inject($c);
-
-        $model = new TestModel();
-        $this->assertEquals($c, $model->getApp());
-    }
-
     public function testDriverMissing()
     {
         $this->expectException(DriverMissingException::class);

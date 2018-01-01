@@ -27,9 +27,6 @@ class ModelDriver
 
     public function __construct($app)
     {
-        // make the app available to models
-        Model::inject($app);
-
         // set up the model driver
         $config = $app['config'];
         $class = $config->get('models.driver');

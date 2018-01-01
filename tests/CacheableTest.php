@@ -9,7 +9,6 @@
  * @license MIT
  */
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Pimple\Container;
 use Psr\Cache\CacheItemInterface;
 use Pulsar\Driver\DriverInterface;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
@@ -18,16 +17,6 @@ require_once 'tests/test_models.php';
 
 class CacheableTest extends MockeryTestCase
 {
-    public static $app;
-
-    public static function setUpBeforeClass()
-    {
-        // set up DI
-        self::$app = new Container();
-
-        CacheableModel::inject(self::$app);
-    }
-
     protected function tearDown()
     {
         CacheableModel::clearCachePool();

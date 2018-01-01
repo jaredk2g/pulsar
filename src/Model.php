@@ -13,7 +13,6 @@ namespace Pulsar;
 
 use BadMethodCallException;
 use ICanBoogie\Inflector;
-use Pimple\Container;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
@@ -69,11 +68,6 @@ abstract class Model implements \ArrayAccess
      * @var array
      */
     protected static $dispatchers;
-
-    /**
-     * @var Container
-     */
-    protected static $globalContainer;
 
     /**
      * @var number|string|false
@@ -334,30 +328,6 @@ abstract class Model implements \ArrayAccess
             $this->_id = $id;
             $this->_ids = [$idName => $id];
         }
-    }
-
-    /**
-     * @deprecated
-     *
-     * Injects a DI container
-     *
-     * @param Container $container
-     */
-    public static function inject(Container $container)
-    {
-        self::$globalContainer = $container;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Gets the DI container used for this model
-     *
-     * @return Container|null
-     */
-    public function getApp()
-    {
-        return self::$globalContainer;
     }
 
     /**
