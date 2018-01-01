@@ -38,20 +38,13 @@ class ModelDriver
         if ($this->driver instanceof DatabaseDriver) {
             if (isset($app['database'])) {
                 $this->driver->setConnectionManager($app['database']);
-            } elseif (isset($app['db'])) {
-                // NOTE this is kept around for backwards compatibility
-                // but is no longer recommended
-                $this->driver->setConnection($app['db']);
             }
         }
 
         Model::setDriver($this->driver);
 
         // pass optional configuration to model validator
-        $validatorParams = [
-            'salt' => $config->get('app.salt'), // DEPRECATED
-        ];
-        Validator::configure($config->get('models.validator', $validatorParams));
+        Validator::configure($config->get('models.validator'));
     }
 
     public function __invoke()

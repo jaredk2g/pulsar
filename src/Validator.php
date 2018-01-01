@@ -25,9 +25,7 @@ class Validator
     /**
      * @var array
      */
-    private static $config = [
-        'salt' => '',
-    ];
+    private static $config = [];
 
     /**
      * @var array|string

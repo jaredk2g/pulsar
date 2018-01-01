@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Removed global error stack support and Infuse error stack service.
+- No longer support `db` service with Infuse. Now you must use the `database` service set to connection manager.
 
 ## 0.6 - 2017-12-02
 ### Changed
