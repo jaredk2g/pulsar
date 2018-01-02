@@ -22,6 +22,13 @@ class ErrorsTest extends MockeryTestCase
         return $stack;
     }
 
+    public function testSetGlobalLocale()
+    {
+        $locale = new Locale();
+        Errors::setGlobalLocale($locale);
+        $this->assertEquals($locale, (new Errors())->getLocale());
+    }
+
     public function testGetLocale()
     {
         $errorStack = new Errors();

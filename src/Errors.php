@@ -49,6 +49,11 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     ];
 
     /**
+     * @var Locale
+     */
+    private static $globalLocale;
+
+    /**
      * @var array
      */
     private $stack = [];
@@ -57,6 +62,16 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      * @var Locale
      */
     private $locale;
+
+    /**
+     * Sets the global locale instance.
+     *
+     * @param Locale $locale
+     */
+    public static function setGlobalLocale(Locale $locale)
+    {
+        self::$globalLocale = $locale;
+    }
 
     /**
      * Sets the locale service.
@@ -80,6 +95,10 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     public function getLocale()
     {
         if (!$this->locale) {
+            if (self::$globalLocale) {
+                return self::$globalLocale;
+            }
+
             $this->locale = new Locale();
         }
 

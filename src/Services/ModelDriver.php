@@ -11,7 +11,9 @@
 
 namespace Pulsar\Services;
 
+use Infuse\Application;
 use Pulsar\Driver\DatabaseDriver;
+use Pulsar\Errors;
 use Pulsar\Model;
 use Pulsar\Validator;
 
@@ -25,7 +27,7 @@ class ModelDriver
      */
     private $driver;
 
-    public function __construct($app)
+    public function __construct(Application $app)
     {
         // set up the model driver
         $config = $app['config'];
@@ -39,6 +41,10 @@ class ModelDriver
         }
 
         Model::setDriver($this->driver);
+
+        if (isset($app['locale'])) {
+            Errors::setGlobalLocale($app['locale']);
+        }
 
         // pass optional configuration to model validator
         Validator::configure($config->get('models.validator'));
