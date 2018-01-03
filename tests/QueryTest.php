@@ -83,6 +83,9 @@ class QueryTest extends MockeryTestCase
 
         $this->assertEquals($query, $query->with('author'));
         $this->assertEquals(['author'], $query->getWith());
+
+        $query->with('author');
+        $this->assertEquals(['author'], $query->getWith());
     }
 
     public function testExecute()

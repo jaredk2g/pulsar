@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Fetching non-existent or dynamic properties no longer calls refresh().
+- De-duplicate eager loaded relationships set using `with()`.
 
 ### Removed
 - Removed global error stack support and Infuse error stack service.

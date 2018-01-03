@@ -251,7 +251,9 @@ class Query
      */
     public function with($k)
     {
-        $this->relationships[] = $k;
+        if (!in_array($k, $this->relationships)) {
+            $this->relationships[] = $k;
+        }
 
         return $this;
     }
