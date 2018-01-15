@@ -39,6 +39,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
         'pulsar.validation.matching' => '{{field_name}} must match',
         'pulsar.validation.numeric' => '{{field_name}} only allows numbers',
         'pulsar.validation.password' => '{{field_name}} must meet the password requirements',
+        'pulsar.validation.password_php' => '{{field_name}} must meet the password requirements',
         'pulsar.validation.range' => '{{field_name}} must be within the allowed range',
         'pulsar.validation.required' => '{{field_name}} is missing',
         'pulsar.validation.string' => '{{field_name}} must be a string of the proper length',

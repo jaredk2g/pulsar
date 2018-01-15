@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 ### Added
-- Can set global locale instance used by error instances with `Errors::setGlobalLocale()`.
+- Can set global locale instance **used by error instances with `Errors::setGlobalLocale()`.
 
 ### Changed
 - Relax `icanboogie/inflector` version dependency.
