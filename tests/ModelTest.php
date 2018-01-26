@@ -1061,7 +1061,7 @@ class ModelTest extends MockeryTestCase
         $driver->shouldReceive('updateModel')
                ->andReturnUsing(function ($model, $params) {
                    unset($params['updated_at']);
-                   $expected = ['id' => 'hello', 'id2' => 'world'];
+                   $expected = ['id' => 12, 'id2' => 13];
                    $this->assertEquals($expected, $params);
 
                    return true;
@@ -1070,8 +1070,8 @@ class ModelTest extends MockeryTestCase
         TestModel::setDriver($driver);
 
         $this->assertTrue($model->set([
-            'id' => 'hello',
-            'id2' => 'world',
+            'id' => 12,
+            'id2' => 13,
             'nonexistent_property' => 'whatever',
         ]));
     }
@@ -1086,7 +1086,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetImmutableProperties()
     {
-        $model = new TestModel2(10);
+        $model = new TestModel2(10, ['mutable_create_only' => 'test']);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -1105,7 +1105,7 @@ class ModelTest extends MockeryTestCase
             'id' => 432,
             'mutable_create_only' => 'blah',
         ]));
-        $this->assertEquals(10, $model->id);
+        $this->assertEquals('test', $model->mutable_create_only);
     }
 
     public function testSetAutoTimestamps()

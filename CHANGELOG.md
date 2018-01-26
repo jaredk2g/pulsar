@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+## Changed
+- Reduce a loadModel call by caching the values after a save.
+
 ## 0.7 - 2018-01-21
 ### Added
 - Can set global locale instance **used by error instances with `Errors::setGlobalLocale()`.
