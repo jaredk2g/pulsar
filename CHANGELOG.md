@@ -5,6 +5,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - There is a `relation_type` property on model properties for supporting non-has one relationships.
+- Added a Collection class to represent a collection of models and provide functionality around managing that collection.
 
 ## Changed
 - Reduce a loadModel call by caching the values after a save.
