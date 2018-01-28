@@ -42,6 +42,9 @@ abstract class Model implements \ArrayAccess
     const TYPE_OBJECT = 'object';
     const TYPE_ARRAY = 'array';
 
+    const RELATIONSHIP_HAS_ONE = 'has_one';
+    const RELATIONSHIP_HAS_MANY = 'has_many';
+
     const DEFAULT_ID_PROPERTY = 'id';
 
     /////////////////////////////
@@ -248,6 +251,11 @@ abstract class Model implements \ArrayAccess
         // definition base
         foreach (static::$properties as &$property) {
             $property = array_replace(self::$propertyDefinitionBase, $property);
+
+            // this is added for BC with older versions of pulsar
+            if (isset($property['relation']) && !isset($property['relation_type'])) {
+                $property['relation_type'] = self::RELATIONSHIP_HAS_ONE;
+            }
         }
 
         // order the properties array by name for consistency
@@ -1339,7 +1347,10 @@ abstract class Model implements \ArrayAccess
         if (!isset($this->_relationships[$k])) {
             $property = static::getProperty($k);
             $relationModelClass = $property['relation'];
-            $this->_relationships[$k] = $relationModelClass::find($id);
+
+            if ($property['relation_type'] == self::RELATIONSHIP_HAS_ONE) {
+                $this->_relationships[$k] = $relationModelClass::find($id);
+            }
         }
 
         return $this->_relationships[$k];

@@ -79,6 +79,7 @@ class ModelTest extends MockeryTestCase
             'relation' => [
                 'type' => Model::TYPE_NUMBER,
                 'relation' => 'TestModel2',
+                'relation_type' => Model::RELATIONSHIP_HAS_ONE,
                 'null' => true,
                 'unique' => false,
                 'required' => false,
@@ -144,6 +145,7 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'type' => Model::TYPE_NUMBER,
             'relation' => 'TestModel2',
+            'relation_type' => Model::RELATIONSHIP_HAS_ONE,
             'null' => true,
             'unique' => false,
             'required' => false,
@@ -218,6 +220,7 @@ class ModelTest extends MockeryTestCase
             'person' => [
                 'type' => Model::TYPE_NUMBER,
                 'relation' => 'Person',
+                'relation_type' => Model::RELATIONSHIP_HAS_ONE,
                 'default' => 20,
                 'mutable' => Model::MUTABLE,
                 'null' => false,

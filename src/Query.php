@@ -302,11 +302,14 @@ class Query
             foreach ($this->relationships as $k) {
                 $property = $model::getProperty($k);
                 $relationModelClass = $property['relation'];
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
 
-                foreach ($ids[$k] as $j => $id) {
-                    if (isset($relationships[$id])) {
-                        $models[$j]->setRelation($k, $relationships[$id]);
+                if ($property['relation_type'] == Model::RELATIONSHIP_HAS_ONE) {
+                    $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
+
+                    foreach ($ids[$k] as $j => $id) {
+                        if (isset($relationships[$id])) {
+                            $models[$j]->setRelation($k, $relationships[$id]);
+                        }
                     }
                 }
             }
