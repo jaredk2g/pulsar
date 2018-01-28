@@ -32,7 +32,7 @@ class Query
     /**
      * @var array
      */
-    private $relationships;
+    private $eagerLoaded;
 
     /**
      * @var array
@@ -61,7 +61,7 @@ class Query
     {
         $this->model = $model;
         $this->joins = [];
-        $this->relationships = [];
+        $this->eagerLoaded = [];
         $this->where = [];
         $this->start = 0;
         $this->limit = self::DEFAULT_LIMIT;
@@ -141,7 +141,7 @@ class Query
         foreach ($columns as $column) {
             $c = explode(' ', trim($column));
 
-            if (count($c) != 2) {
+            if (2 != count($c)) {
                 continue;
             }
 
@@ -193,10 +193,10 @@ class Query
             $args = func_num_args();
             if ($args > 2) {
                 $this->where[] = [$where, $value, $condition];
-                // handles ii.
-            } elseif ($args == 2) {
+            // handles ii.
+            } elseif (2 == $args) {
                 $this->where[$where] = $value;
-                // handles iv.
+            // handles iv.
             } else {
                 $this->where[] = $where;
             }
@@ -251,8 +251,8 @@ class Query
      */
     public function with($k)
     {
-        if (!in_array($k, $this->relationships)) {
-            $this->relationships[] = $k;
+        if (!in_array($k, $this->eagerLoaded)) {
+            $this->eagerLoaded[] = $k;
         }
 
         return $this;
@@ -265,7 +265,7 @@ class Query
      */
     public function getWith()
     {
-        return $this->relationships;
+        return $this->eagerLoaded;
     }
 
     /**
@@ -276,7 +276,7 @@ class Query
     public function execute()
     {
         $models = [];
-        $ids = array_fill_keys($this->relationships, []);
+        $ids = array_fill_keys($this->eagerLoaded, []);
 
         // fetch the models matching the query
         $model = $this->model;
@@ -290,7 +290,7 @@ class Query
 
             // create the model and cache the loaded values
             $models[] = new $model($id, $row);
-            foreach ($this->relationships as $k) {
+            foreach ($this->eagerLoaded as $k) {
                 if ($row[$k]) {
                     $ids[$k][] = $row[$k];
                 }
@@ -298,18 +298,16 @@ class Query
         }
 
         // hydrate the eager loaded relationships
-        if (count($this->relationships) > 0) {
-            foreach ($this->relationships as $k) {
-                $property = $model::getProperty($k);
-                $relationModelClass = $property['relation'];
+        foreach ($this->eagerLoaded as $k) {
+            $property = $model::getProperty($k);
+            $relationModelClass = $property['relation'];
 
-                if ($property['relation_type'] == Model::RELATIONSHIP_HAS_ONE) {
-                    $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
+            if (Model::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
 
-                    foreach ($ids[$k] as $j => $id) {
-                        if (isset($relationships[$id])) {
-                            $models[$j]->setRelation($k, $relationships[$id]);
-                        }
+                foreach ($ids[$k] as $j => $id) {
+                    if (isset($relationships[$id])) {
+                        $models[$j]->setRelation($k, $relationships[$id]);
                     }
                 }
             }
@@ -339,8 +337,8 @@ class Query
     {
         $models = $this->limit($limit)->execute();
 
-        if ($limit == 1) {
-            return (count($models) == 1) ? $models[0] : null;
+        if (1 == $limit) {
+            return (1 == count($models)) ? $models[0] : null;
         }
 
         return $models;
@@ -482,7 +480,7 @@ class Query
     private function fetchRelationships($modelClass, array $ids)
     {
         $uniqueIds = array_unique($ids);
-        if (count($uniqueIds) === 0) {
+        if (0 === count($uniqueIds)) {
             return [];
         }
 
