@@ -318,6 +318,20 @@ class Query
                         $models[$j]->setRelation($k, $relationships[$id]);
                     }
                 }
+            } elseif (Model::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key']);
+
+                foreach ($ids[$k] as $j => $id) {
+                    if (isset($relationships[$id])) {
+                        $models[$j]->setRelation($k, $relationships[$id]);
+                    } else {
+                        // when using has one eager loading we must
+                        // explicitly mark the relationship as null
+                        // for models not found during eager loading
+                        // or else it will trigger another DB call
+                        $models[$j]->clearRelation($k);
+                    }
+                }
             }
         }
 
@@ -486,7 +500,7 @@ class Query
      *
      * @return array
      */
-    private function fetchRelationships($modelClass, array $ids, $foreignKey = 'id')
+    private function fetchRelationships($modelClass, array $ids, $foreignKey)
     {
         $uniqueIds = array_unique($ids);
         if (0 === count($uniqueIds)) {
@@ -499,7 +513,7 @@ class Query
 
         $result = [];
         foreach ($models as $model) {
-            $result[$model->id()] = $model;
+            $result[$model->$foreignKey] = $model;
         }
 
         return $result;

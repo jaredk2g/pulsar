@@ -215,6 +215,60 @@ class QueryTest extends MockeryTestCase
         $this->assertNull($result[2]->relation('person'));
     }
 
+    public function testExecuteEagerLoadingHasOne()
+    {
+        $query = new Query(Person::class);
+        $query->with('car');
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->andReturnUsing(function ($query) {
+                if ($query->getModel() instanceof Car && $query->getWhere() == ['person_id IN (1,2,3)']) {
+                    return [
+                        [
+                            'id' => 100,
+                            'person_id' => 1,
+                            'make' => 'Nissan',
+                            'model' => 'GTR',
+                        ],
+                        [
+                            'id' => 101,
+                            'person_id' => 2,
+                            'make' => 'Aston Martin',
+                            'model' => 'DB11',
+                        ],
+                    ];
+                } elseif (Person::class == $query->getModel()) {
+                    return [
+                        [
+                            'id' => 1,
+                        ],
+                        [
+                            'id' => 2,
+                        ],
+                        [
+                            'id' => 3,
+                        ],
+                    ];
+                }
+            });
+
+        TestModel2::setDriver($driver);
+
+        $result = $query->execute();
+
+        $this->assertCount(3, $result);
+
+        $car1 = $result[0]->relation('car');
+        $this->assertInstanceOf(Car::class, $car1);
+        $this->assertEquals(100, $car1->id());
+        $car2 = $result[1]->relation('car');
+        $this->assertInstanceOf(Car::class, $car2);
+        $this->assertEquals(101, $car2->id());
+        $this->assertNull($result[2]->relation('car'));
+    }
+
     public function testExecuteEagerLoadingNoRelations()
     {
         $query = new Query(TestModel2::class);

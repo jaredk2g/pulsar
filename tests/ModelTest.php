@@ -323,6 +323,17 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
             ],
+            'car' => [
+                'type' => null,
+                'mutable' => Model::MUTABLE,
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'relation' => 'Car',
+                'relation_type' => 'has_one',
+                'foreign_key' => 'person_id',
+                'local_key' => 'id',
+            ],
         ];
 
         $model = new Person(); // forces initialize()
@@ -610,6 +621,7 @@ class ModelTest extends MockeryTestCase
                 'id' => 10,
                 'name' => 'Bob Loblaw',
                 'email' => 'bob@example.com',
+                'car' => null,
                 'deleted_at' => null,
             ],
         ];

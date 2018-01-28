@@ -70,11 +70,11 @@ class HasManyTest extends MockeryTestCase
         $relation = new HasMany($person, 'id', 'Car', 'person_id');
 
         $car = new Car(2);
-        $car->refreshWith(['type' => '']);
-        $car->type = 'Aston Martin';
+        $car->refreshWith(['make' => '']);
+        $car->make = 'Aston Martin';
 
         self::$driver->shouldReceive('updateModel')
-            ->withArgs([$car, ['type' => 'Aston Martin', 'person_id' => 100]])
+            ->withArgs([$car, ['make' => 'Aston Martin', 'person_id' => 100]])
             ->andReturn(true)
             ->once();
 
@@ -91,7 +91,7 @@ class HasManyTest extends MockeryTestCase
 
         self::$driver->shouldReceive('createModel')
             ->andReturnUsing(function ($model, $params) {
-                $this->assertEquals(['type' => 'Aston Martin', 'person_id' => 100], $params);
+                $this->assertEquals(['make' => 'Aston Martin', 'model' => 'DB11', 'person_id' => 100], $params);
 
                 return true;
             });
@@ -99,7 +99,7 @@ class HasManyTest extends MockeryTestCase
         self::$driver->shouldReceive('getCreatedID')
             ->andReturn(1);
 
-        $car = $relation->create(['type' => 'Aston Martin']);
+        $car = $relation->create(['make' => 'Aston Martin', 'model' => 'DB11']);
 
         $this->assertInstanceOf(Car::class, $car);
         $this->assertTrue($car->persisted());

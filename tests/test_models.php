@@ -202,6 +202,10 @@ class Person extends ACLModel
             'validate' => 'email',
             'title' => 'Email address',
         ],
+        'car' => [
+            'relation' => Car::class,
+            'relation_type' => Model::RELATIONSHIP_HAS_ONE,
+        ],
     ];
 
     protected static $softDelete;
@@ -283,7 +287,8 @@ class Category extends Model
 class Car extends Model
 {
     protected static $properties = [
-        'type' => [],
+        'make' => [],
+        'model' => [],
         'person_id' => [
             'type' => Model::TYPE_INTEGER,
         ],

@@ -1362,7 +1362,7 @@ abstract class Model implements \ArrayAccess
      */
     public function relation($k)
     {
-        if (!isset($this->_relationships[$k])) {
+        if (!array_key_exists($k, $this->_relationships)) {
             $property = static::getProperty($k);
             $relation = $this->getRelationshipManager($property, $k);
             $this->_relationships[$k] = $relation->getResults();
@@ -1385,6 +1385,21 @@ abstract class Model implements \ArrayAccess
     {
         $this->$k = $model->id();
         $this->_relationships[$k] = $model;
+
+        return $this;
+    }
+
+    /**
+     * Sets the model for a one-to-one relationship (has-one or belongs-to) as null.
+     *
+     * @param string $k
+     *
+     * @return $this
+     */
+    public function clearRelation($k)
+    {
+        $this->$k = null;
+        $this->_relationships[$k] = null;
 
         return $this;
     }

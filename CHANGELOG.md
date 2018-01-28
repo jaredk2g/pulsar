@@ -7,8 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - There is a `relation_type` setting on model properties that defaults to `belongs_to`.
 - Added a `local_key` setting on model properties for overriding the default local key on relationships.
 - Added a `foreign_key` setting on model properties for overriding the default foreign key on relationships.
-- Added a `pivot_tablename` setting on model properties for overriding the default pivot table name on belongs to many relationships.
+- Added a `pivot_tablename` setting on model properties for overriding the default pivot table name on belongs-to-many relationships.
 - Added a Collection class to represent a collection of models and provide functionality around managing that collection.
+- Implemented eager loading for has-one relationships.
 
 ## Changed
 - Reduce a loadModel call by caching the values after a save.
