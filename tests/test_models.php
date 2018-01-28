@@ -232,7 +232,7 @@ class AclObject extends ACLModel
 
     protected function hasPermission($permission, Model $requester)
     {
-        if ($permission == 'whatever') {
+        if ('whatever' == $permission) {
             // always say no the first time
             if ($this->first) {
                 $this->first = false;
@@ -241,8 +241,8 @@ class AclObject extends ACLModel
             }
 
             return true;
-        } elseif ($permission == 'do nothing') {
-            return $requester->id() == 5;
+        } elseif ('do nothing' == $permission) {
+            return 5 == $requester->id();
         }
     }
 }
@@ -295,6 +295,8 @@ class Balance extends Model
     protected static $properties = [
         'person_id' => [
             'type' => Model::TYPE_INTEGER,
+            'relation' => Person::class,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
         ],
         'amount' => [
             'type' => Model::TYPE_FLOAT,

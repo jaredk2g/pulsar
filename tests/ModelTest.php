@@ -79,7 +79,9 @@ class ModelTest extends MockeryTestCase
             'relation' => [
                 'type' => Model::TYPE_NUMBER,
                 'relation' => 'TestModel2',
-                'relation_type' => Model::RELATIONSHIP_HAS_ONE,
+                'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+                'foreign_key' => 'id',
+                'local_key' => 'relation',
                 'null' => true,
                 'unique' => false,
                 'required' => false,
@@ -145,7 +147,9 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'type' => Model::TYPE_NUMBER,
             'relation' => 'TestModel2',
-            'relation_type' => Model::RELATIONSHIP_HAS_ONE,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+            'foreign_key' => 'id',
+            'local_key' => 'relation',
             'null' => true,
             'unique' => false,
             'required' => false,
@@ -220,7 +224,9 @@ class ModelTest extends MockeryTestCase
             'person' => [
                 'type' => Model::TYPE_NUMBER,
                 'relation' => 'Person',
-                'relation_type' => Model::RELATIONSHIP_HAS_ONE,
+                'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+                'foreign_key' => 'id',
+                'local_key' => 'person',
                 'default' => 20,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -437,10 +443,10 @@ class ModelTest extends MockeryTestCase
     public function testIdTypeCast()
     {
         $model = new TestModel('5');
-        $this->assertTrue($model->id() === 5, 'id() type casting failed');
+        $this->assertTrue(5 === $model->id(), 'id() type casting failed');
 
         $model = new TestModel(5);
-        $this->assertTrue($model->id() === 5, 'id() type casting failed');
+        $this->assertTrue(5 === $model->id(), 'id() type casting failed');
     }
 
     public function testIds()
@@ -455,11 +461,11 @@ class ModelTest extends MockeryTestCase
     public function testIdsTypeCast()
     {
         $model = new TestModel('3');
-        $this->assertTrue($model->ids()['id'] === 3, 'ids() type casting failed');
+        $this->assertTrue(3 === $model->ids()['id'], 'ids() type casting failed');
 
         $model2 = new TestModel2(['5', '2']);
-        $this->assertTrue($model2->ids()['id'] === 5, 'ids() type casting failed');
-        $this->assertTrue($model2->ids()['id2'] === 2, 'ids() type casting failed');
+        $this->assertTrue(5 === $model2->ids()['id'], 'ids() type casting failed');
+        $this->assertTrue(2 === $model2->ids()['id2'], 'ids() type casting failed');
     }
 
     public function testToString()
@@ -1648,6 +1654,99 @@ class ModelTest extends MockeryTestCase
         $model->setRelation('relation', $relation);
         $this->assertEquals($relation, $model->relation('relation'));
         $this->assertEquals(2, $model->relation);
+    }
+
+    public function testGetRelationshipManagerNotRelationship()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $property = [
+        ];
+
+        $model = new TestModel();
+        $model->getRelationshipManager($property, 'relationship_id');
+    }
+
+    public function testGetRelationshipManagerInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $property = [
+            'relation' => TestModel2::class,
+            'relation_type' => 'not a valid type',
+        ];
+
+        $model = new TestModel();
+        $model->getRelationshipManager($property, 'relationship_id');
+    }
+
+    public function testGetRelationshipManagerHasOne()
+    {
+        $model = new TestModel();
+        $property = [
+            'relation' => TestModel2::class,
+            'relation_type' => Model::RELATIONSHIP_HAS_ONE,
+        ];
+
+        $relation = $model->getRelationshipManager($property, 'id');
+
+        $this->assertInstanceOf(HasOne::class, $relation);
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
+        $this->assertEquals('test_model_id', $relation->getForeignKey());
+        $this->assertEquals('id', $relation->getLocalKey());
+        $this->assertEquals($model, $relation->getLocalModel());
+    }
+
+    public function testGetRelationshipManagerHasMany()
+    {
+        $model = new TestModel();
+        $property = [
+            'relation' => TestModel2::class,
+            'relation_type' => Model::RELATIONSHIP_HAS_MANY,
+        ];
+
+        $relation = $model->getRelationshipManager($property, 'id');
+
+        $this->assertInstanceOf(HasMany::class, $relation);
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
+        $this->assertEquals('test_model_id', $relation->getForeignKey());
+        $this->assertEquals('id', $relation->getLocalKey());
+        $this->assertEquals($model, $relation->getLocalModel());
+    }
+
+    public function testGetRelationshipManagerBelongsTo()
+    {
+        $model = new TestModel();
+        $property = [
+            'relation' => TestModel2::class,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+        ];
+
+        $relation = $model->getRelationshipManager($property, 'my_relationship_id');
+
+        $this->assertInstanceOf(BelongsTo::class, $relation);
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
+        $this->assertEquals('id', $relation->getForeignKey());
+        $this->assertEquals('test_model2_id', $relation->getLocalKey());
+        $this->assertEquals($model, $relation->getLocalModel());
+    }
+
+    public function testGetRelationshipManagerBelongsToMany()
+    {
+        $model = new TestModel();
+        $property = [
+            'relation' => TestModel2::class,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO_MANY,
+        ];
+
+        $relation = $model->getRelationshipManager($property, 'my_relationship_id');
+
+        $this->assertInstanceOf(BelongsToMany::class, $relation);
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
+        $this->assertEquals('id', $relation->getForeignKey());
+        $this->assertEquals('test_model2_id', $relation->getLocalKey());
+        $this->assertEquals($model, $relation->getLocalModel());
+        $this->assertEquals('TestModelTestModel2', $relation->getTablename());
     }
 
     public function testHasOne()

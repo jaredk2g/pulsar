@@ -22,6 +22,7 @@ use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
 use Pulsar\Relation\HasOne;
+use Pulsar\Relation\Relation;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -44,6 +45,8 @@ abstract class Model implements \ArrayAccess
 
     const RELATIONSHIP_HAS_ONE = 'has_one';
     const RELATIONSHIP_HAS_MANY = 'has_many';
+    const RELATIONSHIP_BELONGS_TO = 'belongs_to';
+    const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
 
     const DEFAULT_ID_PROPERTY = 'id';
 
@@ -249,12 +252,30 @@ abstract class Model implements \ArrayAccess
 
         // fill in each property by extending the property
         // definition base
-        foreach (static::$properties as &$property) {
+        foreach (static::$properties as $k => &$property) {
             $property = array_replace(self::$propertyDefinitionBase, $property);
 
-            // this is added for BC with older versions of pulsar
-            if (isset($property['relation']) && !isset($property['relation_type'])) {
-                $property['relation_type'] = self::RELATIONSHIP_HAS_ONE;
+            // populate relationship property settings
+            if (isset($property['relation'])) {
+                // this is added for BC with older versions of pulsar
+                // that only supported belongs to relationships
+                if (!isset($property['relation_type'])) {
+                    $property['relation_type'] = self::RELATIONSHIP_BELONGS_TO;
+                    $property['local_key'] = $k;
+                }
+
+                $relation = $this->getRelationshipManager($property, $k);
+                if (!isset($property['foreign_key'])) {
+                    $property['foreign_key'] = $relation->getForeignKey();
+                }
+
+                if (!isset($property['local_key'])) {
+                    $property['local_key'] = $relation->getLocalKey();
+                }
+
+                if (!isset($property['pivot_tablename']) && $relation instanceof BelongsToMany) {
+                    $property['pivot_tablename'] = $relation->getTablename();
+                }
             }
         }
 
@@ -328,7 +349,7 @@ abstract class Model implements \ArrayAccess
         } else {
             // type cast the single primary key
             $idName = static::$ids[0];
-            if ($id !== false) {
+            if (false !== $id) {
                 $idProperty = static::getProperty($idName);
                 $id = static::cast($idProperty, $id);
             }
@@ -633,12 +654,12 @@ abstract class Model implements \ArrayAccess
      */
     public static function cast(array $property, $value)
     {
-        if ($value === null) {
+        if (null === $value) {
             return;
         }
 
         // handle empty strings as null
-        if ($property['null'] && $value == '') {
+        if ($property['null'] && '' == $value) {
             return;
         }
 
@@ -686,7 +707,7 @@ abstract class Model implements \ArrayAccess
      */
     public function save()
     {
-        if ($this->_id === false) {
+        if (false === $this->_id) {
             return $this->create();
         }
 
@@ -721,7 +742,7 @@ abstract class Model implements \ArrayAccess
      */
     public function create(array $data = [])
     {
-        if ($this->_id !== false) {
+        if (false !== $this->_id) {
             throw new BadMethodCallException('Cannot call create() on an existing model');
         }
 
@@ -762,7 +783,7 @@ abstract class Model implements \ArrayAccess
 
             // cannot insert immutable values
             // (unless using the default value)
-            if ($property['mutable'] == self::IMMUTABLE && $value !== $this->getPropertyDefault($property)) {
+            if (self::IMMUTABLE == $property['mutable'] && $value !== $this->getPropertyDefault($property)) {
                 continue;
             }
 
@@ -1002,7 +1023,7 @@ abstract class Model implements \ArrayAccess
      */
     public function set(array $data = [])
     {
-        if ($this->_id === false) {
+        if (false === $this->_id) {
             throw new BadMethodCallException('Can only call set() on an existing model');
         }
 
@@ -1013,7 +1034,7 @@ abstract class Model implements \ArrayAccess
         $this->getErrors()->clear();
 
         // not updating anything?
-        if (count($this->_unsaved) == 0) {
+        if (0 == count($this->_unsaved)) {
             return true;
         }
 
@@ -1039,7 +1060,7 @@ abstract class Model implements \ArrayAccess
             $property = static::$properties[$name];
 
             // can only modify mutable properties
-            if ($property['mutable'] != self::MUTABLE) {
+            if (self::MUTABLE != $property['mutable']) {
                 continue;
             }
 
@@ -1074,7 +1095,7 @@ abstract class Model implements \ArrayAccess
      */
     public function delete()
     {
-        if ($this->_id === false) {
+        if (false === $this->_id) {
             throw new BadMethodCallException('Can only call delete() on an existing model');
         }
 
@@ -1248,7 +1269,7 @@ abstract class Model implements \ArrayAccess
      */
     public function exists()
     {
-        return static::query()->where($this->ids())->count() == 1;
+        return 1 == static::query()->where($this->ids())->count();
     }
 
     /**
@@ -1270,7 +1291,7 @@ abstract class Model implements \ArrayAccess
      */
     public function refresh()
     {
-        if ($this->_id === false) {
+        if (false === $this->_id) {
             return $this;
         }
 
@@ -1331,26 +1352,20 @@ abstract class Model implements \ArrayAccess
     /**
      * @deprecated
      *
-     * Gets the model for a has-one relationship
+     * Gets the model(s) for a relationship
      *
      * @param string $k property
+     *
+     * @throws \InvalidArgumentException when the relationship manager cannot be created
      *
      * @return Model|null
      */
     public function relation($k)
     {
-        $id = $this->$k;
-        if (!$id) {
-            return;
-        }
-
         if (!isset($this->_relationships[$k])) {
             $property = static::getProperty($k);
-            $relationModelClass = $property['relation'];
-
-            if ($property['relation_type'] == self::RELATIONSHIP_HAS_ONE) {
-                $this->_relationships[$k] = $relationModelClass::find($id);
-            }
+            $relation = $this->getRelationshipManager($property, $k);
+            $this->_relationships[$k] = $relation->getResults();
         }
 
         return $this->_relationships[$k];
@@ -1359,19 +1374,60 @@ abstract class Model implements \ArrayAccess
     /**
      * @deprecated
      *
-     * Sets the model for a has-one relationship
+     * Sets the model for a one-to-one relationship (has-one or belongs-to)
      *
      * @param string $k
      * @param Model  $model
      *
      * @return $this
      */
-    public function setRelation($k, Model $model)
+    public function setRelation($k, self $model)
     {
         $this->$k = $model->id();
         $this->_relationships[$k] = $model;
 
         return $this;
+    }
+
+    /**
+     * Builds a relationship manager object for a given property.
+     *
+     * @param array  $property
+     * @param string $name
+     *
+     * @throws \InvalidArgumentException when the relationship manager cannot be created
+     *
+     * @return Relation
+     */
+    public function getRelationshipManager(array $property, $name)
+    {
+        if (!isset($property['relation'])) {
+            throw new \InvalidArgumentException('Property "'.$name.'" does not have a relationship.');
+        }
+
+        $relationModelClass = $property['relation'];
+        $foreignKey = array_value($property, 'foreign_key');
+        $localKey = array_value($property, 'local_key');
+
+        if (self::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
+            return $this->hasOne($relationModelClass, $foreignKey, $localKey);
+        }
+
+        if (self::RELATIONSHIP_HAS_MANY == $property['relation_type']) {
+            return $this->hasMany($relationModelClass, $foreignKey, $localKey);
+        }
+
+        if (self::RELATIONSHIP_BELONGS_TO == $property['relation_type']) {
+            return $this->belongsTo($relationModelClass, $foreignKey, $localKey);
+        }
+
+        if (self::RELATIONSHIP_BELONGS_TO_MANY == $property['relation_type']) {
+            $pivotTable = array_value($property, 'pivot_tablename');
+
+            return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
+        }
+
+        throw new \InvalidArgumentException('Relationship type on "'.$name.'" property not supported: '.$property['relation_type']);
     }
 
     /**
@@ -1381,7 +1437,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation\Relation
+     * @return HasOne
      */
     public function hasOne($model, $foreignKey = '', $localKey = '')
     {
@@ -1395,7 +1451,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation\Relation
+     * @return BelongsTo
      */
     public function belongsTo($model, $foreignKey = '', $localKey = '')
     {
@@ -1409,7 +1465,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return Relation\Relation
+     * @return HasMany
      */
     public function hasMany($model, $foreignKey = '', $localKey = '')
     {
@@ -1424,7 +1480,7 @@ abstract class Model implements \ArrayAccess
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
      *
-     * @return \Pulsar\Relation\Relation
+     * @return BelongsToMany
      */
     public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = '')
     {
@@ -1635,7 +1691,7 @@ abstract class Model implements \ArrayAccess
         list($valid, $value) = $this->validateValue($property, $name, $value);
 
         // unique?
-        if ($valid && $property['unique'] && ($this->_id === false || $value != $this->ignoreUnsaved()->$name)) {
+        if ($valid && $property['unique'] && (false === $this->_id || $value != $this->ignoreUnsaved()->$name)) {
             $valid = $this->checkUniqueness($property, $name, $value);
         }
 

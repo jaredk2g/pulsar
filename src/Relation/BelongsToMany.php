@@ -64,29 +64,32 @@ class BelongsToMany extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery()
+    protected function initQuery(Query $query)
     {
         $pivot = new Pivot();
         $pivot->setTablename($this->tablename);
 
         $ids = $this->localModel->ids();
         foreach ($ids as $idProperty => $id) {
-            if ($id === false) {
+            if (false === $id) {
                 $this->empty = true;
             }
 
-            $this->query->where($this->localKey, $id);
-            $this->query->join($pivot, $this->foreignKey, $idProperty);
+            $query->where($this->localKey, $id);
+            $query->join($pivot, $this->foreignKey, $idProperty);
         }
+
+        return $query;
     }
 
     public function getResults()
     {
+        $query = $this->getQuery();
         if ($this->empty) {
             return;
         }
 
-        return $this->query->execute();
+        return $query->execute();
     }
 
     /**

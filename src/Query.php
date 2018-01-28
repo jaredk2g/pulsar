@@ -276,10 +276,16 @@ class Query
     public function execute()
     {
         $models = [];
-        $ids = array_fill_keys($this->eagerLoaded, []);
+        $model = $this->model;
+
+        $ids = [];
+        $eagerLoadedProperties = [];
+        foreach ($this->eagerLoaded as $k) {
+            $ids[$k] = [];
+            $eagerLoadedProperties[$k] = $model::getProperty($k);
+        }
 
         // fetch the models matching the query
-        $model = $this->model;
         $driver = $model::getDriver();
         foreach ($driver->queryModels($this) as $row) {
             // get the model's ID
@@ -291,19 +297,21 @@ class Query
             // create the model and cache the loaded values
             $models[] = new $model($id, $row);
             foreach ($this->eagerLoaded as $k) {
-                if ($row[$k]) {
-                    $ids[$k][] = $row[$k];
+                $property = $eagerLoadedProperties[$k];
+                $localKey = $property['local_key'];
+                if ($row[$localKey]) {
+                    $ids[$k][] = $row[$localKey];
                 }
             }
         }
 
         // hydrate the eager loaded relationships
         foreach ($this->eagerLoaded as $k) {
-            $property = $model::getProperty($k);
+            $property = $eagerLoadedProperties[$k];
             $relationModelClass = $property['relation'];
 
-            if (Model::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k]);
+            if (Model::RELATIONSHIP_BELONGS_TO == $property['relation_type']) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key']);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
@@ -474,17 +482,18 @@ class Query
      *
      * @param string $modelClass
      * @param array  $ids
+     * @param string $foreignKey
      *
      * @return array
      */
-    private function fetchRelationships($modelClass, array $ids)
+    private function fetchRelationships($modelClass, array $ids, $foreignKey = 'id')
     {
         $uniqueIds = array_unique($ids);
         if (0 === count($uniqueIds)) {
             return [];
         }
 
-        $in = 'id IN ('.implode(',', $uniqueIds).')';
+        $in = $foreignKey.' IN ('.implode(',', $uniqueIds).')';
         $models = $modelClass::where($in)
                              ->first(self::MAX_LIMIT);
 

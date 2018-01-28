@@ -13,6 +13,7 @@ namespace Pulsar\Relation;
 
 use ICanBoogie\Inflector;
 use Pulsar\Model;
+use Pulsar\Query;
 
 /**
  * Represents a has-many relationship.
@@ -41,25 +42,28 @@ class HasMany extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery()
+    protected function initQuery(Query $query)
     {
         $localKey = $this->localKey;
         $id = $this->localModel->$localKey;
 
-        if ($id === false) {
+        if (false === $id) {
             $this->empty = true;
         }
 
-        $this->query->where($this->foreignKey, $id);
+        $query->where($this->foreignKey, $id);
+
+        return $query;
     }
 
     public function getResults()
     {
+        $query = $this->getQuery();
         if ($this->empty) {
             return;
         }
 
-        return $this->query->execute();
+        return $query->execute();
     }
 
     public function save(Model $model)

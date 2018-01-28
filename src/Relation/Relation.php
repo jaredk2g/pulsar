@@ -41,11 +41,6 @@ abstract class Relation
     protected $foreignKey;
 
     /**
-     * @var \Pulsar\Query
-     */
-    protected $query;
-
-    /**
      * @var bool
      */
     protected $empty;
@@ -63,9 +58,6 @@ abstract class Relation
 
         $this->foreignModel = $foreignModel;
         $this->foreignKey = $foreignKey;
-
-        $this->query = new Query(new $foreignModel());
-        $this->initQuery();
     }
 
     /**
@@ -115,13 +107,21 @@ abstract class Relation
      */
     public function getQuery()
     {
-        return $this->query;
+        $foreignModel = $this->foreignModel;
+        $query = new Query(new $foreignModel());
+        $this->initQuery($query);
+
+        return $query;
     }
 
     /**
      * Called to initialize the query.
+     *
+     * @param Query $query
+     *
+     * @return Query
      */
-    abstract protected function initQuery();
+    abstract protected function initQuery(Query $query);
 
     /**
      * Called to get the results of the relation query.
@@ -157,6 +157,6 @@ abstract class Relation
     public function __call($method, $arguments)
     {
         // try calling any unkown methods on the query
-        return call_user_func_array([$this->query, $method], $arguments);
+        return call_user_func_array([$this->getQuery(), $method], $arguments);
     }
 }

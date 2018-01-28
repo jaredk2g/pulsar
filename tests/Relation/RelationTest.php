@@ -15,14 +15,6 @@ use Pulsar\Relation\Relation;
 
 class RelationTest extends MockeryTestCase
 {
-    public function testConstruct()
-    {
-        $model = Mockery::mock(Model::class);
-        $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
-
-        $this->assertTrue($relation->initQuery);
-    }
-
     public function testGetLocalModel()
     {
         $model = Mockery::mock(Model::class);
@@ -62,6 +54,7 @@ class RelationTest extends MockeryTestCase
 
         $query = $relation->getQuery();
         $this->assertInstanceOf(Query::class, $query);
+        $this->assertEquals(['test' => true], $query->getWhere());
     }
 
     public function testCallOnQuery()
@@ -69,19 +62,20 @@ class RelationTest extends MockeryTestCase
         $model = Mockery::mock(Model::class);
         $relation = new DistantRelation($model, 'user_id', 'TestModel', 'id');
 
-        $relation->where(['name' => 'Bob']);
+        $query = $relation->where(['name' => 'Bob']);
 
-        $this->assertEquals(['name' => 'Bob'], $relation->getQuery()->getWhere());
+        $this->assertInstanceOf(Query::class, $query);
+        $this->assertEquals(['test' => true, 'name' => 'Bob'], $query->getWhere());
     }
 }
 
 class DistantRelation extends Relation
 {
-    public $initQuery;
-
-    protected function initQuery()
+    protected function initQuery(Query $query)
     {
-        $this->initQuery = true;
+        $query->where('test', true);
+
+        return $query;
     }
 
     public function getResults()

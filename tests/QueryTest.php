@@ -161,7 +161,7 @@ class QueryTest extends MockeryTestCase
         $this->assertEquals('102,103', $result[1]->id());
     }
 
-    public function testExecuteEagerLoading()
+    public function testExecuteEagerLoadingBelongsTo()
     {
         $query = new Query(TestModel2::class);
         $query->with('person');
@@ -179,7 +179,7 @@ class QueryTest extends MockeryTestCase
                                'id' => 1,
                            ],
                        ];
-                   } elseif ($query->getModel() == TestModel2::class) {
+                   } elseif (TestModel2::class == $query->getModel()) {
                        return [
                            [
                                'id' => 100,

@@ -13,6 +13,7 @@ namespace Pulsar\Relation;
 
 use ICanBoogie\Inflector;
 use Pulsar\Model;
+use Pulsar\Query;
 
 /**
  * Represents a belongs-to relationship.
@@ -41,25 +42,28 @@ class BelongsTo extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery()
+    protected function initQuery(Query $query)
     {
         $id = $this->localModel->{$this->localKey};
 
-        if ($id === null) {
+        if (null === $id) {
             $this->empty = true;
         }
 
-        $this->query->where($this->foreignKey, $id)
+        $query->where($this->foreignKey, $id)
             ->limit(1);
+
+        return $query;
     }
 
     public function getResults()
     {
+        $query = $this->getQuery();
         if ($this->empty) {
             return;
         }
 
-        return $this->query->first();
+        return $query->first();
     }
 
     public function save(Model $model)
