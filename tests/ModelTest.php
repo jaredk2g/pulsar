@@ -323,13 +323,13 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
             ],
-            'car' => [
+            'garage' => [
                 'type' => null,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
-                'relation' => 'Car',
+                'relation' => 'Garage',
                 'relation_type' => 'has_one',
                 'foreign_key' => 'person_id',
                 'local_key' => 'id',
@@ -621,7 +621,7 @@ class ModelTest extends MockeryTestCase
                 'id' => 10,
                 'name' => 'Bob Loblaw',
                 'email' => 'bob@example.com',
-                'car' => null,
+                'garage' => null,
                 'deleted_at' => null,
             ],
         ];

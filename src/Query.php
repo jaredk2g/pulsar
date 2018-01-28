@@ -275,18 +275,14 @@ class Query
      */
     public function execute()
     {
-        $models = [];
         $model = $this->model;
+        $driver = $model::getDriver();
 
-        $ids = [];
         $eagerLoadedProperties = [];
-        foreach ($this->eagerLoaded as $k) {
-            $ids[$k] = [];
-            $eagerLoadedProperties[$k] = $model::getProperty($k);
-        }
+        $ids = array_fill_keys($this->eagerLoaded, []);
 
         // fetch the models matching the query
-        $driver = $model::getDriver();
+        $models = [];
         foreach ($driver->queryModels($this) as $row) {
             // get the model's ID
             $id = [];
@@ -297,8 +293,11 @@ class Query
             // create the model and cache the loaded values
             $models[] = new $model($id, $row);
             foreach ($this->eagerLoaded as $k) {
-                $property = $eagerLoadedProperties[$k];
-                $localKey = $property['local_key'];
+                if (!isset($eagerLoadedProperties[$k])) {
+                    $eagerLoadedProperties[$k] = $model::getProperty($k);
+                }
+
+                $localKey = $eagerLoadedProperties[$k]['local_key'];
                 if ($row[$localKey]) {
                     $ids[$k][] = $row[$localKey];
                 }
@@ -311,7 +310,7 @@ class Query
             $relationModelClass = $property['relation'];
 
             if (Model::RELATIONSHIP_BELONGS_TO == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key']);
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
@@ -319,7 +318,7 @@ class Query
                     }
                 }
             } elseif (Model::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key']);
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
@@ -330,6 +329,16 @@ class Query
                         // for models not found during eager loading
                         // or else it will trigger another DB call
                         $models[$j]->clearRelation($k);
+                    }
+                }
+            } elseif (Model::RELATIONSHIP_HAS_MANY == $property['relation_type']) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], true);
+
+                foreach ($ids[$k] as $j => $id) {
+                    if (isset($relationships[$id])) {
+                        $models[$j]->setRelationCollection($k, $relationships[$id]);
+                    } else {
+                        $models[$j]->setRelationCollection($k, []);
                     }
                 }
             }
@@ -492,15 +501,16 @@ class Query
     }
 
     /**
-     * Hydrates the eager-loaded relationships for a given set of models.
+     * Hydrates the eager-loaded relationships for a given set of IDs.
      *
      * @param string $modelClass
      * @param array  $ids
      * @param string $foreignKey
+     * @param bool   $multiple   when true will condense
      *
      * @return array
      */
-    private function fetchRelationships($modelClass, array $ids, $foreignKey)
+    private function fetchRelationships($modelClass, array $ids, $foreignKey, $multiple)
     {
         $uniqueIds = array_unique($ids);
         if (0 === count($uniqueIds)) {
@@ -513,7 +523,14 @@ class Query
 
         $result = [];
         foreach ($models as $model) {
-            $result[$model->$foreignKey] = $model;
+            if ($multiple) {
+                if (!isset($result[$model->$foreignKey])) {
+                    $result[$model->$foreignKey] = [];
+                }
+                $result[$model->$foreignKey][] = $model;
+            } else {
+                $result[$model->$foreignKey] = $model;
+            }
         }
 
         return $result;

@@ -218,13 +218,13 @@ class QueryTest extends MockeryTestCase
     public function testExecuteEagerLoadingHasOne()
     {
         $query = new Query(Person::class);
-        $query->with('car');
+        $query->with('garage');
 
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
             ->andReturnUsing(function ($query) {
-                if ($query->getModel() instanceof Car && $query->getWhere() == ['person_id IN (1,2,3)']) {
+                if ($query->getModel() instanceof Garage && $query->getWhere() == ['person_id IN (1,2,3)']) {
                     return [
                         [
                             'id' => 100,
@@ -260,13 +260,82 @@ class QueryTest extends MockeryTestCase
 
         $this->assertCount(3, $result);
 
-        $car1 = $result[0]->relation('car');
-        $this->assertInstanceOf(Car::class, $car1);
-        $this->assertEquals(100, $car1->id());
-        $car2 = $result[1]->relation('car');
-        $this->assertInstanceOf(Car::class, $car2);
-        $this->assertEquals(101, $car2->id());
-        $this->assertNull($result[2]->relation('car'));
+        $garage1 = $result[0]->relation('garage');
+        $this->assertInstanceOf(Garage::class, $garage1);
+        $this->assertEquals(100, $garage1->id());
+        $garage2 = $result[1]->relation('garage');
+        $this->assertInstanceOf(Garage::class, $garage2);
+        $this->assertEquals(101, $garage2->id());
+        $this->assertNull($result[2]->relation('garage'));
+    }
+
+    public function testExecuteEagerLoadingHasMany()
+    {
+        $query = new Query(Category::class);
+        $query->with('posts');
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->andReturnUsing(function ($query) {
+                if ($query->getModel() instanceof Post && $query->getWhere() == ['category_id IN (1,2,3)']) {
+                    return [
+                        [
+                            'id' => 100,
+                            'category_id' => 1,
+                        ],
+                        [
+                            'id' => 101,
+                            'category_id' => 2,
+                        ],
+                        [
+                            'id' => 102,
+                            'category_id' => 2,
+                        ],
+                        [
+                            'id' => 103,
+                            'category_id' => 2,
+                        ],
+                    ];
+                } elseif (Category::class == $query->getModel()) {
+                    return [
+                        [
+                            'id' => 1,
+                        ],
+                        [
+                            'id' => 2,
+                        ],
+                        [
+                            'id' => 3,
+                        ],
+                    ];
+                }
+            });
+
+        Category::setDriver($driver);
+
+        $result = $query->execute();
+
+        $this->assertCount(3, $result);
+
+        $posts1 = $result[0]->relation('posts');
+        $this->assertCount(1, $posts1);
+        foreach ($posts1 as $post) {
+            $this->assertInstanceOf(Post::class, $post);
+        }
+        $this->assertEquals(100, $posts1[0]->id());
+
+        $posts2 = $result[1]->relation('posts');
+        $this->assertCount(3, $posts2);
+        foreach ($posts2 as $post) {
+            $this->assertInstanceOf(Post::class, $post);
+        }
+        $this->assertEquals(101, $posts2[0]->id());
+        $this->assertEquals(102, $posts2[1]->id());
+        $this->assertEquals(103, $posts2[2]->id());
+
+        $posts3 = $result[2]->relation('posts');
+        $this->assertCount(0, $posts3);
     }
 
     public function testExecuteEagerLoadingNoRelations()

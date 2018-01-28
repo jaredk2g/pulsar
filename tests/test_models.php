@@ -202,8 +202,8 @@ class Person extends ACLModel
             'validate' => 'email',
             'title' => 'Email address',
         ],
-        'car' => [
-            'relation' => Car::class,
+        'garage' => [
+            'relation' => Garage::class,
             'relation_type' => Model::RELATIONSHIP_HAS_ONE,
         ],
     ];
@@ -281,6 +281,24 @@ class Category extends Model
 {
     protected static $properties = [
         'name' => [],
+        'posts' => [
+            'relation' => Post::class,
+            'relation_type' => Model::RELATIONSHIP_HAS_MANY,
+        ],
+    ];
+}
+
+class Garage extends Model
+{
+    protected static $properties = [
+        'person_id' => [
+            'type' => Model::TYPE_INTEGER,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+        ],
+        'location' => [],
+        'cars' => [
+            'relation_type' => Model::RELATIONSHIP_HAS_MANY,
+        ],
     ];
 }
 
@@ -289,8 +307,9 @@ class Car extends Model
     protected static $properties = [
         'make' => [],
         'model' => [],
-        'person_id' => [
+        'garage_id' => [
             'type' => Model::TYPE_INTEGER,
+            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
         ],
     ];
 }

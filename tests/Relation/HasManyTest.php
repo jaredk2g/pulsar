@@ -27,7 +27,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(10);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
         $this->assertEquals(['person_id' => 10], $relation->getQuery()->getWhere());
     }
@@ -36,7 +36,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(10);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
         self::$driver->shouldReceive('queryModels')
             ->andReturn([['id' => 11], ['id' => 12]]);
@@ -46,7 +46,7 @@ class HasManyTest extends MockeryTestCase
         $this->assertCount(2, $result);
 
         foreach ($result as $m) {
-            $this->assertInstanceOf(Car::class, $m);
+            $this->assertInstanceOf(Garage::class, $m);
         }
 
         $this->assertEquals(11, $result[0]->id());
@@ -58,7 +58,7 @@ class HasManyTest extends MockeryTestCase
         $person = new Person();
         $person->person_id = null;
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
         $this->assertNull($relation->getResults());
     }
@@ -67,31 +67,31 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
-        $car = new Car(2);
-        $car->refreshWith(['make' => '']);
-        $car->make = 'Aston Martin';
+        $garage = new Garage(2);
+        $garage->refreshWith(['location' => '']);
+        $garage->location = 'My House';
 
         self::$driver->shouldReceive('updateModel')
-            ->withArgs([$car, ['make' => 'Aston Martin', 'person_id' => 100]])
+            ->withArgs([$garage, ['location' => 'My House', 'person_id' => 100]])
             ->andReturn(true)
             ->once();
 
-        $this->assertEquals($car, $relation->save($car));
+        $this->assertEquals($garage, $relation->save($garage));
 
-        $this->assertTrue($car->persisted());
+        $this->assertTrue($garage->persisted());
     }
 
     public function testCreate()
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
         self::$driver->shouldReceive('createModel')
             ->andReturnUsing(function ($model, $params) {
-                $this->assertEquals(['make' => 'Aston Martin', 'model' => 'DB11', 'person_id' => 100], $params);
+                $this->assertEquals(['location' => 'My House', 'person_id' => 100], $params);
 
                 return true;
             });
@@ -99,57 +99,57 @@ class HasManyTest extends MockeryTestCase
         self::$driver->shouldReceive('getCreatedID')
             ->andReturn(1);
 
-        $car = $relation->create(['make' => 'Aston Martin', 'model' => 'DB11']);
+        $garage = $relation->create(['location' => 'My House']);
 
-        $this->assertInstanceOf(Car::class, $car);
-        $this->assertTrue($car->persisted());
+        $this->assertInstanceOf(Garage::class, $garage);
+        $this->assertTrue($garage->persisted());
     }
 
     public function testAttach()
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
-        $car = new Car(5);
-        $car->refreshWith(['person_id' => null]);
+        $garage = new Garage(5);
+        $garage->refreshWith(['person_id' => null]);
 
         self::$driver->shouldReceive('updateModel')
             ->andReturnUsing(function ($model, $params) {
-                $this->assertInstanceOf(Car::class, $model);
+                $this->assertInstanceOf(Garage::class, $model);
                 $this->assertEquals(['person_id' => 100], $params);
 
                 return true;
             })
             ->once();
 
-        $this->assertEquals($relation, $relation->attach($car));
+        $this->assertEquals($relation, $relation->attach($garage));
 
-        $this->assertTrue($car->persisted());
+        $this->assertTrue($garage->persisted());
     }
 
     public function testDetach()
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
-        $car = new Car(2);
-        $car->refreshWith(['person_id' => 100]);
+        $garage = new Garage(2);
+        $garage->refreshWith(['person_id' => 100]);
 
         self::$driver->shouldReceive('updateModel')
-            ->withArgs([$car, ['person_id' => null]])
+            ->withArgs([$garage, ['person_id' => null]])
             ->andReturn(true)
             ->once();
 
-        $this->assertEquals($relation, $relation->detach($car));
+        $this->assertEquals($relation, $relation->detach($garage));
     }
 
     public function testSync()
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Car', 'person_id');
+        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
 
         self::$driver = Mockery::mock(DriverInterface::class);
 
@@ -158,7 +158,7 @@ class HasManyTest extends MockeryTestCase
 
         self::$driver->shouldReceive('queryModels')
             ->andReturnUsing(function ($query) {
-                $this->assertInstanceOf(Car::class, $query->getModel());
+                $this->assertInstanceOf(Garage::class, $query->getModel());
                 $this->assertEquals(['person_id NOT IN (1,2,3)'], $query->getWhere());
 
                 return [['id' => 3], ['id' => 4], ['id' => 5]];

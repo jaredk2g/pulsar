@@ -1390,6 +1390,23 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
+     * @deprecated
+     *
+     * Sets the model for a one-to-many relationship
+     *
+     * @param string   $k
+     * @param iterable $models
+     *
+     * @return $this
+     */
+    public function setRelationCollection($k, iterable $models)
+    {
+        $this->_relationships[$k] = $models;
+
+        return $this;
+    }
+
+    /**
      * Sets the model for a one-to-one relationship (has-one or belongs-to) as null.
      *
      * @param string $k
