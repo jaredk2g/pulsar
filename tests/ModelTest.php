@@ -1672,69 +1672,46 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $property = [
-        ];
-
-        $model = new TestModel();
-        $model->getRelationshipManager($property, 'relationship_id');
+        $model = new InvalidRelationship();
+        $model->getRelationshipManager('name');
     }
 
     public function testGetRelationshipManagerInvalidType()
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $property = [
-            'relation' => TestModel2::class,
-            'relation_type' => 'not a valid type',
-        ];
-
-        $model = new TestModel();
-        $model->getRelationshipManager($property, 'relationship_id');
+        $model = new RelationshipTester();
+        $model->getRelationshipManager('invalid_relationship');
     }
 
     public function testGetRelationshipManagerHasOne()
     {
-        $model = new TestModel();
-        $property = [
-            'relation' => TestModel2::class,
-            'relation_type' => Model::RELATIONSHIP_HAS_ONE,
-        ];
-
-        $relation = $model->getRelationshipManager($property, 'id');
+        $model = new RelationshipTester();
+        $relation = $model->getRelationshipManager('has_one');
 
         $this->assertInstanceOf(HasOne::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('test_model_id', $relation->getForeignKey());
+        $this->assertEquals('relationship_tester_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testGetRelationshipManagerHasMany()
     {
-        $model = new TestModel();
-        $property = [
-            'relation' => TestModel2::class,
-            'relation_type' => Model::RELATIONSHIP_HAS_MANY,
-        ];
-
-        $relation = $model->getRelationshipManager($property, 'id');
+        $model = new RelationshipTester();
+        $relation = $model->getRelationshipManager('has_many');
 
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('test_model_id', $relation->getForeignKey());
+        $this->assertEquals('relationship_tester_id', $relation->getForeignKey());
         $this->assertEquals('id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
     }
 
     public function testGetRelationshipManagerBelongsTo()
     {
-        $model = new TestModel();
-        $property = [
-            'relation' => TestModel2::class,
-            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
-        ];
-
-        $relation = $model->getRelationshipManager($property, 'my_relationship_id');
+        $model = new RelationshipTester();
+        $relation = $model->getRelationshipManager('belongs_to');
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -1745,20 +1722,15 @@ class ModelTest extends MockeryTestCase
 
     public function testGetRelationshipManagerBelongsToMany()
     {
-        $model = new TestModel();
-        $property = [
-            'relation' => TestModel2::class,
-            'relation_type' => Model::RELATIONSHIP_BELONGS_TO_MANY,
-        ];
-
-        $relation = $model->getRelationshipManager($property, 'my_relationship_id');
+        $model = new RelationshipTester();
+        $relation = $model->getRelationshipManager('belongs_to_many');
 
         $this->assertInstanceOf(BelongsToMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('id', $relation->getForeignKey());
         $this->assertEquals('test_model2_id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
-        $this->assertEquals('TestModelTestModel2', $relation->getTablename());
+        $this->assertEquals('RelationshipTesterTestModel2', $relation->getTablename());
     }
 
     public function testHasOne()

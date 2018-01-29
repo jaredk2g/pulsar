@@ -264,7 +264,7 @@ abstract class Model implements \ArrayAccess
                     $property['local_key'] = $k;
                 }
 
-                $relation = $this->getRelationshipManager($property, $k);
+                $relation = $this->getRelationshipManager($k);
                 if (!isset($property['foreign_key'])) {
                     $property['foreign_key'] = $relation->getForeignKey();
                 }
@@ -1363,8 +1363,7 @@ abstract class Model implements \ArrayAccess
     public function relation($k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $property = static::getProperty($k);
-            $relation = $this->getRelationshipManager($property, $k);
+            $relation = $this->getRelationshipManager($k);
             $this->_relationships[$k] = $relation->getResults();
         }
 
@@ -1424,17 +1423,17 @@ abstract class Model implements \ArrayAccess
     /**
      * Builds a relationship manager object for a given property.
      *
-     * @param array  $property
-     * @param string $name
+     * @param array $k
      *
      * @throws \InvalidArgumentException when the relationship manager cannot be created
      *
      * @return Relation
      */
-    public function getRelationshipManager(array $property, $name)
+    public function getRelationshipManager($k)
     {
+        $property = static::getProperty($k);
         if (!isset($property['relation'])) {
-            throw new \InvalidArgumentException('Property "'.$name.'" does not have a relationship.');
+            throw new \InvalidArgumentException('Property "'.$k.'" does not have a relationship.');
         }
 
         $relationModelClass = $property['relation'];
@@ -1459,7 +1458,7 @@ abstract class Model implements \ArrayAccess
             return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
         }
 
-        throw new \InvalidArgumentException('Relationship type on "'.$name.'" property not supported: '.$property['relation_type']);
+        throw new \InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$property['relation_type']);
     }
 
     /**
