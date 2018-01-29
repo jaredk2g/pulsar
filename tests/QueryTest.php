@@ -161,6 +161,25 @@ class QueryTest extends MockeryTestCase
         $this->assertEquals('102,103', $result[1]->id());
     }
 
+    public function testExecuteEagerLoadingNoResults()
+    {
+        $query = new Query(TestModel2::class);
+        $query->with('person');
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->andReturnUsing(function ($query) {
+                return [];
+            });
+
+        TestModel2::setDriver($driver);
+
+        $result = $query->execute();
+
+        $this->assertCount(0, $result);
+    }
+
     public function testExecuteEagerLoadingBelongsTo()
     {
         $query = new Query(TestModel2::class);

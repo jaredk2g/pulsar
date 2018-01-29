@@ -275,28 +275,31 @@ class Query
      */
     public function execute()
     {
-        $model = $this->model;
-        $driver = $model::getDriver();
+        $modelClass = $this->model;
+        $driver = $modelClass::getDriver();
 
         $eagerLoadedProperties = [];
-        $ids = array_fill_keys($this->eagerLoaded, []);
+        // instantiate a model so that initialize() is called and properties are filled in
+        // otherwise this empty model is not used
+        $model = new $modelClass();
+        $ids = [];
+        foreach ($this->eagerLoaded as $k) {
+            $eagerLoadedProperties[$k] = $modelClass::getProperty($k);
+            $ids[$k] = [];
+        }
 
         // fetch the models matching the query
         $models = [];
         foreach ($driver->queryModels($this) as $row) {
             // get the model's ID
             $id = [];
-            foreach ($model::getIDProperties() as $k) {
+            foreach ($modelClass::getIDProperties() as $k) {
                 $id[] = $row[$k];
             }
 
             // create the model and cache the loaded values
-            $models[] = new $model($id, $row);
+            $models[] = new $modelClass($id, $row);
             foreach ($this->eagerLoaded as $k) {
-                if (!isset($eagerLoadedProperties[$k])) {
-                    $eagerLoadedProperties[$k] = $model::getProperty($k);
-                }
-
                 $localKey = $eagerLoadedProperties[$k]['local_key'];
                 if ($row[$localKey]) {
                     $ids[$k][] = $row[$localKey];
