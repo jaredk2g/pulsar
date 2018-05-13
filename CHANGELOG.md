@@ -15,6 +15,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Reduce a loadModel call by caching the values after a save.
 - Use Relation classes in `relation()` instead of `::find()`.
 
+## Fixed
+- Catch `PDOException` in `getConnection()` and rethrow as `DriverException` database driver. 
+
 ## 0.7 - 2018-01-21
 ### Added
 - Can set global locale instance **used by error instances with `Errors::setGlobalLocale()`.

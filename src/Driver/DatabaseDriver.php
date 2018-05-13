@@ -91,8 +91,10 @@ class DatabaseDriver implements DriverInterface
                 } else {
                     return $this->connections->getDefault();
                 }
+            } catch (PDOException $e) {
+                throw new DriverException($e->getMessage(), $e->getCode(), $e);
             } catch (JAQBException $e) {
-                throw new DriverException($e->getMessage());
+                throw new DriverException($e->getMessage(), $e->getCode(), $e);
             }
         }
 
@@ -111,8 +113,8 @@ class DatabaseDriver implements DriverInterface
 
         try {
             return $db->insert($values)
-                      ->into($tablename)
-                      ->execute() instanceof PDOStatement;
+                    ->into($tablename)
+                    ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -140,9 +142,9 @@ class DatabaseDriver implements DriverInterface
 
         try {
             $row = $db->select('*')
-                      ->from($tablename)
-                      ->where($model->ids())
-                      ->one();
+                ->from($tablename)
+                ->where($model->ids())
+                ->one();
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -158,7 +160,7 @@ class DatabaseDriver implements DriverInterface
 
     public function updateModel(Model $model, array $parameters)
     {
-        if (count($parameters) == 0) {
+        if (0 == count($parameters)) {
             return true;
         }
 
@@ -168,9 +170,9 @@ class DatabaseDriver implements DriverInterface
 
         try {
             return $db->update($tablename)
-                      ->values($values)
-                      ->where($model->ids())
-                      ->execute() instanceof PDOStatement;
+                    ->values($values)
+                    ->where($model->ids())
+                    ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -185,8 +187,8 @@ class DatabaseDriver implements DriverInterface
 
         try {
             return $db->delete($tablename)
-                      ->where($model->ids())
-                      ->execute() instanceof PDOStatement;
+                    ->where($model->ids())
+                    ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             $e = new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage());
             $e->setException($original);
@@ -437,7 +439,7 @@ class DatabaseDriver implements DriverInterface
      */
     private function prefixColumn($column, $tablename)
     {
-        if ($column === '*' || preg_match('/^[a-z0-9_]+$/i', $column)) {
+        if ('*' === $column || preg_match('/^[a-z0-9_]+$/i', $column)) {
             return "$tablename.$column";
         }
 
