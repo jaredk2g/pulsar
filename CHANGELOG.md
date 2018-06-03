@@ -16,7 +16,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Use Relation classes in `relation()` instead of `::find()`.
 
 ## Fixed
-- Catch `PDOException` in `getConnection()` and rethrow as `DriverException` database driver. 
+- Catch `PDOException` in `getConnection()` and rethrow as `DriverException` database driver.
+- The time zone validator was rejecting many valid time zones.
 
 ## 0.7 - 2018-01-21
 ### Added

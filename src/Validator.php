@@ -11,6 +11,8 @@
 
 namespace Pulsar;
 
+use DateTimeZone;
+use Exception;
 use Infuse\Utility;
 
 /**
@@ -379,17 +381,13 @@ class Validator
      */
     private function time_zone(&$value)
     {
-        // thanks to http://stackoverflow.com/questions/5816960/how-to-check-is-timezone-identifier-valid-from-code
-        $valid = [];
-        $tza = timezone_abbreviations_list();
-        foreach ($tza as $zone) {
-            foreach ($zone as $item) {
-                $valid[$item['timezone_id']] = true;
-            }
+        try {
+            $tz = new DateTimeZone($value);
+        } catch (Exception $e) {
+            return false;
         }
-        unset($valid['']);
 
-        return (bool) array_value($valid, $value);
+        return true;
     }
 
     /**

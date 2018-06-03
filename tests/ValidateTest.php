@@ -225,10 +225,15 @@ class ValidateTest extends MockeryTestCase
     public function testTimeZone()
     {
         $validator = new Validator('time_zone');
-        $s = 'America/Chicago';
-        $this->assertTrue($validator->validate($s));
+
+        foreach (DateTimeZone::listIdentifiers() as $tz) {
+            $this->assertTrue($validator->validate($tz), "Time zone $tz was not considered valid");
+        }
 
         $s = 'anywhere';
+        $this->assertFalse($validator->validate($s));
+
+        $s = 'Jupiter/Europa';
         $this->assertFalse($validator->validate($s));
     }
 
