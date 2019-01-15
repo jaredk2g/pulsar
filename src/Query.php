@@ -410,7 +410,7 @@ class Query
      *
      * @param string $property
      *
-     * @return int
+     * @return number
      */
     public function sum($property)
     {
@@ -425,7 +425,7 @@ class Query
      *
      * @param string $property
      *
-     * @return int
+     * @return number
      */
     public function average($property)
     {
@@ -440,7 +440,7 @@ class Query
      *
      * @param string $property
      *
-     * @return int
+     * @return number
      */
     public function max($property)
     {
@@ -455,7 +455,7 @@ class Query
      *
      * @param string $property
      *
-     * @return int
+     * @return number
      */
     public function min($property)
     {

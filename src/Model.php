@@ -27,6 +27,20 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class Model.
+ *
+ * @method Query             where($where, $value = null, $condition = null)
+ * @method Query             limit($limit)
+ * @method Query             start($start)
+ * @method Query             sort($sort)
+ * @method Query             join($model, $column, $foreignKey)
+ * @method Query             with($k)
+ * @method Iterator          all()
+ * @method array|static|null first($limit = 1)
+ * @method int               count()
+ * @method number            sum($property)
+ * @method number            average($property)
+ * @method number            max($property)
+ * @method number            min($property)
  */
 abstract class Model implements \ArrayAccess
 {
