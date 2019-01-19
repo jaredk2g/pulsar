@@ -10,10 +10,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added a `pivot_tablename` setting on model properties for overriding the default pivot table name on belongs-to-many relationships.
 - Added a Collection class to represent a collection of models and provide functionality around managing that collection.
 - Implemented eager loading for has-one and has-many relationships.
+- The `ACLModelRequester` class now holds the current requester and supports callables for lazy-loading.
 
 ## Changed
 - Reduce a loadModel call by caching the values after a save.
 - Use Relation classes in `relation()` instead of `::find()`.
+- Deprecated `ACLModel::setRequester()` and `ACLModel::getRequester()`
 
 ## Fixed
 - Catch `PDOException` in `getConnection()` and rethrow as `DriverException` database driver.

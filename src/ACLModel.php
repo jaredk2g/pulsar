@@ -21,11 +21,6 @@ abstract class ACLModel extends Model
     const LISTENER_PRIORITY = 1000;
 
     /**
-     * @var Model
-     */
-    protected static $requester;
-
-    /**
      * @var array
      */
     private $permissionsCache = [];
@@ -39,20 +34,24 @@ abstract class ACLModel extends Model
      * Sets the requester.
      *
      * @param Model $requester
+     *
+     * @deprecated
      */
     public static function setRequester(Model $requester)
     {
-        static::$requester = $requester;
+        ACLModelRequester::set($requester);
     }
 
     /**
      * Gets the requester.
      *
      * @return Model|null
+     *
+     * @deprecated
      */
     public static function getRequester()
     {
-        return static::$requester;
+        return ACLModelRequester::get();
     }
 
     /**
@@ -116,7 +115,7 @@ abstract class ACLModel extends Model
         static::creating(function (ModelEvent $event) {
             $model = $event->getModel();
 
-            if (!$model->can('create', ACLModel::getRequester())) {
+            if (!$model->can('create', ACLModelRequester::get())) {
                 $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
 
                 $event->stopPropagation();
@@ -128,7 +127,7 @@ abstract class ACLModel extends Model
         static::updating(function (ModelEvent $event) {
             $model = $event->getModel();
 
-            if (!$model->can('edit', ACLModel::getRequester())) {
+            if (!$model->can('edit', ACLModelRequester::get())) {
                 $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
 
                 $event->stopPropagation();
@@ -140,7 +139,7 @@ abstract class ACLModel extends Model
         static::deleting(function (ModelEvent $event) {
             $model = $event->getModel();
 
-            if (!$model->can('delete', ACLModel::getRequester())) {
+            if (!$model->can('delete', ACLModelRequester::get())) {
                 $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
 
                 $event->stopPropagation();

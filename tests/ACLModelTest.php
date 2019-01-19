@@ -16,7 +16,6 @@ require_once 'tests/test_models.php';
 
 class ACLModelTest extends MockeryTestCase
 {
-    public static $app;
     public static $requester;
 
     public static function setUpBeforeClass()
