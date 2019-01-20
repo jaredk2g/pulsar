@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.8 - 2019-01-19
 ### Added
 - There is a `relation_type` setting on model properties that defaults to `belongs_to`.
 - Added a `local_key` setting on model properties for overriding the default local key on relationships.
