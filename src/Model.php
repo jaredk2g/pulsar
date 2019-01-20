@@ -1412,7 +1412,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return $this
      */
-    public function setRelationCollection($k, iterable $models)
+    public function setRelationCollection($k, $models)
     {
         $this->_relationships[$k] = $models;
 
