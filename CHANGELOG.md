@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.9 - 2019-08-13
+## Changed
+- Updated Symfony dependency to version 4.3+
+- PHP 7.1 is the minimum supported version
+
 ## 0.8 - 2019-01-19
 ### Added
 - There is a `relation_type` setting on model properties that defaults to `belongs_to`.
