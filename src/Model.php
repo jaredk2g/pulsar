@@ -1663,7 +1663,7 @@ abstract class Model implements \ArrayAccess
     private function performDispatch($eventName)
     {
         $event = new ModelEvent($this);
-        static::getDispatcher()->dispatch($eventName, $event);
+        static::getDispatcher()->dispatch($event, $eventName);
 
         return !$event->isPropagationStopped();
     }
