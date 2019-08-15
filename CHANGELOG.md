@@ -2,16 +2,16 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
 
+## Unreleased
 ### Changed
 - Package infuse/libs updated to v1.2.
-- Stop using deprecated symfony/event-dispatcher 4.2 and switch to 4.3
+	
+## 0.9 - 2019-08-13
+## Changed
+- Updated Symfony dependency to version 4.3+
+- PHP 7.1 is the minimum supported version
 
-### Removed
-- PHP 7.0 support
-	
-	
 ## 0.8 - 2019-01-19
 ### Added
 - There is a `relation_type` setting on model properties that defaults to `belongs_to`.
