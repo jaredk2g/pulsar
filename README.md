@@ -12,7 +12,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 
 ## Requirements
 
-- PHP 7+
+- PHP 7.1+
 
 ## Installation
 
