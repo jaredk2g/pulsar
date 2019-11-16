@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.9.1 - 2019-11-16
 ## Fixed
 - Querying a has-one relationship with eager loading could return incorrect results. 
 
