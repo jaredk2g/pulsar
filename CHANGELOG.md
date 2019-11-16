@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+## Fixed
+- Querying a has-one relationship with eager loading could return incorrect results. 
+
 ## 0.9 - 2019-08-13
 ## Changed
 - Updated Symfony dependency to version 4.3+

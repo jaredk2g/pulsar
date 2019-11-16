@@ -290,7 +290,7 @@ class Query
 
         // fetch the models matching the query
         $models = [];
-        foreach ($driver->queryModels($this) as $row) {
+        foreach ($driver->queryModels($this) as $j => $row) {
             // get the model's ID
             $id = [];
             foreach ($modelClass::getIDProperties() as $k) {
@@ -302,7 +302,7 @@ class Query
             foreach ($this->eagerLoaded as $k) {
                 $localKey = $eagerLoadedProperties[$k]['local_key'];
                 if ($row[$localKey]) {
-                    $ids[$k][] = $row[$localKey];
+                    $ids[$k][$j] = $row[$localKey];
                 }
             }
         }

@@ -215,6 +215,16 @@ class QueryTest extends MockeryTestCase
                                'id2' => 103,
                                'person' => null,
                            ],
+                           [
+                               'id' => 103,
+                               'id2' => 104,
+                               'person' => 2,
+                           ],
+                           [
+                               'id' => 105,
+                               'id2' => 106,
+                               'person' => 1,
+                           ],
                        ];
                    }
                });
@@ -223,7 +233,7 @@ class QueryTest extends MockeryTestCase
 
         $result = $query->execute();
 
-        $this->assertCount(3, $result);
+        $this->assertCount(5, $result);
 
         $person1 = $result[0]->relation('person');
         $this->assertInstanceOf(Person::class, $person1);
@@ -232,6 +242,12 @@ class QueryTest extends MockeryTestCase
         $this->assertInstanceOf(Person::class, $person2);
         $this->assertEquals(2, $person2->id());
         $this->assertNull($result[2]->relation('person'));
+        $person4 = $result[3]->relation('person');
+        $this->assertInstanceOf(Person::class, $person4);
+        $this->assertEquals(2, $person4->id());
+        $person5 = $result[4]->relation('person');
+        $this->assertInstanceOf(Person::class, $person5);
+        $this->assertEquals(1, $person5->id());
     }
 
     public function testExecuteEagerLoadingHasOne()
@@ -243,7 +259,7 @@ class QueryTest extends MockeryTestCase
 
         $driver->shouldReceive('queryModels')
             ->andReturnUsing(function ($query) {
-                if ($query->getModel() instanceof Garage && $query->getWhere() == ['person_id IN (1,2,3)']) {
+                if ($query->getModel() instanceof Garage && $query->getWhere() == ['person_id IN (1,2,3,4,5)']) {
                     return [
                         [
                             'id' => 100,
@@ -257,6 +273,18 @@ class QueryTest extends MockeryTestCase
                             'make' => 'Aston Martin',
                             'model' => 'DB11',
                         ],
+                        [
+                            'id' => 103,
+                            'person_id' => 4,
+                            'make' => 'Lamborghini',
+                            'model' => 'Aventador',
+                        ],
+                        [
+                            'id' => 104,
+                            'person_id' => 5,
+                            'make' => 'Tesla',
+                            'model' => 'Roadster',
+                        ],
                     ];
                 } elseif (Person::class == $query->getModel()) {
                     return [
@@ -269,6 +297,12 @@ class QueryTest extends MockeryTestCase
                         [
                             'id' => 3,
                         ],
+                        [
+                            'id' => 4,
+                        ],
+                        [
+                            'id' => 5,
+                        ],
                     ];
                 }
             });
@@ -277,7 +311,7 @@ class QueryTest extends MockeryTestCase
 
         $result = $query->execute();
 
-        $this->assertCount(3, $result);
+        $this->assertCount(5, $result);
 
         $garage1 = $result[0]->relation('garage');
         $this->assertInstanceOf(Garage::class, $garage1);
@@ -286,6 +320,12 @@ class QueryTest extends MockeryTestCase
         $this->assertInstanceOf(Garage::class, $garage2);
         $this->assertEquals(101, $garage2->id());
         $this->assertNull($result[2]->relation('garage'));
+        $garage4 = $result[3]->relation('garage');
+        $this->assertInstanceOf(Garage::class, $garage4);
+        $this->assertEquals(103, $garage4->id());
+        $garage5 = $result[4]->relation('garage');
+        $this->assertInstanceOf(Garage::class, $garage5);
+        $this->assertEquals(104, $garage5->id());
     }
 
     public function testExecuteEagerLoadingHasMany()
