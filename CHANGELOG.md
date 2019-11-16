@@ -4,7 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.9.1 - 2019-11-16
 ## Fixed
-- Querying a has-one relationship with eager loading could return incorrect results. 
+- Querying a belongs-to relationship with eager loading could return incorrect results. 
 
 ## 0.9 - 2019-08-13
 ## Changed
