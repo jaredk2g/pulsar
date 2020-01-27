@@ -440,7 +440,7 @@ class ModelTest extends MockeryTestCase
     public function testGetConnection()
     {
         $model = new TestModel();
-        $this->assertFalse($model->getConnection());
+        $this->assertNull($model->getConnection());
     }
 
     public function testId()
