@@ -548,6 +548,8 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('beginTransaction')
             ->once();
+        $db->shouldReceive('inTransaction')
+            ->andReturn(false);
         $driver = $this->getDriver($db);
         $driver->startTransaction(null);
     }
@@ -556,6 +558,8 @@ class DatabaseDriverTest extends MockeryTestCase
     {
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('beginTransaction');
+        $db->shouldReceive('inTransaction')
+            ->andReturn(false);
         $db->shouldReceive('rollBack')
             ->once();
         $driver = $this->getDriver($db);
@@ -577,6 +581,8 @@ class DatabaseDriverTest extends MockeryTestCase
     {
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('beginTransaction');
+        $db->shouldReceive('inTransaction')
+            ->andReturn(false);
         $db->shouldReceive('commit')
             ->once();
         $driver = $this->getDriver($db);
@@ -599,6 +605,8 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('beginTransaction')
             ->once();
+        $db->shouldReceive('inTransaction')
+            ->andReturn(false);
         $db->shouldReceive('rollBack')
             ->once();
         $driver = $this->getDriver($db);
@@ -609,5 +617,16 @@ class DatabaseDriverTest extends MockeryTestCase
         $driver->commitTransaction(null);
         $driver->commitTransaction(null);
         $driver->rollBackTransaction(null);
+    }
+
+    public function testCommitTransactionExistingTransaction()
+    {
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('inTransaction')
+            ->andReturn(true);
+        $driver = $this->getDriver($db);
+
+        $driver->startTransaction(null);
+        $driver->commitTransaction(null);
     }
 }

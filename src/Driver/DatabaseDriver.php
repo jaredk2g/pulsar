@@ -312,7 +312,14 @@ class DatabaseDriver extends AbstractDriver
     public function startTransaction(?string $connection): void
     {
         if (0 == $this->transactionNestingLevel) {
-            $this->getConnection($connection)->beginTransaction();
+            $db = $this->getConnection($connection);
+            if ($db->inTransaction()) {
+                $this->transactionNestingLevel += 2;
+
+                return;
+            }
+
+            $db->beginTransaction();
         }
 
         ++$this->transactionNestingLevel;
