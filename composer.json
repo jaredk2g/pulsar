@@ -23,7 +23,7 @@
 	},
 	"require": {
 		"php": ">=7.1",
-		"icanboogie/inflector": "^1.3",
+		"icanboogie/inflector": "^2.0",
 		"symfony/event-dispatcher": "^4.3",
 		"jaqb/jaqb": "~1.4",
 		"infuse/libs": "~1.0",
