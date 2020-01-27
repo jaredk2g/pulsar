@@ -115,9 +115,7 @@ class DatabaseDriver extends AbstractDriver
                     ->into($tablename)
                     ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -126,9 +124,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             $id = $this->getConnection($model->getConnection())->lastInsertId();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
         return Model::cast($model::getProperty($propertyName), $id);
@@ -145,9 +141,7 @@ class DatabaseDriver extends AbstractDriver
                 ->where($model->ids())
                 ->one();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
         if (!is_array($row)) {
@@ -173,9 +167,7 @@ class DatabaseDriver extends AbstractDriver
                     ->where($model->ids())
                     ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -189,9 +181,7 @@ class DatabaseDriver extends AbstractDriver
                     ->where($model->ids())
                     ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -215,9 +205,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return $dbQuery->all();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -237,9 +225,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the number of '.$model::modelName().' objects: '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the number of '.$model::modelName().' objects: '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -259,9 +245,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the sum of '.$model::modelName().' '.$field.': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the sum of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -281,9 +265,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the average of '.$model::modelName().' '.$field.': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the average of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -303,9 +285,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the max of '.$model::modelName().' '.$field.': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the max of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -325,9 +305,7 @@ class DatabaseDriver extends AbstractDriver
         try {
             return (int) $dbQuery->scalar();
         } catch (PDOException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the min of '.$model::modelName().' '.$field.': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the min of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 

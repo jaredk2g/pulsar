@@ -12,9 +12,6 @@ namespace Pulsar\Exception;
 
 use Exception;
 
-/**
- * Class ModelException.
- */
 class ModelException extends Exception
 {
 }

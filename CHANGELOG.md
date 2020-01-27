@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added a DBAL driver.
 - Model operations will now be wrapped in database transactions by overriding the `Model::usesTransactions()` method. 
 
+### Removed
+- Removed the `DriverException::getException()` method in favor of `getPrevious()`.
+
 ## 0.9.1 - 2019-11-16
 ## Fixed
 - Querying a belongs-to relationship with eager loading could return incorrect results. 

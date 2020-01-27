@@ -49,9 +49,7 @@ class DbalDriver extends AbstractDriver
 
             return true;
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -60,9 +58,7 @@ class DbalDriver extends AbstractDriver
         try {
             $id = $this->getConnection($model->getConnection())->lastInsertId();
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
         return Model::cast($model::getProperty($propertyName), $id);
@@ -83,9 +79,7 @@ class DbalDriver extends AbstractDriver
         try {
             $row = $db->fetchAssoc($dbQuery->build(), $dbQuery->getValues());
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
         if (!is_array($row)) {
@@ -113,9 +107,7 @@ class DbalDriver extends AbstractDriver
         try {
             return $db->fetchAll($dbQuery->build(), $dbQuery->getValues());
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -141,9 +133,7 @@ class DbalDriver extends AbstractDriver
 
             return true;
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -163,9 +153,7 @@ class DbalDriver extends AbstractDriver
 
             return true;
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
@@ -280,9 +268,7 @@ class DbalDriver extends AbstractDriver
         try {
             return $db->fetchColumn($query->build(), $query->getValues());
         } catch (DBALException $original) {
-            $e = new DriverException('An error occurred in the database driver while getting the value of '.$model::modelName().'.'.$field.': '.$original->getMessage());
-            $e->setException($original);
-            throw $e;
+            throw new DriverException('An error occurred in the database driver while getting the value of '.$model::modelName().'.'.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
     }
 
