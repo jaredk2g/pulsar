@@ -285,4 +285,19 @@ class DbalDriver extends AbstractDriver
             throw $e;
         }
     }
+
+    public function startTransaction(?string $connection): void
+    {
+        $this->getConnection($connection)->beginTransaction();
+    }
+
+    public function rollBackTransaction(?string $connection): void
+    {
+        $this->getConnection($connection)->rollBack();
+    }
+
+    public function commitTransaction(?string $connection): void
+    {
+        $this->getConnection($connection)->commit();
+    }
 }

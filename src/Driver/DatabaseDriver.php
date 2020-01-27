@@ -36,6 +36,11 @@ class DatabaseDriver extends AbstractDriver
     private $connection;
 
     /**
+     * @var int
+     */
+    private $transactionNestingLevel = 0;
+
+    /**
      * Sets the connection manager.
      *
      * @param ConnectionManager $manager
@@ -51,10 +56,8 @@ class DatabaseDriver extends AbstractDriver
 
     /**
      * Gets the connection manager.
-     *
-     * @return ConnectionManager
      */
-    public function getConnectionManager()
+    public function getConnectionManager(): ConnectionManager
     {
         return $this->connections;
     }
@@ -76,13 +79,11 @@ class DatabaseDriver extends AbstractDriver
     /**
      * Gets the database connection.
      *
-     * @param string|false $id connection ID
+     * @param string|null $id connection ID
      *
      * @throws DriverException when the connection has not been set yet
-     *
-     * @return QueryBuilder
      */
-    public function getConnection($id)
+    public function getConnection(?string $id): QueryBuilder
     {
         if ($this->connections) {
             try {
@@ -91,9 +92,7 @@ class DatabaseDriver extends AbstractDriver
                 } else {
                     return $this->connections->getDefault();
                 }
-            } catch (PDOException $e) {
-                throw new DriverException($e->getMessage(), $e->getCode(), $e);
-            } catch (JAQBException $e) {
+            } catch (JAQBException | PDOException $e) {
                 throw new DriverException($e->getMessage(), $e->getCode(), $e);
             }
         }
@@ -330,5 +329,36 @@ class DatabaseDriver extends AbstractDriver
             $e->setException($original);
             throw $e;
         }
+    }
+
+    public function startTransaction(?string $connection): void
+    {
+        if (0 == $this->transactionNestingLevel) {
+            $this->getConnection($connection)->beginTransaction();
+        }
+
+        ++$this->transactionNestingLevel;
+    }
+
+    public function rollBackTransaction(?string $connection): void
+    {
+        if (0 == $this->transactionNestingLevel) {
+            throw new DriverException('No active transaction');
+        } elseif (1 == $this->transactionNestingLevel) {
+            $this->getConnection($connection)->rollBack();
+        }
+
+        --$this->transactionNestingLevel;
+    }
+
+    public function commitTransaction(?string $connection): void
+    {
+        if (0 == $this->transactionNestingLevel) {
+            throw new DriverException('No active transaction');
+        } elseif (1 == $this->transactionNestingLevel) {
+            $this->getConnection($connection)->commit();
+        }
+
+        --$this->transactionNestingLevel;
     }
 }

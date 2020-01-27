@@ -714,6 +714,11 @@ abstract class Model implements \ArrayAccess
         return null;
     }
 
+    protected function usesTransactions(): bool
+    {
+        return false;
+    }
+
     /**
      * Saves the model.
      *
@@ -766,8 +771,14 @@ abstract class Model implements \ArrayAccess
         // clear any previous errors
         $this->getErrors()->clear();
 
+        // start a DB transaction if needed
+        $usesTransactions = $this->usesTransactions();
+        if ($usesTransactions) {
+            self::$driver->startTransaction($this->getConnection());
+        }
+
         // dispatch the model.creating event
-        if (!$this->performDispatch(ModelEvent::CREATING)) {
+        if (!$this->performDispatch(ModelEvent::CREATING, $usesTransactions)) {
             return false;
         }
 
@@ -820,6 +831,11 @@ abstract class Model implements \ArrayAccess
         }
 
         if (!$validated) {
+            // when validations fail roll back any database transaction
+            if ($usesTransactions) {
+                self::$driver->rollBackTransaction($this->getConnection());
+            }
+
             return false;
         }
 
@@ -834,9 +850,14 @@ abstract class Model implements \ArrayAccess
             $this->refreshWith(array_replace($this->_ids, $insertArray));
 
             // dispatch the model.created event
-            if (!$this->performDispatch(ModelEvent::CREATED)) {
+            if (!$this->performDispatch(ModelEvent::CREATED, $usesTransactions)) {
                 return false;
             }
+        }
+
+        // commit the transaction, if used
+        if ($usesTransactions) {
+            self::$driver->commitTransaction($this->getConnection());
         }
 
         return $created;
@@ -1052,13 +1073,14 @@ abstract class Model implements \ArrayAccess
             return true;
         }
 
-        // dispatch the model.updating event
-        if (!$this->performDispatch(ModelEvent::UPDATING)) {
-            return false;
+        // start a DB transaction if needed
+        $usesTransactions = $this->usesTransactions();
+        if ($usesTransactions) {
+            self::$driver->startTransaction($this->getConnection());
         }
 
-        // DEPRECATED
-        if (method_exists($this, 'preSetHook') && !$this->preSetHook($this->_unsaved)) {
+        // dispatch the model.updating event
+        if (!$this->performDispatch(ModelEvent::UPDATING, $usesTransactions)) {
             return false;
         }
 
@@ -1083,6 +1105,11 @@ abstract class Model implements \ArrayAccess
         }
 
         if (!$validated) {
+            // when validations fail roll back any database transaction
+            if ($usesTransactions) {
+                self::$driver->rollBackTransaction($this->getConnection());
+            }
+
             return false;
         }
 
@@ -1094,9 +1121,14 @@ abstract class Model implements \ArrayAccess
             $this->refreshWith(array_replace($this->_values, $updateArray));
 
             // dispatch the model.updated event
-            if (!$this->performDispatch(ModelEvent::UPDATED)) {
+            if (!$this->performDispatch(ModelEvent::UPDATED, $usesTransactions)) {
                 return false;
             }
+        }
+
+        // commit the transaction, if used
+        if ($usesTransactions) {
+            self::$driver->commitTransaction($this->getConnection());
         }
 
         return $updated;
@@ -1116,8 +1148,14 @@ abstract class Model implements \ArrayAccess
         // clear any previous errors
         $this->getErrors()->clear();
 
+        // start a DB transaction if needed
+        $usesTransactions = $this->usesTransactions();
+        if ($usesTransactions) {
+            self::$driver->startTransaction($this->getConnection());
+        }
+
         // dispatch the model.deleting event
-        if (!$this->performDispatch(ModelEvent::DELETING)) {
+        if (!$this->performDispatch(ModelEvent::DELETING, $usesTransactions)) {
             return false;
         }
 
@@ -1135,13 +1173,18 @@ abstract class Model implements \ArrayAccess
 
         if ($deleted) {
             // dispatch the model.deleted event
-            if (!$this->performDispatch(ModelEvent::DELETED)) {
+            if (!$this->performDispatch(ModelEvent::DELETED, $usesTransactions)) {
                 return false;
             }
 
             if ($hardDelete) {
                 $this->_persisted = false;
             }
+        }
+
+        // commit the transaction, if used
+        if ($usesTransactions) {
+            self::$driver->commitTransaction($this->getConnection());
         }
 
         return $deleted;
@@ -1158,8 +1201,14 @@ abstract class Model implements \ArrayAccess
             throw new BadMethodCallException('Can only call restore() on a soft-deleted model');
         }
 
+        // start a DB transaction if needed
+        $usesTransactions = $this->usesTransactions();
+        if ($usesTransactions) {
+            self::$driver->startTransaction($this->getConnection());
+        }
+
         // dispatch the model.updating event
-        if (!$this->performDispatch(ModelEvent::UPDATING)) {
+        if (!$this->performDispatch(ModelEvent::UPDATING, $usesTransactions)) {
             return false;
         }
 
@@ -1168,9 +1217,14 @@ abstract class Model implements \ArrayAccess
 
         if ($restored) {
             // dispatch the model.updated event
-            if (!$this->performDispatch(ModelEvent::UPDATED)) {
+            if (!$this->performDispatch(ModelEvent::UPDATED, $usesTransactions)) {
                 return false;
             }
+        }
+
+        // commit the transaction, if used
+        if ($usesTransactions) {
+            self::$driver->commitTransaction($this->getConnection());
         }
 
         return $restored;
@@ -1656,16 +1710,35 @@ abstract class Model implements \ArrayAccess
     /**
      * Dispatches the given event and checks if it was successful.
      *
-     * @param string $eventName
-     *
      * @return bool true if the events were successfully propagated
      */
-    private function performDispatch($eventName)
+    private function performDispatch(string $eventName, bool $usesTransactions): bool
     {
         $event = new ModelEvent($this);
         static::getDispatcher()->dispatch($event, $eventName);
 
-        return !$event->isPropagationStopped();
+        // when listeners fail roll back any database transaction
+        if ($event->isPropagationStopped()) {
+            if ($usesTransactions) {
+                self::$driver->rollBackTransaction($this->getConnection());
+            }
+
+            return false;
+        }
+
+        // DEPRECATED
+        if (ModelEvent::UPDATING == $eventName && !$event->isPropagationStopped() && method_exists($this, 'preSetHook')) {
+            if (!$this->preSetHook($this->_unsaved)) {
+                // when listeners fail roll back any database transaction
+                if ($usesTransactions) {
+                    self::$driver->rollBackTransaction($this->getConnection());
+                }
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /////////////////////////////

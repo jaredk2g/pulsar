@@ -25,6 +25,14 @@ use stdClass;
 
 class DatabaseDriverTest extends MockeryTestCase
 {
+    private function getDriver($connection): DatabaseDriver
+    {
+        $driver = new DatabaseDriver();
+        $driver->setConnection($connection);
+
+        return $driver;
+    }
+
     public function testGetConnectionFromManager()
     {
         $qb = new QueryBuilder();
@@ -118,9 +126,7 @@ class DatabaseDriverTest extends MockeryTestCase
             ->andReturn($into)
             ->once();
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $model = new Person();
         $this->assertTrue($driver->createModel($model, ['answer' => 42, 'array' => ['test' => true]]));
@@ -132,9 +138,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('insert')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $model = new Person();
         $driver->createModel($model, []);
     }
@@ -145,8 +149,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('lastInsertId')
             ->andReturn('1');
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
+        $driver = $this->getDriver($db);
 
         $model = new Person();
         $this->assertEquals(1, $driver->getCreatedID($model, 'id'));
@@ -158,8 +161,9 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('lastInsertId')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
+
+        $driver = $this->getDriver($db);
+
         $model = new Person();
         $driver->getCreatedID($model, 'id');
     }
@@ -183,8 +187,7 @@ class DatabaseDriverTest extends MockeryTestCase
             ->andReturn($from)
             ->once();
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
+        $driver = $this->getDriver($db);
 
         $model = new Person(12);
         $this->assertEquals(['name' => 'John'], $driver->loadModel($model));
@@ -195,8 +198,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->from->where->one')
             ->andReturn(false);
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
+        $driver = $this->getDriver($db);
 
         $model = new Person(12);
         $this->assertFalse($driver->loadModel($model));
@@ -208,8 +210,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->from->where->one')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
+        $driver = $this->getDriver($db);
         $model = new Person(12);
         $driver->loadModel($model);
     }
@@ -233,9 +234,7 @@ class DatabaseDriverTest extends MockeryTestCase
             ->withArgs(['People'])
             ->andReturn($values);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $model = new Person(11);
 
@@ -252,9 +251,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('update')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $model = new Person(11);
         $driver->updateModel($model, ['name' => 'John']);
     }
@@ -266,9 +263,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('delete->where->execute')
             ->andReturn($stmt);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $model = new Person(10);
         $this->assertTrue($driver->deleteModel($model));
@@ -281,9 +276,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('delete->where->execute')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $model = new Person(10);
         $driver->deleteModel($model);
     }
@@ -311,9 +304,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select')
             ->andReturn($agg);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals(1, $driver->count($query));
     }
@@ -326,9 +317,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->count->from->where->scalar')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->count($query);
     }
 
@@ -356,9 +345,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select')
             ->andReturn($agg);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals(1, $driver->sum($query, 'balance'));
     }
@@ -371,9 +358,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->sum->from->where->scalar')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->sum($query, 'Person.balance');
     }
 
@@ -401,9 +386,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select')
             ->andReturn($agg);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals(1, $driver->average($query, 'balance'));
     }
@@ -416,9 +399,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->average->from->where->scalar')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->average($query, 'balance');
     }
 
@@ -446,9 +427,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select')
             ->andReturn($agg);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals(1, $driver->max($query, 'balance'));
     }
@@ -461,9 +440,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->max->from->where->scalar')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->max($query, 'balance');
     }
 
@@ -491,9 +468,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select')
             ->andReturn($agg);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals(1, $driver->min($query, 'balance'));
     }
@@ -506,9 +481,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->min->from->where->scalar')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->min($query, 'balance');
     }
 
@@ -553,9 +526,7 @@ class DatabaseDriverTest extends MockeryTestCase
             ->withArgs(['People.*'])
             ->andReturn($from);
 
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
 
         $this->assertEquals([['test' => true]], $driver->queryModels($query));
     }
@@ -568,9 +539,75 @@ class DatabaseDriverTest extends MockeryTestCase
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select->from->where->limit->orderBy->all')
             ->andThrow(new PDOException('error'));
-        $driver = new DatabaseDriver();
-        $driver->setConnection($db);
-        Person::setDriver($driver);
+        $driver = $this->getDriver($db);
         $driver->queryModels($query);
+    }
+
+    public function testStartTransaction()
+    {
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('beginTransaction')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->startTransaction(null);
+    }
+
+    public function testRollBackTransaction()
+    {
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('beginTransaction');
+        $db->shouldReceive('rollBack')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->startTransaction(null);
+        $driver->rollBackTransaction(null);
+    }
+
+    public function testRollBackTransactionNoneActive()
+    {
+        $this->expectException(DriverException::class);
+
+        $db = Mockery::mock(QueryBuilder::class);
+        $driver = $this->getDriver($db);
+
+        $driver->rollBackTransaction(null);
+    }
+
+    public function testCommitTransaction()
+    {
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('beginTransaction');
+        $db->shouldReceive('commit')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->startTransaction(null);
+        $driver->commitTransaction(null);
+    }
+
+    public function testCommitTransactionNoneActive()
+    {
+        $this->expectException(DriverException::class);
+
+        $db = Mockery::mock(QueryBuilder::class);
+        $driver = $this->getDriver($db);
+
+        $driver->commitTransaction(null);
+    }
+
+    public function testNestedTransactions()
+    {
+        $db = Mockery::mock(QueryBuilder::class);
+        $db->shouldReceive('beginTransaction')
+            ->once();
+        $db->shouldReceive('rollBack')
+            ->once();
+        $driver = $this->getDriver($db);
+
+        $driver->startTransaction(null);
+        $driver->startTransaction(null);
+        $driver->startTransaction(null);
+        $driver->commitTransaction(null);
+        $driver->commitTransaction(null);
+        $driver->rollBackTransaction(null);
     }
 }

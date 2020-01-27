@@ -36,6 +36,7 @@ use RelationshipTestModel;
 use stdClass;
 use TestModel;
 use TestModel2;
+use TransactionModel;
 
 require_once 'test_models.php';
 
@@ -1010,6 +1011,40 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals(['Required is missing'], $errorStack->all());
     }
 
+    public function testCreateTransactions()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('createModel')
+            ->andReturn(true);
+        $driver->shouldReceive('getCreatedID')
+            ->andReturn(1);
+        $driver->shouldReceive('commitTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $newModel = new TransactionModel();
+        $this->assertTrue($newModel->create(['name' => 'db transactions rock']));
+    }
+
+    public function testCreateTransactionsFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('rollBackTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $newModel = new TransactionModel();
+        $newModel->create([]);
+    }
+
     public function testCreateFail()
     {
         $driver = Mockery::mock(DriverInterface::class);
@@ -1278,6 +1313,44 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals(['Validate2 is invalid'], $errorStack->all());
     }
 
+    public function testSetTransactions()
+    {
+        $model = new TransactionModel(10);
+
+        $this->assertTrue($model->set([]));
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('updateModel')
+            ->andReturn(true);
+        $driver->shouldReceive('commitTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $this->assertTrue($model->set(['name' => 'db transactions rock']));
+    }
+
+    public function testSetTransactionsFail()
+    {
+        $model = new TransactionModel(10);
+
+        $this->assertTrue($model->set([]));
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('rollBackTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $model->set(['name' => 'fail']);
+    }
+
     public function testSetDeprecated()
     {
         $model = new TestModel(11);
@@ -1379,6 +1452,40 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($model->delete());
         $this->assertTrue($model->persisted());
         $this->assertFalse($model->isDeleted());
+    }
+
+    public function testDeleteTransactions()
+    {
+        $model = new TransactionModel(1);
+        $model->refreshWith(['test' => true]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('deleteModel')
+            ->andReturn(true);
+        $driver->shouldReceive('commitTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $this->assertTrue($model->delete());
+    }
+
+    public function testDeleteTransactionsFail()
+    {
+        $model = new TransactionModel(1);
+        $model->refreshWith(['name' => 'delete fail']);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('startTransaction')
+            ->once();
+        $driver->shouldReceive('rollBackTransaction')
+            ->once();
+
+        TransactionModel::setDriver($driver);
+
+        $model->delete();
     }
 
     public function testSoftDelete()

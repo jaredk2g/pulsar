@@ -30,6 +30,19 @@ class DbalDriverTest extends MockeryTestCase
         return new DbalDriver($connection);
     }
 
+    public function testGetConnection()
+    {
+        $db = Mockery::mock(Connection::class);
+        $driver = $this->getDriver($db);
+        $this->assertEquals($db, $driver->getConnection(null));
+    }
+
+    public function testGetConnectionFromManagerMissing()
+    {
+        $this->expectException(DriverException::class);
+        $this->getDriver()->getConnection('not_supported');
+    }
+
     public function testSerializeValue()
     {
         $driver = $this->getDriver();
@@ -360,5 +373,51 @@ class DbalDriverTest extends MockeryTestCase
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->min($query, 'balance');
+    }
+
+    public function testStartTransaction()
+    {
+        $db = Mockery::mock(Connection::class);
+        $db->shouldReceive('beginTransaction')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->startTransaction(null);
+    }
+
+    public function testRollBackTransaction()
+    {
+        $db = Mockery::mock(Connection::class);
+        $db->shouldReceive('rollBack')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->rollBackTransaction(null);
+    }
+
+    public function testCommitTransaction()
+    {
+        $db = Mockery::mock(Connection::class);
+        $db->shouldReceive('commit')
+            ->once();
+        $driver = $this->getDriver($db);
+        $driver->commitTransaction(null);
+    }
+
+    public function testNestedTransactions()
+    {
+        $db = Mockery::mock(Connection::class);
+        $db->shouldReceive('beginTransaction')
+            ->times(3);
+        $db->shouldReceive('rollBack')
+            ->once();
+        $db->shouldReceive('commit')
+            ->twice();
+        $driver = $this->getDriver($db);
+
+        $driver->startTransaction(null);
+        $driver->startTransaction(null);
+        $driver->startTransaction(null);
+        $driver->commitTransaction(null);
+        $driver->commitTransaction(null);
+        $driver->rollBackTransaction(null);
     }
 }

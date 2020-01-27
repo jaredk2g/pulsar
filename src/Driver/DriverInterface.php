@@ -56,6 +56,17 @@ interface DriverInterface
     public function loadModel(Model $model);
 
     /**
+     * Performs a query to find models of the given type.
+     *
+     * @param Query $query
+     *
+     * @return array raw data from storage
+     *
+     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     */
+    public function queryModels(Query $query);
+
+    /**
      * Updates a model.
      *
      * @param Model $model
@@ -138,13 +149,23 @@ interface DriverInterface
     public function min(Query $query, $field);
 
     /**
-     * Performs a query to find models of the given type.
+     * Starts a database transaction.
      *
-     * @param Query $query
-     *
-     * @return array raw data from storage
-     *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @param string|null $connection
      */
-    public function queryModels(Query $query);
+    public function startTransaction(?string $connection): void;
+
+    /**
+     * Rolls back the open database transaction.
+     *
+     * @param string|null $connection
+     */
+    public function rollBackTransaction(?string $connection): void;
+
+    /**
+     * Commits the database transaction.
+     *
+     * @param string|null $connection
+     */
+    public function commitTransaction(?string $connection): void;
 }
