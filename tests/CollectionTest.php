@@ -1,5 +1,8 @@
 <?php
 
+namespace Pulsar\Tests;
+
+use Exception;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Collection;
 

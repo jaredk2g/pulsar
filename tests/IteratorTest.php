@@ -8,7 +8,14 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use Exception;
+use IteratorTestModel;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use OutOfBoundsException;
 use Pulsar\Iterator;
 use Pulsar\Query;
 
@@ -27,31 +34,31 @@ class IteratorTest extends MockeryTestCase
         $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
-               ->andReturnUsing(function ($query) {
-                   if (IteratorTest::$noResults) {
-                       return [];
-                   }
+            ->andReturnUsing(function ($query) {
+                if (IteratorTest::$noResults) {
+                    return [];
+                }
 
-                   $range = range($query->getStart(), $query->getStart() + $query->getLimit() - 1);
+                $range = range($query->getStart(), $query->getStart() + $query->getLimit() - 1);
 
-                   foreach ($range as &$i) {
-                       $i = ['id' => $i];
-                   }
+                foreach ($range as &$i) {
+                    $i = ['id' => $i];
+                }
 
-                   return $range;
-               });
+                return $range;
+            });
 
         $driver->shouldReceive('count')
-               ->andReturnUsing(function () {
-                   return IteratorTest::$count;
-               });
+            ->andReturnUsing(function () {
+                return IteratorTest::$count;
+            });
 
         self::$driver = $driver;
         IteratorTestModel::setDriver(self::$driver);
 
         self::$query = new Query('IteratorTestModel');
         self::$query->start(self::$start)
-                    ->limit(self::$limit);
+            ->limit(self::$limit);
         self::$iterator = new Iterator(self::$query);
     }
 
@@ -157,11 +164,11 @@ class IteratorTest extends MockeryTestCase
             ++$n;
 
             // simulate increasing the # of records midway
-            if ($i == 51) {
+            if (51 == $i) {
                 self::$count = 300;
                 $this->assertCount(300, self::$iterator);
             // simulate decreasing the # of records midway
-            } elseif ($i == 101) {
+            } elseif (101 == $i) {
                 self::$count = 26;
                 $this->assertCount(26, self::$iterator);
 

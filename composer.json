@@ -18,6 +18,9 @@
     "autoload": {
         "psr-4": {"Pulsar\\": "src/"}
     },
+	"autoload-dev": {
+		"psr-4": { "Pulsar\\Tests\\": "tests/" }
+	},
 	"require": {
 		"php": ">=7.1",
 		"icanboogie/inflector": "^1.3",

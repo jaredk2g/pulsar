@@ -8,8 +8,12 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Property;
+use stdClass;
 
 class PropertyTest extends MockeryTestCase
 {

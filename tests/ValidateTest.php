@@ -8,8 +8,13 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use DateTimeZone;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Validator;
+use stdClass;
 
 class ValidateTest extends MockeryTestCase
 {

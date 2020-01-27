@@ -8,6 +8,10 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Model;
 use Pulsar\ModelEvent;

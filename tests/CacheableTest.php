@@ -8,6 +8,11 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use CacheableModel;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Cache\CacheItemInterface;
 use Pulsar\Driver\DriverInterface;
@@ -75,8 +80,8 @@ class CacheableTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('loadModel')
-               ->andReturn(['answer' => 42])
-               ->once();
+            ->andReturn(['answer' => 42])
+            ->once();
 
         CacheableModel::setDriver($driver);
 

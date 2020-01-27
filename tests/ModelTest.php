@@ -8,8 +8,16 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use BadMethodCallException;
 use Infuse\Locale;
+use InvalidArgumentException;
+use InvalidRelationship;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Person;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
@@ -23,6 +31,11 @@ use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
 use Pulsar\Relation\HasOne;
+use RelationshipTester;
+use RelationshipTestModel;
+use stdClass;
+use TestModel;
+use TestModel2;
 
 require_once 'test_models.php';
 
@@ -61,8 +74,8 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('getTablename')
-               ->withArgs(['TestModel'])
-               ->andReturn('TestModels');
+            ->withArgs(['TestModel'])
+            ->andReturn('TestModels');
         TestModel::setDriver($driver);
     }
 
@@ -558,9 +571,9 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->withArgs([$model])
-               ->andReturn(['answer' => 42])
-               ->once();
+            ->withArgs([$model])
+            ->andReturn(['answer' => 42])
+            ->once();
 
         TestModel::setDriver($driver);
 
@@ -581,7 +594,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->andReturn([]);
+            ->andReturn([]);
 
         TestModel2::setDriver($driver);
 
@@ -593,7 +606,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->andReturn([]);
+            ->andReturn([]);
 
         TestModel::setDriver($driver);
 
@@ -660,17 +673,17 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->withArgs([$newModel, [
-                    'mutator' => 'BLAH',
-                    'relation' => null,
-                    'answer' => 42,
-                ]])
-               ->andReturn(true)
-               ->once();
+            ->withArgs([$newModel, [
+                'mutator' => 'BLAH',
+                'relation' => null,
+                'answer' => 42,
+            ]])
+            ->andReturn(true)
+            ->once();
 
         $driver->shouldReceive('getCreatedID')
-               ->withArgs([$newModel, 'id'])
-               ->andReturn(1);
+            ->withArgs([$newModel, 'id'])
+            ->andReturn(1);
 
         TestModel::setDriver($driver);
 
@@ -694,16 +707,16 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->withArgs([$newModel, [
-                    'mutator' => 'BLAH',
-                    'relation' => null,
-                    'answer' => 42,
-                ]])
-               ->andReturn(true)
-               ->once();
+            ->withArgs([$newModel, [
+                'mutator' => 'BLAH',
+                'relation' => null,
+                'answer' => 42,
+            ]])
+            ->andReturn(true)
+            ->once();
 
         $driver->shouldReceive('getCreatedID')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel::setDriver($driver);
 
@@ -726,7 +739,7 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('createModel')
-               ->andReturn(false);
+            ->andReturn(false);
         TestModel::setDriver($driver);
 
         $newModel->saveOrFail();
@@ -786,8 +799,8 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->andReturn(true)
-               ->once();
+            ->andReturn(true)
+            ->once();
 
         TestModel2::setDriver($driver);
 
@@ -806,30 +819,30 @@ class ModelTest extends MockeryTestCase
         $object->test = true;
 
         $driver->shouldReceive('createModel')
-               ->andReturnUsing(function ($newModel, $params) use ($object) {
-                   unset($params['created_at']);
-                   unset($params['updated_at']);
+            ->andReturnUsing(function ($newModel, $params) use ($object) {
+                unset($params['created_at']);
+                unset($params['updated_at']);
 
-                   $expected = [
-                       'id' => 1,
-                        'id2' => 2,
-                        'required' => 25,
-                        'mutable_create_only' => 'test',
-                        'default' => 'some default value',
-                        'hidden' => false,
-                        'array' => [
-                            'tax' => '%',
-                            'discounts' => false,
-                            'shipping' => false,
-                        ],
-                        'object' => $object,
-                        'person' => 20,
-                    ];
-                   $this->assertEquals($expected, $params);
+                $expected = [
+                    'id' => 1,
+                    'id2' => 2,
+                    'required' => 25,
+                    'mutable_create_only' => 'test',
+                    'default' => 'some default value',
+                    'hidden' => false,
+                    'array' => [
+                        'tax' => '%',
+                        'discounts' => false,
+                        'shipping' => false,
+                    ],
+                    'object' => $object,
+                    'person' => 20,
+                ];
+                $this->assertEquals($expected, $params);
 
-                   return true;
-               })
-               ->andReturn(true);
+                return true;
+            })
+            ->andReturn(true);
 
         TestModel2::setDriver($driver);
 
@@ -843,10 +856,10 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         $driver->shouldReceive('getCreatedID')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel::setDriver($driver);
 
@@ -858,16 +871,16 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('createModel')
-               ->andReturnUsing(function ($model, $params) {
-                   $this->assertTrue(isset($params['created_at']));
-                   $this->assertTrue(isset($params['updated_at']));
-                   $createdAt = strtotime($params['created_at']);
-                   $updatedAt = strtotime($params['updated_at']);
-                   $this->assertLessThan(3, time() - $createdAt);
-                   $this->assertLessThan(3, time() - $updatedAt);
+            ->andReturnUsing(function ($model, $params) {
+                $this->assertTrue(isset($params['created_at']));
+                $this->assertTrue(isset($params['updated_at']));
+                $createdAt = strtotime($params['created_at']);
+                $updatedAt = strtotime($params['updated_at']);
+                $this->assertLessThan(3, time() - $createdAt);
+                $this->assertLessThan(3, time() - $updatedAt);
 
-                   return true;
-               });
+                return true;
+            });
         Model::setDriver($driver);
         $newModel = new TestModel2();
         $newModel->id = 1;
@@ -899,10 +912,10 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         $driver->shouldReceive('getCreatedID')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel::setDriver($driver);
 
@@ -929,10 +942,10 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         $driver->shouldReceive('getCreatedID')
-               ->andReturn(1);
+            ->andReturn(1);
 
         Model::setDriver($driver);
 
@@ -952,7 +965,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel2::setDriver($driver);
 
@@ -1002,7 +1015,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
-               ->andReturn(false);
+            ->andReturn(false);
 
         TestModel::setDriver($driver);
 
@@ -1023,8 +1036,8 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->withArgs([$model, ['answer' => 42]])
-               ->andReturn(true);
+            ->withArgs([$model, ['answer' => 42]])
+            ->andReturn(true);
 
         TestModel::setDriver($driver);
 
@@ -1039,8 +1052,8 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->withArgs([$model, ['answer' => 42]])
-               ->andReturn(true);
+            ->withArgs([$model, ['answer' => 42]])
+            ->andReturn(true);
 
         TestModel::setDriver($driver);
 
@@ -1056,7 +1069,7 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
-               ->andReturn(false);
+            ->andReturn(false);
         TestModel::setDriver($driver);
 
         $model->answer = 42;
@@ -1080,13 +1093,13 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->andReturnUsing(function ($model, $params) {
-                   unset($params['updated_at']);
-                   $expected = ['id' => 12, 'id2' => 13];
-                   $this->assertEquals($expected, $params);
+            ->andReturnUsing(function ($model, $params) {
+                unset($params['updated_at']);
+                $expected = ['id' => 12, 'id2' => 13];
+                $this->assertEquals($expected, $params);
 
-                   return true;
-               });
+                return true;
+            });
 
         TestModel::setDriver($driver);
 
@@ -1112,13 +1125,13 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->andReturnUsing(function ($model, $params) {
-                   $this->assertTrue(isset($params['id']));
-                   $this->assertFalse(isset($params['mutable_create_only']));
+            ->andReturnUsing(function ($model, $params) {
+                $this->assertTrue(isset($params['id']));
+                $this->assertFalse(isset($params['mutable_create_only']));
 
-                   return true;
-               })
-               ->once();
+                return true;
+            })
+            ->once();
 
         TestModel::setDriver($driver);
 
@@ -1134,13 +1147,13 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel2(10);
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
-                ->andReturnUsing(function ($model, $params) {
-                    $this->assertTrue(isset($params['updated_at']));
-                    $updatedAt = strtotime($params['updated_at']);
-                    $this->assertLessThan(3, time() - $updatedAt);
+            ->andReturnUsing(function ($model, $params) {
+                $this->assertTrue(isset($params['updated_at']));
+                $updatedAt = strtotime($params['updated_at']);
+                $this->assertLessThan(3, time() - $updatedAt);
 
-                    return true;
-                });
+                return true;
+            });
         Model::setDriver($driver);
         $model->required = true;
         $this->assertTrue($model->set());
@@ -1169,7 +1182,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         TestModel::setDriver($driver);
 
@@ -1197,7 +1210,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         Model::setDriver($driver);
 
@@ -1218,12 +1231,12 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(0);
+            ->andReturn(0);
 
         $driver->shouldReceive('loadModel');
 
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         TestModel2::setDriver($driver);
 
@@ -1239,10 +1252,10 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->andReturn(['unique' => 'works']);
+            ->andReturn(['unique' => 'works']);
 
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         TestModel2::setDriver($driver);
 
@@ -1270,7 +1283,7 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel(11);
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
         Model::setDriver($driver);
         $this->assertTrue($model->set(['answer' => 42]));
         $expected = [
@@ -1296,8 +1309,8 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
-               ->withArgs([$model])
-               ->andReturn(true);
+            ->withArgs([$model])
+            ->andReturn(true);
         TestModel::setDriver($driver);
 
         $this->assertTrue($model->delete());
@@ -1336,7 +1349,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('deleteModel')
-               ->andReturn(true);
+            ->andReturn(true);
 
         TestModel::setDriver($driver);
 
@@ -1359,8 +1372,8 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('deleteModel')
-               ->withArgs([$model])
-               ->andReturn(false);
+            ->withArgs([$model])
+            ->andReturn(false);
         TestModel2::setDriver($driver);
 
         $this->assertFalse($model->delete());
@@ -1375,7 +1388,7 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
-               ->andReturn(true);
+            ->andReturn(true);
         Person::setDriver($driver);
 
         $this->assertTrue($model->grantAllPermissions()->delete());
@@ -1489,7 +1502,7 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-               ->andReturn([['id' => 100, 'answer' => 42]]);
+            ->andReturn([['id' => 100, 'answer' => 42]]);
 
         TestModel::setDriver($driver);
 
@@ -1503,7 +1516,7 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-               ->andReturn([]);
+            ->andReturn([]);
 
         TestModel::setDriver($driver);
 
@@ -1520,7 +1533,7 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-               ->andReturn([['id' => 100, 'answer' => 42]]);
+            ->andReturn([['id' => 100, 'answer' => 42]]);
 
         TestModel::setDriver($driver);
 
@@ -1536,7 +1549,7 @@ class ModelTest extends MockeryTestCase
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-               ->andReturn([]);
+            ->andReturn([]);
 
         TestModel::setDriver($driver);
 
@@ -1551,7 +1564,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel2::setDriver($driver);
 
@@ -1568,7 +1581,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(2);
+            ->andReturn(2);
 
         TestModel2::setDriver($driver);
 
@@ -1582,7 +1595,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(1);
+            ->andReturn(1);
 
         TestModel2::setDriver($driver);
 
@@ -1595,7 +1608,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('count')
-               ->andReturn(0);
+            ->andReturn(0);
 
         TestModel2::setDriver($driver);
 
@@ -1611,11 +1624,11 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-               ->andReturnUsing(function ($query) {
-                   $id = $query->getWhere()['id'];
+            ->andReturnUsing(function ($query) {
+                $id = $query->getWhere()['id'];
 
-                   return [['id' => $id]];
-               });
+                return [['id' => $id]];
+            });
 
         TestModel2::setDriver($driver);
 
@@ -1651,7 +1664,7 @@ class ModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('queryModels')
-                ->andReturn([]);
+            ->andReturn([]);
 
         TestModel::setDriver($driver);
 
@@ -1802,9 +1815,9 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->withArgs([$model])
-               ->andReturn([])
-               ->once();
+            ->withArgs([$model])
+            ->andReturn([])
+            ->once();
 
         TestModel2::setDriver($driver);
 
@@ -1816,7 +1829,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-               ->andReturn(false);
+            ->andReturn(false);
 
         TestModel2::setDriver($driver);
 
@@ -1878,11 +1891,11 @@ class ModelTest extends MockeryTestCase
 
         $locale = Mockery::mock(Locale::class);
         $locale->shouldReceive('t')
-               ->withArgs(['pulsar.properties.Person.email'])
-               ->andReturn('Title');
+            ->withArgs(['pulsar.properties.Person.email'])
+            ->andReturn('Title');
         $locale->shouldReceive('t')
-               ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false, '{{field_name}} must be a valid email address'])
-               ->andReturn('Title must be a valid email address');
+            ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false, '{{field_name}} must be a valid email address'])
+            ->andReturn('Title must be a valid email address');
         $errors = $model->getErrors();
         $errors->setLocale($locale);
 

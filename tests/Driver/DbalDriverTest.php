@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Test\Driver;
+namespace Pulsar\Tests\Driver;
 
 /*
  * @author Jared King <j@jaredtking.com>

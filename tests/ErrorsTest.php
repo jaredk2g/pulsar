@@ -8,8 +8,13 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use Exception;
 use Infuse\Locale;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use OutOfBoundsException;
 use Pulsar\Errors;
 
 class ErrorsTest extends MockeryTestCase

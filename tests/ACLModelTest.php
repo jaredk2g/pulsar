@@ -8,9 +8,17 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use AclObject;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Person;
 use Pulsar\ACLModel;
 use Pulsar\Driver\DriverInterface;
+use TestModel;
+use TestModelNoPermission;
 
 require_once 'tests/test_models.php';
 

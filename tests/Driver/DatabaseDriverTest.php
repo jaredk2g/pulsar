@@ -8,12 +8,20 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests\Driver;
+
 use JAQB\ConnectionManager;
 use JAQB\QueryBuilder;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use PDOException;
+use PDOStatement;
+use Person;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
+use stdClass;
 
 class DatabaseDriverTest extends MockeryTestCase
 {
@@ -100,15 +108,15 @@ class DatabaseDriverTest extends MockeryTestCase
         $stmt = Mockery::mock(PDOStatement::class);
         $execute = Mockery::mock();
         $execute->shouldReceive('execute')
-                ->andReturn($stmt);
+            ->andReturn($stmt);
         $into = Mockery::mock();
         $into->shouldReceive('into')
-             ->withArgs(['People'])
-             ->andReturn($execute);
+            ->withArgs(['People'])
+            ->andReturn($execute);
         $db->shouldReceive('insert')
-           ->withArgs([['answer' => 42, 'array' => '{"test":true}']])
-           ->andReturn($into)
-           ->once();
+            ->withArgs([['answer' => 42, 'array' => '{"test":true}']])
+            ->andReturn($into)
+            ->once();
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -164,16 +172,16 @@ class DatabaseDriverTest extends MockeryTestCase
             ->andReturn(['name' => 'John']);
         $where = Mockery::mock();
         $where->shouldReceive('where')
-              ->withArgs([['id' => 12]])
-              ->andReturn($one);
+            ->withArgs([['id' => 12]])
+            ->andReturn($one);
         $from = Mockery::mock();
         $from->shouldReceive('from')
-             ->withArgs(['People'])
-             ->andReturn($where);
+            ->withArgs(['People'])
+            ->andReturn($where);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('select')
-           ->andReturn($from)
-           ->once();
+            ->andReturn($from)
+            ->once();
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -214,16 +222,16 @@ class DatabaseDriverTest extends MockeryTestCase
         $execute->shouldReceive('execute')->andReturn($stmt);
         $where = Mockery::mock();
         $where->shouldReceive('where')
-              ->withArgs([['id' => 11]])
-              ->andReturn($execute);
+            ->withArgs([['id' => 11]])
+            ->andReturn($execute);
         $values = Mockery::mock();
         $values->shouldReceive('values')
-               ->withArgs([['name' => 'John', 'array' => '{"test":true}']])
-               ->andReturn($where);
+            ->withArgs([['name' => 'John', 'array' => '{"test":true}']])
+            ->andReturn($where);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('update')
-           ->withArgs(['People'])
-           ->andReturn($values);
+            ->withArgs(['People'])
+            ->andReturn($values);
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -256,7 +264,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $stmt = Mockery::mock(PDOStatement::class);
         $db = Mockery::mock(QueryBuilder::class);
         $db->shouldReceive('delete->where->execute')
-           ->andReturn($stmt);
+            ->andReturn($stmt);
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);
@@ -287,15 +295,15 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $scalar = Mockery::mock();
         $scalar->shouldReceive('scalar')
-               ->andReturn(1);
+            ->andReturn(1);
         $where = Mockery::mock();
         $where->shouldReceive('where')
-              ->withArgs([[]])
-              ->andReturn($scalar);
+            ->withArgs([[]])
+            ->andReturn($scalar);
         $from = Mockery::mock();
         $from->shouldReceive('from')
-             ->withArgs(['People'])
-             ->andReturn($where);
+            ->withArgs(['People'])
+            ->andReturn($where);
         $agg = Mockery::mock();
         $agg->shouldReceive('count')
             ->andReturn($from);
@@ -508,13 +516,13 @@ class DatabaseDriverTest extends MockeryTestCase
     {
         $query = new Query('Person');
         $query->where('id', 50, '>')
-              ->where(['city' => 'Austin'])
-              ->where('RAW SQL')
-              ->where('People.alreadyDotted', true)
-              ->join('Group', 'group', 'id')
-              ->sort('name asc')
-              ->limit(5)
-              ->start(10);
+            ->where(['city' => 'Austin'])
+            ->where('RAW SQL')
+            ->where('People.alreadyDotted', true)
+            ->join('Group', 'group', 'id')
+            ->sort('name asc')
+            ->limit(5)
+            ->start(10);
 
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
@@ -522,28 +530,28 @@ class DatabaseDriverTest extends MockeryTestCase
         $all->shouldReceive('all')
             ->andReturn([['test' => true]]);
         $all->shouldReceive('join')
-             ->withArgs(['Groups', 'People.group=Groups.id'])
-             ->andReturn($db)
-             ->once();
+            ->withArgs(['Groups', 'People.group=Groups.id'])
+            ->andReturn($db)
+            ->once();
         $orderBy = Mockery::mock();
         $orderBy->shouldReceive('orderBy')
-                ->withArgs([[['People.name', 'asc']]])
-                ->andReturn($all);
+            ->withArgs([[['People.name', 'asc']]])
+            ->andReturn($all);
         $limit = Mockery::mock();
         $limit->shouldReceive('limit')
-             ->withArgs([5, 10])
-             ->andReturn($orderBy);
+            ->withArgs([5, 10])
+            ->andReturn($orderBy);
         $where = Mockery::mock();
         $where->shouldReceive('where')
-              ->withArgs([[['People.id', 50, '>'], 'People.city' => 'Austin', 'RAW SQL', 'People.alreadyDotted' => true]])
-              ->andReturn($limit);
+            ->withArgs([[['People.id', 50, '>'], 'People.city' => 'Austin', 'RAW SQL', 'People.alreadyDotted' => true]])
+            ->andReturn($limit);
         $from = Mockery::mock();
         $from->shouldReceive('from')
-             ->withArgs(['People'])
-             ->andReturn($where);
+            ->withArgs(['People'])
+            ->andReturn($where);
         $db->shouldReceive('select')
-           ->withArgs(['People.*'])
-           ->andReturn($from);
+            ->withArgs(['People.*'])
+            ->andReturn($from);
 
         $driver = new DatabaseDriver();
         $driver->setConnection($db);

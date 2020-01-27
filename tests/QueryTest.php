@@ -8,9 +8,20 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
+namespace Pulsar\Tests;
+
+use Category;
+use Garage;
+use Iterator;
+use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Person;
+use Post;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Query;
+use TestModel;
+use TestModel2;
 
 class QueryTest extends MockeryTestCase
 {
@@ -108,8 +119,8 @@ class QueryTest extends MockeryTestCase
         ];
 
         $driver->shouldReceive('queryModels')
-               ->withArgs([$query])
-               ->andReturn($data);
+            ->withArgs([$query])
+            ->andReturn($data);
 
         Person::setDriver($driver);
 
@@ -145,8 +156,8 @@ class QueryTest extends MockeryTestCase
         ];
 
         $driver->shouldReceive('queryModels')
-               ->withArgs([$query])
-               ->andReturn($data);
+            ->withArgs([$query])
+            ->andReturn($data);
 
         TestModel2::setDriver($driver);
 
@@ -188,46 +199,46 @@ class QueryTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
-               ->andReturnUsing(function ($query) {
-                   if ($query->getModel() instanceof Person && $query->getWhere() == ['deleted_at IS NOT NULL', 'id IN (1,2)']) {
-                       return [
-                           [
-                               'id' => 2,
-                           ],
-                           [
-                               'id' => 1,
-                           ],
-                       ];
-                   } elseif (TestModel2::class == $query->getModel()) {
-                       return [
-                           [
-                               'id' => 100,
-                               'id2' => 101,
-                               'person' => 1,
-                           ],
-                           [
-                               'id' => 102,
-                               'id2' => 103,
-                               'person' => 2,
-                           ],
-                           [
-                               'id' => 102,
-                               'id2' => 103,
-                               'person' => null,
-                           ],
-                           [
-                               'id' => 103,
-                               'id2' => 104,
-                               'person' => 2,
-                           ],
-                           [
-                               'id' => 105,
-                               'id2' => 106,
-                               'person' => 1,
-                           ],
-                       ];
-                   }
-               });
+            ->andReturnUsing(function ($query) {
+                if ($query->getModel() instanceof Person && $query->getWhere() == ['deleted_at IS NOT NULL', 'id IN (1,2)']) {
+                    return [
+                        [
+                            'id' => 2,
+                        ],
+                        [
+                            'id' => 1,
+                        ],
+                    ];
+                } elseif (TestModel2::class == $query->getModel()) {
+                    return [
+                        [
+                            'id' => 100,
+                            'id2' => 101,
+                            'person' => 1,
+                        ],
+                        [
+                            'id' => 102,
+                            'id2' => 103,
+                            'person' => 2,
+                        ],
+                        [
+                            'id' => 102,
+                            'id2' => 103,
+                            'person' => null,
+                        ],
+                        [
+                            'id' => 103,
+                            'id2' => 104,
+                            'person' => 2,
+                        ],
+                        [
+                            'id' => 105,
+                            'id2' => 106,
+                            'person' => 1,
+                        ],
+                    ];
+                }
+            });
 
         TestModel2::setDriver($driver);
 
@@ -405,24 +416,24 @@ class QueryTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
-               ->withArgs([$query])
-               ->andReturn([
-                    [
-                        'id' => 100,
-                        'id2' => 101,
-                        'person' => null,
-                    ],
-                    [
-                        'id' => 102,
-                        'id2' => 103,
-                        'person' => null,
-                    ],
-                    [
-                        'id' => 102,
-                        'id2' => 103,
-                        'person' => null,
-                    ],
-                ]);
+            ->withArgs([$query])
+            ->andReturn([
+                [
+                    'id' => 100,
+                    'id2' => 101,
+                    'person' => null,
+                ],
+                [
+                    'id' => 102,
+                    'id2' => 103,
+                    'person' => null,
+                ],
+                [
+                    'id' => 102,
+                    'id2' => 103,
+                    'person' => null,
+                ],
+            ]);
 
         TestModel2::setDriver($driver);
 
@@ -458,8 +469,8 @@ class QueryTest extends MockeryTestCase
         ];
 
         $driver->shouldReceive('queryModels')
-               ->withArgs([$query])
-               ->andReturn($data);
+            ->withArgs([$query])
+            ->andReturn($data);
 
         Person::setDriver($driver);
 
@@ -490,8 +501,8 @@ class QueryTest extends MockeryTestCase
         ];
 
         $driver->shouldReceive('queryModels')
-               ->withArgs([$query])
-               ->andReturn($data);
+            ->withArgs([$query])
+            ->andReturn($data);
 
         Person::setDriver($driver);
 
