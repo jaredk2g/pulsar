@@ -1891,11 +1891,6 @@ abstract class Model implements \ArrayAccess
             return $title;
         }
 
-        // DEPRECATED
-        if (isset($property['title'])) {
-            return $property['title'];
-        }
-
         // otherwise just attempt to title-ize the property name
         return Inflector::get()->titleize($name);
     }

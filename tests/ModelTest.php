@@ -327,7 +327,6 @@ class ModelTest extends MockeryTestCase
                 'unique' => false,
                 'required' => false,
                 'validate' => 'email',
-                'title' => 'Email address',
             ],
             'deleted_at' => [
                 'type' => Model::TYPE_DATE,
@@ -1954,15 +1953,6 @@ class ModelTest extends MockeryTestCase
         // repeat validations should clear error stack
         $this->assertFalse($model->valid());
         $this->assertEquals(['Validate must be a valid email address'], $model->getErrors()->all());
-    }
-
-    public function testValidFailLocaleTitle()
-    {
-        $model = new Person();
-        $model->email = 'notanemail';
-
-        $this->assertFalse($model->valid());
-        $this->assertEquals(['Email address must be a valid email address'], $model->getErrors()->all());
     }
 
     public function testValidFailPropertyTitle()

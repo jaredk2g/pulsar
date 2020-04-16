@@ -200,7 +200,6 @@ class Person extends ACLModel
         'email' => [
             'type' => Model::TYPE_STRING,
             'validate' => 'email',
-            'title' => 'Email address',
         ],
         'garage' => [
             'relation' => Garage::class,
