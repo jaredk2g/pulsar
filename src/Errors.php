@@ -93,7 +93,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return Locale
      */
-    public function getLocale()
+    public function getLocale(): Locale
     {
         if (!$this->locale) {
             if (self::$globalLocale) {
@@ -132,7 +132,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return array error messages
      */
-    public function all($locale = false)
+    public function all($locale = false): array
     {
         $messages = [];
         foreach ($this->stack as $error) {
@@ -175,7 +175,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return bool
      */
-    public function has($value, $param = 'field')
+    public function has($value, $param = 'field'): bool
     {
         return null !== $this->find($value, $param);
     }
@@ -199,7 +199,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return array
      */
-    private function sanitize($error)
+    private function sanitize($error): array
     {
         if (!is_array($error)) {
             $error = ['error' => $error];
@@ -221,7 +221,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return string
      */
-    private function parse($error, $locale, array $parameters)
+    private function parse($error, $locale, array $parameters): string
     {
         // try to supply a fallback message in case
         // the user does not have one specified
