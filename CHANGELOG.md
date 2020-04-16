@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed the number property type. Use integer or float instead.
 - Removed `exists()` on model class.
 - Removed `title` setting on model properties.
+- Removed `ACLModel::setRequester()` and `ACLModel::getRequester()`
 
 ## 0.9.1 - 2019-11-16
 ## Fixed

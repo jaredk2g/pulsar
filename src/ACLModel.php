@@ -31,30 +31,6 @@ abstract class ACLModel extends Model
     private $permissionsDisabled = false;
 
     /**
-     * Sets the requester.
-     *
-     * @param Model $requester
-     *
-     * @deprecated
-     */
-    public static function setRequester(Model $requester)
-    {
-        ACLModelRequester::set($requester);
-    }
-
-    /**
-     * Gets the requester.
-     *
-     * @return Model|null
-     *
-     * @deprecated
-     */
-    public static function getRequester()
-    {
-        return ACLModelRequester::get();
-    }
-
-    /**
      * Checks if the requesting model has a specific permission
      * on this object.
      *

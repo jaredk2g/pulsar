@@ -14,7 +14,6 @@ namespace Pulsar\Tests;
 use AclObject;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\ACLModel;
 use Pulsar\Driver\DriverInterface;
 use TestModel;
@@ -30,13 +29,6 @@ class ACLModelTest extends MockeryTestCase
     {
         $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);
-    }
-
-    public function testSetRequester()
-    {
-        $requester = new Person(2);
-        ACLModel::setRequester($requester);
-        $this->assertEquals($requester, ACLModel::getRequester());
     }
 
     public function testCan()
