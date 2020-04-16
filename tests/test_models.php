@@ -36,8 +36,6 @@ class TestModel extends Model
 
     public static $query;
 
-    public static $preSetHookValues;
-
     protected function initialize()
     {
         self::$properties['test_hook'] = [
@@ -76,17 +74,6 @@ class TestModel extends Model
 
     protected function getAppendedValue()
     {
-        return true;
-    }
-
-    protected function preSetHook(array &$data)
-    {
-        self::$preSetHookValues = $data;
-
-        if (isset($data['fail'])) {
-            return false;
-        }
-
         return true;
     }
 
@@ -389,6 +376,26 @@ class TransactionModel extends Model
 
     protected function usesTransactions(): bool
     {
+        return true;
+    }
+}
+
+class PreSetHookModel extends Model
+{
+    protected static $properties = [
+        'name' => [],
+    ];
+
+    public static $preSetHookValues;
+
+    protected function preSetHook(array &$data)
+    {
+        self::$preSetHookValues = $data;
+
+        if (isset($data['fail'])) {
+            return false;
+        }
+
         return true;
     }
 }

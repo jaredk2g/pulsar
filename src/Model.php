@@ -263,6 +263,17 @@ abstract class Model implements \ArrayAccess
             $this->installSoftDelete();
         }
 
+        // install the preSetHook listener
+        // DEPRECATED: Use event listeners instead
+        if (method_exists($this, 'preSetHook')) {
+            static::updating(function (ModelEvent $modelEvent) {
+                $model = $modelEvent->getModel();
+                if (!$model->preSetHook($model->_unsaved)) {
+                    $modelEvent->stopPropagation();
+                }
+            }, -512);
+        }
+
         // fill in each property by extending the property
         // definition base
         foreach (static::$properties as $k => &$property) {
@@ -1710,18 +1721,6 @@ abstract class Model implements \ArrayAccess
             }
 
             return false;
-        }
-
-        // DEPRECATED
-        if (ModelEvent::UPDATING == $eventName && !$event->isPropagationStopped() && method_exists($this, 'preSetHook')) {
-            if (!$this->preSetHook($this->_unsaved)) {
-                // when listeners fail roll back any database transaction
-                if ($usesTransactions) {
-                    self::$driver->rollBackTransaction($this->getConnection());
-                }
-
-                return false;
-            }
         }
 
         return true;
