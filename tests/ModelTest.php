@@ -91,7 +91,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
             ],
             'relation' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'relation' => 'TestModel2',
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
@@ -159,7 +159,7 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($expected, TestModel::getProperty('id'));
 
         $expected = [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
             'relation' => 'TestModel2',
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
             'foreign_key' => 'id',
@@ -176,14 +176,14 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'id' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
             ],
             'id2' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -221,7 +221,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
             ],
             'required' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'required' => true,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -236,7 +236,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
             ],
             'person' => [
-                'type' => Model::TYPE_NUMBER,
+                'type' => Model::TYPE_INTEGER,
                 'relation' => 'Person',
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
@@ -397,7 +397,7 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals(1.23, Model::cast($property, 1.23));
         $this->assertEquals(123.0, Model::cast($property, '123'));
 
-        $property = ['type' => Model::TYPE_NUMBER, 'null' => false];
+        $property = ['type' => Model::TYPE_INTEGER, 'null' => false];
         $this->assertEquals(123, Model::cast($property, 123));
         $this->assertEquals(123, Model::cast($property, '123'));
 

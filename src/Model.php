@@ -49,7 +49,6 @@ abstract class Model implements \ArrayAccess
     const MUTABLE = 2;
 
     const TYPE_STRING = 'string';
-    const TYPE_NUMBER = 'number'; // DEPRECATED
     const TYPE_INTEGER = 'integer';
     const TYPE_FLOAT = 'float';
     const TYPE_BOOLEAN = 'boolean';

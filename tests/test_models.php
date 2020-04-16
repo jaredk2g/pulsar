@@ -17,7 +17,7 @@ class TestModel extends Model
 {
     protected static $properties = [
         'relation' => [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
             'relation' => TestModel2::class,
             'null' => true,
         ],
@@ -107,10 +107,10 @@ class TestModel2 extends Model
 
     protected static $properties = [
         'id' => [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
         ],
         'id2' => [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
         ],
         'default' => [
             'default' => 'some default value',
@@ -127,7 +127,7 @@ class TestModel2 extends Model
             'unique' => true,
         ],
         'required' => [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
             'required' => true,
         ],
         'hidden' => [
@@ -135,7 +135,7 @@ class TestModel2 extends Model
             'default' => false,
         ],
         'person' => [
-            'type' => Model::TYPE_NUMBER,
+            'type' => Model::TYPE_INTEGER,
             'relation' => Person::class,
             'default' => 20,
         ],

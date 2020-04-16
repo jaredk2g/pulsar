@@ -35,12 +35,6 @@ class PropertyTest extends MockeryTestCase
         $this->assertEquals(123.0, Property::to_float('123'));
     }
 
-    public function testToNumber()
-    {
-        $this->assertEquals(123, Property::to_number(123));
-        $this->assertEquals(123, Property::to_number('123'));
-    }
-
     public function testToBoolean()
     {
         $this->assertTrue(Property::to_boolean(true));

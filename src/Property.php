@@ -53,18 +53,6 @@ class Property
     }
 
     /**
-     * Casts a value to a number.
-     *
-     * @param $value
-     *
-     * @return number
-     */
-    public static function to_number($value)
-    {
-        return $value + 0;
-    }
-
-    /**
      * Casts a value to a boolean.
      *
      * @param mixed $value
