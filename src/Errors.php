@@ -125,24 +125,6 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @deprecated
-     *
-     * Adds an error message to the stack
-     *
-     * @param array|string $error
-     *                            - error: error code
-     *                            - params: array of parameters to be passed to message
-     *
-     * @return $this
-     */
-    public function push($error)
-    {
-        $this->stack[] = $this->sanitize($error);
-
-        return $this;
-    }
-
-    /**
      * Gets all of the errors on the stack and also attempts
      * translation using the Locale class.
      *
@@ -161,60 +143,28 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * @deprecated
-     *
-     * Gets all of the errors on the stack and also attempts
-     * translation using the Locale class
-     *
-     * @param string|bool $locale optional locale
-     *
-     * @return array errors
-     */
-    public function errors($locale = false)
-    {
-        $errors = [];
-        foreach ($this->stack as $error) {
-            if (!isset($error['message'])) {
-                $error['message'] = $this->parse($error['error'], $locale, $error['params']);
-            }
-
-            $errors[] = $error;
-        }
-
-        return $errors;
-    }
-
-    /**
-     * @deprecated
-     *
-     * Gets the messages of errors on the stack
-     *
-     * @param string|bool $locale optional locale
-     *
-     * @return array errors
-     */
-    public function messages($locale = false)
-    {
-        return $this->all($locale);
-    }
-
-    /**
      * Gets an error for a specific parameter on the stack.
      *
      * @param string $value value we are searching for
      * @param string $param parameter name
      *
-     * @return array|bool
+     * @return array|null
      */
-    public function find($value, $param = 'field')
+    public function find($value, $param = 'field'): ?array
     {
-        foreach ($this->errors() as $error) {
-            if (array_value($error['params'], $param) === $value) {
-                return $error;
+        foreach ($this->stack as $error) {
+            if (array_value($error['params'], $param) !== $value) {
+                continue;
             }
+
+            if (!isset($error['message'])) {
+                $error['message'] = $this->parse($error['error'], false, $error['params']);
+            }
+
+            return $error;
         }
 
-        return false;
+        return null;
     }
 
     /**
@@ -227,7 +177,7 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      */
     public function has($value, $param = 'field')
     {
-        return $this->find($value, $param) !== false;
+        return null !== $this->find($value, $param);
     }
 
     /**
@@ -318,7 +268,12 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
             throw new \OutOfBoundsException("$offset does not exist on this ErrorStack");
         }
 
-        return $this->errors()[$offset];
+        $error = $this->stack[$offset];
+        if (!isset($error['message'])) {
+            $error['message'] = $this->parse($error['error'], false, $error['params']);
+        }
+
+        return $error;
     }
 
     public function offsetSet($offset, $error)

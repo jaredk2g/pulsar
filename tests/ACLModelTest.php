@@ -72,20 +72,20 @@ class ACLModelTest extends MockeryTestCase
     {
         $newModel = new TestModelNoPermission();
         $this->assertFalse($newModel->create([]));
-        $this->assertCount(1, $newModel->getErrors()->errors());
+        $this->assertCount(1, $newModel->getErrors()->all());
     }
 
     public function testSetNoPermission()
     {
         $model = new TestModelNoPermission(5);
         $this->assertFalse($model->set(['answer' => 42]));
-        $this->assertCount(1, $model->getErrors()->errors());
+        $this->assertCount(1, $model->getErrors()->all());
     }
 
     public function testDeleteNoPermission()
     {
         $model = new TestModelNoPermission(5);
         $this->assertFalse($model->delete());
-        $this->assertCount(1, $model->getErrors()->errors());
+        $this->assertCount(1, $model->getErrors()->all());
     }
 }

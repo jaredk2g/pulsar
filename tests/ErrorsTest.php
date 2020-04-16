@@ -43,54 +43,6 @@ class ErrorsTest extends MockeryTestCase
         $this->assertEquals($locale, $errorStack->getLocale());
     }
 
-    public function testErrorsDeprecated()
-    {
-        $errorStack = $this->getErrorStack();
-
-        // push some errors
-        $error1 = [
-            'error' => 'some_error',
-            'message' => 'Something is wrong',
-        ];
-
-        $error2 = [
-            'error' => 'username_invalid',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field' => 'username',
-            ],
-        ];
-
-        $this->assertEquals($errorStack, $errorStack->push($error1));
-        $this->assertEquals($errorStack, $errorStack->push($error2));
-        $this->assertEquals($errorStack, $errorStack->push('some_error'));
-
-        // check the result
-        $expected1 = [
-            'error' => 'some_error',
-            'message' => 'Something is wrong',
-            'params' => [],
-        ];
-
-        $expected2 = [
-            'error' => 'username_invalid',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field' => 'username',
-            ],
-        ];
-
-        $expected3 = [
-            'error' => 'some_error',
-            'message' => 'some_error',
-            'params' => [],
-        ];
-
-        $errors = $errorStack->errors();
-        $this->assertEquals(3, count($errors));
-        $this->assertEquals([$expected1, $expected2, $expected3], $errors);
-    }
-
     public function testAll()
     {
         $errorStack = $this->getErrorStack();
@@ -110,10 +62,6 @@ class ErrorsTest extends MockeryTestCase
         $messages = $errorStack->all();
         $this->assertEquals(3, count($messages));
         $this->assertEquals($expected, $messages);
-
-        $messages = $errorStack->messages();
-        $this->assertEquals(3, count($messages));
-        $this->assertEquals($expected, $messages);
     }
 
     public function testAllWithoutLocale()
@@ -121,7 +69,6 @@ class ErrorsTest extends MockeryTestCase
         $errorStack = new Errors();
         $errorStack->add('pulsar.validation.failed', ['field_name' => 'test']);
         $this->assertEquals(['test is invalid'], $errorStack->all());
-        $this->assertEquals(['test is invalid'], $errorStack->messages());
     }
 
     public function testAllFallback()
@@ -129,7 +76,6 @@ class ErrorsTest extends MockeryTestCase
         $errorStack = $this->getErrorStack();
         $errorStack->add('pulsar.validation.alpha', ['field_name' => 'Name']);
         $this->assertEquals(['Name only allows letters'], $errorStack->all());
-        $this->assertEquals(['Name only allows letters'], $errorStack->messages());
     }
 
     public function testFind()
@@ -154,7 +100,7 @@ class ErrorsTest extends MockeryTestCase
         $this->assertEquals($expected, $errorStack->find('username'));
         $this->assertEquals($expected, $errorStack->find('username', 'field'));
 
-        $this->assertFalse($errorStack->find('non-existent'));
+        $this->assertNull($errorStack->find('non-existent'));
     }
 
     public function testHas()
@@ -179,7 +125,6 @@ class ErrorsTest extends MockeryTestCase
         $errorStack = $this->getErrorStack();
         $this->assertEquals($errorStack, $errorStack->clear());
         $this->assertCount(0, $errorStack->all());
-        $this->assertCount(0, $errorStack->messages());
     }
 
     public function testIterator()
