@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added a DBAL driver.
 - Model operations will now be wrapped in database transactions by overriding the `Model::usesTransactions()` method. 
 
+### Changed
+- Added argument and return type hinting to most methods.
+
 ### Removed
 - Removed the `DriverException::getException()` method in favor of `getPrevious()`.
 - Removed the number property type. Use integer or float instead.

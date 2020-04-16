@@ -74,7 +74,7 @@ class Validator
      *
      * @return bool
      */
-    public function validate(&$data)
+    public function validate(&$data): bool
     {
         if (is_array($this->rules)) {
             $validated = true;
@@ -109,7 +109,7 @@ class Validator
      *
      * @return bool
      */
-    private function validateRule(&$value, $rule)
+    private function validateRule(&$value, $rule): bool
     {
         $filters = explode('|', $rule);
 
@@ -141,7 +141,7 @@ class Validator
      *
      * @return bool
      */
-    private function alpha(&$value, array $parameters)
+    private function alpha(&$value, array $parameters): bool
     {
         return preg_match('/^[A-Za-z]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
@@ -155,7 +155,7 @@ class Validator
      *
      * @return bool
      */
-    private function alpha_numeric(&$value, array $parameters)
+    private function alpha_numeric(&$value, array $parameters): bool
     {
         return preg_match('/^[A-Za-z0-9]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
@@ -169,7 +169,7 @@ class Validator
      *
      * @return bool
      */
-    private function alpha_dash(&$value, array $parameters)
+    private function alpha_dash(&$value, array $parameters): bool
     {
         return preg_match('/^[A-Za-z0-9_-]*$/', $value) && strlen($value) >= array_value($parameters, 0);
     }
@@ -181,7 +181,7 @@ class Validator
      *
      * @return bool
      */
-    private function boolean(&$value)
+    private function boolean(&$value): bool
     {
         $value = filter_var($value, FILTER_VALIDATE_BOOLEAN);
 
@@ -196,7 +196,7 @@ class Validator
      *
      * @return bool success
      */
-    private function email(&$value, array $parameters)
+    private function email(&$value, array $parameters): bool
     {
         $value = trim(strtolower($value));
 
@@ -211,7 +211,7 @@ class Validator
      *
      * @return bool
      */
-    private function enum(&$value, array $parameters)
+    private function enum(&$value, array $parameters): bool
     {
         $enum = explode(',', array_value($parameters, 0));
 
@@ -225,7 +225,7 @@ class Validator
      *
      * @return bool
      */
-    private function date(&$value)
+    private function date(&$value): bool
     {
         return strtotime($value);
     }
@@ -237,7 +237,7 @@ class Validator
      *
      * @return bool
      */
-    private function ip(&$value)
+    private function ip(&$value): bool
     {
         return filter_var($value, FILTER_VALIDATE_IP);
     }
@@ -250,7 +250,7 @@ class Validator
      *
      * @return bool
      */
-    private function matching(&$value)
+    private function matching(&$value): bool
     {
         if (!is_array($value)) {
             return true;
@@ -279,7 +279,7 @@ class Validator
      *
      * @return bool
      */
-    private function numeric(&$value, array $parameters)
+    private function numeric(&$value, array $parameters): bool
     {
         $check = 'is_'.array_value($parameters, 0);
 
@@ -296,7 +296,7 @@ class Validator
      *
      * @return bool
      */
-    private function password_php(&$value, array $parameters)
+    private function password_php(&$value, array $parameters): bool
     {
         $minimumPasswordLength = (isset($parameters[0])) ? $parameters[0] : 8;
 
@@ -322,7 +322,7 @@ class Validator
      *
      * @return bool
      */
-    private function range(&$value, array $parameters)
+    private function range(&$value, array $parameters): bool
     {
         // check min
         if (isset($parameters[0]) && $value < $parameters[0]) {
@@ -344,7 +344,7 @@ class Validator
      *
      * @return bool
      */
-    private function required(&$value)
+    private function required(&$value): bool
     {
         return !empty($value);
     }
@@ -359,7 +359,7 @@ class Validator
      *
      * @return bool
      */
-    private function string(&$value, array $parameters)
+    private function string(&$value, array $parameters): bool
     {
         if (!is_string($value)) {
             return false;
@@ -379,7 +379,7 @@ class Validator
      *
      * @return bool
      */
-    private function time_zone(&$value)
+    private function time_zone(&$value): bool
     {
         try {
             $tz = new DateTimeZone($value);
@@ -398,7 +398,7 @@ class Validator
      *
      * @return bool
      */
-    private function timestamp(&$value)
+    private function timestamp(&$value): bool
     {
         if (ctype_digit((string) $value)) {
             return true;
@@ -417,7 +417,7 @@ class Validator
      *
      * @return bool
      */
-    private function db_timestamp(&$value)
+    private function db_timestamp(&$value): bool
     {
         if (is_integer($value)) {
             $value = Utility::unixToDb($value);
@@ -435,7 +435,7 @@ class Validator
      *
      * @return bool
      */
-    private function url(&$value)
+    private function url(&$value): bool
     {
         return filter_var($value, FILTER_VALIDATE_URL);
     }

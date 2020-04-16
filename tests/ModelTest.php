@@ -362,15 +362,15 @@ class ModelTest extends MockeryTestCase
 
     public function testGetMutator()
     {
-        $this->assertFalse(TestModel::getMutator('id'));
-        $this->assertFalse(TestModel2::getMutator('id'));
+        $this->assertNull(TestModel::getMutator('id'));
+        $this->assertNull(TestModel2::getMutator('id'));
         $this->assertEquals('setMutatorValue', TestModel::getMutator('mutator'));
     }
 
     public function testGetAccessor()
     {
-        $this->assertFalse(TestModel::getAccessor('id'));
-        $this->assertFalse(TestModel2::getAccessor('id'));
+        $this->assertNull(TestModel::getAccessor('id'));
+        $this->assertNull(TestModel2::getAccessor('id'));
         $this->assertEquals('getAccessorValue', TestModel::getAccessor('accessor'));
     }
 

@@ -23,7 +23,7 @@ class Property
      *
      * @return string
      */
-    public static function to_string($value)
+    public static function to_string($value): string
     {
         return (string) $value;
     }
@@ -35,7 +35,7 @@ class Property
      *
      * @return int
      */
-    public static function to_integer($value)
+    public static function to_integer($value): int
     {
         return (int) $value;
     }
@@ -47,7 +47,7 @@ class Property
      *
      * @return float
      */
-    public static function to_float($value)
+    public static function to_float($value): float
     {
         return (float) $value;
     }
@@ -59,7 +59,7 @@ class Property
      *
      * @return bool
      */
-    public static function to_boolean($value)
+    public static function to_boolean($value): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
@@ -71,7 +71,7 @@ class Property
      *
      * @return int
      */
-    public static function to_date($value)
+    public static function to_date($value): int
     {
         if (!is_numeric($value)) {
             return strtotime($value);
@@ -87,7 +87,7 @@ class Property
      *
      * @return array
      */
-    public static function to_array($value)
+    public static function to_array($value): array
     {
         // decode JSON strings into an array
         if (is_string($value)) {
@@ -104,7 +104,7 @@ class Property
      *
      * @return object
      */
-    public static function to_object($value)
+    public static function to_object($value): \stdClass
     {
         // decode JSON strings into an object
         if (is_string($value)) {

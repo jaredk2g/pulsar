@@ -43,7 +43,7 @@ class ModelEvent extends Event
      *
      * @return Model
      */
-    public function getModel()
+    public function getModel(): Model
     {
         return $this->model;
     }

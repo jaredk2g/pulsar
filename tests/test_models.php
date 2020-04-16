@@ -48,7 +48,7 @@ class TestModel extends Model
         parent::initialize();
     }
 
-    public static function query()
+    public static function query(): Query
     {
         if ($query = self::$query) {
             self::$query = false;
@@ -162,7 +162,7 @@ class TestModel2 extends Model
 
     public static $query;
 
-    public static function query()
+    public static function query(): Query
     {
         if ($query = self::$query) {
             self::$query = false;

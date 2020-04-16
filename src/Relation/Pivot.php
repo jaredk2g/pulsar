@@ -30,7 +30,7 @@ class Pivot extends Model
         $this->_tablename = $tablename;
     }
 
-    public function getTablename()
+    public function getTablename(): string
     {
         return $this->_tablename;
     }

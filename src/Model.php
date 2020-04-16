@@ -389,7 +389,7 @@ abstract class Model implements \ArrayAccess
      *
      * @throws DriverMissingException when a driver has not been set yet
      */
-    public static function getDriver()
+    public static function getDriver(): DriverInterface
     {
         if (!self::$driver) {
             throw new DriverMissingException('A model driver has not been set yet.');
@@ -411,7 +411,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return string
      */
-    public static function modelName()
+    public static function modelName(): string
     {
         // strip namespacing
         $paths = explode('\\', get_called_class());
@@ -434,7 +434,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array ID map
      */
-    public function ids()
+    public function ids(): array
     {
         return $this->_ids;
     }
@@ -562,7 +562,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array key-value map of properties
      */
-    public static function getProperties()
+    public static function getProperties(): array
     {
         return static::$properties;
     }
@@ -574,7 +574,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array|null property
      */
-    public static function getProperty($property)
+    public static function getProperty(string $property): ?array
     {
         return array_value(static::$properties, $property);
     }
@@ -584,7 +584,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array
      */
-    public static function getIDProperties()
+    public static function getIDProperties(): array
     {
         return static::$ids;
     }
@@ -596,7 +596,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool has property
      */
-    public static function hasProperty($property)
+    public static function hasProperty(string $property): bool
     {
         return isset(static::$properties[$property]);
     }
@@ -608,9 +608,9 @@ abstract class Model implements \ArrayAccess
      *
      * @param string $property property
      *
-     * @return string|false method name if it exists
+     * @return string|null method name if it exists
      */
-    public static function getMutator($property)
+    public static function getMutator(string $property): ?string
     {
         $class = get_called_class();
 
@@ -620,7 +620,7 @@ abstract class Model implements \ArrayAccess
             $method = 'set'.$inflector->camelize($property).'Value';
 
             if (!method_exists($class, $method)) {
-                $method = false;
+                $method = null;
             }
 
             self::$mutators[$k] = $method;
@@ -636,9 +636,9 @@ abstract class Model implements \ArrayAccess
      *
      * @param string $property property
      *
-     * @return string|false method name if it exists
+     * @return string|null method name if it exists
      */
-    public static function getAccessor($property)
+    public static function getAccessor(string $property): ?string
     {
         $class = get_called_class();
 
@@ -648,7 +648,7 @@ abstract class Model implements \ArrayAccess
             $method = 'get'.$inflector->camelize($property).'Value';
 
             if (!method_exists($class, $method)) {
-                $method = false;
+                $method = null;
             }
 
             self::$accessors[$k] = $method;
@@ -695,7 +695,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return string
      */
-    public function getTablename()
+    public function getTablename(): string
     {
         $inflector = Inflector::get();
 
@@ -708,7 +708,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return string|null
      */
-    public function getConnection()
+    public function getConnection(): ?string
     {
         return null;
     }
@@ -723,7 +723,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool true when the operation was successful
      */
-    public function save()
+    public function save(): bool
     {
         if (false === $this->_id) {
             return $this->create();
@@ -758,7 +758,7 @@ abstract class Model implements \ArrayAccess
      *
      * @throws BadMethodCallException when called on an existing model
      */
-    public function create(array $data = [])
+    public function create(array $data = []): bool
     {
         if (false !== $this->_id) {
             throw new BadMethodCallException('Cannot call create() on an existing model');
@@ -818,10 +818,9 @@ abstract class Model implements \ArrayAccess
         // check for required fields
         foreach ($requiredProperties as $name) {
             if (!isset($insertArray[$name])) {
-                $property = static::$properties[$name];
                 $params = [
                     'field' => $name,
-                    'field_name' => $this->getPropertyTitle($property, $name),
+                    'field_name' => $this->getPropertyTitle($name),
                 ];
                 $this->getErrors()->add('pulsar.validation.required', $params);
 
@@ -884,7 +883,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array
      */
-    public function get(array $properties)
+    public function get(array $properties): array
     {
         // load the values from the IDs and local model cache
         $values = array_replace($this->ids(), $this->_values);
@@ -1014,7 +1013,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         // build the list of properties to retrieve
         $properties = array_keys(static::$properties);
@@ -1055,7 +1054,7 @@ abstract class Model implements \ArrayAccess
      *
      * @throws BadMethodCallException when not called on an existing model
      */
-    public function set(array $data = [])
+    public function set(array $data = []): bool
     {
         if (false === $this->_id) {
             throw new BadMethodCallException('Can only call set() on an existing model');
@@ -1138,7 +1137,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool true when the operation was successful
      */
-    public function delete()
+    public function delete(): bool
     {
         if (false === $this->_id) {
             throw new BadMethodCallException('Can only call delete() on an existing model');
@@ -1194,7 +1193,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool
      */
-    public function restore()
+    public function restore(): bool
     {
         if (!property_exists($this, 'softDelete') || !$this->deleted_at) {
             throw new BadMethodCallException('Can only call restore() on a soft-deleted model');
@@ -1234,7 +1233,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool
      */
-    public function isDeleted()
+    public function isDeleted(): bool
     {
         if (property_exists($this, 'softDelete') && $this->deleted_at) {
             return true;
@@ -1252,7 +1251,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return Query
      */
-    public static function query()
+    public static function query(): Query
     {
         // Create a new model instance for the query to ensure
         // that the model's initialize() method gets called.
@@ -1273,7 +1272,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return Query
      */
-    public static function withDeleted()
+    public static function withDeleted(): Query
     {
         // Create a new model instance for the query to ensure
         // that the model's initialize() method gets called.
@@ -1290,7 +1289,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return static|null
      */
-    public static function find($id)
+    public static function find($id): ?self
     {
         $ids = [];
         $id = (array) $id;
@@ -1317,7 +1316,7 @@ abstract class Model implements \ArrayAccess
      *
      * @throws ModelNotFoundException when a model could not be found
      */
-    public static function findOrFail($id)
+    public static function findOrFail($id): self
     {
         $model = static::find($id);
         if (!$model) {
@@ -1334,7 +1333,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool
      */
-    public function persisted()
+    public function persisted(): bool
     {
         return $this->_persisted;
     }
@@ -1413,9 +1412,9 @@ abstract class Model implements \ArrayAccess
      *
      * @throws \InvalidArgumentException when the relationship manager cannot be created
      *
-     * @return Model|null
+     * @return Model|array|null
      */
-    public function relation($k)
+    public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
             $relation = $this->getRelationshipManager($k);
@@ -1435,7 +1434,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return $this
      */
-    public function setRelation($k, self $model)
+    public function setRelation(string $k, Model $model)
     {
         $this->$k = $model->id();
         $this->_relationships[$k] = $model;
@@ -1453,7 +1452,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return $this
      */
-    public function setRelationCollection($k, $models)
+    public function setRelationCollection(string $k, iterable $models)
     {
         $this->_relationships[$k] = $models;
 
@@ -1467,7 +1466,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return $this
      */
-    public function clearRelation($k)
+    public function clearRelation(string $k)
     {
         $this->$k = null;
         $this->_relationships[$k] = null;
@@ -1484,7 +1483,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return Relation
      */
-    public function getRelationshipManager($k)
+    public function getRelationshipManager(string $k): Relation
     {
         $property = static::getProperty($k);
         if (!isset($property['relation'])) {
@@ -1525,7 +1524,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return HasOne
      */
-    public function hasOne($model, $foreignKey = '', $localKey = '')
+    public function hasOne($model, $foreignKey = '', $localKey = ''): HasOne
     {
         return new HasOne($this, $localKey, $model, $foreignKey);
     }
@@ -1539,7 +1538,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return BelongsTo
      */
-    public function belongsTo($model, $foreignKey = '', $localKey = '')
+    public function belongsTo($model, $foreignKey = '', $localKey = ''): BelongsTo
     {
         return new BelongsTo($this, $localKey, $model, $foreignKey);
     }
@@ -1553,7 +1552,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return HasMany
      */
-    public function hasMany($model, $foreignKey = '', $localKey = '')
+    public function hasMany($model, $foreignKey = '', $localKey = ''): HasMany
     {
         return new HasMany($this, $localKey, $model, $foreignKey);
     }
@@ -1568,7 +1567,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return BelongsToMany
      */
-    public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = '')
+    public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = ''): BelongsToMany
     {
         return new BelongsToMany($this, $localKey, $tablename, $model, $foreignKey);
     }
@@ -1582,7 +1581,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return EventDispatcher
      */
-    public static function getDispatcher($ignoreCache = false)
+    public static function getDispatcher($ignoreCache = false): EventDispatcher
     {
         $class = get_called_class();
         if ($ignoreCache || !isset(self::$dispatchers[$class])) {
@@ -1599,7 +1598,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority optional priority, higher #s get called first
      */
-    public static function listen($event, callable $listener, $priority = 0)
+    public static function listen(string $event, callable $listener, int $priority = 0)
     {
         static::getDispatcher()->addListener($event, $listener, $priority);
     }
@@ -1610,7 +1609,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function saving(callable $listener, $priority = 0)
+    public static function saving(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::CREATING, $listener, $priority);
         static::listen(ModelEvent::UPDATING, $listener, $priority);
@@ -1622,7 +1621,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function saved(callable $listener, $priority = 0)
+    public static function saved(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::CREATED, $listener, $priority);
         static::listen(ModelEvent::UPDATED, $listener, $priority);
@@ -1634,7 +1633,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function creating(callable $listener, $priority = 0)
+    public static function creating(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::CREATING, $listener, $priority);
     }
@@ -1645,7 +1644,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function created(callable $listener, $priority = 0)
+    public static function created(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::CREATED, $listener, $priority);
     }
@@ -1656,7 +1655,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function updating(callable $listener, $priority = 0)
+    public static function updating(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::UPDATING, $listener, $priority);
     }
@@ -1667,7 +1666,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function updated(callable $listener, $priority = 0)
+    public static function updated(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::UPDATED, $listener, $priority);
     }
@@ -1678,7 +1677,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function deleting(callable $listener, $priority = 0)
+    public static function deleting(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::DELETING, $listener, $priority);
     }
@@ -1689,7 +1688,7 @@ abstract class Model implements \ArrayAccess
      * @param callable $listener
      * @param int      $priority
      */
-    public static function deleted(callable $listener, $priority = 0)
+    public static function deleted(callable $listener, int $priority = 0)
     {
         static::listen(ModelEvent::DELETED, $listener, $priority);
     }
@@ -1737,7 +1736,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return Errors
      */
-    public function getErrors()
+    public function getErrors(): Errors
     {
         if (!$this->_errors) {
             $this->_errors = new Errors();
@@ -1751,7 +1750,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         // clear any previous errors
         $this->getErrors()->clear();
@@ -1782,7 +1781,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return bool
      */
-    private function filterAndValidate(array $property, $name, &$value)
+    private function filterAndValidate(array $property, string $name, &$value): bool
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
@@ -1797,7 +1796,7 @@ abstract class Model implements \ArrayAccess
 
         // unique?
         if ($valid && $property['unique'] && (false === $this->_id || $value != $this->ignoreUnsaved()->$name)) {
-            $valid = $this->checkUniqueness($property, $name, $value);
+            $valid = $this->checkUniqueness($name, $value);
         }
 
         return $valid;
@@ -1812,7 +1811,7 @@ abstract class Model implements \ArrayAccess
      *
      * @return array
      */
-    private function validateValue(array $property, $name, $value)
+    private function validateValue(array $property, string $name, $value): array
     {
         $valid = true;
 
@@ -1828,7 +1827,7 @@ abstract class Model implements \ArrayAccess
         if (!$valid) {
             $params = [
                 'field' => $name,
-                'field_name' => $this->getPropertyTitle($property, $name),
+                'field_name' => $this->getPropertyTitle($name),
             ];
             $this->getErrors()->add($error, $params);
         }
@@ -1839,19 +1838,18 @@ abstract class Model implements \ArrayAccess
     /**
      * Checks if a value is unique for a property.
      *
-     * @param array  $property property definition
-     * @param string $name     property name
+     * @param string $name  property name
      * @param mixed  $value
      *
      * @return bool
      */
-    private function checkUniqueness(array $property, $name, $value)
+    private function checkUniqueness(string $name, $value): bool
     {
         $n = static::query()->where([$name => $value])->count();
         if ($n > 0) {
             $params = [
                 'field' => $name,
-                'field_name' => $this->getPropertyTitle($property, $name),
+                'field_name' => $this->getPropertyTitle($name),
             ];
             $this->getErrors()->add('pulsar.validation.unique', $params);
 
@@ -1876,12 +1874,11 @@ abstract class Model implements \ArrayAccess
     /**
      * Gets the humanized name of a property.
      *
-     * @param array  $property property definition
-     * @param string $name     property name
+     * @param string $name property name
      *
      * @return string
      */
-    private function getPropertyTitle(array $property, $name)
+    private function getPropertyTitle(string $name): string
     {
         // look up the property from the locale service first
         $k = 'pulsar.properties.'.static::modelName().'.'.$name;

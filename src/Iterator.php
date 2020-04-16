@@ -74,7 +74,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
         }
     }
 
-    public function getQuery()
+    public function getQuery(): Query
     {
         return $this->query;
     }
@@ -218,7 +218,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
     {
         // The count only needs to be updated when the pointer is
         // on the edges
-        if ($this->pointer % $this->limit != 0 &&
+        if (0 != $this->pointer % $this->limit &&
             $this->pointer < $this->count) {
             return;
         }
@@ -231,7 +231,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
         // shift the pointer to prevent overflow.
         // This calculation is based on the assumption that
         // the first N (count - count') models are deleted.
-        if ($this->count != 0 && $newCount < $this->count) {
+        if (0 != $this->count && $newCount < $this->count) {
             $this->pointer = max(0, $this->pointer - ($this->count - $newCount));
         }
 
@@ -246,7 +246,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
      * @param int $pointer
      * @param int $limit
      */
-    private function rangeStart($pointer, $limit)
+    private function rangeStart(int $pointer, int $limit)
     {
         return floor($pointer / $limit) * $limit;
     }

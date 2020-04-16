@@ -85,7 +85,7 @@ class Query
      *
      * @return $this
      */
-    public function limit($limit)
+    public function limit(int $limit)
     {
         $this->limit = min($limit, self::MAX_LIMIT);
 
@@ -97,7 +97,7 @@ class Query
      *
      * @return int
      */
-    public function getLimit()
+    public function getLimit(): int
     {
         return $this->limit;
     }
@@ -109,7 +109,7 @@ class Query
      *
      * @return $this
      */
-    public function start($start)
+    public function start(int $start)
     {
         $this->start = max($start, 0);
 
@@ -121,7 +121,7 @@ class Query
      *
      * @return int
      */
-    public function getStart()
+    public function getStart(): int
     {
         return $this->start;
     }
@@ -164,7 +164,7 @@ class Query
      *
      * @return array
      */
-    public function getSort()
+    public function getSort(): array
     {
         return $this->sort;
     }
@@ -210,7 +210,7 @@ class Query
      *
      * @return array
      */
-    public function getWhere()
+    public function getWhere(): array
     {
         return $this->where;
     }
@@ -225,7 +225,7 @@ class Query
      *
      * @return $this
      */
-    public function join($model, $column, $foreignKey)
+    public function join($model, string $column, string $foreignKey)
     {
         $this->joins[] = [$model, $column, $foreignKey];
 
@@ -237,7 +237,7 @@ class Query
      *
      * @return array
      */
-    public function getJoins()
+    public function getJoins(): array
     {
         return $this->joins;
     }
@@ -249,7 +249,7 @@ class Query
      *
      * @return $this
      */
-    public function with($k)
+    public function with(string $k)
     {
         if (!in_array($k, $this->eagerLoaded)) {
             $this->eagerLoaded[] = $k;
@@ -263,7 +263,7 @@ class Query
      *
      * @return array
      */
-    public function getWith()
+    public function getWith(): array
     {
         return $this->eagerLoaded;
     }
@@ -273,7 +273,7 @@ class Query
      *
      * @return array results
      */
-    public function execute()
+    public function execute(): array
     {
         $modelClass = $this->model;
         $driver = $modelClass::getDriver();
@@ -367,7 +367,7 @@ class Query
      *
      * @return array|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
      */
-    public function first($limit = 1)
+    public function first(int $limit = 1)
     {
         $models = $this->limit($limit)->execute();
 
@@ -383,7 +383,7 @@ class Query
      *
      * @return int
      */
-    public function count()
+    public function count(): int
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -398,7 +398,7 @@ class Query
      *
      * @return number
      */
-    public function sum($property)
+    public function sum(string $property)
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -413,7 +413,7 @@ class Query
      *
      * @return number
      */
-    public function average($property)
+    public function average(string $property)
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -428,7 +428,7 @@ class Query
      *
      * @return number
      */
-    public function max($property)
+    public function max(string $property)
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -443,7 +443,7 @@ class Query
      *
      * @return number
      */
-    public function min($property)
+    public function min(string $property)
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -460,7 +460,7 @@ class Query
      *
      * @return int # of models updated
      */
-    public function set(array $params)
+    public function set(array $params): int
     {
         $n = 0;
         foreach ($this->all() as $model) {
@@ -478,7 +478,7 @@ class Query
      *
      * @return int # of models deleted
      */
-    public function delete()
+    public function delete(): int
     {
         $n = 0;
         foreach ($this->all() as $model) {
@@ -499,7 +499,7 @@ class Query
      *
      * @return array
      */
-    private function fetchRelationships($modelClass, array $ids, $foreignKey, $multiple)
+    private function fetchRelationships($modelClass, array $ids, string $foreignKey, bool $multiple): array
     {
         $uniqueIds = array_unique($ids);
         if (0 === count($uniqueIds)) {
