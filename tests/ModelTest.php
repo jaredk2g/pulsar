@@ -1662,40 +1662,6 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse(TestModel::findOrFail(101));
     }
 
-    public function testTotalRecords()
-    {
-        $query = TestModel2::query();
-        TestModel2::setQuery($query);
-
-        $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('count')
-            ->andReturn(1);
-
-        TestModel2::setDriver($driver);
-
-        $this->assertEquals(1, TestModel2::totalRecords(['name' => 'John']));
-
-        $this->assertEquals(['name' => 'John'], $query->getWhere());
-    }
-
-    public function testTotalRecordsNoCriteria()
-    {
-        $query = TestModel2::query();
-        TestModel2::setQuery($query);
-
-        $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('count')
-            ->andReturn(2);
-
-        TestModel2::setDriver($driver);
-
-        $this->assertEquals(2, TestModel2::totalRecords());
-
-        $this->assertEquals([], $query->getWhere());
-    }
-
     /////////////////////////////
     // Relationships
     /////////////////////////////

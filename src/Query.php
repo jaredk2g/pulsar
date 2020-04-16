@@ -392,20 +392,6 @@ class Query
     }
 
     /**
-     * @deprecated
-     *
-     * Gets the total number of records matching an optional criteria
-     *
-     * @param array $where criteria
-     *
-     * @return int
-     */
-    public function totalRecords(array $where = [])
-    {
-        return $this->where($where)->count();
-    }
-
-    /**
      * Gets the sum of a property matching the query.
      *
      * @param string $property

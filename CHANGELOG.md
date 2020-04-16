@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `title` setting on model properties.
 - Removed `ACLModel::setRequester()` and `ACLModel::getRequester()`
 - Removed `Errors::errors()`, `Errors::messages()`, and `Errors::push()`
+- Removed `Query::totalRecords()`
 
 ## 0.9.1 - 2019-11-16
 ## Fixed
