@@ -1697,32 +1697,6 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals([], $query->getWhere());
     }
 
-    public function testExists()
-    {
-        $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('count')
-            ->andReturn(1);
-
-        TestModel2::setDriver($driver);
-
-        $model = new TestModel2(12);
-        $this->assertTrue($model->exists());
-    }
-
-    public function testNotExists()
-    {
-        $driver = Mockery::mock(DriverInterface::class);
-
-        $driver->shouldReceive('count')
-            ->andReturn(0);
-
-        TestModel2::setDriver($driver);
-
-        $model = new TestModel2(12);
-        $this->assertFalse($model->exists());
-    }
-
     /////////////////////////////
     // Relationships
     /////////////////////////////

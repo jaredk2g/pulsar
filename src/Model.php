@@ -1328,18 +1328,6 @@ abstract class Model implements \ArrayAccess
     }
 
     /**
-     * @deprecated
-     *
-     * Checks if the model exists in the database
-     *
-     * @return bool
-     */
-    public function exists()
-    {
-        return 1 == static::query()->where($this->ids())->count();
-    }
-
-    /**
      * Tells if this model instance has been persisted to the data layer.
      *
      * NOTE: this does not actually perform a check with the data layer

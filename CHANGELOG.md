@@ -10,6 +10,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 - Removed the `DriverException::getException()` method in favor of `getPrevious()`.
 - Removed the number property type. Use integer or float instead.
+- Removed `exists()` on model class.
 
 ## 0.9.1 - 2019-11-16
 ## Fixed
