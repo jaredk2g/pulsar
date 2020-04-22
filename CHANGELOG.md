@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.10 - 2020-04-22
 ### Added
 - Added a DBAL driver.
 - Model operations will now be wrapped in database transactions by overriding the `Model::usesTransactions()` method. 
