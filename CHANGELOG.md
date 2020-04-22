@@ -18,6 +18,17 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `ACLModel::setRequester()` and `ACLModel::getRequester()`
 - Removed `Errors::errors()`, `Errors::messages()`, and `Errors::push()`
 - Removed `Query::totalRecords()`
+- Removed the `preSetHook()` method call during the `model.updating` event. If you need to use this functionality install the below event listener in your model.
+  ```php
+   use Pulsar\ModelEvent;
+
+   self::updating(function (ModelEvent $modelEvent) {
+     $model = $modelEvent->getModel();
+     if (!$model->preSetHook($model->_unsaved)) {
+         $modelEvent->stopPropagation();
+     }
+   }, -512);
+   ```
 
 ## 0.9.1 - 2019-11-16
 ## Fixed

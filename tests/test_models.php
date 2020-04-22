@@ -379,23 +379,3 @@ class TransactionModel extends Model
         return true;
     }
 }
-
-class PreSetHookModel extends Model
-{
-    protected static $properties = [
-        'name' => [],
-    ];
-
-    public static $preSetHookValues;
-
-    protected function preSetHook(array &$data)
-    {
-        self::$preSetHookValues = $data;
-
-        if (isset($data['fail'])) {
-            return false;
-        }
-
-        return true;
-    }
-}

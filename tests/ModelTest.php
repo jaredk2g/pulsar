@@ -18,7 +18,6 @@ use InvalidRelationship;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Person;
-use PreSetHookModel;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
@@ -1349,26 +1348,6 @@ class ModelTest extends MockeryTestCase
         TransactionModel::setDriver($driver);
 
         $model->set(['name' => 'fail']);
-    }
-
-    public function testSetDeprecated()
-    {
-        $model = new PreSetHookModel(11);
-        $driver = Mockery::mock(DriverInterface::class);
-        $driver->shouldReceive('updateModel')
-            ->andReturn(true);
-        Model::setDriver($driver);
-        $this->assertTrue($model->set(['answer' => 42]));
-        $expected = [
-            'answer' => 42,
-        ];
-        $this->assertEquals($expected, $model::$preSetHookValues);
-    }
-
-    public function testSetDeprecatedFail()
-    {
-        $model = new PreSetHookModel(11);
-        $this->assertFalse($model->set(['fail' => true]));
     }
 
     /////////////////////////////

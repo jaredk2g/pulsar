@@ -263,17 +263,6 @@ abstract class Model implements \ArrayAccess
             $this->installSoftDelete();
         }
 
-        // install the preSetHook listener
-        // DEPRECATED: Use event listeners instead
-        if (method_exists($this, 'preSetHook')) {
-            static::updating(function (ModelEvent $modelEvent) {
-                $model = $modelEvent->getModel();
-                if (!$model->preSetHook($model->_unsaved)) {
-                    $modelEvent->stopPropagation();
-                }
-            }, -512);
-        }
-
         // fill in each property by extending the property
         // definition base
         foreach (static::$properties as $k => &$property) {
