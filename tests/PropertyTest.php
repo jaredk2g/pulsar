@@ -53,6 +53,8 @@ class PropertyTest extends MockeryTestCase
     {
         $this->assertEquals(['test' => true], Property::to_array('{"test":true}'));
         $this->assertEquals(['test' => true], Property::to_array(['test' => true]));
+        $this->assertEquals([], Property::to_array(''));
+        $this->assertEquals([], Property::to_array(null));
     }
 
     public function testToObject()
@@ -61,5 +63,9 @@ class PropertyTest extends MockeryTestCase
         $expected->test = true;
         $this->assertEquals($expected, Property::to_object('{"test":true}'));
         $this->assertEquals($expected, Property::to_object($expected));
+
+        $expected = new stdClass();
+        $this->assertEquals($expected, Property::to_object(''));
+        $this->assertEquals($expected, Property::to_object(null));
     }
 }

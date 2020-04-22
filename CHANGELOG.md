@@ -10,6 +10,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Added argument and return type hinting to most methods.
 
+## Fixed
+- Ensure that the array property type always returns an array
+
 ### Removed
 - Removed the `DriverException::getException()` method in favor of `getPrevious()`.
 - Removed the number property type. Use integer or float instead.

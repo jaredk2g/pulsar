@@ -91,7 +91,7 @@ class Property
     {
         // decode JSON strings into an array
         if (is_string($value)) {
-            return json_decode($value, true);
+            return (array) json_decode($value, true);
         }
 
         return (array) $value;
