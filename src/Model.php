@@ -11,8 +11,10 @@
 
 namespace Pulsar;
 
+use ArrayAccess;
 use BadMethodCallException;
 use ICanBoogie\Inflector;
+use InvalidArgumentException;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
@@ -42,7 +44,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * @method number            max($property)
  * @method number            min($property)
  */
-abstract class Model implements \ArrayAccess
+abstract class Model implements ArrayAccess
 {
     const IMMUTABLE = 0;
     const MUTABLE_CREATE_ONLY = 1;
@@ -668,12 +670,12 @@ abstract class Model implements \ArrayAccess
     public static function cast(array $property, $value)
     {
         if (null === $value) {
-            return;
+            return null;
         }
 
         // handle empty strings as null
-        if ($property['null'] && '' == $value) {
-            return;
+        if ($property['null'] && '' === $value) {
+            return null;
         }
 
         $type = array_value($property, 'type');
@@ -1410,7 +1412,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param string $k property
      *
-     * @throws \InvalidArgumentException when the relationship manager cannot be created
+     * @throws InvalidArgumentException when the relationship manager cannot be created
      *
      * @return Model|array|null
      */
@@ -1479,7 +1481,7 @@ abstract class Model implements \ArrayAccess
      *
      * @param array $k
      *
-     * @throws \InvalidArgumentException when the relationship manager cannot be created
+     * @throws InvalidArgumentException when the relationship manager cannot be created
      *
      * @return Relation
      */
@@ -1487,7 +1489,7 @@ abstract class Model implements \ArrayAccess
     {
         $property = static::getProperty($k);
         if (!isset($property['relation'])) {
-            throw new \InvalidArgumentException('Property "'.$k.'" does not have a relationship.');
+            throw new InvalidArgumentException('Property "'.$k.'" does not have a relationship.');
         }
 
         $relationModelClass = $property['relation'];
@@ -1512,7 +1514,7 @@ abstract class Model implements \ArrayAccess
             return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
         }
 
-        throw new \InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$property['relation_type']);
+        throw new InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$property['relation_type']);
     }
 
     /**

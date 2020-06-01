@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
+
 ## 0.10 - 2020-04-22
 ### Added
 - Added a DBAL driver.
@@ -10,7 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Added argument and return type hinting to most methods.
 
-## Fixed
+### Fixed
 - Ensure that the array property type always returns an array
 
 ### Removed

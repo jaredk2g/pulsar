@@ -377,7 +377,8 @@ class ModelTest extends MockeryTestCase
     public function testCast()
     {
         $property = ['null' => true];
-        $this->assertEquals(null, Model::cast($property, ''));
+        $this->assertNull(Model::cast($property, ''));
+        $this->assertTrue(false === Model::cast($property, false));
 
         $property = ['type' => Model::TYPE_STRING, 'null' => false];
         $this->assertEquals('string', Model::cast($property, 'string'));
