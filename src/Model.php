@@ -1775,7 +1775,7 @@ abstract class Model implements ArrayAccess
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
-        if ($property['null'] && $value === '') {
+        if ($property['null'] && ($value === '' || $value === null)) {
             $value = null;
 
             return true;
