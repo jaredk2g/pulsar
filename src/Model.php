@@ -687,11 +687,11 @@ abstract class Model implements ArrayAccess
         $type = $property['type'] ?? null;
         $m = 'to_'.$type;
 
-        if (!method_exists(Property::class, $m)) {
+        if (!method_exists(Type::class, $m)) {
             return $value;
         }
 
-        return Property::$m($value);
+        return Type::$m($value);
     }
 
     /////////////////////////////

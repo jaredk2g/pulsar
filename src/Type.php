@@ -14,7 +14,7 @@ namespace Pulsar;
 /**
  * Handles value type casting.
  */
-class Property
+class Type
 {
     /**
      * Casts a value to a string.

@@ -10,12 +10,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Make model internal properties private when possible.
 - The package no longer depends on `infuse/libs`.
+- Renamed `Property` class to `Type`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
 
 ### Removed
-- Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`.
+- Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`. It is now required to use `Errors::setTranslator()`.
 
 ## 0.10 - 2020-04-22
 ### Added
