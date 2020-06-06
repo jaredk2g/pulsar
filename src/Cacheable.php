@@ -32,7 +32,7 @@ trait Cacheable
     /**
      * @var CacheItemInterface
      */
-    private $_cacheItem;
+    private $cacheItem;
 
     /**
      * Sets the default cache instance used by new models.
@@ -84,7 +84,7 @@ trait Cacheable
             self::$cachePrefix[$k] = 'models.'.strtolower(static::modelName());
         }
 
-        return self::$cachePrefix[$k].'.'.$this->_id;
+        return self::$cachePrefix[$k].'.'.$this->id();
     }
 
     /**
@@ -98,17 +98,17 @@ trait Cacheable
             return;
         }
 
-        if (!$this->_cacheItem) {
+        if (!$this->cacheItem) {
             $k = $this->getCacheKey();
-            $this->_cacheItem = self::$cachePool->getItem($k);
+            $this->cacheItem = self::$cachePool->getItem($k);
         }
 
-        return $this->_cacheItem;
+        return $this->cacheItem;
     }
 
     public function refresh()
     {
-        if ($this->_id === false) {
+        if ($this->id() === false) {
             return $this;
         }
 

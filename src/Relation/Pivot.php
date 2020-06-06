@@ -23,16 +23,16 @@ class Pivot extends Model
     /**
      * @var string
      */
-    protected $_tablename;
+    private $tablename;
 
     public function setTablename($tablename)
     {
-        $this->_tablename = $tablename;
+        $this->tablename = $tablename;
     }
 
     public function getTablename(): string
     {
-        return $this->_tablename;
+        return $this->tablename;
     }
 
     public function setProperties($localKey, $foreignKey)

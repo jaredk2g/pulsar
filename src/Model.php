@@ -88,17 +88,17 @@ abstract class Model implements ArrayAccess
     /**
      * @var array
      */
-    protected static $dispatchers;
+    private static $dispatchers;
 
     /**
-     * @var number|string|false
+     * @var bool
      */
-    protected $_id;
+    private $hasId;
 
     /**
      * @var array
      */
-    protected $_ids;
+    private $idValues;
 
     /**
      * @var array
@@ -116,19 +116,24 @@ abstract class Model implements ArrayAccess
     protected $_persisted = false;
 
     /**
-     * @var bool
-     */
-    protected $_loaded = false;
-
-    /**
      * @var array
      */
     protected $_relationships = [];
 
     /**
+     * @var bool
+     */
+    private $loaded = false;
+
+    /**
      * @var Errors
      */
-    protected $_errors;
+    private $errors;
+
+    /**
+     * @var bool
+     */
+    private $ignoreUnsaved;
 
     /////////////////////////////
     // Base model variables
@@ -197,11 +202,6 @@ abstract class Model implements ArrayAccess
      * @var array
      */
     private static $mutators = [];
-
-    /**
-     * @var bool
-     */
-    private $_ignoreUnsaved;
 
     /**
      * Creates a new model object.
@@ -345,6 +345,7 @@ abstract class Model implements ArrayAccess
             // input into a key-value map for each ID property.
             $ids = [];
             $idQueue = array_reverse($id);
+            $this->hasId = true;
             foreach (static::$ids as $k => $f) {
                 // type cast
                 if (count($idQueue) > 0) {
@@ -352,25 +353,26 @@ abstract class Model implements ArrayAccess
                     $ids[$f] = static::cast($idProperty, array_pop($idQueue));
                 } else {
                     $ids[$f] = false;
+                    $this->hasId = false;
                 }
             }
 
-            $this->_id = implode(',', $id);
-            $this->_ids = $ids;
+            $this->idValues = $ids;
         } elseif ($id instanceof self) {
             // A model can be supplied as a primary key
-            $this->_id = $id->id();
-            $this->_ids = $id->ids();
+            $this->hasId = $id->hasId;
+            $this->idValues = $id->ids();
         } else {
             // type cast the single primary key
             $idName = static::$ids[0];
+            $this->hasId = false;
             if (false !== $id) {
                 $idProperty = static::getProperty($idName);
                 $id = static::cast($idProperty, $id);
+                $this->hasId = true;
             }
 
-            $this->_id = $id;
-            $this->_ids = [$idName => $id];
+            $this->idValues = [$idName => $id];
         }
     }
 
@@ -428,7 +430,20 @@ abstract class Model implements ArrayAccess
      */
     public function id()
     {
-        return $this->_id;
+        if (!$this->hasId) {
+            return false;
+        }
+
+        if (count($this->idValues) == 1) {
+            return reset($this->idValues);
+        }
+
+        $result = [];
+        foreach (static::$ids as $k) {
+            $result[] = $this->idValues[$k];
+        }
+
+        return implode(',', $result);
     }
 
     /**
@@ -438,7 +453,7 @@ abstract class Model implements ArrayAccess
      */
     public function ids(): array
     {
-        return $this->_ids;
+        return $this->idValues;
     }
 
     /////////////////////////////
@@ -452,7 +467,7 @@ abstract class Model implements ArrayAccess
      */
     public function __toString()
     {
-        $values = array_merge($this->_values, $this->_unsaved, $this->_ids);
+        $values = array_merge($this->_values, $this->_unsaved, $this->idValues);
         ksort($values);
 
         return get_called_class().'('.json_encode($values, JSON_PRETTY_PRINT).')';
@@ -727,7 +742,7 @@ abstract class Model implements ArrayAccess
      */
     public function save(): bool
     {
-        if (false === $this->_id) {
+        if (!$this->hasId) {
             return $this->create();
         }
 
@@ -762,7 +777,7 @@ abstract class Model implements ArrayAccess
      */
     public function create(array $data = []): bool
     {
-        if (false !== $this->_id) {
+        if ($this->hasId) {
             throw new BadMethodCallException('Cannot call create() on an existing model');
         }
 
@@ -847,7 +862,7 @@ abstract class Model implements ArrayAccess
 
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $this->refreshWith(array_replace($this->_ids, $insertArray));
+            $this->refreshWith(array_replace($this->idValues, $insertArray));
 
             // dispatch the model.created event
             if (!$this->performDispatch(ModelEvent::CREATED, $usesTransactions)) {
@@ -870,7 +885,7 @@ abstract class Model implements ArrayAccess
      */
     public function ignoreUnsaved()
     {
-        $this->_ignoreUnsaved = true;
+        $this->ignoreUnsaved = true;
 
         return $this;
     }
@@ -891,8 +906,8 @@ abstract class Model implements ArrayAccess
         $values = array_replace($this->ids(), $this->_values);
 
         // unless specified, use any unsaved values
-        $ignoreUnsaved = $this->_ignoreUnsaved;
-        $this->_ignoreUnsaved = false;
+        $ignoreUnsaved = $this->ignoreUnsaved;
+        $this->ignoreUnsaved = false;
 
         if (!$ignoreUnsaved) {
             $values = array_replace($values, $this->_unsaved);
@@ -904,7 +919,7 @@ abstract class Model implements ArrayAccess
         $modelProperties = array_keys(static::$properties);
         $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
 
-        if ($numMissing > 0 && !$this->_loaded) {
+        if ($numMissing > 0 && !$this->loaded) {
             // load the model from the storage layer, if needed
             $this->refresh();
 
@@ -976,8 +991,8 @@ abstract class Model implements ArrayAccess
             $namedIds[$k] = $id;
         }
 
-        $this->_id = implode(',', $ids);
-        $this->_ids = $namedIds;
+        $this->hasId = true;
+        $this->idValues = $namedIds;
     }
 
     /**
@@ -1058,7 +1073,7 @@ abstract class Model implements ArrayAccess
      */
     public function set(array $data = []): bool
     {
-        if (false === $this->_id) {
+        if (!$this->hasId) {
             throw new BadMethodCallException('Can only call set() on an existing model');
         }
 
@@ -1141,7 +1156,7 @@ abstract class Model implements ArrayAccess
      */
     public function delete(): bool
     {
-        if (false === $this->_id) {
+        if (!$this->hasId) {
             throw new BadMethodCallException('Can only call delete() on an existing model');
         }
 
@@ -1296,8 +1311,8 @@ abstract class Model implements ArrayAccess
         $ids = [];
         $id = (array) $id;
         foreach (static::$ids as $j => $k) {
-            if ($_id = array_value($id, $j)) {
-                $ids[$k] = $_id;
+            if ($id2 = array_value($id, $j)) {
+                $ids[$k] = $id2;
             }
         }
 
@@ -1347,7 +1362,7 @@ abstract class Model implements ArrayAccess
      */
     public function refresh()
     {
-        if (false === $this->_id) {
+        if (!$this->hasId) {
             return $this;
         }
 
@@ -1379,7 +1394,7 @@ abstract class Model implements ArrayAccess
             }
         }
 
-        $this->_loaded = true;
+        $this->loaded = true;
         $this->_persisted = true;
         $this->_values = $values;
 
@@ -1393,7 +1408,7 @@ abstract class Model implements ArrayAccess
      */
     public function clearCache()
     {
-        $this->_loaded = false;
+        $this->loaded = false;
         $this->_unsaved = [];
         $this->_values = [];
         $this->_relationships = [];
@@ -1728,11 +1743,11 @@ abstract class Model implements ArrayAccess
      */
     public function getErrors(): Errors
     {
-        if (!$this->_errors) {
-            $this->_errors = new Errors();
+        if (!$this->errors) {
+            $this->errors = new Errors();
         }
 
-        return $this->_errors;
+        return $this->errors;
     }
 
     /**
@@ -1785,7 +1800,7 @@ abstract class Model implements ArrayAccess
         list($valid, $value) = $this->validateValue($property, $name, $value);
 
         // unique?
-        if ($valid && $property['unique'] && (false === $this->_id || $value != $this->ignoreUnsaved()->$name)) {
+        if ($valid && $property['unique'] && (!$this->hasId || $value != $this->ignoreUnsaved()->$name)) {
             $valid = $this->checkUniqueness($name, $value);
         }
 

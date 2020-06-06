@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Changed
+- Make model internal properties private when possible.
+
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
 
