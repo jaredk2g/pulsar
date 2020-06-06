@@ -3,11 +3,19 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+### Added
+- You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.
+- The `Errors::setTranslator()` method can set the global translation implementation.
+
 ### Changed
 - Make model internal properties private when possible.
+- The package no longer depends on `infuse/libs`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
+
+### Removed
+- Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`.
 
 ## 0.10 - 2020-04-22
 ### Added

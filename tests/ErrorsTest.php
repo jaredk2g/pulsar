@@ -12,35 +12,33 @@
 namespace Pulsar\Tests;
 
 use Exception;
-use Infuse\Locale;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use OutOfBoundsException;
 use Pulsar\Errors;
+use Pulsar\Translator;
 
 class ErrorsTest extends MockeryTestCase
 {
     private function getErrorStack()
     {
-        $stack = new Errors();
-        $stack->setLocale(new Locale());
-
-        return $stack;
+        return new Errors();
     }
 
     public function testSetGlobalLocale()
     {
-        $locale = new Locale();
-        Errors::setGlobalLocale($locale);
-        $this->assertEquals($locale, (new Errors())->getLocale());
+        $translator = new Translator();
+        Errors::setTranslator($translator);
+        $this->assertEquals($translator, (new Errors())->getTranslator());
     }
 
-    public function testGetLocale()
+    public function testGetTranslator()
     {
+        Errors::clearTranslator();
         $errorStack = new Errors();
-        $this->assertInstanceOf(Locale::class, $errorStack->getLocale());
-        $locale = new Locale();
-        $errorStack->setLocale($locale);
-        $this->assertEquals($locale, $errorStack->getLocale());
+        $this->assertNull($errorStack->getTranslator());
+        $translator = new Translator();
+        $errorStack->setTranslator($translator);
+        $this->assertEquals($translator, $errorStack->getTranslator());
     }
 
     public function testAll()

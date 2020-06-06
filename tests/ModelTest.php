@@ -12,7 +12,6 @@
 namespace Pulsar\Tests;
 
 use BadMethodCallException;
-use Infuse\Locale;
 use InvalidArgumentException;
 use InvalidRelationship;
 use Mockery;
@@ -24,6 +23,7 @@ use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
+use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Query;
@@ -1907,15 +1907,15 @@ class ModelTest extends MockeryTestCase
         $model = new Person();
         $model->email = 'notanemail';
 
-        $locale = Mockery::mock(Locale::class);
-        $locale->shouldReceive('t')
+        $translator = Mockery::mock(TranslatorInterface::class);
+        $translator->shouldReceive('translate')
             ->withArgs(['pulsar.properties.Person.email'])
             ->andReturn('Title');
-        $locale->shouldReceive('t')
+        $translator->shouldReceive('translate')
             ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false, '{{field_name}} must be a valid email address'])
             ->andReturn('Title must be a valid email address');
         $errors = $model->getErrors();
-        $errors->setLocale($locale);
+        $errors->setTranslator($translator);
 
         $this->assertFalse($model->valid());
         $this->assertEquals(['Title must be a valid email address'], $model->getErrors()->all());

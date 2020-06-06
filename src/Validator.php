@@ -13,7 +13,6 @@ namespace Pulsar;
 
 use DateTimeZone;
 use Exception;
-use Infuse\Utility;
 
 /**
  * Validates one or more fields based upon certain filters.
@@ -71,8 +70,6 @@ class Validator
      * Validates the given data against the rules.
      *
      * @param array|mixed $data can be key-value array matching rules or a single value
-     *
-     * @return bool
      */
     public function validate(&$data): bool
     {
@@ -106,8 +103,6 @@ class Validator
      *
      * @param mixed  $value
      * @param string $rule  rule string
-     *
-     * @return bool
      */
     private function validateRule(&$value, $rule): bool
     {
@@ -137,13 +132,12 @@ class Validator
      * OPTIONAL alpha:5 can specify minimum length.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function alpha(&$value, array $parameters): bool
     {
-        return preg_match('/^[A-Za-z]*$/', $value) && strlen($value) >= array_value($parameters, 0);
+        $minLength = $parameters[0] ?? 0;
+
+        return preg_match('/^[A-Za-z]*$/', $value) && strlen($value) >= $minLength;
     }
 
     /**
@@ -151,13 +145,12 @@ class Validator
      * OPTIONAL alpha_numeric:6 can specify minimum length.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function alpha_numeric(&$value, array $parameters): bool
     {
-        return preg_match('/^[A-Za-z0-9]*$/', $value) && strlen($value) >= array_value($parameters, 0);
+        $minLength = $parameters[0] ?? 0;
+
+        return preg_match('/^[A-Za-z0-9]*$/', $value) && strlen($value) >= $minLength;
     }
 
     /**
@@ -165,21 +158,18 @@ class Validator
      * OPTIONAL alpha_dash:7 can specify minimum length.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function alpha_dash(&$value, array $parameters): bool
     {
-        return preg_match('/^[A-Za-z0-9_-]*$/', $value) && strlen($value) >= array_value($parameters, 0);
+        $minLength = $parameters[0] ?? 0;
+
+        return preg_match('/^[A-Za-z0-9_-]*$/', $value) && strlen($value) >= $minLength;
     }
 
     /**
      * Validates a boolean value.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function boolean(&$value): bool
     {
@@ -207,13 +197,10 @@ class Validator
      * Validates a value exists in an array. i.e. enum:blue,red,green,yellow.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function enum(&$value, array $parameters): bool
     {
-        $enum = explode(',', array_value($parameters, 0));
+        $enum = explode(',', $parameters[0]);
 
         return in_array($value, $enum);
     }
@@ -222,8 +209,6 @@ class Validator
      * Validates a date string.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function date(&$value): bool
     {
@@ -234,8 +219,6 @@ class Validator
      * Validates an IP address.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function ip(&$value): bool
     {
@@ -247,8 +230,6 @@ class Validator
      * be flattened to a single value if it matches.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function matching(&$value): bool
     {
@@ -275,15 +256,16 @@ class Validator
      * OPTIONAL numeric:int specifies a type.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function numeric(&$value, array $parameters): bool
     {
-        $check = 'is_'.array_value($parameters, 0);
+        if (!isset($parameters[0])) {
+            return is_numeric($value);
+        }
 
-        return (!isset($parameters[0])) ? is_numeric($value) : $check($value);
+        $check = 'is_'.$parameters[0];
+
+        return $check($value);
     }
 
     /**
@@ -292,9 +274,6 @@ class Validator
      * OPTIONAL password:10 sets the minimum length.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function password_php(&$value, array $parameters): bool
     {
@@ -318,9 +297,6 @@ class Validator
      * Validates that a number falls within a range.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function range(&$value, array $parameters): bool
     {
@@ -341,8 +317,6 @@ class Validator
      * Makes sure that a variable is not empty.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function required(&$value): bool
     {
@@ -355,9 +329,6 @@ class Validator
      *          string:1:5 supplies a minimum and maximum length.
      *
      * @param mixed $value
-     * @param array $parameters
-     *
-     * @return bool
      */
     private function string(&$value, array $parameters): bool
     {
@@ -366,8 +337,8 @@ class Validator
         }
 
         $len = strlen($value);
-        $min = array_value($parameters, 0);
-        $max = array_value($parameters, 1);
+        $min = $parameters[0] ?? 0;
+        $max = $parameters[1] ?? null;
 
         return $len >= $min && (!$max || $len <= $max);
     }
@@ -376,8 +347,6 @@ class Validator
      * Validates a PHP time zone identifier.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function time_zone(&$value): bool
     {
@@ -395,8 +364,6 @@ class Validator
      * converted to one with `strtotime()`.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function timestamp(&$value): bool
     {
@@ -414,13 +381,12 @@ class Validator
      * timestamp types.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function db_timestamp(&$value): bool
     {
         if (is_integer($value)) {
-            $value = Utility::unixToDb($value);
+            // MySQL datetime format
+            $value = date('Y-m-d H:i:s', $value);
 
             return true;
         }
@@ -432,8 +398,6 @@ class Validator
      * Validates a URL.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     private function url(&$value): bool
     {

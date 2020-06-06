@@ -378,8 +378,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Sets the driver for all models.
-     *
-     * @param DriverInterface $driver
      */
     public static function setDriver(DriverInterface $driver)
     {
@@ -388,8 +386,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the driver for all models.
-     *
-     * @return DriverInterface
      *
      * @throws DriverMissingException when a driver has not been set yet
      */
@@ -412,8 +408,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the name of the model, i.e. User.
-     *
-     * @return string
      */
     public static function modelName(): string
     {
@@ -434,7 +428,7 @@ abstract class Model implements ArrayAccess
             return false;
         }
 
-        if (count($this->idValues) == 1) {
+        if (1 == count($this->idValues)) {
             return reset($this->idValues);
         }
 
@@ -593,13 +587,11 @@ abstract class Model implements ArrayAccess
      */
     public static function getProperty(string $property): ?array
     {
-        return array_value(static::$properties, $property);
+        return static::$properties[$property] ?? null;
     }
 
     /**
      * Gets the names of the model ID properties.
-     *
-     * @return array
      */
     public static function getIDProperties(): array
     {
@@ -677,7 +669,6 @@ abstract class Model implements ArrayAccess
     /**
      * Marshals a value for a given property from storage.
      *
-     * @param array $property
      * @param mixed $value
      *
      * @return mixed type-casted value
@@ -693,7 +684,7 @@ abstract class Model implements ArrayAccess
             return null;
         }
 
-        $type = array_value($property, 'type');
+        $type = $property['type'] ?? null;
         $m = 'to_'.$type;
 
         if (!method_exists(Property::class, $m)) {
@@ -709,8 +700,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the tablename for storing this model.
-     *
-     * @return string
      */
     public function getTablename(): string
     {
@@ -722,8 +711,6 @@ abstract class Model implements ArrayAccess
     /**
      * Gets the ID of the connection in the connection manager
      * that stores this model.
-     *
-     * @return string|null
      */
     public function getConnection(): ?string
     {
@@ -897,8 +884,6 @@ abstract class Model implements ArrayAccess
      * IDs, local cache, unsaved values, storage layer, defaults
      *
      * @param array $properties list of property names to fetch values of
-     *
-     * @return array
      */
     public function get(array $properties): array
     {
@@ -949,7 +934,6 @@ abstract class Model implements ArrayAccess
      *  4. null
      *
      * @param string $property
-     * @param array  $values
      *
      * @return mixed
      */
@@ -1027,8 +1011,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Converts the model to an array.
-     *
-     * @return array
      */
     public function toArray(): array
     {
@@ -1207,8 +1189,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Restores a soft-deleted model.
-     *
-     * @return bool
      */
     public function restore(): bool
     {
@@ -1247,8 +1227,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Checks if the model has been deleted.
-     *
-     * @return bool
      */
     public function isDeleted(): bool
     {
@@ -1265,8 +1243,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Generates a new query instance.
-     *
-     * @return Query
      */
     public static function query(): Query
     {
@@ -1286,8 +1262,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Generates a new query instance that includes soft-deleted models.
-     *
-     * @return Query
      */
     public static function withDeleted(): Query
     {
@@ -1311,8 +1285,8 @@ abstract class Model implements ArrayAccess
         $ids = [];
         $id = (array) $id;
         foreach (static::$ids as $j => $k) {
-            if ($id2 = array_value($id, $j)) {
-                $ids[$k] = $id2;
+            if (isset($id[$j])) {
+                $ids[$k] = $id[$j];
             }
         }
 
@@ -1347,8 +1321,6 @@ abstract class Model implements ArrayAccess
      * Tells if this model instance has been persisted to the data layer.
      *
      * NOTE: this does not actually perform a check with the data layer
-     *
-     * @return bool
      */
     public function persisted(): bool
     {
@@ -1446,9 +1418,6 @@ abstract class Model implements ArrayAccess
      *
      * Sets the model for a one-to-one relationship (has-one or belongs-to)
      *
-     * @param string $k
-     * @param Model  $model
-     *
      * @return $this
      */
     public function setRelation(string $k, Model $model)
@@ -1464,9 +1433,6 @@ abstract class Model implements ArrayAccess
      *
      * Sets the model for a one-to-many relationship
      *
-     * @param string   $k
-     * @param iterable $models
-     *
      * @return $this
      */
     public function setRelationCollection(string $k, iterable $models)
@@ -1478,8 +1444,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Sets the model for a one-to-one relationship (has-one or belongs-to) as null.
-     *
-     * @param string $k
      *
      * @return $this
      */
@@ -1497,8 +1461,6 @@ abstract class Model implements ArrayAccess
      * @param array $k
      *
      * @throws InvalidArgumentException when the relationship manager cannot be created
-     *
-     * @return Relation
      */
     public function getRelationshipManager(string $k): Relation
     {
@@ -1508,8 +1470,8 @@ abstract class Model implements ArrayAccess
         }
 
         $relationModelClass = $property['relation'];
-        $foreignKey = array_value($property, 'foreign_key');
-        $localKey = array_value($property, 'local_key');
+        $foreignKey = $property['foreign_key'] ?? null;
+        $localKey = $property['local_key'] ?? null;
 
         if (self::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
             return $this->hasOne($relationModelClass, $foreignKey, $localKey);
@@ -1524,7 +1486,7 @@ abstract class Model implements ArrayAccess
         }
 
         if (self::RELATIONSHIP_BELONGS_TO_MANY == $property['relation_type']) {
-            $pivotTable = array_value($property, 'pivot_tablename');
+            $pivotTable = $property['pivot_tablename'] ?? null;
 
             return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
         }
@@ -1538,8 +1500,6 @@ abstract class Model implements ArrayAccess
      * @param string $model      foreign model class
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
-     *
-     * @return HasOne
      */
     public function hasOne($model, $foreignKey = '', $localKey = ''): HasOne
     {
@@ -1552,8 +1512,6 @@ abstract class Model implements ArrayAccess
      * @param string $model      foreign model class
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
-     *
-     * @return BelongsTo
      */
     public function belongsTo($model, $foreignKey = '', $localKey = ''): BelongsTo
     {
@@ -1566,8 +1524,6 @@ abstract class Model implements ArrayAccess
      * @param string $model      foreign model class
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
-     *
-     * @return HasMany
      */
     public function hasMany($model, $foreignKey = '', $localKey = ''): HasMany
     {
@@ -1581,8 +1537,6 @@ abstract class Model implements ArrayAccess
      * @param string $tablename  pivot table name
      * @param string $foreignKey identifying key on foreign model
      * @param string $localKey   identifying key on local model
-     *
-     * @return BelongsToMany
      */
     public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = ''): BelongsToMany
     {
@@ -1595,8 +1549,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the event dispatcher.
-     *
-     * @return EventDispatcher
      */
     public static function getDispatcher($ignoreCache = false): EventDispatcher
     {
@@ -1611,9 +1563,8 @@ abstract class Model implements ArrayAccess
     /**
      * Subscribes to a listener to an event.
      *
-     * @param string   $event    event name
-     * @param callable $listener
-     * @param int      $priority optional priority, higher #s get called first
+     * @param string $event    event name
+     * @param int    $priority optional priority, higher #s get called first
      */
     public static function listen(string $event, callable $listener, int $priority = 0)
     {
@@ -1622,9 +1573,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.creating and model.updating events.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function saving(callable $listener, int $priority = 0)
     {
@@ -1634,9 +1582,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.created and model.updated events.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function saved(callable $listener, int $priority = 0)
     {
@@ -1646,9 +1591,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.creating event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function creating(callable $listener, int $priority = 0)
     {
@@ -1657,9 +1599,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.created event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function created(callable $listener, int $priority = 0)
     {
@@ -1668,9 +1607,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.updating event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function updating(callable $listener, int $priority = 0)
     {
@@ -1679,9 +1615,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.updated event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function updated(callable $listener, int $priority = 0)
     {
@@ -1690,9 +1623,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.deleting event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function deleting(callable $listener, int $priority = 0)
     {
@@ -1701,9 +1631,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Adds a listener to the model.deleted event.
-     *
-     * @param callable $listener
-     * @param int      $priority
      */
     public static function deleted(callable $listener, int $priority = 0)
     {
@@ -1738,8 +1665,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the error stack for this model.
-     *
-     * @return Errors
      */
     public function getErrors(): Errors
     {
@@ -1752,8 +1677,6 @@ abstract class Model implements ArrayAccess
 
     /**
      * Checks if the model in its current state is valid.
-     *
-     * @return bool
      */
     public function valid(): bool
     {
@@ -1783,14 +1706,12 @@ abstract class Model implements ArrayAccess
      * @param array  $property property definition
      * @param string $name     property name
      * @param mixed  $value
-     *
-     * @return bool
      */
     private function filterAndValidate(array $property, string $name, &$value): bool
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
-        if ($property['null'] && ($value === '' || $value === null)) {
+        if ($property['null'] && ('' === $value || null === $value)) {
             $value = null;
 
             return true;
@@ -1813,8 +1734,6 @@ abstract class Model implements ArrayAccess
      * @param array  $property property definition
      * @param string $name     property name
      * @param mixed  $value
-     *
-     * @return array
      */
     private function validateValue(array $property, string $name, $value): array
     {
@@ -1845,8 +1764,6 @@ abstract class Model implements ArrayAccess
      *
      * @param string $name  property name
      * @param mixed  $value
-     *
-     * @return bool
      */
     private function checkUniqueness(string $name, $value): bool
     {
@@ -1867,30 +1784,27 @@ abstract class Model implements ArrayAccess
     /**
      * Gets the marshaled default value for a property (if set).
      *
-     * @param array $property
-     *
      * @return mixed
      */
     private function getPropertyDefault(array $property)
     {
-        return array_value($property, 'default');
+        return $property['default'] ?? null;
     }
 
     /**
      * Gets the humanized name of a property.
      *
      * @param string $name property name
-     *
-     * @return string
      */
     private function getPropertyTitle(string $name): string
     {
-        // look up the property from the locale service first
-        $k = 'pulsar.properties.'.static::modelName().'.'.$name;
-        $locale = $this->getErrors()->getLocale();
-        $title = $locale->t($k);
-        if ($title != $k) {
-            return $title;
+        // look up the property from the translator first
+        if ($translator = $this->getErrors()->getTranslator()) {
+            $k = 'pulsar.properties.'.static::modelName().'.'.$name;
+            $title = $translator->translate($k);
+            if ($title != $k) {
+                return $title;
+            }
         }
 
         // otherwise just attempt to title-ize the property name
