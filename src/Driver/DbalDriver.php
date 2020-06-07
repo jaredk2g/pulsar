@@ -54,7 +54,7 @@ class DbalDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedID(Model $model, $propertyName)
+    public function getCreatedID(Model $model, string $propertyName)
     {
         try {
             $id = $this->getConnection($model->getConnection())->lastInsertId();
@@ -172,7 +172,7 @@ class DbalDriver extends AbstractDriver
         return (int) $this->executeScalar($dbQuery, $model, 'count');
     }
 
-    public function sum(Query $query, $field)
+    public function sum(Query $query, string $field)
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -186,7 +186,7 @@ class DbalDriver extends AbstractDriver
         return (int) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function average(Query $query, $field)
+    public function average(Query $query, string $field)
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -200,7 +200,7 @@ class DbalDriver extends AbstractDriver
         return (int) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function max(Query $query, $field)
+    public function max(Query $query, string $field)
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -214,7 +214,7 @@ class DbalDriver extends AbstractDriver
         return (int) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function min(Query $query, $field)
+    public function min(Query $query, string $field)
     {
         // build the SQL query
         $modelClass = $query->getModel();

@@ -34,7 +34,7 @@ class Validator
     private $rules;
 
     /**
-     * @var string
+     * @var string|null
      */
     private $failingRule;
 
@@ -89,10 +89,8 @@ class Validator
 
     /**
      * Gets the failing rule.
-     *
-     * @return string|false
      */
-    public function getFailingRule()
+    public function getFailingRule(): ?string
     {
         return $this->failingRule;
     }

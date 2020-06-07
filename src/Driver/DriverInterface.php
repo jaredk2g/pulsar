@@ -11,6 +11,7 @@
 
 namespace Pulsar\Driver;
 
+use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
 
@@ -24,7 +25,7 @@ interface DriverInterface
      *
      * @return mixed result
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function createModel(Model $model, array $parameters);
 
@@ -32,18 +33,16 @@ interface DriverInterface
      * Gets the last inserted ID. Used for drivers that generate
      * IDs for models after creation.
      *
-     * @param string $propertyName
-     *
      * @return mixed
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
-    public function getCreatedID(Model $model, $propertyName);
+    public function getCreatedID(Model $model, string $propertyName);
 
     /**
      * Loads a model.
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function loadModel(Model $model): ?array;
 
@@ -52,74 +51,66 @@ interface DriverInterface
      *
      * @return array raw data from storage
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function queryModels(Query $query): array;
 
     /**
      * Updates a model.
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function updateModel(Model $model, array $parameters): bool;
 
     /**
      * Deletes a model.
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function deleteModel(Model $model): bool;
 
     /**
      * Gets the count matching the given query.
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
     public function count(Query $query): int;
 
     /**
      * Gets the sum matching the given query.
      *
-     * @param string $field
-     *
      * @return number
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
-    public function sum(Query $query, $field);
+    public function sum(Query $query, string $field);
 
     /**
      * Gets the average matching the given query.
      *
-     * @param string $field
-     *
      * @return number
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
-    public function average(Query $query, $field);
+    public function average(Query $query, string $field);
 
     /**
      * Gets the max matching the given query.
      *
-     * @param string $field
-     *
      * @return number
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
-    public function max(Query $query, $field);
+    public function max(Query $query, string $field);
 
     /**
      * Gets the min matching the given query.
      *
-     * @param string $field
-     *
      * @return number
      *
-     * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
+     * @throws DriverException when an exception occurs within the driver
      */
-    public function min(Query $query, $field);
+    public function min(Query $query, string $field);
 
     /**
      * Starts a database transaction.

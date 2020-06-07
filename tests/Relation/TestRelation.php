@@ -17,7 +17,7 @@ use Pulsar\Relation\Relation;
 
 class TestRelation extends Relation
 {
-    protected function initQuery(Query $query)
+    protected function initQuery(Query $query): Query
     {
         $query->where('test', true);
 
@@ -29,13 +29,15 @@ class TestRelation extends Relation
         // do nothing
     }
 
-    public function save(Model $model)
+    public function save(Model $model): Model
     {
         // do nothing
+        return $model;
     }
 
-    public function create(array $values = [])
+    public function create(array $values = []): Model
     {
         // do nothing
+        return new \TestModel();
     }
 }

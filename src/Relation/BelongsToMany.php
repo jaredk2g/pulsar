@@ -63,7 +63,7 @@ class BelongsToMany extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery(Query $query)
+    protected function initQuery(Query $query): Query
     {
         $pivot = new Pivot();
         $pivot->setTablename($this->tablename);
@@ -85,7 +85,7 @@ class BelongsToMany extends Relation
     {
         $query = $this->getQuery();
         if ($this->empty) {
-            return;
+            return null;
         }
 
         return $query->execute();
@@ -93,15 +93,13 @@ class BelongsToMany extends Relation
 
     /**
      * Gets the pivot tablename.
-     *
-     * @return string
      */
-    public function getTablename()
+    public function getTablename(): string
     {
         return $this->tablename;
     }
 
-    public function save(Model $model)
+    public function save(Model $model): Model
     {
         $model->saveOrFail();
         $this->attach($model);
@@ -109,7 +107,7 @@ class BelongsToMany extends Relation
         return $model;
     }
 
-    public function create(array $values = [])
+    public function create(array $values = []): Model
     {
         $class = $this->foreignModel;
         $model = new $class();

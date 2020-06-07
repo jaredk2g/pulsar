@@ -773,6 +773,8 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
+            // TODO special treatment for relationships
+
             $validated = $validated && $this->filterAndValidate($property, $name, $value);
             $insertArray[$name] = $value;
         }

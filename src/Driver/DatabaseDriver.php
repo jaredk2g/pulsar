@@ -116,7 +116,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedID(Model $model, $propertyName)
+    public function getCreatedID(Model $model, string $propertyName)
     {
         try {
             $id = $this->getConnection($model->getConnection())->lastInsertId();
@@ -226,7 +226,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function sum(Query $query, $field)
+    public function sum(Query $query, string $field)
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -246,7 +246,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function average(Query $query, $field)
+    public function average(Query $query, string $field)
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -266,7 +266,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function max(Query $query, $field)
+    public function max(Query $query, string $field)
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -286,7 +286,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function min(Query $query, $field)
+    public function min(Query $query, string $field)
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();

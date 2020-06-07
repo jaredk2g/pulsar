@@ -20,7 +20,7 @@ class Query
     const MAX_LIMIT = 1000;
 
     /**
-     * @var string
+     * @var Model|string
      */
     private $model;
 
@@ -55,7 +55,7 @@ class Query
     private $sort;
 
     /**
-     * @param string $model model class
+     * @param Model|string $model
      */
     public function __construct($model = '')
     {
@@ -71,7 +71,7 @@ class Query
     /**
      * Gets the model class associated with this query.
      *
-     * @return string
+     * @return Model|string
      */
     public function getModel()
     {
@@ -80,8 +80,6 @@ class Query
 
     /**
      * Sets the limit for this query.
-     *
-     * @param int $limit
      *
      * @return $this
      */
@@ -94,8 +92,6 @@ class Query
 
     /**
      * Gets the limit for this query.
-     *
-     * @return int
      */
     public function getLimit(): int
     {
@@ -104,8 +100,6 @@ class Query
 
     /**
      * Sets the start offset.
-     *
-     * @param int $start
      *
      * @return $this
      */
@@ -118,8 +112,6 @@ class Query
 
     /**
      * Gets the start offset.
-     *
-     * @return int
      */
     public function getStart(): int
     {
@@ -161,8 +153,6 @@ class Query
 
     /**
      * Gets the sort parameters.
-     *
-     * @return array
      */
     public function getSort(): array
     {
@@ -207,8 +197,6 @@ class Query
 
     /**
      * Gets the where parameters.
-     *
-     * @return array
      */
     public function getWhere(): array
     {
@@ -219,9 +207,8 @@ class Query
      * Adds a join to the query. Matches a property on this model
      * to the ID of the model we are joining.
      *
-     * @param string $model      model being joined
-     * @param string $column     name of local property
-     * @param string $foreignKey
+     * @param string $model  model being joined
+     * @param string $column name of local property
      *
      * @return $this
      */
@@ -234,8 +221,6 @@ class Query
 
     /**
      * Gets the joins.
-     *
-     * @return array
      */
     public function getJoins(): array
     {
@@ -260,8 +245,6 @@ class Query
 
     /**
      * Gets the relationship properties that are going to be eager-loaded.
-     *
-     * @return array
      */
     public function getWith(): array
     {
@@ -363,8 +346,6 @@ class Query
     /**
      * Executes the query against the model's driver and returns the first result.
      *
-     * @param int $limit
-     *
      * @return array|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
      */
     public function first(int $limit = 1)
@@ -380,8 +361,6 @@ class Query
 
     /**
      * Gets the number of models matching the query.
-     *
-     * @return int
      */
     public function count(): int
     {
@@ -393,8 +372,6 @@ class Query
 
     /**
      * Gets the sum of a property matching the query.
-     *
-     * @param string $property
      *
      * @return number
      */
@@ -409,8 +386,6 @@ class Query
     /**
      * Gets the average of a property matching the query.
      *
-     * @param string $property
-     *
      * @return number
      */
     public function average(string $property)
@@ -424,8 +399,6 @@ class Query
     /**
      * Gets the max of a property matching the query.
      *
-     * @param string $property
-     *
      * @return number
      */
     public function max(string $property)
@@ -438,8 +411,6 @@ class Query
 
     /**
      * Gets the min of a property matching the query.
-     *
-     * @param string $property
      *
      * @return number
      */
@@ -493,11 +464,7 @@ class Query
      * Hydrates the eager-loaded relationships for a given set of IDs.
      *
      * @param string $modelClass
-     * @param array  $ids
-     * @param string $foreignKey
      * @param bool   $multiple   when true will condense
-     *
-     * @return array
      */
     private function fetchRelationships($modelClass, array $ids, string $foreignKey, bool $multiple): array
     {

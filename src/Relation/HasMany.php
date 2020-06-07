@@ -12,6 +12,7 @@
 namespace Pulsar\Relation;
 
 use ICanBoogie\Inflector;
+use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
 
@@ -41,7 +42,7 @@ class HasMany extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery(Query $query)
+    protected function initQuery(Query $query): Query
     {
         $localKey = $this->localKey;
         $id = $this->localModel->$localKey;
@@ -59,13 +60,13 @@ class HasMany extends Relation
     {
         $query = $this->getQuery();
         if ($this->empty) {
-            return;
+            return null;
         }
 
         return $query->execute();
     }
 
-    public function save(Model $model)
+    public function save(Model $model): Model
     {
         $model->{$this->foreignKey} = $this->localModel->{$this->localKey};
         $model->saveOrFail();
@@ -73,7 +74,7 @@ class HasMany extends Relation
         return $model;
     }
 
-    public function create(array $values = [])
+    public function create(array $values = []): Model
     {
         $class = $this->foreignModel;
         $model = new $class();
@@ -88,7 +89,7 @@ class HasMany extends Relation
      *
      * @param Model $model child model
      *
-     * @throws \Pulsar\Exception\ModelException when the operation fails
+     * @throws ModelException when the operation fails
      *
      * @return $this
      */
@@ -105,7 +106,7 @@ class HasMany extends Relation
      *
      * @param Model $model child model
      *
-     * @throws \Pulsar\Exception\ModelException when the operation fails
+     * @throws ModelException when the operation fails
      *
      * @return $this
      */
@@ -121,7 +122,7 @@ class HasMany extends Relation
      * Removes any relationships that are not included
      * in the list of IDs.
      *
-     * @throws \Pulsar\Exception\ModelException when the operation fails
+     * @throws ModelException when the operation fails
      *
      * @return $this
      */

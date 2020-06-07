@@ -39,22 +39,16 @@ class Translator implements TranslatorInterface
 
     /**
      * Sets the locale.
-     *
-     * @return $this
      */
-    public function setLocale(string $locale)
+    public function setLocale(string $locale): void
     {
         $this->locale = $locale;
-
-        return $this;
     }
 
     /**
      * Gets the locale.
-     *
-     * @return string
      */
-    public function getLocale()
+    public function getLocale(): string
     {
         return $this->locale;
     }
@@ -64,14 +58,10 @@ class Translator implements TranslatorInterface
      * Translation files are expected to be have the same name as the
      * locale with a .php extension. The translation file should return
      * an array with translations.
-     *
-     * @return $this
      */
-    public function setDataDir(string $dir)
+    public function setDataDir(string $dir): void
     {
         $this->dataDir = $dir;
-
-        return $this;
     }
 
     public function translate(string $phrase, array $params = [], ?string $locale = null, ?string $fallback = null): string

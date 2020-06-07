@@ -21,7 +21,7 @@ use Pulsar\Query;
 abstract class Relation
 {
     /**
-     * @var \Pulsar\Model
+     * @var Model
      */
     protected $localModel;
 
@@ -61,50 +61,40 @@ abstract class Relation
 
     /**
      * Gets the local model of the relationship.
-     *
-     * @return \Pulsar\Model
      */
-    public function getLocalModel()
+    public function getLocalModel(): Model
     {
         return $this->localModel;
     }
 
     /**
      * Gets the name of the foreign key of the relation model.
-     *
-     * @return string
      */
-    public function getLocalKey()
+    public function getLocalKey(): string
     {
         return $this->localKey;
     }
 
     /**
      * Gets the foreign model of the relationship.
-     *
-     * @return string
      */
-    public function getForeignModel()
+    public function getForeignModel(): string
     {
         return $this->foreignModel;
     }
 
     /**
      * Gets the name of the foreign key of the foreign model.
-     *
-     * @return string
      */
-    public function getForeignKey()
+    public function getForeignKey(): string
     {
         return $this->foreignKey;
     }
 
     /**
      * Returns the query instance for this relation.
-     *
-     * @return \Pulsar\Query
      */
-    public function getQuery()
+    public function getQuery(): Query
     {
         $foreignModel = $this->foreignModel;
         $query = new Query(new $foreignModel());
@@ -115,10 +105,8 @@ abstract class Relation
 
     /**
      * Called to initialize the query.
-     *
-     * @return Query
      */
-    abstract protected function initQuery(Query $query);
+    abstract protected function initQuery(Query $query): Query;
 
     /**
      * Called to get the results of the relation query.
@@ -132,24 +120,20 @@ abstract class Relation
      * the owning model.
      *
      * @throws ModelException when the operation fails
-     *
-     * @return Model
      */
-    abstract public function save(Model $model);
+    abstract public function save(Model $model): Model;
 
     /**
      * Creates a new relationship model and attaches it to
      * the owning model.
      *
      * @throws ModelException when the operation fails
-     *
-     * @return Model
      */
-    abstract public function create(array $values = []);
+    abstract public function create(array $values = []): Model;
 
     public function __call($method, $arguments)
     {
-        // try calling any unkown methods on the query
+        // try calling any unknown methods on the query
         return call_user_func_array([$this->getQuery(), $method], $arguments);
     }
 }

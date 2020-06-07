@@ -35,11 +35,8 @@ abstract class ACLModel extends Model
      * on this object.
      *
      * @param string $permission
-     * @param Model  $requester
-     *
-     * @return bool
      */
-    public function can($permission, Model $requester)
+    public function can($permission, Model $requester): bool
     {
         if ($this->permissionsDisabled) {
             return true;

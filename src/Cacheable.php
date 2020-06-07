@@ -36,10 +36,8 @@ trait Cacheable
 
     /**
      * Sets the default cache instance used by new models.
-     *
-     * @param CacheItemPoolInterface $pool
      */
-    public static function setCachePool(CacheItemPoolInterface $pool)
+    public static function setCachePool(CacheItemPoolInterface $pool): void
     {
         self::$cachePool = $pool;
     }
@@ -47,37 +45,31 @@ trait Cacheable
     /**
      * Clears the default cache instance for all models.
      */
-    public static function clearCachePool()
+    public static function clearCachePool(): void
     {
         self::$cachePool = null;
     }
 
     /**
      * Returns the cache instance.
-     *
-     * @return CacheItemPoolInterface|false
      */
-    public function getCachePool()
+    public function getCachePool(): ?CacheItemPoolInterface
     {
         return self::$cachePool;
     }
 
     /**
      * Returns the cache TTL.
-     *
-     * @return int|null
      */
-    public function getCacheTTL()
+    public function getCacheTTL(): ?int
     {
         return (property_exists($this, 'cacheTTL')) ? static::$cacheTTL : 86400; // default = 1 day
     }
 
     /**
      * Returns the cache key for this model.
-     *
-     * @return string
      */
-    public function getCacheKey()
+    public function getCacheKey(): string
     {
         $k = get_called_class();
         if (!isset(self::$cachePrefix[$k])) {
@@ -89,13 +81,11 @@ trait Cacheable
 
     /**
      * Returns the cache item for this model.
-     *
-     * @return CacheItemInterface|null
      */
-    public function getCacheItem()
+    public function getCacheItem(): ?CacheItemInterface
     {
         if (!self::$cachePool) {
-            return;
+            return null;
         }
 
         if (!$this->cacheItem) {
@@ -108,7 +98,7 @@ trait Cacheable
 
     public function refresh()
     {
-        if ($this->id() === false) {
+        if (false === $this->id()) {
             return $this;
         }
 
@@ -146,7 +136,7 @@ trait Cacheable
      */
     public function cache()
     {
-        if (!self::$cachePool || count($this->_values) == 0) {
+        if (!self::$cachePool || 0 == count($this->_values)) {
             return $this;
         }
 

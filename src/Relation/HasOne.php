@@ -12,6 +12,7 @@
 namespace Pulsar\Relation;
 
 use ICanBoogie\Inflector;
+use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
 
@@ -41,7 +42,7 @@ class HasOne extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery(Query $query)
+    protected function initQuery(Query $query): Query
     {
         $id = $this->localModel->{$this->localKey};
 
@@ -59,13 +60,13 @@ class HasOne extends Relation
     {
         $query = $this->getQuery();
         if ($this->empty) {
-            return;
+            return null;
         }
 
         return $query->first();
     }
 
-    public function save(Model $model)
+    public function save(Model $model): Model
     {
         $model->{$this->foreignKey} = $this->localModel->{$this->localKey};
         $model->saveOrFail();
@@ -73,7 +74,7 @@ class HasOne extends Relation
         return $model;
     }
 
-    public function create(array $values = [])
+    public function create(array $values = []): Model
     {
         $class = $this->foreignModel;
         $model = new $class();
@@ -88,7 +89,7 @@ class HasOne extends Relation
      *
      * @param Model $model child model
      *
-     * @throws \Pulsar\Exception\ModelException when the operation fails
+     * @throws ModelException when the operation fails
      *
      * @return $this
      */
@@ -103,7 +104,7 @@ class HasOne extends Relation
     /**
      * Detaches the child model from this model.
      *
-     * @throws \Pulsar\Exception\ModelException when the operation fails
+     * @throws ModelException when the operation fails
      *
      * @return $this
      */

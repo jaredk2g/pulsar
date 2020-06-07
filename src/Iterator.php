@@ -51,9 +51,6 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
      */
     private $count;
 
-    /**
-     * @param Query $query
-     */
     public function __construct(Query $query)
     {
         $this->query = $query;
@@ -102,7 +99,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
     public function current()
     {
         if ($this->pointer >= $this->count()) {
-            return;
+            return null;
         }
 
         $this->loadModels();
@@ -112,7 +109,7 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
             return $this->models[$k];
         }
 
-        return;
+        return null;
     }
 
     /**
@@ -242,9 +239,6 @@ class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Generates the starting page given a pointer and limit.
-     *
-     * @param int $pointer
-     * @param int $limit
      */
     private function rangeStart(int $pointer, int $limit)
     {

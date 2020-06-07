@@ -41,7 +41,7 @@ class BelongsTo extends Relation
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 
-    protected function initQuery(Query $query)
+    protected function initQuery(Query $query): Query
     {
         $id = $this->localModel->{$this->localKey};
 
@@ -59,13 +59,13 @@ class BelongsTo extends Relation
     {
         $query = $this->getQuery();
         if ($this->empty) {
-            return;
+            return null;
         }
 
         return $query->first();
     }
 
-    public function save(Model $model)
+    public function save(Model $model): Model
     {
         $model->saveOrFail();
         $this->attach($model);
@@ -73,7 +73,7 @@ class BelongsTo extends Relation
         return $model;
     }
 
-    public function create(array $values = [])
+    public function create(array $values = []): Model
     {
         $class = $this->foreignModel;
         $model = new $class();
