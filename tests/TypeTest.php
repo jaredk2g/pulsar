@@ -12,7 +12,6 @@
 namespace Pulsar\Tests;
 
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Pulsar\Model;
 use Pulsar\Property;
 use Pulsar\Type;
 use stdClass;
@@ -25,37 +24,37 @@ class TypeTest extends MockeryTestCase
         $this->assertNull(Type::cast($property, ''));
         $this->assertTrue(false === Type::cast($property, false));
 
-        $property = new Property(['type' => Model::TYPE_STRING, 'null' => false]);
+        $property = new Property(['type' => Type::STRING, 'null' => false]);
         $this->assertEquals('string', Type::cast($property, 'string'));
         $this->assertNull(Type::cast($property, null));
 
-        $property = new Property(['type' => Model::TYPE_BOOLEAN, 'null' => false]);
+        $property = new Property(['type' => Type::BOOLEAN, 'null' => false]);
         $this->assertTrue(Type::cast($property, true));
         $this->assertTrue(Type::cast($property, '1'));
         $this->assertFalse(Type::cast($property, false));
 
-        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
+        $property = new Property(['type' => Type::INTEGER, 'null' => false]);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Model::TYPE_FLOAT, 'null' => false]);
+        $property = new Property(['type' => Type::FLOAT, 'null' => false]);
         $this->assertEquals(1.23, Type::cast($property, 1.23));
         $this->assertEquals(123.0, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
+        $property = new Property(['type' => Type::INTEGER, 'null' => false]);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Model::TYPE_DATE, 'null' => false]);
+        $property = new Property(['type' => Type::DATE, 'null' => false]);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
         $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::cast($property, 'Aug-20-2015'));
 
-        $property = new Property(['type' => Model::TYPE_ARRAY, 'null' => false]);
+        $property = new Property(['type' => Type::ARRAY, 'null' => false]);
         $this->assertEquals(['test' => true], Type::cast($property, '{"test":true}'));
         $this->assertEquals(['test' => true], Type::cast($property, ['test' => true]));
 
-        $property = new Property(['type' => Model::TYPE_OBJECT, 'null' => false]);
+        $property = new Property(['type' => Type::OBJECT, 'null' => false]);
         $expected = new stdClass();
         $expected->test = true;
         $this->assertEquals($expected, Type::cast($property, '{"test":true}'));

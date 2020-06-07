@@ -16,6 +16,14 @@ namespace Pulsar;
  */
 class Type
 {
+    const STRING = 'string';
+    const INTEGER = 'integer';
+    const FLOAT = 'float';
+    const BOOLEAN = 'boolean';
+    const DATE = 'date';
+    const OBJECT = 'object';
+    const ARRAY = 'array';
+
     /**
      * Marshals a value for a given property from storage.
      *

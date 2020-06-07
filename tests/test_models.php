@@ -8,21 +8,23 @@
  * @copyright 2015 Jared King
  * @license MIT
  */
+
 use Pulsar\ACLModel;
 use Pulsar\Cacheable;
 use Pulsar\Model;
 use Pulsar\Query;
+use Pulsar\Type;
 
 class TestModel extends Model
 {
     protected static $properties = [
         'relation' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation' => TestModel2::class,
             'null' => true,
         ],
         'answer' => [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
         ],
         'mutator' => [],
         'accessor' => [],
@@ -39,7 +41,7 @@ class TestModel extends Model
     protected function initialize()
     {
         self::$properties['test_hook'] = [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
             'null' => true,
         ];
 
@@ -89,10 +91,10 @@ class TestModel2 extends Model
 
     protected static $properties = [
         'id' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
         ],
         'id2' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
         ],
         'default' => [
             'default' => 'some default value',
@@ -109,20 +111,20 @@ class TestModel2 extends Model
             'unique' => true,
         ],
         'required' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'required' => true,
         ],
         'hidden' => [
-            'type' => Model::TYPE_BOOLEAN,
+            'type' => Type::BOOLEAN,
             'default' => false,
         ],
         'person' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation' => Person::class,
             'default' => 20,
         ],
         'array' => [
-            'type' => Model::TYPE_ARRAY,
+            'type' => Type::ARRAY,
             'default' => [
                 'tax' => '%',
                 'discounts' => false,
@@ -130,7 +132,7 @@ class TestModel2 extends Model
             ],
         ],
         'object' => [
-            'type' => Model::TYPE_OBJECT,
+            'type' => Type::OBJECT,
         ],
         'mutable_create_only' => [
             'mutable' => Model::MUTABLE_CREATE_ONLY,
@@ -173,14 +175,14 @@ class Person extends ACLModel
 {
     protected static $properties = [
         'id' => [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
         ],
         'name' => [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
             'default' => 'Jared',
         ],
         'email' => [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
             'validate' => 'email',
         ],
         'garage' => [
@@ -253,7 +255,7 @@ class Post extends Model
 {
     protected static $properties = [
         'category_id' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
         ],
     ];
 }
@@ -273,7 +275,7 @@ class Garage extends Model
 {
     protected static $properties = [
         'person_id' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
         ],
         'location' => [],
@@ -289,7 +291,7 @@ class Car extends Model
         'make' => [],
         'model' => [],
         'garage_id' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
         ],
     ];
@@ -299,12 +301,12 @@ class Balance extends Model
 {
     protected static $properties = [
         'person_id' => [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation' => Person::class,
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
         ],
         'amount' => [
-            'type' => Model::TYPE_FLOAT,
+            'type' => Type::FLOAT,
         ],
     ];
 }

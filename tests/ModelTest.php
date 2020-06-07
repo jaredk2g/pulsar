@@ -25,6 +25,7 @@ use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Query;
+use Pulsar\Type;
 use RelationshipTestModel;
 use stdClass;
 use TestModel;
@@ -77,7 +78,7 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'id' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'mutable' => Model::IMMUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -91,7 +92,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'relation' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'relation' => 'TestModel2',
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
@@ -105,7 +106,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'answer' => [
-                'type' => Model::TYPE_STRING,
+                'type' => Type::STRING,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -119,7 +120,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'test_hook' => [
-                'type' => Model::TYPE_STRING,
+                'type' => Type::STRING,
                 'null' => true,
                 'mutable' => Model::MUTABLE,
                 'unique' => false,
@@ -170,7 +171,7 @@ class ModelTest extends MockeryTestCase
     public function testPropertiesIdOverwrite()
     {
         $expected = [
-            'type' => Model::TYPE_STRING,
+            'type' => Type::STRING,
             'mutable' => Model::MUTABLE,
             'null' => false,
             'unique' => false,
@@ -190,7 +191,7 @@ class ModelTest extends MockeryTestCase
     public function testGetProperty()
     {
         $expected = [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'mutable' => Model::IMMUTABLE,
             'null' => false,
             'unique' => false,
@@ -206,7 +207,7 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($expected, TestModel::getProperty('id')->toArray());
 
         $expected = [
-            'type' => Model::TYPE_INTEGER,
+            'type' => Type::INTEGER,
             'relation' => 'TestModel2',
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
             'foreign_key' => 'id',
@@ -226,7 +227,7 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'id' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -240,7 +241,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'id2' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -310,7 +311,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'required' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'required' => true,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -324,7 +325,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'hidden' => [
-                'type' => Model::TYPE_BOOLEAN,
+                'type' => Type::BOOLEAN,
                 'default' => false,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
@@ -338,7 +339,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'person' => [
-                'type' => Model::TYPE_INTEGER,
+                'type' => Type::INTEGER,
                 'relation' => 'Person',
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
@@ -352,7 +353,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'array' => [
-                'type' => Model::TYPE_ARRAY,
+                'type' => Type::ARRAY,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'default' => [
@@ -370,7 +371,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'object' => [
-                'type' => Model::TYPE_OBJECT,
+                'type' => Type::OBJECT,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -412,7 +413,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'created_at' => [
-                'type' => Model::TYPE_DATE,
+                'type' => Type::DATE,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -426,7 +427,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'updated_at' => [
-                'type' => Model::TYPE_DATE,
+                'type' => Type::DATE,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -450,7 +451,7 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'id' => [
-                'type' => Model::TYPE_STRING,
+                'type' => Type::STRING,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -464,7 +465,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'name' => [
-                'type' => Model::TYPE_STRING,
+                'type' => Type::STRING,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -478,7 +479,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'email' => [
-                'type' => Model::TYPE_STRING,
+                'type' => Type::STRING,
                 'mutable' => Model::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -492,7 +493,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
             'deleted_at' => [
-                'type' => Model::TYPE_DATE,
+                'type' => Type::DATE,
                 'mutable' => Model::MUTABLE,
                 'null' => true,
                 'unique' => false,

@@ -47,12 +47,19 @@ abstract class Model implements ArrayAccess
     const MUTABLE_CREATE_ONLY = 1;
     const MUTABLE = 2;
 
+    /** @deprecated  */
     const TYPE_STRING = 'string';
+    /** @deprecated  */
     const TYPE_INTEGER = 'integer';
+    /** @deprecated  */
     const TYPE_FLOAT = 'float';
+    /** @deprecated  */
     const TYPE_BOOLEAN = 'boolean';
+    /** @deprecated  */
     const TYPE_DATE = 'date';
+    /** @deprecated  */
     const TYPE_OBJECT = 'object';
+    /** @deprecated  */
     const TYPE_ARRAY = 'array';
 
     const RELATIONSHIP_HAS_ONE = 'has_one';
@@ -63,24 +70,24 @@ abstract class Model implements ArrayAccess
     const DEFAULT_ID_NAME = 'id';
 
     const DEFAULT_ID_PROPERTY = [
-        'type' => self::TYPE_INTEGER,
+        'type' => Type::INTEGER,
         'mutable' => self::IMMUTABLE,
     ];
 
     const AUTO_TIMESTAMPS = [
         'created_at' => [
-            'type' => self::TYPE_DATE,
+            'type' => Type::DATE,
             'validate' => 'timestamp|db_timestamp',
         ],
         'updated_at' => [
-            'type' => self::TYPE_DATE,
+            'type' => Type::DATE,
             'validate' => 'timestamp|db_timestamp',
         ],
     ];
 
     const SOFT_DELETE_TIMESTAMPS = [
         'deleted_at' => [
-            'type' => self::TYPE_DATE,
+            'type' => Type::DATE,
             'validate' => 'timestamp|db_timestamp',
             'null' => true,
         ],
