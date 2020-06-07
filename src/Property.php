@@ -42,7 +42,7 @@ class Property implements ArrayAccess
     /** @var string|null */
     private $pivot_tablename;
 
-    public function __construct(array $values)
+    public function __construct(array $values = [])
     {
         foreach ($values as $k => $v) {
             $this->$k = $v;
@@ -150,6 +150,10 @@ class Property implements ArrayAccess
 
     public function offsetGet($offset)
     {
+        if (!property_exists($this, $offset)) {
+            return null;
+        }
+
         return $this->$offset;
     }
 
