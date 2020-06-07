@@ -26,7 +26,6 @@ use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
-use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
@@ -553,52 +552,6 @@ class ModelTest extends MockeryTestCase
         $this->assertNull(TestModel::getAccessor('id'));
         $this->assertNull(TestModel2::getAccessor('id'));
         $this->assertEquals('getAccessorValue', TestModel::getAccessor('accessor'));
-    }
-
-    public function testCast()
-    {
-        $property = new Property(['null' => true]);
-        $this->assertNull(Model::cast($property, ''));
-        $this->assertTrue(false === Model::cast($property, false));
-
-        $property = new Property(['type' => Model::TYPE_STRING, 'null' => false]);
-        $this->assertEquals('string', Model::cast($property, 'string'));
-        $this->assertNull(Model::cast($property, null));
-
-        $property = new Property(['type' => Model::TYPE_BOOLEAN, 'null' => false]);
-        $this->assertTrue(Model::cast($property, true));
-        $this->assertTrue(Model::cast($property, '1'));
-        $this->assertFalse(Model::cast($property, false));
-
-        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
-        $this->assertEquals(123, Model::cast($property, 123));
-        $this->assertEquals(123, Model::cast($property, '123'));
-
-        $property = new Property(['type' => Model::TYPE_FLOAT, 'null' => false]);
-        $this->assertEquals(1.23, Model::cast($property, 1.23));
-        $this->assertEquals(123.0, Model::cast($property, '123'));
-
-        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
-        $this->assertEquals(123, Model::cast($property, 123));
-        $this->assertEquals(123, Model::cast($property, '123'));
-
-        $property = new Property(['type' => Model::TYPE_DATE, 'null' => false]);
-        $this->assertEquals(123, Model::cast($property, 123));
-        $this->assertEquals(123, Model::cast($property, '123'));
-        $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Model::cast($property, 'Aug-20-2015'));
-
-        $property = new Property(['type' => Model::TYPE_ARRAY, 'null' => false]);
-        $this->assertEquals(['test' => true], Model::cast($property, '{"test":true}'));
-        $this->assertEquals(['test' => true], Model::cast($property, ['test' => true]));
-
-        $property = new Property(['type' => Model::TYPE_OBJECT, 'null' => false]);
-        $expected = new stdClass();
-        $expected->test = true;
-        $this->assertEquals($expected, Model::cast($property, '{"test":true}'));
-        $this->assertEquals($expected, Model::cast($property, $expected));
-
-        $property = new Property(['type' => 'unknown', 'null' => false]);
-        $this->assertEquals('blah', Model::cast($property, 'blah'));
     }
 
     public function testGetErrors()

@@ -350,7 +350,7 @@ abstract class Model implements ArrayAccess
                 // type cast
                 if (count($idQueue) > 0) {
                     $idProperty = static::getProperty($f);
-                    $ids[$f] = static::cast($idProperty, array_pop($idQueue));
+                    $ids[$f] = Type::cast($idProperty, array_pop($idQueue));
                 } else {
                     $ids[$f] = false;
                     $this->hasId = false;
@@ -368,7 +368,7 @@ abstract class Model implements ArrayAccess
             $this->hasId = false;
             if (false !== $id) {
                 $idProperty = static::getProperty($idName);
-                $id = static::cast($idProperty, $id);
+                $id = Type::cast($idProperty, $id);
                 $this->hasId = true;
             }
 
@@ -569,7 +569,7 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Gets all the property definitions for the model.
+     * Gets the definition of all model properties.
      */
     public static function getProperties(): Definition
     {
@@ -582,7 +582,7 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Gets a property defition for the model.
+     * Gets the definition of a specific property.
      *
      * @param string $property property to lookup
      */
@@ -665,33 +665,6 @@ abstract class Model implements ArrayAccess
         }
 
         return self::$accessors[$k];
-    }
-
-    /**
-     * Marshals a value for a given property from storage.
-     *
-     * @param mixed $value
-     *
-     * @return mixed type-casted value
-     */
-    public static function cast(Property $property, $value)
-    {
-        if (null === $value) {
-            return null;
-        }
-
-        // handle empty strings as null
-        if ($property->isNullable() && '' === $value) {
-            return null;
-        }
-
-        $m = 'to_'.$property->getType();
-
-        if (!method_exists(Type::class, $m)) {
-            return $value;
-        }
-
-        return Type::$m($value);
     }
 
     /////////////////////////////
@@ -1356,7 +1329,7 @@ abstract class Model implements ArrayAccess
         // type cast the values
         foreach ($values as $k => &$value) {
             if ($property = static::getProperty($k)) {
-                $value = static::cast($property, $value);
+                $value = Type::cast($property, $value);
             }
         }
 

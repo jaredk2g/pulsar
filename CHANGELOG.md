@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Renamed `Property` class to `Type`.
 - A new `Definition` class contains all the properties that belong to a method. Retrieving the model properties will return this object instead of an array.
 - A new `Property` class encapsulates the definition of a model property. The model property methods will return this object instead of an array.
+- Moved `Model::cast()` to `Type::cast()`
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

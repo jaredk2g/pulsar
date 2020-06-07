@@ -11,6 +11,7 @@ use JAQB\Query\UpdateQuery;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
+use Pulsar\Type;
 
 class DbalDriver extends AbstractDriver
 {
@@ -61,7 +62,7 @@ class DbalDriver extends AbstractDriver
             throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
-        return Model::cast($model::getProperty($propertyName), $id);
+        return Type::cast($model::getProperty($propertyName), $id);
     }
 
     public function loadModel(Model $model)
@@ -233,11 +234,6 @@ class DbalDriver extends AbstractDriver
 
     /**
      * Builds a new select query.
-     *
-     * @param Query  $query
-     * @param string $tablename
-     *
-     * @return SelectQuery
      */
     private function buildSelectQuery(Query $query, string $tablename): SelectQuery
     {
@@ -252,10 +248,6 @@ class DbalDriver extends AbstractDriver
 
     /**
      * Executes a select query through DBAL and returns a scalar result.
-     *
-     * @param SelectQuery $query
-     * @param Model       $model
-     * @param string      $field
      *
      * @throws DriverException
      *

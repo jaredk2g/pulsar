@@ -17,11 +17,37 @@ namespace Pulsar;
 class Type
 {
     /**
-     * Casts a value to a string.
+     * Marshals a value for a given property from storage.
      *
      * @param mixed $value
      *
-     * @return string
+     * @return mixed type-casted value
+     */
+    public static function cast(Property $property, $value)
+    {
+        if (null === $value) {
+            return null;
+        }
+
+        // handle empty strings as null
+        if ($property->isNullable() && '' === $value) {
+            return null;
+        }
+
+        $type = $property->getType();
+        if (!$type) {
+            return $value;
+        }
+
+        $m = 'to_'.$property->getType();
+
+        return self::$m($value);
+    }
+
+    /**
+     * Casts a value to a string.
+     *
+     * @param mixed $value
      */
     public static function to_string($value): string
     {
@@ -32,8 +58,6 @@ class Type
      * Casts a value to an integer.
      *
      * @param mixed $value
-     *
-     * @return int
      */
     public static function to_integer($value): int
     {
@@ -44,8 +68,6 @@ class Type
      * Casts a value to a float.
      *
      * @param mixed $value
-     *
-     * @return float
      */
     public static function to_float($value): float
     {
@@ -56,8 +78,6 @@ class Type
      * Casts a value to a boolean.
      *
      * @param mixed $value
-     *
-     * @return bool
      */
     public static function to_boolean($value): bool
     {
@@ -68,8 +88,6 @@ class Type
      * Casts a date value as a UNIX timestamp.
      *
      * @param mixed $value
-     *
-     * @return int
      */
     public static function to_date($value): int
     {
@@ -84,8 +102,6 @@ class Type
      * Casts a value to an array.
      *
      * @param mixed $value
-     *
-     * @return array
      */
     public static function to_array($value): array
     {
