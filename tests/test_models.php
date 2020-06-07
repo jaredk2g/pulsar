@@ -76,11 +76,6 @@ class TestModel extends Model
     {
         return true;
     }
-
-    public function toArrayHook(array &$result, array $exclude, array $include, array $expand)
-    {
-        $result['toArrayHook'] = true;
-    }
 }
 
 function validate()

@@ -637,8 +637,6 @@ class ModelTest extends MockeryTestCase
             'answer' => null,
             'test_hook' => null,
             'appended' => true,
-            // this is tacked on in toArrayHook() below
-            'toArrayHook' => true,
         ];
 
         $this->assertEquals($expected, $model->toArray());

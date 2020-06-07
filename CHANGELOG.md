@@ -18,6 +18,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`. It is now required to use `Errors::setTranslator()`.
+- Removed the `toArrayHook()` call. It is recommended to override `toArray()` if it is necessary to modify its output.
 
 ## 0.10 - 2020-04-22
 ### Added

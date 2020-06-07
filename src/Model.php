@@ -1036,12 +1036,6 @@ abstract class Model implements ArrayAccess
             }
         }
 
-        // DEPRECATED
-        // apply the transformation hook
-        if (method_exists($this, 'toArrayHook')) {
-            $this->toArrayHook($result, [], [], []);
-        }
-
         return $result;
     }
 
