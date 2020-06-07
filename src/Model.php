@@ -582,12 +582,14 @@ abstract class Model implements ArrayAccess
      * Gets a property defition for the model.
      *
      * @param string $property property to lookup
-     *
-     * @return array|null property
      */
-    public static function getProperty(string $property): ?array
+    public static function getProperty(string $property): ?Property
     {
-        return static::$properties[$property] ?? null;
+        if (!isset(static::$properties[$property])) {
+            return null;
+        }
+
+        return new Property(static::$properties[$property]);
     }
 
     /**
@@ -673,19 +675,18 @@ abstract class Model implements ArrayAccess
      *
      * @return mixed type-casted value
      */
-    public static function cast(array $property, $value)
+    public static function cast(Property $property, $value)
     {
         if (null === $value) {
             return null;
         }
 
         // handle empty strings as null
-        if ($property['null'] && '' === $value) {
+        if ($property->isNullable() && '' === $value) {
             return null;
         }
 
-        $type = $property['type'] ?? null;
-        $m = 'to_'.$type;
+        $m = 'to_'.$property->getType();
 
         if (!method_exists(Type::class, $m)) {
             return $value;
@@ -807,11 +808,11 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $property = static::$properties[$name];
+            $property = self::getProperty($name);
 
             // cannot insert immutable values
             // (unless using the default value)
-            if (self::IMMUTABLE == $property['mutable'] && $value !== $this->getPropertyDefault($property)) {
+            if ($property->isImmutable() && $value !== $property->getDefault()) {
                 continue;
             }
 
@@ -944,7 +945,7 @@ abstract class Model implements ArrayAccess
         if (array_key_exists($property, $values)) {
             $value = $values[$property];
         } elseif (static::hasProperty($property)) {
-            $value = $this->_values[$property] = $this->getPropertyDefault(static::$properties[$property]);
+            $value = $this->_values[$property] = self::getProperty($property)->getDefault();
         }
 
         // call any accessors
@@ -965,7 +966,7 @@ abstract class Model implements ArrayAccess
         foreach (static::$ids as $k) {
             // attempt use the supplied value if the ID property is mutable
             $property = static::getProperty($k);
-            if (in_array($property['mutable'], [self::MUTABLE, self::MUTABLE_CREATE_ONLY]) && isset($this->_unsaved[$k])) {
+            if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
                 $id = $this->_unsaved[$k];
             } else {
                 $id = self::$driver->getCreatedID($this, $k);
@@ -1090,10 +1091,10 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $property = static::$properties[$name];
+            $property = self::getProperty($name);
 
             // can only modify mutable properties
-            if (self::MUTABLE != $property['mutable']) {
+            if (!$property->isMutable()) {
                 continue;
             }
 
@@ -1465,33 +1466,38 @@ abstract class Model implements ArrayAccess
     public function getRelationshipManager(string $k): Relation
     {
         $property = static::getProperty($k);
-        if (!isset($property['relation'])) {
+        if (!$property) {
+            throw new InvalidArgumentException('Property "'.$k.'" does not exist.');
+        }
+
+        $relationModelClass = $property->getRelation();
+        if (!$relationModelClass) {
             throw new InvalidArgumentException('Property "'.$k.'" does not have a relationship.');
         }
 
-        $relationModelClass = $property['relation'];
-        $foreignKey = $property['foreign_key'] ?? null;
-        $localKey = $property['local_key'] ?? null;
+        $foreignKey = $property->getForeignKey();
+        $localKey = $property->getLocalKey();
+        $relationType = $property->getRelationType();
 
-        if (self::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
+        if (self::RELATIONSHIP_HAS_ONE == $relationType) {
             return $this->hasOne($relationModelClass, $foreignKey, $localKey);
         }
 
-        if (self::RELATIONSHIP_HAS_MANY == $property['relation_type']) {
+        if (self::RELATIONSHIP_HAS_MANY == $relationType) {
             return $this->hasMany($relationModelClass, $foreignKey, $localKey);
         }
 
-        if (self::RELATIONSHIP_BELONGS_TO == $property['relation_type']) {
+        if (self::RELATIONSHIP_BELONGS_TO == $relationType) {
             return $this->belongsTo($relationModelClass, $foreignKey, $localKey);
         }
 
-        if (self::RELATIONSHIP_BELONGS_TO_MANY == $property['relation_type']) {
-            $pivotTable = $property['pivot_tablename'] ?? null;
+        if (self::RELATIONSHIP_BELONGS_TO_MANY == $relationType) {
+            $pivotTable = $property->getPivotTablename();
 
             return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
         }
 
-        throw new InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$property['relation_type']);
+        throw new InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$relationType);
     }
 
     /**
@@ -1703,15 +1709,15 @@ abstract class Model implements ArrayAccess
     /**
      * Validates and marshals a value to storage.
      *
-     * @param array  $property property definition
-     * @param string $name     property name
-     * @param mixed  $value
+     * @param Property $property property definition
+     * @param string   $name     property name
+     * @param mixed    $value
      */
-    private function filterAndValidate(array $property, string $name, &$value): bool
+    private function filterAndValidate(Property $property, string $name, &$value): bool
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
-        if ($property['null'] && ('' === $value || null === $value)) {
+        if ($property->isNullable() && ('' === $value || null === $value)) {
             $value = null;
 
             return true;
@@ -1721,7 +1727,7 @@ abstract class Model implements ArrayAccess
         list($valid, $value) = $this->validateValue($property, $name, $value);
 
         // unique?
-        if ($valid && $property['unique'] && (!$this->hasId || $value != $this->ignoreUnsaved()->$name)) {
+        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->$name)) {
             $valid = $this->checkUniqueness($name, $value);
         }
 
@@ -1731,19 +1737,20 @@ abstract class Model implements ArrayAccess
     /**
      * Validates a value for a property.
      *
-     * @param array  $property property definition
-     * @param string $name     property name
-     * @param mixed  $value
+     * @param Property $property property definition
+     * @param string   $name     property name
+     * @param mixed    $value
      */
-    private function validateValue(array $property, string $name, $value): array
+    private function validateValue(Property $property, string $name, $value): array
     {
         $valid = true;
 
         $error = 'pulsar.validation.failed';
-        if (isset($property['validate']) && is_callable($property['validate'])) {
-            $valid = call_user_func_array($property['validate'], [$value]);
-        } elseif (isset($property['validate'])) {
-            $validator = new Validator($property['validate']);
+        $validateRules = $property->getValidationRules();
+        if (is_callable($validateRules)) {
+            $valid = call_user_func_array($validateRules, [$value]);
+        } elseif ($validateRules) {
+            $validator = new Validator($validateRules);
             $valid = $validator->validate($value);
             $error = 'pulsar.validation.'.$validator->getFailingRule();
         }
@@ -1779,16 +1786,6 @@ abstract class Model implements ArrayAccess
         }
 
         return true;
-    }
-
-    /**
-     * Gets the marshaled default value for a property (if set).
-     *
-     * @return mixed
-     */
-    private function getPropertyDefault(array $property)
-    {
-        return $property['default'] ?? null;
     }
 
     /**

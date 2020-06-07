@@ -26,6 +26,7 @@ use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
+use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
@@ -142,9 +143,16 @@ class ModelTest extends MockeryTestCase
             'null' => false,
             'unique' => false,
             'required' => false,
+            'validate' => null,
+            'default' => null,
+            'relation' => null,
+            'relation_type' => null,
+            'foreign_key' => null,
+            'local_key' => null,
+            'pivot_tablename' => null,
         ];
 
-        $this->assertEquals($expected, Person::getProperty('id'));
+        $this->assertEquals($expected, Person::getProperty('id')->toArray());
     }
 
     public function testGetProperty()
@@ -155,8 +163,15 @@ class ModelTest extends MockeryTestCase
             'null' => false,
             'unique' => false,
             'required' => false,
+            'validate' => null,
+            'default' => null,
+            'relation' => null,
+            'relation_type' => null,
+            'foreign_key' => null,
+            'local_key' => null,
+            'pivot_tablename' => null,
         ];
-        $this->assertEquals($expected, TestModel::getProperty('id'));
+        $this->assertEquals($expected, TestModel::getProperty('id')->toArray());
 
         $expected = [
             'type' => Model::TYPE_INTEGER,
@@ -168,8 +183,11 @@ class ModelTest extends MockeryTestCase
             'unique' => false,
             'required' => false,
             'mutable' => Model::MUTABLE,
+            'validate' => null,
+            'default' => null,
+            'pivot_tablename' => null,
         ];
-        $this->assertEquals($expected, TestModel::getProperty('relation'));
+        $this->assertEquals($expected, TestModel::getProperty('relation')->toArray());
     }
 
     public function testPropertiesAutoTimestamps()
@@ -376,47 +394,47 @@ class ModelTest extends MockeryTestCase
 
     public function testCast()
     {
-        $property = ['null' => true];
+        $property = new Property(['null' => true]);
         $this->assertNull(Model::cast($property, ''));
         $this->assertTrue(false === Model::cast($property, false));
 
-        $property = ['type' => Model::TYPE_STRING, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_STRING, 'null' => false]);
         $this->assertEquals('string', Model::cast($property, 'string'));
         $this->assertNull(Model::cast($property, null));
 
-        $property = ['type' => Model::TYPE_BOOLEAN, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_BOOLEAN, 'null' => false]);
         $this->assertTrue(Model::cast($property, true));
         $this->assertTrue(Model::cast($property, '1'));
         $this->assertFalse(Model::cast($property, false));
 
-        $property = ['type' => Model::TYPE_INTEGER, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
         $this->assertEquals(123, Model::cast($property, 123));
         $this->assertEquals(123, Model::cast($property, '123'));
 
-        $property = ['type' => Model::TYPE_FLOAT, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_FLOAT, 'null' => false]);
         $this->assertEquals(1.23, Model::cast($property, 1.23));
         $this->assertEquals(123.0, Model::cast($property, '123'));
 
-        $property = ['type' => Model::TYPE_INTEGER, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_INTEGER, 'null' => false]);
         $this->assertEquals(123, Model::cast($property, 123));
         $this->assertEquals(123, Model::cast($property, '123'));
 
-        $property = ['type' => Model::TYPE_DATE, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_DATE, 'null' => false]);
         $this->assertEquals(123, Model::cast($property, 123));
         $this->assertEquals(123, Model::cast($property, '123'));
         $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Model::cast($property, 'Aug-20-2015'));
 
-        $property = ['type' => Model::TYPE_ARRAY, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_ARRAY, 'null' => false]);
         $this->assertEquals(['test' => true], Model::cast($property, '{"test":true}'));
         $this->assertEquals(['test' => true], Model::cast($property, ['test' => true]));
 
-        $property = ['type' => Model::TYPE_OBJECT, 'null' => false];
+        $property = new Property(['type' => Model::TYPE_OBJECT, 'null' => false]);
         $expected = new stdClass();
         $expected->test = true;
         $this->assertEquals($expected, Model::cast($property, '{"test":true}'));
         $this->assertEquals($expected, Model::cast($property, $expected));
 
-        $property = ['type' => 'unknown', 'null' => false];
+        $property = new Property(['type' => 'unknown', 'null' => false]);
         $this->assertEquals('blah', Model::cast($property, 'blah'));
     }
 
