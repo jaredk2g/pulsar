@@ -65,7 +65,7 @@ class DbalDriver extends AbstractDriver
         return Type::cast($model::getProperty($propertyName), $id);
     }
 
-    public function loadModel(Model $model)
+    public function loadModel(Model $model): ?array
     {
         // build the SQL query
         $tablename = $model->getTablename();
@@ -84,13 +84,13 @@ class DbalDriver extends AbstractDriver
         }
 
         if (!is_array($row)) {
-            return false;
+            return null;
         }
 
         return $row;
     }
 
-    public function queryModels(Query $query)
+    public function queryModels(Query $query): array
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -112,7 +112,7 @@ class DbalDriver extends AbstractDriver
         }
     }
 
-    public function updateModel(Model $model, array $parameters)
+    public function updateModel(Model $model, array $parameters): bool
     {
         if (0 == count($parameters)) {
             return true;
@@ -138,7 +138,7 @@ class DbalDriver extends AbstractDriver
         }
     }
 
-    public function deleteModel(Model $model)
+    public function deleteModel(Model $model): bool
     {
         // build the SQL query
         $tablename = $model->getTablename();
@@ -158,7 +158,7 @@ class DbalDriver extends AbstractDriver
         }
     }
 
-    public function count(Query $query)
+    public function count(Query $query): int
     {
         // build the SQL query
         $modelClass = $query->getModel();

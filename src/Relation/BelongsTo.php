@@ -21,12 +21,11 @@ use Pulsar\Query;
 class BelongsTo extends Relation
 {
     /**
-     * @param Model  $localModel
      * @param string $localKey     identifying key on local model
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, $localKey, $foreignModel, $foreignKey)
+    public function __construct(Model $localModel, ?string $localKey, string $foreignModel, ?string $foreignKey)
     {
         if (!$foreignKey) {
             $foreignKey = Model::DEFAULT_ID_PROPERTY;

@@ -46,12 +46,11 @@ abstract class Relation
     protected $empty;
 
     /**
-     * @param Model  $localModel
      * @param string $localKey     identifying key on local model
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, $localKey, $foreignModel, $foreignKey)
+    public function __construct(Model $localModel, string $localKey, string $foreignModel, string $foreignKey)
     {
         $this->localModel = $localModel;
         $this->localKey = $localKey;
@@ -117,8 +116,6 @@ abstract class Relation
     /**
      * Called to initialize the query.
      *
-     * @param Query $query
-     *
      * @return Query
      */
     abstract protected function initQuery(Query $query);
@@ -134,8 +131,6 @@ abstract class Relation
      * Saves a new relationship model and attaches it to
      * the owning model.
      *
-     * @param Model $model
-     *
      * @throws ModelException when the operation fails
      *
      * @return Model
@@ -145,8 +140,6 @@ abstract class Relation
     /**
      * Creates a new relationship model and attaches it to
      * the owning model.
-     *
-     * @param array $values
      *
      * @throws ModelException when the operation fails
      *

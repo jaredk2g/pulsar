@@ -22,9 +22,6 @@ interface DriverInterface
     /**
      * Creates a model.
      *
-     * @param Model $model
-     * @param array $parameters
-     *
      * @return mixed result
      *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
@@ -35,7 +32,6 @@ interface DriverInterface
      * Gets the last inserted ID. Used for drivers that generate
      * IDs for models after creation.
      *
-     * @param Model  $model
      * @param string $propertyName
      *
      * @return mixed
@@ -47,63 +43,43 @@ interface DriverInterface
     /**
      * Loads a model.
      *
-     * @param Model $model
-     *
-     * @return array|false
-     *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function loadModel(Model $model);
+    public function loadModel(Model $model): ?array;
 
     /**
      * Performs a query to find models of the given type.
-     *
-     * @param Query $query
      *
      * @return array raw data from storage
      *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function queryModels(Query $query);
+    public function queryModels(Query $query): array;
 
     /**
      * Updates a model.
      *
-     * @param Model $model
-     * @param array $parameters
-     *
-     * @return bool
-     *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function updateModel(Model $model, array $parameters);
+    public function updateModel(Model $model, array $parameters): bool;
 
     /**
      * Deletes a model.
      *
-     * @param Model $model
-     *
-     * @return bool
-     *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function deleteModel(Model $model);
+    public function deleteModel(Model $model): bool;
 
     /**
      * Gets the count matching the given query.
      *
-     * @param Query $query
-     *
-     * @return int
-     *
      * @throws \Pulsar\Exception\DriverException when an exception occurs within the driver
      */
-    public function count(Query $query);
+    public function count(Query $query): int;
 
     /**
      * Gets the sum matching the given query.
      *
-     * @param Query  $query
      * @param string $field
      *
      * @return number
@@ -115,7 +91,6 @@ interface DriverInterface
     /**
      * Gets the average matching the given query.
      *
-     * @param Query  $query
      * @param string $field
      *
      * @return number
@@ -127,7 +102,6 @@ interface DriverInterface
     /**
      * Gets the max matching the given query.
      *
-     * @param Query  $query
      * @param string $field
      *
      * @return number
@@ -139,7 +113,6 @@ interface DriverInterface
     /**
      * Gets the min matching the given query.
      *
-     * @param Query  $query
      * @param string $field
      *
      * @return number
@@ -150,22 +123,16 @@ interface DriverInterface
 
     /**
      * Starts a database transaction.
-     *
-     * @param string|null $connection
      */
     public function startTransaction(?string $connection): void;
 
     /**
      * Rolls back the open database transaction.
-     *
-     * @param string|null $connection
      */
     public function rollBackTransaction(?string $connection): void;
 
     /**
      * Commits the database transaction.
-     *
-     * @param string|null $connection
      */
     public function commitTransaction(?string $connection): void;
 }

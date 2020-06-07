@@ -127,7 +127,7 @@ class DatabaseDriver extends AbstractDriver
         return Type::cast($model::getProperty($propertyName), $id);
     }
 
-    public function loadModel(Model $model)
+    public function loadModel(Model $model): ?array
     {
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
@@ -142,13 +142,13 @@ class DatabaseDriver extends AbstractDriver
         }
 
         if (!is_array($row)) {
-            return false;
+            return null;
         }
 
         return $row;
     }
 
-    public function updateModel(Model $model, array $parameters)
+    public function updateModel(Model $model, array $parameters): bool
     {
         if (0 == count($parameters)) {
             return true;
@@ -168,7 +168,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function deleteModel(Model $model)
+    public function deleteModel(Model $model): bool
     {
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
@@ -182,7 +182,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function queryModels(Query $query)
+    public function queryModels(Query $query): array
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -206,7 +206,7 @@ class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function count(Query $query)
+    public function count(Query $query): int
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();

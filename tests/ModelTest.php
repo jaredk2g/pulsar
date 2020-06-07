@@ -1861,7 +1861,7 @@ class ModelTest extends MockeryTestCase
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('loadModel')
-            ->andReturn(false);
+            ->andReturn(null);
 
         TestModel2::setDriver($driver);
 

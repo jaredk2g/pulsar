@@ -35,7 +35,7 @@ class Pivot extends Model
         return $this->tablename;
     }
 
-    public function setProperties($localKey, $foreignKey)
+    public function setProperties(string $localKey, string $foreignKey)
     {
         self::$properties = [
             $localKey => [],

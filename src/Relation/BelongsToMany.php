@@ -27,13 +27,12 @@ class BelongsToMany extends Relation
     protected $tablename;
 
     /**
-     * @param Model  $localModel
      * @param string $localKey     identifying key on local model
      * @param string $tablename    pivot table name
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, $localKey, $tablename, $foreignModel, $foreignKey)
+    public function __construct(Model $localModel, ?string $localKey, ?string $tablename, ?string $foreignModel, ?string $foreignKey)
     {
         // the default local key would look like `user_id`
         // for a model named User
@@ -125,8 +124,6 @@ class BelongsToMany extends Relation
      * Attaches a model to the relationship by creating
      * a pivot model.
      *
-     * @param Model $model
-     *
      * @throws ModelException when the operation fails
      *
      * @return $this
@@ -160,8 +157,6 @@ class BelongsToMany extends Relation
      * Detaches a model from the relationship by deleting
      * the pivot model.
      *
-     * @param Model $model
-     *
      * @throws ModelException when the operation fails
      *
      * @return $this
@@ -177,8 +172,6 @@ class BelongsToMany extends Relation
     /**
      * Removes any relationships that are not included
      * in the list of IDs.
-     *
-     * @param array $ids
      *
      * @throws ModelException when the operation fails
      *

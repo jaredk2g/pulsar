@@ -21,12 +21,11 @@ use Pulsar\Query;
 class HasMany extends Relation
 {
     /**
-     * @param Model  $localModel
      * @param string $localKey     identifying key on local model
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, $localKey, $foreignModel, $foreignKey)
+    public function __construct(Model $localModel, ?string $localKey, string $foreignModel, ?string $foreignKey)
     {
         // the default foreign key would look like
         // `user_id` for a model named User
@@ -121,8 +120,6 @@ class HasMany extends Relation
     /**
      * Removes any relationships that are not included
      * in the list of IDs.
-     *
-     * @param array $ids
      *
      * @throws \Pulsar\Exception\ModelException when the operation fails
      *

@@ -21,7 +21,6 @@ use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\BelongsToMany;
-use Pulsar\Relation\Relation;
 use Pulsar\Relation\RelationFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -62,6 +61,25 @@ abstract class Model implements ArrayAccess
     const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
 
     const DEFAULT_ID_PROPERTY = 'id';
+
+    const TIMESTAMP_PROPERTIES = [
+        'created_at' => [
+            'type' => self::TYPE_DATE,
+            'validate' => 'timestamp|db_timestamp',
+        ],
+        'updated_at' => [
+            'type' => self::TYPE_DATE,
+            'validate' => 'timestamp|db_timestamp',
+        ],
+    ];
+
+    const SOFT_DELETE_TIMESTAMPS = [
+        'deleted_at' => [
+            'type' => self::TYPE_DATE,
+            'validate' => 'timestamp|db_timestamp',
+            'null' => true,
+        ],
+    ];
 
     /////////////////////////////
     // Model visible variables
@@ -148,31 +166,6 @@ abstract class Model implements ArrayAccess
     /**
      * @var array
      */
-    private static $timestampProperties = [
-        'created_at' => [
-            'type' => self::TYPE_DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-        'updated_at' => [
-            'type' => self::TYPE_DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-    ];
-
-    /**
-     * @var array
-     */
-    private static $softDeleteProperties = [
-        'deleted_at' => [
-            'type' => self::TYPE_DATE,
-            'validate' => 'timestamp|db_timestamp',
-            'null' => true,
-        ],
-    ];
-
-    /**
-     * @var array
-     */
     private static $initialized = [];
 
     /**
@@ -236,7 +229,7 @@ abstract class Model implements ArrayAccess
      */
     private static function installAutoTimestamps()
     {
-        static::$properties = array_replace(self::$timestampProperties, static::$properties);
+        static::$properties = array_replace(self::TIMESTAMP_PROPERTIES, static::$properties);
 
         self::creating(function (ModelEvent $event) {
             $model = $event->getModel();
@@ -254,7 +247,7 @@ abstract class Model implements ArrayAccess
      */
     private static function installSoftDelete()
     {
-        static::$properties = array_replace(self::$softDeleteProperties, static::$properties);
+        static::$properties = array_replace(self::SOFT_DELETE_TIMESTAMPS, static::$properties);
     }
 
     /**

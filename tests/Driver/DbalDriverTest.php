@@ -124,11 +124,11 @@ class DbalDriverTest extends MockeryTestCase
     {
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchAssoc')
-            ->andReturn(false);
+            ->andReturn(null);
         $driver = $this->getDriver($db);
 
         $model = new Person(12);
-        $this->assertFalse($driver->loadModel($model));
+        $this->assertNull($driver->loadModel($model));
     }
 
     public function testLoadModelFail()

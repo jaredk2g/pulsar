@@ -201,7 +201,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $driver = $this->getDriver($db);
 
         $model = new Person(12);
-        $this->assertFalse($driver->loadModel($model));
+        $this->assertNull($driver->loadModel($model));
     }
 
     public function testLoadModelFail()
