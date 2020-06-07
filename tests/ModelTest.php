@@ -12,8 +12,6 @@
 namespace Pulsar\Tests;
 
 use BadMethodCallException;
-use InvalidArgumentException;
-use InvalidRelationship;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Person;
@@ -27,11 +25,6 @@ use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Query;
-use Pulsar\Relation\BelongsTo;
-use Pulsar\Relation\BelongsToMany;
-use Pulsar\Relation\HasMany;
-use Pulsar\Relation\HasOne;
-use RelationshipTester;
 use RelationshipTestModel;
 use stdClass;
 use TestModel;
@@ -1838,126 +1831,6 @@ class ModelTest extends MockeryTestCase
         $model->setRelation('relation', $relation);
         $this->assertEquals($relation, $model->relation('relation'));
         $this->assertEquals(2, $model->relation);
-    }
-
-    public function testGetRelationshipManagerNotRelationship()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $model = new InvalidRelationship();
-        $model->getRelationshipManager('name');
-    }
-
-    public function testGetRelationshipManagerInvalidType()
-    {
-        $this->expectException(InvalidArgumentException::class);
-
-        $model = new RelationshipTester();
-        $model->getRelationshipManager('invalid_relationship');
-    }
-
-    public function testGetRelationshipManagerHasOne()
-    {
-        $model = new RelationshipTester();
-        $relation = $model->getRelationshipManager('has_one');
-
-        $this->assertInstanceOf(HasOne::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('relationship_tester_id', $relation->getForeignKey());
-        $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testGetRelationshipManagerHasMany()
-    {
-        $model = new RelationshipTester();
-        $relation = $model->getRelationshipManager('has_many');
-
-        $this->assertInstanceOf(HasMany::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('relationship_tester_id', $relation->getForeignKey());
-        $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testGetRelationshipManagerBelongsTo()
-    {
-        $model = new RelationshipTester();
-        $relation = $model->getRelationshipManager('belongs_to');
-
-        $this->assertInstanceOf(BelongsTo::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testGetRelationshipManagerBelongsToMany()
-    {
-        $model = new RelationshipTester();
-        $relation = $model->getRelationshipManager('belongs_to_many');
-
-        $this->assertInstanceOf(BelongsToMany::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-        $this->assertEquals('RelationshipTesterTestModel2', $relation->getTablename());
-    }
-
-    public function testHasOne()
-    {
-        $model = new TestModel();
-
-        $relation = $model->hasOne(TestModel2::class);
-
-        $this->assertInstanceOf(HasOne::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('test_model_id', $relation->getForeignKey());
-        $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testBelongsTo()
-    {
-        $model = new TestModel();
-        $model->test_model2_id = 1;
-
-        $relation = $model->belongsTo(TestModel2::class);
-
-        $this->assertInstanceOf(BelongsTo::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testHasMany()
-    {
-        $model = new TestModel();
-
-        $relation = $model->hasMany(TestModel2::class);
-
-        $this->assertInstanceOf(HasMany::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('test_model_id', $relation->getForeignKey());
-        $this->assertEquals('id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-    }
-
-    public function testBelongsToMany()
-    {
-        $model = new TestModel();
-        $model->test_model2_id = 1;
-
-        $relation = $model->belongsToMany(TestModel2::class);
-
-        $this->assertInstanceOf(BelongsToMany::class, $relation);
-        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
-        $this->assertEquals($model, $relation->getLocalModel());
-        $this->assertEquals('TestModelTestModel2', $relation->getTablename());
     }
 
     /////////////////////////////

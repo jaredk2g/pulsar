@@ -42,7 +42,11 @@ class Definition implements ArrayAccess
 
     public static function make(string $modelClass): self
     {
-        // TODO
+        if (!isset(self::$cache[$modelClass])) {
+            self::$cache[$modelClass] = $modelClass::buildDefinition();
+        }
+
+        return self::$cache[$modelClass];
     }
 
     public function offsetExists($offset)

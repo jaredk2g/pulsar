@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.
 - The `Errors::setTranslator()` method can set the global translation implementation.
+- Models now have a `buildDefinition()` method that can be overriden to dynamically customize the model properties.
 
 ### Changed
 - Make model internal properties private when possible.

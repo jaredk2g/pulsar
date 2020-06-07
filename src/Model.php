@@ -20,11 +20,9 @@ use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
-use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
-use Pulsar\Relation\HasMany;
-use Pulsar\Relation\HasOne;
 use Pulsar\Relation\Relation;
+use Pulsar\Relation\RelationFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -142,17 +140,6 @@ abstract class Model implements ArrayAccess
     /**
      * @var array
      */
-    private static $propertyDefinitionBase = [
-        'type' => null,
-        'mutable' => self::MUTABLE,
-        'null' => false,
-        'unique' => false,
-        'required' => false,
-    ];
-
-    /**
-     * @var array
-     */
     private static $defaultIDProperty = [
         'type' => self::TYPE_INTEGER,
         'mutable' => self::IMMUTABLE,
@@ -229,7 +216,7 @@ abstract class Model implements ArrayAccess
     private function init()
     {
         // ensure the initialize function is called only once
-        $k = get_called_class();
+        $k = static::class;
         if (!isset(self::$initialized[$k])) {
             $this->initialize();
             self::$initialized[$k] = true;
@@ -237,72 +224,17 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * The initialize() method is called once per model. It's used
-     * to perform any one-off tasks before the model gets
-     * constructed. This is a great place to add any model
-     * properties. When extending this method be sure to call
-     * parent::initialize() as some important stuff happens here.
-     * If extending this method to add properties then you should
-     * call parent::initialize() after adding any properties.
+     * The initialize() method is called once per model. This is a great
+     * place to install event listeners.
      */
     protected function initialize()
     {
-        // load the driver
-        static::getDriver();
-
-        // add in the default ID property
-        if (static::$ids == [self::DEFAULT_ID_PROPERTY] && !isset(static::$properties[self::DEFAULT_ID_PROPERTY])) {
-            static::$properties[self::DEFAULT_ID_PROPERTY] = self::$defaultIDProperty;
-        }
-
-        // generates created_at and updated_at timestamps
-        if (property_exists($this, 'autoTimestamps')) {
-            $this->installAutoTimestamps();
-        }
-
-        // generates deleted_at timestamps
-        if (property_exists($this, 'softDelete')) {
-            $this->installSoftDelete();
-        }
-
-        // fill in each property by extending the property
-        // definition base
-        foreach (static::$properties as $k => &$property) {
-            $property = array_replace(self::$propertyDefinitionBase, $property);
-
-            // populate relationship property settings
-            if (isset($property['relation'])) {
-                // this is added for BC with older versions of pulsar
-                // that only supported belongs to relationships
-                if (!isset($property['relation_type'])) {
-                    $property['relation_type'] = self::RELATIONSHIP_BELONGS_TO;
-                    $property['local_key'] = $k;
-                }
-
-                $relation = $this->getRelationshipManager($k);
-                if (!isset($property['foreign_key'])) {
-                    $property['foreign_key'] = $relation->getForeignKey();
-                }
-
-                if (!isset($property['local_key'])) {
-                    $property['local_key'] = $relation->getLocalKey();
-                }
-
-                if (!isset($property['pivot_tablename']) && $relation instanceof BelongsToMany) {
-                    $property['pivot_tablename'] = $relation->getTablename();
-                }
-            }
-        }
-
-        // order the properties array by name for consistency
-        // since it is constructed in a random order
-        ksort(static::$properties);
     }
 
     /**
      * Installs the `created_at` and `updated_at` properties.
      */
-    private function installAutoTimestamps()
+    private static function installAutoTimestamps()
     {
         static::$properties = array_replace(self::$timestampProperties, static::$properties);
 
@@ -320,7 +252,7 @@ abstract class Model implements ArrayAccess
     /**
      * Installs the `deleted_at` properties.
      */
-    private function installSoftDelete()
+    private static function installSoftDelete()
     {
         static::$properties = array_replace(self::$softDeleteProperties, static::$properties);
     }
@@ -412,7 +344,7 @@ abstract class Model implements ArrayAccess
     public static function modelName(): string
     {
         // strip namespacing
-        $paths = explode('\\', get_called_class());
+        $paths = explode('\\', static::class);
 
         return end($paths);
     }
@@ -464,7 +396,7 @@ abstract class Model implements ArrayAccess
         $values = array_merge($this->_values, $this->_unsaved, $this->idValues);
         ksort($values);
 
-        return get_called_class().'('.json_encode($values, JSON_PRETTY_PRINT).')';
+        return static::class.'('.json_encode($values, JSON_PRETTY_PRINT).')';
     }
 
     /**
@@ -569,16 +501,69 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
+     * The buildDefinition() method is called once per model. It's used
+     * to generate the model definition. This is a great place to add any
+     * dynamic model properties.
+     */
+    public static function buildDefinition(): Definition
+    {
+        // add in the default ID property
+        if (static::$ids == [self::DEFAULT_ID_PROPERTY] && !isset(static::$properties[self::DEFAULT_ID_PROPERTY])) {
+            static::$properties[self::DEFAULT_ID_PROPERTY] = self::$defaultIDProperty;
+        }
+
+        // generates created_at and updated_at timestamps
+        if (property_exists(static::class, 'autoTimestamps')) {
+            self::installAutoTimestamps();
+        }
+
+        // generates deleted_at timestamps
+        if (property_exists(static::class, 'softDelete')) {
+            self::installSoftDelete();
+        }
+
+        $properties = [];
+        foreach (static::$properties as $k => $property) {
+            // populate relationship property settings
+            if (isset($property['relation'])) {
+                // this is added for BC with older versions of pulsar
+                // that only supported belongs to relationships
+                if (!isset($property['relation_type'])) {
+                    $property['relation_type'] = self::RELATIONSHIP_BELONGS_TO;
+                    $property['local_key'] = $k;
+                }
+
+                $tempProperty = new Property($property);
+                $relation = RelationFactory::make(new static(), $k, $tempProperty);
+                if (!isset($property['foreign_key'])) {
+                    $property['foreign_key'] = $relation->getForeignKey();
+                }
+
+                if (!isset($property['local_key'])) {
+                    $property['local_key'] = $relation->getLocalKey();
+                }
+
+                if (!isset($property['pivot_tablename']) && $relation instanceof BelongsToMany) {
+                    $property['pivot_tablename'] = $relation->getTablename();
+                }
+            }
+
+            $properties[$k] = new Property($property);
+        }
+
+        // order the properties array by name for consistency
+        // since it is constructed in a random order
+        ksort($properties);
+
+        return new Definition($properties);
+    }
+
+    /**
      * Gets the definition of all model properties.
      */
     public static function getProperties(): Definition
     {
-        $properties = [];
-        foreach (static::$properties as $k => $property) {
-            $properties[$k] = new Property($property);
-        }
-
-        return new Definition($properties);
+        return Definition::make(static::class);
     }
 
     /**
@@ -622,7 +607,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getMutator(string $property): ?string
     {
-        $class = get_called_class();
+        $class = static::class;
 
         $k = $class.':'.$property;
         if (!array_key_exists($k, self::$mutators)) {
@@ -650,7 +635,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getAccessor(string $property): ?string
     {
-        $class = get_called_class();
+        $class = static::class;
 
         $k = $class.':'.$property;
         if (!array_key_exists($k, self::$accessors)) {
@@ -1373,7 +1358,7 @@ abstract class Model implements ArrayAccess
     public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $relation = $this->getRelationshipManager($k);
+            $relation = RelationFactory::make($this, $k, self::getProperty($k));
             $this->_relationships[$k] = $relation->getResults();
         }
 
@@ -1422,99 +1407,6 @@ abstract class Model implements ArrayAccess
         return $this;
     }
 
-    /**
-     * Builds a relationship manager object for a given property.
-     *
-     * @param array $k
-     *
-     * @throws InvalidArgumentException when the relationship manager cannot be created
-     */
-    public function getRelationshipManager(string $k): Relation
-    {
-        $property = static::getProperty($k);
-        if (!$property) {
-            throw new InvalidArgumentException('Property "'.$k.'" does not exist.');
-        }
-
-        $relationModelClass = $property->getRelation();
-        if (!$relationModelClass) {
-            throw new InvalidArgumentException('Property "'.$k.'" does not have a relationship.');
-        }
-
-        $foreignKey = $property->getForeignKey();
-        $localKey = $property->getLocalKey();
-        $relationType = $property->getRelationType();
-
-        if (self::RELATIONSHIP_HAS_ONE == $relationType) {
-            return $this->hasOne($relationModelClass, $foreignKey, $localKey);
-        }
-
-        if (self::RELATIONSHIP_HAS_MANY == $relationType) {
-            return $this->hasMany($relationModelClass, $foreignKey, $localKey);
-        }
-
-        if (self::RELATIONSHIP_BELONGS_TO == $relationType) {
-            return $this->belongsTo($relationModelClass, $foreignKey, $localKey);
-        }
-
-        if (self::RELATIONSHIP_BELONGS_TO_MANY == $relationType) {
-            $pivotTable = $property->getPivotTablename();
-
-            return $this->belongsToMany($relationModelClass, $pivotTable, $foreignKey, $localKey);
-        }
-
-        throw new InvalidArgumentException('Relationship type on "'.$k.'" property not supported: '.$relationType);
-    }
-
-    /**
-     * Creates the parent side of a One-To-One relationship.
-     *
-     * @param string $model      foreign model class
-     * @param string $foreignKey identifying key on foreign model
-     * @param string $localKey   identifying key on local model
-     */
-    public function hasOne($model, $foreignKey = '', $localKey = ''): HasOne
-    {
-        return new HasOne($this, $localKey, $model, $foreignKey);
-    }
-
-    /**
-     * Creates the child side of a One-To-One or One-To-Many relationship.
-     *
-     * @param string $model      foreign model class
-     * @param string $foreignKey identifying key on foreign model
-     * @param string $localKey   identifying key on local model
-     */
-    public function belongsTo($model, $foreignKey = '', $localKey = ''): BelongsTo
-    {
-        return new BelongsTo($this, $localKey, $model, $foreignKey);
-    }
-
-    /**
-     * Creates the parent side of a Many-To-One or Many-To-Many relationship.
-     *
-     * @param string $model      foreign model class
-     * @param string $foreignKey identifying key on foreign model
-     * @param string $localKey   identifying key on local model
-     */
-    public function hasMany($model, $foreignKey = '', $localKey = ''): HasMany
-    {
-        return new HasMany($this, $localKey, $model, $foreignKey);
-    }
-
-    /**
-     * Creates the child side of a Many-To-Many relationship.
-     *
-     * @param string $model      foreign model class
-     * @param string $tablename  pivot table name
-     * @param string $foreignKey identifying key on foreign model
-     * @param string $localKey   identifying key on local model
-     */
-    public function belongsToMany($model, $tablename = '', $foreignKey = '', $localKey = ''): BelongsToMany
-    {
-        return new BelongsToMany($this, $localKey, $tablename, $model, $foreignKey);
-    }
-
     /////////////////////////////
     // Events
     /////////////////////////////
@@ -1524,7 +1416,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getDispatcher($ignoreCache = false): EventDispatcher
     {
-        $class = get_called_class();
+        $class = static::class;
         if ($ignoreCache || !isset(self::$dispatchers[$class])) {
             self::$dispatchers[$class] = new EventDispatcher();
         }
