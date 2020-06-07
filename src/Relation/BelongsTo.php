@@ -28,7 +28,7 @@ class BelongsTo extends Relation
     public function __construct(Model $localModel, ?string $localKey, string $foreignModel, ?string $foreignKey)
     {
         if (!$foreignKey) {
-            $foreignKey = Model::DEFAULT_ID_PROPERTY;
+            $foreignKey = Model::DEFAULT_ID_NAME;
         }
 
         // the default local key would look like `user_id`

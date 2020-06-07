@@ -60,9 +60,14 @@ abstract class Model implements ArrayAccess
     const RELATIONSHIP_BELONGS_TO = 'belongs_to';
     const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
 
-    const DEFAULT_ID_PROPERTY = 'id';
+    const DEFAULT_ID_NAME = 'id';
 
-    const TIMESTAMP_PROPERTIES = [
+    const DEFAULT_ID_PROPERTY = [
+        'type' => self::TYPE_INTEGER,
+        'mutable' => self::IMMUTABLE,
+    ];
+
+    const AUTO_TIMESTAMPS = [
         'created_at' => [
             'type' => self::TYPE_DATE,
             'validate' => 'timestamp|db_timestamp',
@@ -90,7 +95,7 @@ abstract class Model implements ArrayAccess
      *
      * @var array
      */
-    protected static $ids = [self::DEFAULT_ID_PROPERTY];
+    protected static $ids = [self::DEFAULT_ID_NAME];
 
     /**
      * Property definitions expressed as a key-value map with
@@ -100,21 +105,6 @@ abstract class Model implements ArrayAccess
      * @var array
      */
     protected static $properties = [];
-
-    /**
-     * @var array
-     */
-    private static $dispatchers;
-
-    /**
-     * @var bool
-     */
-    private $hasId;
-
-    /**
-     * @var array
-     */
-    private $idValues;
 
     /**
      * @var array
@@ -136,32 +126,9 @@ abstract class Model implements ArrayAccess
      */
     protected $_relationships = [];
 
-    /**
-     * @var bool
-     */
-    private $loaded = false;
-
-    /**
-     * @var Errors
-     */
-    private $errors;
-
-    /**
-     * @var bool
-     */
-    private $ignoreUnsaved;
-
     /////////////////////////////
     // Base model variables
     /////////////////////////////
-
-    /**
-     * @var array
-     */
-    private static $defaultIDProperty = [
-        'type' => self::TYPE_INTEGER,
-        'mutable' => self::IMMUTABLE,
-    ];
 
     /**
      * @var array
@@ -182,6 +149,36 @@ abstract class Model implements ArrayAccess
      * @var array
      */
     private static $mutators = [];
+
+    /**
+     * @var array
+     */
+    private static $dispatchers = [];
+
+    /**
+     * @var bool
+     */
+    private $hasId;
+
+    /**
+     * @var array
+     */
+    private $idValues;
+
+    /**
+     * @var bool
+     */
+    private $loaded = false;
+
+    /**
+     * @var Errors
+     */
+    private $errors;
+
+    /**
+     * @var bool
+     */
+    private $ignoreUnsaved;
 
     /**
      * Creates a new model object.
@@ -229,7 +226,7 @@ abstract class Model implements ArrayAccess
      */
     private static function installAutoTimestamps()
     {
-        static::$properties = array_replace(self::TIMESTAMP_PROPERTIES, static::$properties);
+        static::$properties = array_replace(self::AUTO_TIMESTAMPS, static::$properties);
 
         self::creating(function (ModelEvent $event) {
             $model = $event->getModel();
@@ -501,8 +498,8 @@ abstract class Model implements ArrayAccess
     public static function buildDefinition(): Definition
     {
         // add in the default ID property
-        if (static::$ids == [self::DEFAULT_ID_PROPERTY] && !isset(static::$properties[self::DEFAULT_ID_PROPERTY])) {
-            static::$properties[self::DEFAULT_ID_PROPERTY] = self::$defaultIDProperty;
+        if (static::$ids == [self::DEFAULT_ID_NAME] && !isset(static::$properties[self::DEFAULT_ID_NAME])) {
+            static::$properties[self::DEFAULT_ID_NAME] = self::DEFAULT_ID_PROPERTY;
         }
 
         // generates created_at and updated_at timestamps

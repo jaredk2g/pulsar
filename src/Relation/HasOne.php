@@ -35,7 +35,7 @@ class HasOne extends Relation
         }
 
         if (!$localKey) {
-            $localKey = Model::DEFAULT_ID_PROPERTY;
+            $localKey = Model::DEFAULT_ID_NAME;
         }
 
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);

@@ -42,7 +42,7 @@ class BelongsToMany extends Relation
         }
 
         if (!$foreignKey) {
-            $foreignKey = Model::DEFAULT_ID_PROPERTY;
+            $foreignKey = Model::DEFAULT_ID_NAME;
         }
 
         // the default pivot table name looks like
