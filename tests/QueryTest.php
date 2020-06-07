@@ -11,24 +11,24 @@
 
 namespace Pulsar\Tests;
 
-use Category;
-use Garage;
 use Iterator;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
-use Post;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Query;
-use TestModel;
-use TestModel2;
+use Pulsar\Tests\Models\Category;
+use Pulsar\Tests\Models\Garage;
+use Pulsar\Tests\Models\Person;
+use Pulsar\Tests\Models\Post;
+use Pulsar\Tests\Models\TestModel;
+use Pulsar\Tests\Models\TestModel2;
 
 class QueryTest extends MockeryTestCase
 {
     public function testGetModel()
     {
         $query = new Query(TestModel::class);
-        $this->assertEquals('TestModel', $query->getModel());
+        $this->assertEquals(TestModel::class, $query->getModel());
     }
 
     public function testLimit()

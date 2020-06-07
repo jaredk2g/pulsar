@@ -12,12 +12,13 @@
 namespace Pulsar\Tests;
 
 use Exception;
-use IteratorTestModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use OutOfBoundsException;
+use Pulsar\Driver\DriverInterface;
 use Pulsar\Iterator;
 use Pulsar\Query;
+use Pulsar\Tests\Models\IteratorTestModel;
 
 class IteratorTest extends MockeryTestCase
 {
@@ -31,7 +32,7 @@ class IteratorTest extends MockeryTestCase
 
     public static function setUpBeforeClass()
     {
-        $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('queryModels')
             ->andReturnUsing(function ($query) {
@@ -56,7 +57,7 @@ class IteratorTest extends MockeryTestCase
         self::$driver = $driver;
         IteratorTestModel::setDriver(self::$driver);
 
-        self::$query = new Query('IteratorTestModel');
+        self::$query = new Query(IteratorTestModel::class);
         self::$query->start(self::$start)
             ->limit(self::$limit);
         self::$iterator = new Iterator(self::$query);
@@ -193,7 +194,7 @@ class IteratorTest extends MockeryTestCase
     {
         $start = 0;
         $limit = 101;
-        $query = new Query('IteratorTestModel');
+        $query = new Query(IteratorTestModel::class);
         $query->limit(101);
         $iterator = new Iterator($query);
 

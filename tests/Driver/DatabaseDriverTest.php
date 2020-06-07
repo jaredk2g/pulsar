@@ -17,10 +17,11 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PDOException;
 use PDOStatement;
-use Person;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
+use Pulsar\Tests\Models\Group;
+use Pulsar\Tests\Models\Person;
 use stdClass;
 
 class DatabaseDriverTest extends MockeryTestCase
@@ -283,7 +284,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testCount()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         // select query mock
         $scalar = Mockery::mock();
@@ -323,7 +324,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testSum()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         // select query mock
         $scalar = Mockery::mock();
@@ -364,7 +365,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testAverage()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         // select query mock
         $scalar = Mockery::mock();
@@ -405,7 +406,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testMax()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         // select query mock
         $scalar = Mockery::mock();
@@ -446,7 +447,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testMin()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
 
         // select query mock
         $scalar = Mockery::mock();
@@ -487,12 +488,12 @@ class DatabaseDriverTest extends MockeryTestCase
 
     public function testQueryModels()
     {
-        $query = new Query('Person');
+        $query = new Query(Person::class);
         $query->where('id', 50, '>')
             ->where(['city' => 'Austin'])
             ->where('RAW SQL')
             ->where('People.alreadyDotted', true)
-            ->join('Group', 'group', 'id')
+            ->join(Group::class, 'group', 'id')
             ->sort('name asc')
             ->limit(5)
             ->start(10);

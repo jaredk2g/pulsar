@@ -11,15 +11,13 @@
 
 namespace Pulsar\Tests;
 
-use AclObject;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\ACLModel;
 use Pulsar\Driver\DriverInterface;
-use TestModel;
-use TestModelNoPermission;
-
-require_once 'tests/test_models.php';
+use Pulsar\Tests\Models\AclObject;
+use Pulsar\Tests\Models\TestModel;
+use Pulsar\Tests\Models\TestModelNoPermission;
 
 class ACLModelTest extends MockeryTestCase
 {

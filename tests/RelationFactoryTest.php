@@ -3,15 +3,16 @@
 namespace Pulsar\Tests;
 
 use InvalidArgumentException;
-use InvalidRelationship;
 use PHPUnit\Framework\TestCase;
 use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
 use Pulsar\Relation\HasOne;
 use Pulsar\Relation\RelationFactory;
-use RelationshipTester;
-use TestModel2;
+use Pulsar\Tests\Models\InvalidRelationship;
+use Pulsar\Tests\Models\InvalidRelationship2;
+use Pulsar\Tests\Models\RelationshipTester;
+use Pulsar\Tests\Models\TestModel2;
 
 class RelationFactoryTest extends TestCase
 {
@@ -21,6 +22,14 @@ class RelationFactoryTest extends TestCase
 
         $model = new InvalidRelationship();
         RelationFactory::make($model, 'name', InvalidRelationship::getProperty('name'));
+    }
+
+    public function testInvalidType()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $model = new InvalidRelationship();
+        RelationFactory::make($model, 'name', InvalidRelationship2::getProperty('invalid_relationship'));
     }
 
     public function testHasOne()

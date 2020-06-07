@@ -11,13 +11,13 @@
 
 namespace Pulsar\Tests\Relation;
 
-use Garage;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\HasMany;
+use Pulsar\Tests\Models\Garage;
+use Pulsar\Tests\Models\Person;
 
 class HasManyTest extends MockeryTestCase
 {
@@ -33,7 +33,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(10);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         $this->assertEquals(['person_id' => 10], $relation->getQuery()->getWhere());
     }
@@ -42,7 +42,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(10);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         self::$driver->shouldReceive('queryModels')
             ->andReturn([['id' => 11], ['id' => 12]]);
@@ -64,7 +64,7 @@ class HasManyTest extends MockeryTestCase
         $person = new Person();
         $person->person_id = null;
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         $this->assertNull($relation->getResults());
     }
@@ -73,7 +73,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         $garage = new Garage(2);
         $garage->refreshWith(['location' => '']);
@@ -93,7 +93,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         self::$driver->shouldReceive('createModel')
             ->andReturnUsing(function ($model, $params) {
@@ -115,7 +115,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         $garage = new Garage(5);
         $garage->refreshWith(['person_id' => null]);
@@ -138,7 +138,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         $garage = new Garage(2);
         $garage->refreshWith(['person_id' => 100]);
@@ -155,7 +155,7 @@ class HasManyTest extends MockeryTestCase
     {
         $person = new Person(100);
 
-        $relation = new HasMany($person, 'id', 'Garage', 'person_id');
+        $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
         self::$driver = Mockery::mock(DriverInterface::class);
 

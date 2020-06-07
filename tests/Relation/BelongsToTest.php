@@ -11,13 +11,13 @@
 
 namespace Pulsar\Tests\Relation;
 
-use Category;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Post;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\BelongsTo;
+use Pulsar\Tests\Models\Category;
+use Pulsar\Tests\Models\Post;
 
 class BelongsToTest extends MockeryTestCase
 {

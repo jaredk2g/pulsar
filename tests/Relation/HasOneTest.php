@@ -11,13 +11,13 @@
 
 namespace Pulsar\Tests\Relation;
 
-use Balance;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\HasOne;
+use Pulsar\Tests\Models\Balance;
+use Pulsar\Tests\Models\Person;
 
 class HasOneTest extends MockeryTestCase
 {

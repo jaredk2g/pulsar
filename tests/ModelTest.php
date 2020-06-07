@@ -14,7 +14,6 @@ namespace Pulsar\Tests;
 use BadMethodCallException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Exception\DriverMissingException;
@@ -26,14 +25,16 @@ use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Property;
 use Pulsar\Query;
+use Pulsar\Tests\Models\Customer;
+use Pulsar\Tests\Models\Garage;
+use Pulsar\Tests\Models\Invoice;
+use Pulsar\Tests\Models\Person;
+use Pulsar\Tests\Models\RelationshipTestModel;
+use Pulsar\Tests\Models\TestModel;
+use Pulsar\Tests\Models\TestModel2;
+use Pulsar\Tests\Models\TransactionModel;
 use Pulsar\Type;
-use RelationshipTestModel;
 use stdClass;
-use TestModel;
-use TestModel2;
-use TransactionModel;
-
-require_once 'test_models.php';
 
 class ModelTest extends MockeryTestCase
 {
@@ -86,6 +87,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -94,7 +96,7 @@ class ModelTest extends MockeryTestCase
             ],
             'relation' => [
                 'type' => Type::INTEGER,
-                'relation' => 'TestModel2',
+                'relation' => TestModel2::class,
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
                 'local_key' => 'relation',
@@ -104,6 +106,7 @@ class ModelTest extends MockeryTestCase
                 'mutable' => Property::MUTABLE,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'pivot_tablename' => null,
             ],
             'answer' => [
@@ -114,6 +117,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -128,6 +132,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -142,6 +147,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -156,6 +162,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -164,6 +171,7 @@ class ModelTest extends MockeryTestCase
             ],
         ];
 
+        $model = new TestModel(); // ensure initialize() is called
         $properties = TestModel::getProperties();
         $result = array_map(function ($value) { return $value->toArray(); }, $properties->all());
         $this->assertEquals($expected, $result);
@@ -179,6 +187,7 @@ class ModelTest extends MockeryTestCase
             'required' => false,
             'validate' => null,
             'default' => null,
+            'persisted' => true,
             'relation' => null,
             'relation_type' => null,
             'foreign_key' => null,
@@ -199,6 +208,7 @@ class ModelTest extends MockeryTestCase
             'required' => false,
             'validate' => null,
             'default' => null,
+            'persisted' => true,
             'relation' => null,
             'relation_type' => null,
             'foreign_key' => null,
@@ -209,7 +219,7 @@ class ModelTest extends MockeryTestCase
 
         $expected = [
             'type' => Type::INTEGER,
-            'relation' => 'TestModel2',
+            'relation' => TestModel2::class,
             'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
             'foreign_key' => 'id',
             'local_key' => 'relation',
@@ -219,6 +229,7 @@ class ModelTest extends MockeryTestCase
             'mutable' => Property::MUTABLE,
             'validate' => null,
             'default' => null,
+            'persisted' => true,
             'pivot_tablename' => null,
         ];
         $this->assertEquals($expected, TestModel::getProperty('relation')->toArray());
@@ -235,6 +246,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -249,6 +261,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -258,6 +271,7 @@ class ModelTest extends MockeryTestCase
             'default' => [
                 'type' => null,
                 'default' => 'some default value',
+                'persisted' => true,
                 'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -277,6 +291,7 @@ class ModelTest extends MockeryTestCase
                 'unique' => false,
                 'required' => false,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -285,12 +300,13 @@ class ModelTest extends MockeryTestCase
             ],
             'validate2' => [
                 'type' => null,
-                'validate' => 'validate',
+                'validate' => 'modelValidate',
                 'null' => true,
                 'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -305,6 +321,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -319,6 +336,7 @@ class ModelTest extends MockeryTestCase
                 'unique' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -328,6 +346,7 @@ class ModelTest extends MockeryTestCase
             'hidden' => [
                 'type' => Type::BOOLEAN,
                 'default' => false,
+                'persisted' => true,
                 'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -341,11 +360,12 @@ class ModelTest extends MockeryTestCase
             ],
             'person' => [
                 'type' => Type::INTEGER,
-                'relation' => 'Person',
+                'relation' => Person::class,
                 'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
                 'foreign_key' => 'id',
                 'local_key' => 'person',
                 'default' => 20,
+                'persisted' => true,
                 'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
@@ -362,6 +382,7 @@ class ModelTest extends MockeryTestCase
                     'discounts' => false,
                     'shipping' => false,
                 ],
+                'persisted' => true,
                 'unique' => false,
                 'required' => false,
                 'validate' => null,
@@ -379,6 +400,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -393,6 +415,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -407,6 +430,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -421,6 +445,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -435,6 +460,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -459,6 +485,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -473,6 +500,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'default' => 'Jared',
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -487,6 +515,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'email',
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -501,6 +530,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => 'timestamp|db_timestamp',
                 'default' => null,
+                'persisted' => true,
                 'relation' => null,
                 'relation_type' => null,
                 'foreign_key' => null,
@@ -513,12 +543,13 @@ class ModelTest extends MockeryTestCase
                 'null' => false,
                 'unique' => false,
                 'required' => false,
-                'relation' => 'Garage',
+                'relation' => Garage::class,
                 'relation_type' => 'has_one',
                 'foreign_key' => 'person_id',
                 'local_key' => 'id',
                 'validate' => null,
                 'default' => null,
+                'persisted' => false,
                 'pivot_tablename' => null,
             ],
         ];
@@ -626,7 +657,7 @@ class ModelTest extends MockeryTestCase
     {
         $model = new TestModel(1);
         $model->answer = 42;
-        $expected = 'TestModel({
+        $expected = 'Pulsar\Tests\Models\TestModel({
     "answer": 42,
     "id": 1
 })';
@@ -1721,7 +1752,7 @@ class ModelTest extends MockeryTestCase
         TestModel::setDriver($driver);
 
         $model = TestModel::find(100);
-        $this->assertInstanceOf('TestModel', $model);
+        $this->assertInstanceOf(TestModel::class, $model);
         $this->assertEquals(100, $model->id());
         $this->assertEquals(42, $model->answer);
     }
@@ -1752,7 +1783,7 @@ class ModelTest extends MockeryTestCase
         TestModel::setDriver($driver);
 
         $model = TestModel::findOrFail(100);
-        $this->assertInstanceOf('TestModel', $model);
+        $this->assertInstanceOf(TestModel::class, $model);
         $this->assertEquals(100, $model->id());
         $this->assertEquals(42, $model->answer);
     }
@@ -1833,6 +1864,141 @@ class ModelTest extends MockeryTestCase
         $model->setRelation('relation', $relation);
         $this->assertEquals($relation, $model->relation('relation'));
         $this->assertEquals(2, $model->relation);
+    }
+
+    /////////////////////////////
+    // Belongs To Relationship
+    /////////////////////////////
+
+    public function testGetPropertiesBelongsTo()
+    {
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'mutable' => 'immutable',
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'validate' => null,
+                'default' => null,
+                'persisted' => true,
+                'relation' => null,
+                'relation_type' => null,
+                'foreign_key' => null,
+                'local_key' => null,
+                'pivot_tablename' => null,
+            ],
+            'customer' => [
+                'type' => null,
+                'mutable' => 'mutable',
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'validate' => null,
+                'default' => null,
+                'persisted' => false,
+                'relation' => Customer::class,
+                'relation_type' => 'belongs_to',
+                'foreign_key' => 'id',
+                'local_key' => 'customer_id',
+                'pivot_tablename' => null,
+            ],
+            'customer_id' => [
+                'type' => 'integer',
+                'mutable' => 'mutable',
+                'null' => false,
+                'unique' => false,
+                'required' => false,
+                'validate' => null,
+                'default' => null,
+                'persisted' => true,
+                'relation' => null,
+                'relation_type' => null,
+                'foreign_key' => null,
+                'local_key' => null,
+                'pivot_tablename' => null,
+            ],
+        ];
+
+        $result = array_map(function ($value) { return $value->toArray(); }, Invoice::getProperties()->all());
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testGetSetRelationshipBelongsTo()
+    {
+        $customer = new Customer(123);
+        $customer->name = 'Test';
+        $invoice = new Invoice();
+        $invoice->customer = $customer;
+        $this->assertEquals($customer, $invoice->customer);
+        $this->assertEquals('Test', $invoice->customer->name);
+        $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testCreateBelongsTo()
+    {
+        $invoice = new Invoice();
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->withArgs([$invoice, [
+                'customer_id' => 123,
+            ]])
+            ->andReturn(true)
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$invoice, 'id'])
+            ->andReturn(1);
+
+        TestModel::setDriver($driver);
+
+        $customer = new Customer(123);
+        $invoice->customer = $customer;
+
+        $this->assertTrue($invoice->create());
+        $this->assertEquals(1, $invoice->id());
+        $this->assertEquals(1, $invoice->id);
+        $this->assertTrue($invoice->persisted());
+        $this->assertEquals($customer, $invoice->customer);
+        $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testSetBelongsTo()
+    {
+        $invoice = new Invoice(10);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('updateModel')
+            ->withArgs([$invoice, ['customer_id' => 123]])
+            ->andReturn(true);
+
+        TestModel::setDriver($driver);
+
+        $customer = new Customer(123);
+        $invoice->customer = $customer;
+        $this->assertTrue($invoice->save());
+        $this->assertTrue($invoice->persisted());
+        $this->assertEquals($customer, $invoice->customer);
+        $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testToArrayBelongsTo()
+    {
+        $invoice = new Invoice(10);
+        $customer = new Customer(123, ['name' => 'Test']);
+        $invoice->customer = $customer;
+        $expected = [
+            'id' => 10,
+            'customer' => [
+                'id' => 123,
+                'name' => 'Test',
+            ],
+            'customer_id' => 123,
+        ];
+        $this->assertEquals($expected, $invoice->toArray());
     }
 
     /////////////////////////////

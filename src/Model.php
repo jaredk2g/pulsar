@@ -110,7 +110,7 @@ abstract class Model implements ArrayAccess
     /**
      * Property definitions expressed as a key-value map with
      * property names as the keys.
-     * i.e. ['enabled' => ['type' => Model::TYPE_BOOLEAN]].
+     * i.e. ['enabled' => ['type' => Type::BOOLEAN]].
      *
      * @var array
      */
@@ -433,6 +433,14 @@ abstract class Model implements ArrayAccess
         } else {
             $this->_unsaved[$name] = $value;
         }
+
+        // set local ID property on belongs_to relationship
+        if ($value instanceof self) {
+            $property = static::getProperty($name);
+            if ($property && self::RELATIONSHIP_BELONGS_TO == $property->getRelationType()) {
+                $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
+            }
+        }
     }
 
     /**
@@ -531,6 +539,8 @@ abstract class Model implements ArrayAccess
                 if (!isset($property['relation_type'])) {
                     $property['relation_type'] = self::RELATIONSHIP_BELONGS_TO;
                     $property['local_key'] = $k;
+                } elseif (!isset($property['persisted'])) {
+                    $property['persisted'] = false;
                 }
 
                 $tempProperty = new Property($property);
@@ -545,6 +555,14 @@ abstract class Model implements ArrayAccess
 
                 if (!isset($property['pivot_tablename']) && $relation instanceof BelongsToMany) {
                     $property['pivot_tablename'] = $relation->getTablename();
+                }
+
+                // when a belongs_to relationship is used then we automatically add a
+                // new property for the ID field which gets persisted to the DB
+                if (self::RELATIONSHIP_BELONGS_TO == $property['relation_type'] && !isset($properties[$property['local_key']])) {
+                    $properties[$property['local_key']] = new Property([
+                        'type' => Type::INTEGER,
+                    ]);
                 }
             }
 
@@ -759,6 +777,7 @@ abstract class Model implements ArrayAccess
         // validate the values being saved
         $validated = true;
         $insertArray = [];
+        $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
             if (!self::getProperties()->has($name)) {
@@ -767,13 +786,17 @@ abstract class Model implements ArrayAccess
 
             $property = self::getProperty($name);
 
+            // check if this property is persisted to the DB
+            if (!$property->isPersisted()) {
+                $preservedValues[$name] = $value;
+                continue;
+            }
+
             // cannot insert immutable values
             // (unless using the default value)
             if ($property->isImmutable() && $value !== $property->getDefault()) {
                 continue;
             }
-
-            // TODO special treatment for relationships
 
             $validated = $validated && $this->filterAndValidate($property, $name, $value);
             $insertArray[$name] = $value;
@@ -809,7 +832,7 @@ abstract class Model implements ArrayAccess
 
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $this->refreshWith(array_replace($this->idValues, $insertArray));
+            $this->refreshWith(array_replace($this->idValues, $preservedValues, $insertArray));
 
             // dispatch the model.created event
             if (!$this->performDispatch(ModelEvent::CREATED, $usesTransactions)) {
@@ -1038,6 +1061,7 @@ abstract class Model implements ArrayAccess
         // validate the values being saved
         $validated = true;
         $updateArray = [];
+        $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
             if (!self::getProperties()->has($name)) {
@@ -1045,6 +1069,12 @@ abstract class Model implements ArrayAccess
             }
 
             $property = self::getProperty($name);
+
+            // check if this property is persisted to the DB
+            if (!$property->isPersisted()) {
+                $preservedValues[$name] = $value;
+                continue;
+            }
 
             // can only modify mutable properties
             if (!$property->isMutable()) {
@@ -1069,7 +1099,7 @@ abstract class Model implements ArrayAccess
         if ($updated) {
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $this->refreshWith(array_replace($this->_values, $updateArray));
+            $this->refreshWith(array_replace($this->_values, $preservedValues, $updateArray));
 
             // dispatch the model.updated event
             if (!$this->performDispatch(ModelEvent::UPDATED, $usesTransactions)) {

@@ -11,14 +11,14 @@
 
 namespace Pulsar\Tests\Relation;
 
-use Group;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Model;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\Pivot;
+use Pulsar\Tests\Models\Group;
+use Pulsar\Tests\Models\Person;
 
 class BelongsToManyTest extends MockeryTestCase
 {

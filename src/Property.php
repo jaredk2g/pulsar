@@ -31,6 +31,9 @@ class Property implements ArrayAccess
     /** @var mixed|null */
     private $default = null;
 
+    /** @var bool */
+    private $persisted = true;
+
     /** @var string|null */
     private $relation;
 
@@ -104,6 +107,11 @@ class Property implements ArrayAccess
         return $this->default;
     }
 
+    public function isPersisted(): bool
+    {
+        return $this->persisted;
+    }
+
     public function getRelation(): ?string
     {
         return $this->relation;
@@ -139,6 +147,7 @@ class Property implements ArrayAccess
             'required' => $this->required,
             'validate' => $this->validate,
             'default' => $this->default,
+            'persisted' => $this->persisted,
             'relation' => $this->relation,
             'relation_type' => $this->relation_type,
             'foreign_key' => $this->foreign_key,

@@ -11,14 +11,12 @@
 
 namespace Pulsar\Tests;
 
-use CacheableModel;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Psr\Cache\CacheItemInterface;
 use Pulsar\Driver\DriverInterface;
+use Pulsar\Tests\Models\CacheableModel;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-
-require_once 'tests/test_models.php';
 
 class CacheableTest extends MockeryTestCase
 {

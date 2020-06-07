@@ -6,13 +6,14 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Model;
 use Pulsar\Query;
+use Pulsar\Tests\Models\TestModel;
 
 class RelationTest extends MockeryTestCase
 {
     public function testGetLocalModel()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
         $this->assertEquals($model, $relation->getLocalModel());
     }
@@ -20,7 +21,7 @@ class RelationTest extends MockeryTestCase
     public function testGetLocalKey()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
         $this->assertEquals('user_id', $relation->getLocalKey());
     }
@@ -28,15 +29,15 @@ class RelationTest extends MockeryTestCase
     public function testGetForeignModel()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
-        $this->assertEquals('TestModel', $relation->getForeignModel());
+        $this->assertEquals(TestModel::class, $relation->getForeignModel());
     }
 
     public function testGetForeignKey()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
         $this->assertEquals('id', $relation->getForeignKey());
     }
@@ -44,7 +45,7 @@ class RelationTest extends MockeryTestCase
     public function testGetQuery()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
         $query = $relation->getQuery();
         $this->assertInstanceOf(Query::class, $query);
@@ -54,7 +55,7 @@ class RelationTest extends MockeryTestCase
     public function testCallOnQuery()
     {
         $model = Mockery::mock(Model::class);
-        $relation = new TestRelation($model, 'user_id', 'TestModel', 'id');
+        $relation = new TestRelation($model, 'user_id', TestModel::class, 'id');
 
         $query = $relation->where(['name' => 'Bob']);
 

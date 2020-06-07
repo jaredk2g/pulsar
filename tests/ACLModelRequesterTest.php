@@ -4,12 +4,10 @@ namespace Pulsar\Tests;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
-use Person;
 use Pulsar\ACLModel;
 use Pulsar\ACLModelRequester;
 use Pulsar\Driver\DriverInterface;
-
-require_once 'tests/test_models.php';
+use Pulsar\Tests\Models\Person;
 
 class ACLModelRequesterTest extends MockeryTestCase
 {

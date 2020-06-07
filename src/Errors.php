@@ -190,13 +190,13 @@ class Errors implements IteratorAggregate, Countable, ArrayAccess
      */
     private function parse($error, $locale, array $parameters): string
     {
-        // try to supply a fallback message in case
-        // the user does not have one specified
-        $fallback = self::$messages[$error] ?? null;
-
         if (!self::$translator) {
             return $error;
         }
+
+        // try to supply a fallback message in case
+        // the user does not have one specified
+        $fallback = self::$messages[$error] ?? $error;
 
         return $this->getTranslator()->translate($error, $parameters, $locale, $fallback);
     }
