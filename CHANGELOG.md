@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Make model internal properties private when possible.
 - The package no longer depends on `infuse/libs`.
 - Renamed `Property` class to `Type`.
+- A new `Definition` class contains all the properties that belong to a method. Retrieving the model properties will return this object instead of an array.
 - A new `Property` class encapsulates the definition of a model property. The model property methods will return this object instead of an array.
 
 ### Fixed

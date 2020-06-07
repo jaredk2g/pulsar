@@ -570,12 +570,15 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets all the property definitions for the model.
-     *
-     * @return array key-value map of properties
      */
-    public static function getProperties(): array
+    public static function getProperties(): Definition
     {
-        return static::$properties;
+        $properties = [];
+        foreach (static::$properties as $k => $property) {
+            $properties[$k] = new Property($property);
+        }
+
+        return new Definition($properties);
     }
 
     /**
@@ -585,11 +588,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getProperty(string $property): ?Property
     {
-        if (!isset(static::$properties[$property])) {
-            return null;
-        }
-
-        return new Property(static::$properties[$property]);
+        return self::getProperties()->get($property);
     }
 
     /**
@@ -609,7 +608,7 @@ abstract class Model implements ArrayAccess
      */
     public static function hasProperty(string $property): bool
     {
-        return isset(static::$properties[$property]);
+        return self::getProperties()->has($property);
     }
 
     /**
@@ -787,15 +786,15 @@ abstract class Model implements ArrayAccess
         }
 
         $requiredProperties = [];
-        foreach (static::$properties as $name => $property) {
+        foreach (self::getProperties()->all() as $name => $property) {
             // build a list of the required properties
-            if ($property['required']) {
+            if ($property->isRequired()) {
                 $requiredProperties[] = $name;
             }
 
             // add in default values
-            if (!array_key_exists($name, $this->_unsaved) && array_key_exists('default', $property)) {
-                $this->_unsaved[$name] = $property['default'];
+            if (!array_key_exists($name, $this->_unsaved) && isset($property['default'])) {
+                $this->_unsaved[$name] = $property->getDefault();
             }
         }
 
@@ -804,7 +803,7 @@ abstract class Model implements ArrayAccess
         $insertArray = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            if (!isset(static::$properties[$name])) {
+            if (!self::getProperties()->has($name)) {
                 continue;
             }
 
@@ -902,7 +901,7 @@ abstract class Model implements ArrayAccess
         // see if there are any model properties that do not exist.
         // when true then this means the model needs to be hydrated
         // NOTE: only looking at model properties and excluding dynamic/non-existent properties
-        $modelProperties = array_keys(static::$properties);
+        $modelProperties = self::getProperties()->propertyNames();
         $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
 
         if ($numMissing > 0 && !$this->loaded) {
@@ -1016,7 +1015,7 @@ abstract class Model implements ArrayAccess
     public function toArray(): array
     {
         // build the list of properties to retrieve
-        $properties = array_keys(static::$properties);
+        $properties = self::getProperties()->propertyNames();
 
         // remove any hidden properties
         $hide = (property_exists($this, 'hidden')) ? static::$hidden : [];
@@ -1081,7 +1080,7 @@ abstract class Model implements ArrayAccess
         $updateArray = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            if (!isset(static::$properties[$name])) {
+            if (!self::getProperties()->has($name)) {
                 continue;
             }
 

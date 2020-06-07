@@ -155,11 +155,11 @@ class Property implements ArrayAccess
 
     public function offsetSet($offset, $value)
     {
-        throw new \RuntimeException('Modifying a model definition is not allowed.');
+        throw new \RuntimeException('Modifying a model property is not allowed.');
     }
 
     public function offsetUnset($offset)
     {
-        throw new \RuntimeException('Modifying a model definition is not allowed.');
+        throw new \RuntimeException('Modifying a model property is not allowed.');
     }
 }
