@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - A new `Property` class encapsulates the definition of a model property. The model property methods will return this object instead of an array.
 - Moved `Model::cast()` to `Type::cast()`
 - Deprecated the `Model::TYPE_*` constants in favor of `Type::*` constants.
+- Deprecated the `Model` mutability constants in favor of `Property::*` constants.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

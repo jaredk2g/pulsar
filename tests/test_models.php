@@ -12,6 +12,7 @@
 use Pulsar\ACLModel;
 use Pulsar\Cacheable;
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Type;
 
@@ -135,7 +136,7 @@ class TestModel2 extends Model
             'type' => Type::OBJECT,
         ],
         'mutable_create_only' => [
-            'mutable' => Model::MUTABLE_CREATE_ONLY,
+            'mutable' => Property::MUTABLE_CREATE_ONLY,
         ],
         'protected' => [],
     ];

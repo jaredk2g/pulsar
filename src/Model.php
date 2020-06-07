@@ -43,9 +43,12 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 abstract class Model implements ArrayAccess
 {
-    const IMMUTABLE = 0;
-    const MUTABLE_CREATE_ONLY = 1;
-    const MUTABLE = 2;
+    /** @deprecated  */
+    const IMMUTABLE = 'immutable';
+    /** @deprecated  */
+    const MUTABLE_CREATE_ONLY = 'mutable_create_only';
+    /** @deprecated  */
+    const MUTABLE = 'mutable';
 
     /** @deprecated  */
     const TYPE_STRING = 'string';
@@ -71,7 +74,7 @@ abstract class Model implements ArrayAccess
 
     const DEFAULT_ID_PROPERTY = [
         'type' => Type::INTEGER,
-        'mutable' => self::IMMUTABLE,
+        'mutable' => Property::IMMUTABLE,
     ];
 
     const AUTO_TIMESTAMPS = [

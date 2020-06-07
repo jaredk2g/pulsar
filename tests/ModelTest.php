@@ -24,6 +24,7 @@ use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
 use Pulsar\ModelEvent;
+use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Type;
 use RelationshipTestModel;
@@ -79,7 +80,7 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'id' => [
                 'type' => Type::INTEGER,
-                'mutable' => Model::IMMUTABLE,
+                'mutable' => Property::IMMUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -100,14 +101,14 @@ class ModelTest extends MockeryTestCase
                 'null' => true,
                 'unique' => false,
                 'required' => false,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'validate' => null,
                 'default' => null,
                 'pivot_tablename' => null,
             ],
             'answer' => [
                 'type' => Type::STRING,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -122,7 +123,7 @@ class ModelTest extends MockeryTestCase
             'test_hook' => [
                 'type' => Type::STRING,
                 'null' => true,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'validate' => null,
@@ -136,7 +137,7 @@ class ModelTest extends MockeryTestCase
             'mutator' => [
                 'type' => null,
                 'null' => false,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'validate' => null,
@@ -150,7 +151,7 @@ class ModelTest extends MockeryTestCase
             'accessor' => [
                 'type' => null,
                 'null' => false,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'validate' => null,
@@ -172,7 +173,7 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'type' => Type::STRING,
-            'mutable' => Model::MUTABLE,
+            'mutable' => Property::MUTABLE,
             'null' => false,
             'unique' => false,
             'required' => false,
@@ -192,7 +193,7 @@ class ModelTest extends MockeryTestCase
     {
         $expected = [
             'type' => Type::INTEGER,
-            'mutable' => Model::IMMUTABLE,
+            'mutable' => Property::IMMUTABLE,
             'null' => false,
             'unique' => false,
             'required' => false,
@@ -215,7 +216,7 @@ class ModelTest extends MockeryTestCase
             'null' => true,
             'unique' => false,
             'required' => false,
-            'mutable' => Model::MUTABLE,
+            'mutable' => Property::MUTABLE,
             'validate' => null,
             'default' => null,
             'pivot_tablename' => null,
@@ -228,7 +229,7 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'id' => [
                 'type' => Type::INTEGER,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -242,7 +243,7 @@ class ModelTest extends MockeryTestCase
             ],
             'id2' => [
                 'type' => Type::INTEGER,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -257,7 +258,7 @@ class ModelTest extends MockeryTestCase
             'default' => [
                 'type' => null,
                 'default' => 'some default value',
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -272,7 +273,7 @@ class ModelTest extends MockeryTestCase
                 'type' => null,
                 'validate' => 'email|string:5',
                 'null' => true,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'default' => null,
@@ -286,7 +287,7 @@ class ModelTest extends MockeryTestCase
                 'type' => null,
                 'validate' => 'validate',
                 'null' => true,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'unique' => false,
                 'required' => false,
                 'default' => null,
@@ -299,7 +300,7 @@ class ModelTest extends MockeryTestCase
             'unique' => [
                 'type' => null,
                 'unique' => true,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'required' => false,
                 'validate' => null,
@@ -313,7 +314,7 @@ class ModelTest extends MockeryTestCase
             'required' => [
                 'type' => Type::INTEGER,
                 'required' => true,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'validate' => null,
@@ -327,7 +328,7 @@ class ModelTest extends MockeryTestCase
             'hidden' => [
                 'type' => Type::BOOLEAN,
                 'default' => false,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -345,7 +346,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => 'id',
                 'local_key' => 'person',
                 'default' => 20,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -354,7 +355,7 @@ class ModelTest extends MockeryTestCase
             ],
             'array' => [
                 'type' => Type::ARRAY,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'default' => [
                     'tax' => '%',
@@ -372,7 +373,7 @@ class ModelTest extends MockeryTestCase
             ],
             'object' => [
                 'type' => Type::OBJECT,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -386,7 +387,7 @@ class ModelTest extends MockeryTestCase
             ],
             'mutable_create_only' => [
                 'type' => null,
-                'mutable' => Model::MUTABLE_CREATE_ONLY,
+                'mutable' => Property::MUTABLE_CREATE_ONLY,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -400,7 +401,7 @@ class ModelTest extends MockeryTestCase
             ],
             'protected' => [
                 'type' => null,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -414,7 +415,7 @@ class ModelTest extends MockeryTestCase
             ],
             'created_at' => [
                 'type' => Type::DATE,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -428,7 +429,7 @@ class ModelTest extends MockeryTestCase
             ],
             'updated_at' => [
                 'type' => Type::DATE,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -452,7 +453,7 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'id' => [
                 'type' => Type::STRING,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -466,7 +467,7 @@ class ModelTest extends MockeryTestCase
             ],
             'name' => [
                 'type' => Type::STRING,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -480,7 +481,7 @@ class ModelTest extends MockeryTestCase
             ],
             'email' => [
                 'type' => Type::STRING,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,
@@ -494,7 +495,7 @@ class ModelTest extends MockeryTestCase
             ],
             'deleted_at' => [
                 'type' => Type::DATE,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => true,
                 'unique' => false,
                 'required' => false,
@@ -508,7 +509,7 @@ class ModelTest extends MockeryTestCase
             ],
             'garage' => [
                 'type' => null,
-                'mutable' => Model::MUTABLE,
+                'mutable' => Property::MUTABLE,
                 'null' => false,
                 'unique' => false,
                 'required' => false,

@@ -6,11 +6,15 @@ use ArrayAccess;
 
 class Property implements ArrayAccess
 {
+    const IMMUTABLE = 'immutable';
+    const MUTABLE_CREATE_ONLY = 'mutable_create_only';
+    const MUTABLE = 'mutable';
+
     /** @var string|null */
     private $type = null;
 
     /** @var string */
-    private $mutable = Model::MUTABLE;
+    private $mutable = self::MUTABLE;
 
     /** @var bool */
     private $null = false;
@@ -56,17 +60,17 @@ class Property implements ArrayAccess
 
     public function isMutable(): bool
     {
-        return Model::MUTABLE == $this->mutable;
+        return self::MUTABLE == $this->mutable;
     }
 
     public function isMutableCreateOnly(): bool
     {
-        return Model::MUTABLE_CREATE_ONLY == $this->mutable;
+        return self::MUTABLE_CREATE_ONLY == $this->mutable;
     }
 
     public function isImmutable(): bool
     {
-        return Model::IMMUTABLE == $this->mutable;
+        return self::IMMUTABLE == $this->mutable;
     }
 
     public function isNullable(): bool

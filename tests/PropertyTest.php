@@ -3,7 +3,6 @@
 namespace Pulsar\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Pulsar\Model;
 use Pulsar\Property;
 
 class PropertyTest extends TestCase
@@ -36,17 +35,17 @@ class PropertyTest extends TestCase
 
     public function testMutable()
     {
-        $property = new Property(['mutable' => Model::MUTABLE]);
+        $property = new Property(['mutable' => Property::MUTABLE]);
         $this->assertTrue($property->isMutable());
         $this->assertFalse($property->isImmutable());
         $this->assertFalse($property->isMutableCreateOnly());
 
-        $property = new Property(['mutable' => Model::IMMUTABLE]);
+        $property = new Property(['mutable' => Property::IMMUTABLE]);
         $this->assertFalse($property->isMutable());
         $this->assertTrue($property->isImmutable());
         $this->assertFalse($property->isMutableCreateOnly());
 
-        $property = new Property(['mutable' => Model::MUTABLE_CREATE_ONLY]);
+        $property = new Property(['mutable' => Property::MUTABLE_CREATE_ONLY]);
         $this->assertFalse($property->isMutable());
         $this->assertFalse($property->isImmutable());
         $this->assertTrue($property->isMutableCreateOnly());
