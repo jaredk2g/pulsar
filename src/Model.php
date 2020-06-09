@@ -20,7 +20,6 @@ use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
-use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\RelationFactory;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -71,30 +70,6 @@ abstract class Model implements ArrayAccess
     const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
 
     const DEFAULT_ID_NAME = 'id';
-
-    const DEFAULT_ID_PROPERTY = [
-        'type' => Type::INTEGER,
-        'mutable' => Property::IMMUTABLE,
-    ];
-
-    const AUTO_TIMESTAMPS = [
-        'created_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-        'updated_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-    ];
-
-    const SOFT_DELETE_TIMESTAMPS = [
-        'deleted_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-            'null' => true,
-        ],
-    ];
 
     /////////////////////////////
     // Model visible variables
@@ -229,32 +204,17 @@ abstract class Model implements ArrayAccess
      */
     protected function initialize()
     {
-    }
+        if (property_exists(static::class, 'autoTimestamps')) {
+            self::creating(function (ModelEvent $event) {
+                $model = $event->getModel();
+                $model->created_at = time();
+                $model->updated_at = time();
+            });
 
-    /**
-     * Installs the `created_at` and `updated_at` properties.
-     */
-    private static function installAutoTimestamps()
-    {
-        static::$properties = array_replace(self::AUTO_TIMESTAMPS, static::$properties);
-
-        self::creating(function (ModelEvent $event) {
-            $model = $event->getModel();
-            $model->created_at = time();
-            $model->updated_at = time();
-        });
-
-        self::updating(function (ModelEvent $event) {
-            $event->getModel()->updated_at = time();
-        });
-    }
-
-    /**
-     * Installs the `deleted_at` properties.
-     */
-    private static function installSoftDelete()
-    {
-        static::$properties = array_replace(self::SOFT_DELETE_TIMESTAMPS, static::$properties);
+            self::updating(function (ModelEvent $event) {
+                $event->getModel()->updated_at = time();
+            });
+        }
     }
 
     /**
@@ -509,79 +469,24 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
+     * Gets the definition of all model properties.
+     */
+    public static function getProperties(): Definition
+    {
+        return DefinitionBuilder::get(static::class);
+    }
+
+    /**
      * The buildDefinition() method is called once per model. It's used
      * to generate the model definition. This is a great place to add any
      * dynamic model properties.
      */
     public static function buildDefinition(): Definition
     {
-        // add in the default ID property
-        if (static::$ids == [self::DEFAULT_ID_NAME] && !isset(static::$properties[self::DEFAULT_ID_NAME])) {
-            static::$properties[self::DEFAULT_ID_NAME] = self::DEFAULT_ID_PROPERTY;
-        }
+        $autoTimestamps = property_exists(static::class, 'autoTimestamps');
+        $softDelete = property_exists(static::class, 'softDelete');
 
-        // generates created_at and updated_at timestamps
-        if (property_exists(static::class, 'autoTimestamps')) {
-            self::installAutoTimestamps();
-        }
-
-        // generates deleted_at timestamps
-        if (property_exists(static::class, 'softDelete')) {
-            self::installSoftDelete();
-        }
-
-        $properties = [];
-        foreach (static::$properties as $k => $property) {
-            // populate relationship property settings
-            if (isset($property['relation'])) {
-                // this is added for BC with older versions of pulsar
-                // that only supported belongs to relationships
-                if (!isset($property['relation_type'])) {
-                    $property['relation_type'] = self::RELATIONSHIP_BELONGS_TO;
-                    $property['local_key'] = $k;
-                } elseif (!isset($property['persisted'])) {
-                    $property['persisted'] = false;
-                }
-
-                $tempProperty = new Property($property);
-                $relation = RelationFactory::make(new static(), $k, $tempProperty);
-                if (!isset($property['foreign_key'])) {
-                    $property['foreign_key'] = $relation->getForeignKey();
-                }
-
-                if (!isset($property['local_key'])) {
-                    $property['local_key'] = $relation->getLocalKey();
-                }
-
-                if (!isset($property['pivot_tablename']) && $relation instanceof BelongsToMany) {
-                    $property['pivot_tablename'] = $relation->getTablename();
-                }
-
-                // when a belongs_to relationship is used then we automatically add a
-                // new property for the ID field which gets persisted to the DB
-                if (self::RELATIONSHIP_BELONGS_TO == $property['relation_type'] && !isset($properties[$property['local_key']])) {
-                    $properties[$property['local_key']] = new Property([
-                        'type' => Type::INTEGER,
-                    ]);
-                }
-            }
-
-            $properties[$k] = new Property($property);
-        }
-
-        // order the properties array by name for consistency
-        // since it is constructed in a random order
-        ksort($properties);
-
-        return new Definition($properties);
-    }
-
-    /**
-     * Gets the definition of all model properties.
-     */
-    public static function getProperties(): Definition
-    {
-        return Definition::make(static::class);
+        return DefinitionBuilder::build(static::$properties, static::class, $autoTimestamps, $softDelete);
     }
 
     /**

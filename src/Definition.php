@@ -6,9 +6,6 @@ use ArrayAccess;
 
 class Definition implements ArrayAccess
 {
-    /** @var self[] */
-    private static $cache;
-
     /** @var Property[] */
     private $properties;
 
@@ -38,15 +35,6 @@ class Definition implements ArrayAccess
     public function propertyNames(): array
     {
         return array_keys($this->properties);
-    }
-
-    public static function make(string $modelClass): self
-    {
-        if (!isset(self::$cache[$modelClass])) {
-            self::$cache[$modelClass] = $modelClass::buildDefinition();
-        }
-
-        return self::$cache[$modelClass];
     }
 
     public function offsetExists($offset)
