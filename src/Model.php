@@ -1354,7 +1354,9 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Sets the model for a one-to-one relationship (has-one or belongs-to) as null.
+     * @deprecated
+     *
+     * Sets the model for a one-to-one relationship (has-one or belongs-to) as null
      *
      * @return $this
      */
