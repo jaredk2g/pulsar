@@ -6,7 +6,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.
 - The `Errors::setTranslator()` method can set the global translation implementation.
-- Models now have a `buildDefinition()` method that can be overriden to dynamically customize the model properties.
+- Models now have a `buildDefinition()` method that can be overridden to dynamically customize the model properties.
+- Added `Model::dirty()` to check if a property has an unsaved value that has changed.
 
 ### Changed
 - Make model internal properties private when possible.
@@ -19,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated the `Model` mutability constants in favor of `Property::*` constants.
 - Deprecated the `Model::RELATIONSHIP_*` constants in favor of `Relationship::*` constants.
 - Marked classes as final when appropriate.
+- Calling `isset()` on model will no longer return true if the property exists but does not have an unsaved value.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

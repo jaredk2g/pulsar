@@ -421,7 +421,7 @@ abstract class Model implements ArrayAccess
      */
     public function __isset($name)
     {
-        return array_key_exists($name, $this->_unsaved) || static::hasProperty($name);
+        return array_key_exists($name, $this->_unsaved);
     }
 
     /**
@@ -937,6 +937,15 @@ abstract class Model implements ArrayAccess
         }
 
         return $result;
+    }
+
+    /**
+     * Checks if the unsaved value for a property is present and
+     * is different from the original value.
+     */
+    public function dirty(string $name): bool
+    {
+        return isset($this->_unsaved[$name]) && (!isset($this->_values[$name]) || $this->_values[$name] != $this->_unsaved[$name]);
     }
 
     /**

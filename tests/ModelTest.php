@@ -693,6 +693,23 @@ class ModelTest extends MockeryTestCase
 
         $model->null = null;
         $this->assertTrue(isset($model->null));
+
+        $model = new TestModel();
+        $this->assertFalse(isset($model->test));
+        $this->assertFalse(isset($model->not_a_property));
+
+        $model->test = 'hello world';
+        $this->assertTrue(isset($model->test));
+
+        $model->not_a_property = 'hello world';
+        $this->assertTrue(isset($model->not_a_property));
+
+        $model = new TestModel(1, ['test' => 'hello world']);
+        $this->assertFalse(isset($model->test));
+        $model->test = 'hello world';
+        $this->assertTrue(isset($model->test));
+        $model->test = 'goodbye world';
+        $this->assertTrue(isset($model->test));
     }
 
     public function testUnset()
@@ -820,6 +837,26 @@ class ModelTest extends MockeryTestCase
         // test offsetUnset
         unset($model['test']);
         $this->assertFalse(isset($model['test']));
+    }
+
+    public function testDirty()
+    {
+        $model = new TestModel();
+        $this->assertFalse($model->dirty('test'));
+        $this->assertFalse($model->dirty('not_a_property'));
+
+        $model->test = 'hello world';
+        $this->assertTrue($model->dirty('test'));
+
+        $model->not_a_property = 'hello world';
+        $this->assertTrue($model->dirty('not_a_property'));
+
+        $model = new TestModel(1, ['test' => 'hello world']);
+        $this->assertFalse($model->dirty('test'));
+        $model->test = 'hello world';
+        $this->assertFalse($model->dirty('test'));
+        $model->test = 'goodbye world';
+        $this->assertTrue($model->dirty('test'));
     }
 
     /////////////////////////////
