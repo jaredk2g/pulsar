@@ -36,6 +36,9 @@ final class Property implements ArrayAccess
     private $default = null;
 
     /** @var bool */
+    private $hasDefault;
+
+    /** @var bool */
     private $persisted = true;
 
     /** @var string|null */
@@ -59,6 +62,7 @@ final class Property implements ArrayAccess
         foreach ($values as $k => $v) {
             $this->$k = $v;
         }
+        $this->hasDefault = array_key_exists('default', $values);
     }
 
     public function getName(): string
@@ -133,6 +137,11 @@ final class Property implements ArrayAccess
     public function getDefault()
     {
         return $this->default;
+    }
+
+    public function hasDefault(): bool
+    {
+        return $this->hasDefault;
     }
 
     public function isPersisted(): bool

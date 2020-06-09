@@ -687,7 +687,7 @@ abstract class Model implements ArrayAccess
             }
 
             // add in default values
-            if (!array_key_exists($name, $this->_unsaved) && isset($property['default'])) {
+            if (!array_key_exists($name, $this->_unsaved) && $property->hasDefault()) {
                 $this->_unsaved[$name] = $property->getDefault();
             }
         }

@@ -33,6 +33,30 @@ class PropertyTest extends TestCase
         $this->assertNotNull($e);
     }
 
+    public function testDefault()
+    {
+        $property = new Property();
+        $this->assertFalse($property->hasDefault());
+
+        $property = new Property(['default' => 'test']);
+        $this->assertTrue($property->hasDefault());
+
+        $property = new Property(['default' => null]);
+        $this->assertTrue($property->hasDefault());
+
+        $property = new Property(['default' => false]);
+        $this->assertTrue($property->hasDefault());
+
+        $property = new Property(['default' => 0]);
+        $this->assertTrue($property->hasDefault());
+
+        $property = new Property(['default' => '']);
+        $this->assertTrue($property->hasDefault());
+
+        $property = new Property(['default' => []]);
+        $this->assertTrue($property->hasDefault());
+    }
+
     public function testMutable()
     {
         $property = new Property(['mutable' => Property::MUTABLE]);
