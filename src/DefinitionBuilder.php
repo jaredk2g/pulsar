@@ -102,11 +102,11 @@ class DefinitionBuilder
                 if (Relationship::BELONGS_TO == $property['relation_type'] && !isset($result[$property['local_key']])) {
                     $result[$property['local_key']] = new Property([
                         'type' => Type::INTEGER,
-                    ]);
+                    ], $property['local_key']);
                 }
             }
 
-            $result[$k] = new Property($property);
+            $result[$k] = new Property($property, $k);
         }
 
         // order the properties array by name for consistency

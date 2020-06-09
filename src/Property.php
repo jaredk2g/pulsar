@@ -3,12 +3,16 @@
 namespace Pulsar;
 
 use ArrayAccess;
+use ICanBoogie\Inflector;
 
 class Property implements ArrayAccess
 {
     const IMMUTABLE = 'immutable';
     const MUTABLE_CREATE_ONLY = 'mutable_create_only';
     const MUTABLE = 'mutable';
+
+    /** @var string */
+    private $name;
 
     /** @var string|null */
     private $type = null;
@@ -49,11 +53,35 @@ class Property implements ArrayAccess
     /** @var string|null */
     private $pivot_tablename;
 
-    public function __construct(array $values = [])
+    public function __construct(array $values = [], string $name = '')
     {
+        $this->name = $name;
         foreach ($values as $k => $v) {
             $this->$k = $v;
         }
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Gets the humanized name of this property.
+     */
+    public function getTitle(Model $model): string
+    {
+        // look up the property from the translator first
+        if ($translator = $model->getErrors()->getTranslator()) {
+            $k = 'pulsar.properties.'.$model::modelName().'.'.$this->name;
+            $title = $translator->translate($k);
+            if ($title != $k) {
+                return $title;
+            }
+        }
+
+        // otherwise just attempt to title-ize the property name
+        return Inflector::get()->titleize($this->name);
     }
 
     public function getType(): ?string

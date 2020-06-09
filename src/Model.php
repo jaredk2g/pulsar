@@ -674,7 +674,7 @@ abstract class Model implements ArrayAccess
         foreach (self::getProperties()->all() as $name => $property) {
             // build a list of the required properties
             if ($property->isRequired()) {
-                $requiredProperties[] = $name;
+                $requiredProperties[] = $property;
             }
 
             // add in default values
@@ -707,16 +707,16 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $validated = $validated && $this->filterAndValidate($property, $name, $value);
+            $validated = $validated && $this->filterAndValidate($property, $value);
             $insertArray[$name] = $value;
         }
 
         // check for required fields
-        foreach ($requiredProperties as $name) {
-            if (!isset($insertArray[$name])) {
+        foreach ($requiredProperties as $property) {
+            if (!isset($insertArray[$property->getName()])) {
                 $params = [
-                    'field' => $name,
-                    'field_name' => $this->getPropertyTitle($name),
+                    'field' => $property->getName(),
+                    'field_name' => $property->getTitle($this),
                 ];
                 $this->getErrors()->add('pulsar.validation.required', $params);
 
@@ -990,7 +990,7 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $validated = $validated && $this->filterAndValidate($property, $name, $value);
+            $validated = $validated && $this->filterAndValidate($property, $value);
             $updateArray[$name] = $value;
         }
 
@@ -1054,7 +1054,7 @@ abstract class Model implements ArrayAccess
         if (property_exists($this, 'softDelete')) {
             $t = time();
             $this->deleted_at = $t;
-            $t = $this->filterAndValidate(static::getProperty('deleted_at'), 'deleted_at', $t);
+            $t = $this->filterAndValidate(static::getProperty('deleted_at'), $t);
             $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
             $hardDelete = false;
         } else {
@@ -1494,7 +1494,7 @@ abstract class Model implements ArrayAccess
         $validated = true;
         foreach ($values as $k => $v) {
             $property = static::getProperty($k);
-            $validated = $this->filterAndValidate($property, $k, $v) && $validated;
+            $validated = $this->filterAndValidate($property, $v) && $validated;
         }
 
         // add back any modified unsaved values
@@ -1509,10 +1509,9 @@ abstract class Model implements ArrayAccess
      * Validates and marshals a value to storage.
      *
      * @param Property $property property definition
-     * @param string   $name     property name
      * @param mixed    $value
      */
-    private function filterAndValidate(Property $property, string $name, &$value): bool
+    private function filterAndValidate(Property $property, &$value): bool
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
@@ -1523,11 +1522,11 @@ abstract class Model implements ArrayAccess
         }
 
         // validate
-        list($valid, $value) = $this->validateValue($property, $name, $value);
+        list($valid, $value) = $this->validateValue($property, $value);
 
         // unique?
-        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->$name)) {
-            $valid = $this->checkUniqueness($name, $value);
+        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->{$property->getName()})) {
+            $valid = $this->checkUniqueness($property, $value);
         }
 
         return $valid;
@@ -1537,10 +1536,9 @@ abstract class Model implements ArrayAccess
      * Validates a value for a property.
      *
      * @param Property $property property definition
-     * @param string   $name     property name
      * @param mixed    $value
      */
-    private function validateValue(Property $property, string $name, $value): array
+    private function validateValue(Property $property, $value): array
     {
         $valid = true;
 
@@ -1556,8 +1554,8 @@ abstract class Model implements ArrayAccess
 
         if (!$valid) {
             $params = [
-                'field' => $name,
-                'field_name' => $this->getPropertyTitle($name),
+                'field' => $property->getName(),
+                'field_name' => $property->getTitle($this),
             ];
             $this->getErrors()->add($error, $params);
         }
@@ -1568,16 +1566,15 @@ abstract class Model implements ArrayAccess
     /**
      * Checks if a value is unique for a property.
      *
-     * @param string $name  property name
-     * @param mixed  $value
+     * @param mixed $value
      */
-    private function checkUniqueness(string $name, $value): bool
+    private function checkUniqueness(Property $property, $value): bool
     {
-        $n = static::query()->where([$name => $value])->count();
+        $n = static::query()->where([$property->getName() => $value])->count();
         if ($n > 0) {
             $params = [
-                'field' => $name,
-                'field_name' => $this->getPropertyTitle($name),
+                'field' => $property->getName(),
+                'field_name' => $property->getTitle($this),
             ];
             $this->getErrors()->add('pulsar.validation.unique', $params);
 
@@ -1585,25 +1582,5 @@ abstract class Model implements ArrayAccess
         }
 
         return true;
-    }
-
-    /**
-     * Gets the humanized name of a property.
-     *
-     * @param string $name property name
-     */
-    private function getPropertyTitle(string $name): string
-    {
-        // look up the property from the translator first
-        if ($translator = $this->getErrors()->getTranslator()) {
-            $k = 'pulsar.properties.'.static::modelName().'.'.$name;
-            $title = $translator->translate($k);
-            if ($title != $k) {
-                return $title;
-            }
-        }
-
-        // otherwise just attempt to title-ize the property name
-        return Inflector::get()->titleize($name);
     }
 }

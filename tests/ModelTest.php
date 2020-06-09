@@ -25,6 +25,7 @@ use Pulsar\Model;
 use Pulsar\ModelEvent;
 use Pulsar\Property;
 use Pulsar\Query;
+use Pulsar\Relation\Relationship;
 use Pulsar\Tests\Models\Customer;
 use Pulsar\Tests\Models\Garage;
 use Pulsar\Tests\Models\Invoice;
