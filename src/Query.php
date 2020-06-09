@@ -286,7 +286,7 @@ class Query
             $models[] = new $modelClass($id, $row);
             foreach ($this->eagerLoaded as $k) {
                 $localKey = $eagerLoadedProperties[$k]['local_key'];
-                if ($row[$localKey]) {
+                if (isset($row[$localKey])) {
                     $ids[$k][$j] = $row[$localKey];
                 }
             }
