@@ -145,6 +145,11 @@ abstract class Model implements ArrayAccess
     private static $dispatchers = [];
 
     /**
+     * @var string
+     */
+    private $tablename;
+
+    /**
      * @var bool
      */
     private $hasId;
@@ -524,7 +529,7 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Gets the mutator method name for a given proeprty name.
+     * Gets the mutator method name for a given property name.
      * Looks for methods in the form of `setPropertyValue`.
      * i.e. the mutator for `last_name` would be `setLastNameValue`.
      *
@@ -552,7 +557,7 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Gets the accessor method name for a given proeprty name.
+     * Gets the accessor method name for a given property name.
      * Looks for methods in the form of `getPropertyValue`.
      * i.e. the accessor for `last_name` would be `getLastNameValue`.
      *
@@ -584,13 +589,17 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Gets the tablename for storing this model.
+     * Gets the table name for storing this model.
      */
     public function getTablename(): string
     {
-        $inflector = Inflector::get();
+        if (!$this->tablename) {
+            $inflector = Inflector::get();
 
-        return $inflector->camelize($inflector->pluralize(static::modelName()));
+            $this->tablename = $inflector->camelize($inflector->pluralize(static::modelName()));
+        }
+
+        return $this->tablename;
     }
 
     /**
