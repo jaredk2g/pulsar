@@ -1524,11 +1524,6 @@ abstract class Model implements ArrayAccess
         // validate
         list($valid, $value) = $this->validateValue($property, $value);
 
-        // unique?
-        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->{$property->getName()})) {
-            $valid = $this->checkUniqueness($property, $value);
-        }
-
         return $valid;
     }
 
@@ -1553,34 +1548,23 @@ abstract class Model implements ArrayAccess
         }
 
         if (!$valid) {
-            $params = [
+            $this->getErrors()->add($error, [
                 'field' => $property->getName(),
                 'field_name' => $property->getTitle($this),
-            ];
-            $this->getErrors()->add($error, $params);
+            ]);
+        }
+
+        // unique?
+        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->{$property->getName()})) {
+            if (!Validator::isUnique($this, $property, $value)) {
+                $valid = false;
+                $this->getErrors()->add('pulsar.validation.unique', [
+                    'field' => $property->getName(),
+                    'field_name' => $property->getTitle($this),
+                ]);
+            }
         }
 
         return [$valid, $value];
-    }
-
-    /**
-     * Checks if a value is unique for a property.
-     *
-     * @param mixed $value
-     */
-    private function checkUniqueness(Property $property, $value): bool
-    {
-        $n = static::query()->where([$property->getName() => $value])->count();
-        if ($n > 0) {
-            $params = [
-                'field' => $property->getName(),
-                'field_name' => $property->getTitle($this),
-            ];
-            $this->getErrors()->add('pulsar.validation.unique', $params);
-
-            return false;
-        }
-
-        return true;
     }
 }

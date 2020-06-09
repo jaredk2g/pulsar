@@ -122,7 +122,7 @@ class Validator
     }
 
     ////////////////////////////////
-    // FILTERS
+    // Validators
     ////////////////////////////////
 
     /**
@@ -400,5 +400,19 @@ class Validator
     private function url(&$value): bool
     {
         return filter_var($value, FILTER_VALIDATE_URL);
+    }
+
+    /////////////////////////
+    // Uniqueness
+    /////////////////////////
+
+    /**
+     * Checks if a value is unique for a property.
+     *
+     * @param mixed $value
+     */
+    public static function isUnique(Model $model, Property $property, $value): bool
+    {
+        return 0 == $model::query()->where([$property->getName() => $value])->count();
     }
 }
