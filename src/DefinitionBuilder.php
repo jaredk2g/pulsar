@@ -84,7 +84,7 @@ final class DefinitionBuilder
                 }
 
                 $tempProperty = new Property($property);
-                $relation = Relationship::make(new $modelClass(), $k, $tempProperty);
+                $relation = Relationship::make(new $modelClass(), $tempProperty);
                 if (!isset($property['foreign_key'])) {
                     $property['foreign_key'] = $relation->getForeignKey();
                 }

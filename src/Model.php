@@ -1317,7 +1317,7 @@ abstract class Model implements ArrayAccess
     public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $relation = Relationship::make($this, $k, self::getProperty($k));
+            $relation = Relationship::make($this, self::getProperty($k));
             $this->_relationships[$k] = $relation->getResults();
         }
 

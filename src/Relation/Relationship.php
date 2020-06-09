@@ -16,11 +16,11 @@ final class Relationship
     /**
      * Creates a new relation instance given a model and property.
      */
-    public static function make(Model $model, string $propertyName, Property $property): AbstractRelation
+    public static function make(Model $model, Property $property): AbstractRelation
     {
         $relationModelClass = $property->getRelation();
         if (!$relationModelClass) {
-            throw new InvalidArgumentException('Property "'.$propertyName.'" does not have a relationship.');
+            throw new InvalidArgumentException('Property "'.$property->getName().'" does not have a relationship.');
         }
 
         $foreignKey = $property->getForeignKey();
@@ -45,6 +45,6 @@ final class Relationship
             return new BelongsToMany($model, $localKey, $pivotTable, $relationModelClass, $foreignKey);
         }
 
-        throw new InvalidArgumentException('Relationship type on "'.$propertyName.'" property not supported: '.$relationType);
+        throw new InvalidArgumentException('Relationship type on "'.$property->getName().'" property not supported: '.$relationType);
     }
 }
