@@ -11,6 +11,6 @@
 
 namespace Pulsar\Exception;
 
-class DriverException extends ModelException
+final class DriverException extends ModelException
 {
 }

@@ -4,7 +4,7 @@ namespace Pulsar;
 
 use ArrayAccess;
 
-class Definition implements ArrayAccess
+final class Definition implements ArrayAccess
 {
     /** @var Property[] */
     private $properties;

@@ -16,7 +16,7 @@ use Pulsar\Model;
 /**
  * Pivot model shim for use by relationships.
  */
-class Pivot extends Model
+final class Pivot extends Model
 {
     protected static $properties = [];
 

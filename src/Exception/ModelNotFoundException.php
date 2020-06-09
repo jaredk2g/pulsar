@@ -14,6 +14,6 @@ namespace Pulsar\Exception;
 /**
  * Class ModelNotFoundException.
  */
-class ModelNotFoundException extends ModelException
+final class ModelNotFoundException extends ModelException
 {
 }

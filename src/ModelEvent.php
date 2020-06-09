@@ -13,10 +13,7 @@ namespace Pulsar;
 
 use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Class ModelEvent.
- */
-class ModelEvent extends Event
+final class ModelEvent extends Event
 {
     const CREATING = 'model.creating';
     const CREATED = 'model.created';
@@ -30,9 +27,6 @@ class ModelEvent extends Event
      */
     protected $model;
 
-    /**
-     * @param Model $model
-     */
     public function __construct(Model $model)
     {
         $this->model = $model;
@@ -40,8 +34,6 @@ class ModelEvent extends Event
 
     /**
      * Gets the model for this event.
-     *
-     * @return Model
      */
     public function getModel(): Model
     {

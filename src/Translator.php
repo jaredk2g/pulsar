@@ -13,7 +13,7 @@ namespace Pulsar;
 
 use Pulsar\Interfaces\TranslatorInterface;
 
-class Translator implements TranslatorInterface
+final class Translator implements TranslatorInterface
 {
     /**
      * @var string

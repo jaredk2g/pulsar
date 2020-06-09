@@ -11,10 +11,7 @@
 
 namespace Pulsar;
 
-/**
- * Class Iterator.
- */
-class Iterator implements \Iterator, \Countable, \ArrayAccess
+final class Iterator implements \Iterator, \Countable, \ArrayAccess
 {
     /**
      * @var Query

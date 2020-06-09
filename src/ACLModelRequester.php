@@ -6,7 +6,7 @@ namespace Pulsar;
  * Holds the requesting model for ACL
  * permission checks.
  */
-class ACLModelRequester
+final class ACLModelRequester
 {
     /**
      * @var callable

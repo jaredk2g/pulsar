@@ -24,7 +24,7 @@ use Pulsar\Type;
 /**
  * Driver for storing models in a database using PDO.
  */
-class DatabaseDriver extends AbstractDriver
+final class DatabaseDriver extends AbstractDriver
 {
     /**
      * @var ConnectionManager

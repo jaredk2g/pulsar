@@ -21,7 +21,7 @@ use Exception;
  *
  * NOTE: some filters may modify the data, which is passed in by reference
  */
-class Validator
+final class Validator
 {
     /**
      * @var array

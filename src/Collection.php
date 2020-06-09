@@ -11,7 +11,7 @@ use IteratorAggregate;
 /**
  * Represents a collection of models.
  */
-class Collection implements ArrayAccess, Countable, IteratorAggregate
+final class Collection implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * @var Model[]

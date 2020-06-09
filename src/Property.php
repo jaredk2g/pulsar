@@ -5,7 +5,7 @@ namespace Pulsar;
 use ArrayAccess;
 use ICanBoogie\Inflector;
 
-class Property implements ArrayAccess
+final class Property implements ArrayAccess
 {
     const IMMUTABLE = 'immutable';
     const MUTABLE_CREATE_ONLY = 'mutable_create_only';

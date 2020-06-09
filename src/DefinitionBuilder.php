@@ -5,7 +5,7 @@ namespace Pulsar;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\Relationship;
 
-class DefinitionBuilder
+final class DefinitionBuilder
 {
     const DEFAULT_ID_PROPERTY = [
         'type' => Type::INTEGER,

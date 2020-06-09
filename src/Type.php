@@ -14,7 +14,7 @@ namespace Pulsar;
 /**
  * Handles value type casting.
  */
-class Type
+final class Type
 {
     const STRING = 'string';
     const INTEGER = 'integer';

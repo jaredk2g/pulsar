@@ -13,7 +13,7 @@ use Pulsar\Model;
 use Pulsar\Query;
 use Pulsar\Type;
 
-class DbalDriver extends AbstractDriver
+final class DbalDriver extends AbstractDriver
 {
     /**
      * @var Connection

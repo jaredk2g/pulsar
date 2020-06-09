@@ -6,7 +6,7 @@ use InvalidArgumentException;
 use Pulsar\Model;
 use Pulsar\Property;
 
-class Relationship
+final class Relationship
 {
     const HAS_ONE = 'has_one';
     const HAS_MANY = 'has_many';
