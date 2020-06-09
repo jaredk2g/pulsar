@@ -78,7 +78,7 @@ final class DefinitionBuilder
                 // that only supported belongs to relationships
                 if (!isset($property['relation_type'])) {
                     $property['relation_type'] = Relationship::BELONGS_TO;
-                    $property['local_key'] = $k;
+                    $property['local_key'] = $property['local_key'] ?? $k;
                 } elseif (!isset($property['persisted'])) {
                     $property['persisted'] = false;
                 }
