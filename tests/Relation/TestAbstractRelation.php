@@ -13,9 +13,9 @@ namespace Pulsar\Tests\Relation;
 
 use Pulsar\Model;
 use Pulsar\Query;
-use Pulsar\Relation\Relation;
+use Pulsar\Relation\AbstractRelation;
 
-class TestRelation extends Relation
+class TestAbstractRelation extends AbstractRelation
 {
     protected function initQuery(Query $query): Query
     {

@@ -97,7 +97,7 @@ class ModelTest extends MockeryTestCase
             'relation' => [
                 'type' => Type::INTEGER,
                 'relation' => TestModel2::class,
-                'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+                'relation_type' => Relationship::BELONGS_TO,
                 'foreign_key' => 'id',
                 'local_key' => 'relation',
                 'null' => true,
@@ -220,7 +220,7 @@ class ModelTest extends MockeryTestCase
         $expected = [
             'type' => Type::INTEGER,
             'relation' => TestModel2::class,
-            'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+            'relation_type' => Relationship::BELONGS_TO,
             'foreign_key' => 'id',
             'local_key' => 'relation',
             'null' => true,
@@ -361,7 +361,7 @@ class ModelTest extends MockeryTestCase
             'person' => [
                 'type' => Type::INTEGER,
                 'relation' => Person::class,
-                'relation_type' => Model::RELATIONSHIP_BELONGS_TO,
+                'relation_type' => Relationship::BELONGS_TO,
                 'foreign_key' => 'id',
                 'local_key' => 'person',
                 'default' => 20,

@@ -8,20 +8,20 @@ use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
 use Pulsar\Relation\HasOne;
-use Pulsar\Relation\RelationFactory;
+use Pulsar\Relation\Relationship;
 use Pulsar\Tests\Models\InvalidRelationship;
 use Pulsar\Tests\Models\InvalidRelationship2;
 use Pulsar\Tests\Models\RelationshipTester;
 use Pulsar\Tests\Models\TestModel2;
 
-class RelationFactoryTest extends TestCase
+class RelationshipTest extends TestCase
 {
     public function testNotRelationship()
     {
         $this->expectException(InvalidArgumentException::class);
 
         $model = new InvalidRelationship();
-        RelationFactory::make($model, 'name', InvalidRelationship::getProperty('name'));
+        Relationship::make($model, 'name', InvalidRelationship::getProperty('name'));
     }
 
     public function testInvalidType()
@@ -29,13 +29,13 @@ class RelationFactoryTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $model = new InvalidRelationship();
-        RelationFactory::make($model, 'name', InvalidRelationship2::getProperty('invalid_relationship'));
+        Relationship::make($model, 'name', InvalidRelationship2::getProperty('invalid_relationship'));
     }
 
     public function testHasOne()
     {
         $model = new RelationshipTester();
-        $relation = RelationFactory::make($model, 'has_one', RelationshipTester::getProperty('has_one'));
+        $relation = Relationship::make($model, 'has_one', RelationshipTester::getProperty('has_one'));
 
         $this->assertInstanceOf(HasOne::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -47,7 +47,7 @@ class RelationFactoryTest extends TestCase
     public function testHasMany()
     {
         $model = new RelationshipTester();
-        $relation = RelationFactory::make($model, 'has_many', RelationshipTester::getProperty('has_many'));
+        $relation = Relationship::make($model, 'has_many', RelationshipTester::getProperty('has_many'));
 
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -59,7 +59,7 @@ class RelationFactoryTest extends TestCase
     public function testBelongsTo()
     {
         $model = new RelationshipTester();
-        $relation = RelationFactory::make($model, 'belongs_to', RelationshipTester::getProperty('belongs_to'));
+        $relation = Relationship::make($model, 'belongs_to', RelationshipTester::getProperty('belongs_to'));
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -71,7 +71,7 @@ class RelationFactoryTest extends TestCase
     public function testBelongsToMany()
     {
         $model = new RelationshipTester();
-        $relation = RelationFactory::make($model, 'belongs_to_many', RelationshipTester::getProperty('belongs_to_many'));
+        $relation = Relationship::make($model, 'belongs_to_many', RelationshipTester::getProperty('belongs_to_many'));
 
         $this->assertInstanceOf(BelongsToMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());

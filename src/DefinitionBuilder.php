@@ -3,7 +3,7 @@
 namespace Pulsar;
 
 use Pulsar\Relation\BelongsToMany;
-use Pulsar\Relation\RelationFactory;
+use Pulsar\Relation\Relationship;
 
 class DefinitionBuilder
 {
@@ -77,14 +77,14 @@ class DefinitionBuilder
                 // this is added for BC with older versions of pulsar
                 // that only supported belongs to relationships
                 if (!isset($property['relation_type'])) {
-                    $property['relation_type'] = Model::RELATIONSHIP_BELONGS_TO;
+                    $property['relation_type'] = Relationship::BELONGS_TO;
                     $property['local_key'] = $k;
                 } elseif (!isset($property['persisted'])) {
                     $property['persisted'] = false;
                 }
 
                 $tempProperty = new Property($property);
-                $relation = RelationFactory::make(new $modelClass(), $k, $tempProperty);
+                $relation = Relationship::make(new $modelClass(), $k, $tempProperty);
                 if (!isset($property['foreign_key'])) {
                     $property['foreign_key'] = $relation->getForeignKey();
                 }
@@ -99,7 +99,7 @@ class DefinitionBuilder
 
                 // when a belongs_to relationship is used then we automatically add a
                 // new property for the ID field which gets persisted to the DB
-                if (Model::RELATIONSHIP_BELONGS_TO == $property['relation_type'] && !isset($result[$property['local_key']])) {
+                if (Relationship::BELONGS_TO == $property['relation_type'] && !isset($result[$property['local_key']])) {
                     $result[$property['local_key']] = new Property([
                         'type' => Type::INTEGER,
                     ]);

@@ -19,7 +19,7 @@ use Pulsar\Query;
 /**
  * Represents a belongs-to-many relationship.
  */
-class BelongsToMany extends Relation
+class BelongsToMany extends AbstractRelation
 {
     /**
      * @var string

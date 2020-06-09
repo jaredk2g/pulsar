@@ -17,6 +17,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Moved `Model::cast()` to `Type::cast()`
 - Deprecated the `Model::TYPE_*` constants in favor of `Type::*` constants.
 - Deprecated the `Model` mutability constants in favor of `Property::*` constants.
+- Deprecated the `Model::RELATIONSHIP_*` constants in favor of `Relationship::*` constants.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

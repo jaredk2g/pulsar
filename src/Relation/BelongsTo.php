@@ -18,7 +18,7 @@ use Pulsar\Query;
 /**
  * Represents a belongs-to relationship.
  */
-class BelongsTo extends Relation
+class BelongsTo extends AbstractRelation
 {
     /**
      * @param string $localKey     identifying key on local model

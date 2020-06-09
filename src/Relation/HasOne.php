@@ -19,7 +19,7 @@ use Pulsar\Query;
 /**
  * Represents a has-one relationship.
  */
-class HasOne extends Relation
+class HasOne extends AbstractRelation
 {
     /**
      * @param string $localKey     identifying key on local model

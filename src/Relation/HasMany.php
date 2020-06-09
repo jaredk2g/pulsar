@@ -19,7 +19,7 @@ use Pulsar\Query;
 /**
  * Represents a has-many relationship.
  */
-class HasMany extends Relation
+class HasMany extends AbstractRelation
 {
     /**
      * @param string $localKey     identifying key on local model

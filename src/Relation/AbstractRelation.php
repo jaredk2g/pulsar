@@ -18,7 +18,7 @@ use Pulsar\Query;
 /**
  * Base relationship class.
  */
-abstract class Relation
+abstract class AbstractRelation
 {
     /**
      * @var Model

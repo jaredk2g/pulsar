@@ -11,6 +11,8 @@
 
 namespace Pulsar;
 
+use Pulsar\Relation\Relationship;
+
 /**
  * Represents a query against a model type.
  */
@@ -295,7 +297,7 @@ class Query
             $property = $eagerLoadedProperties[$k];
             $relationModelClass = $property['relation'];
 
-            if (Model::RELATIONSHIP_BELONGS_TO == $property['relation_type']) {
+            if (Relationship::BELONGS_TO == $property['relation_type']) {
                 $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
 
                 foreach ($ids[$k] as $j => $id) {
@@ -303,7 +305,7 @@ class Query
                         $models[$j]->setRelation($k, $relationships[$id]);
                     }
                 }
-            } elseif (Model::RELATIONSHIP_HAS_ONE == $property['relation_type']) {
+            } elseif (Relationship::HAS_ONE == $property['relation_type']) {
                 $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
 
                 foreach ($ids[$k] as $j => $id) {
@@ -317,7 +319,7 @@ class Query
                         $models[$j]->clearRelation($k);
                     }
                 }
-            } elseif (Model::RELATIONSHIP_HAS_MANY == $property['relation_type']) {
+            } elseif (Relationship::HAS_MANY == $property['relation_type']) {
                 $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], true);
 
                 foreach ($ids[$k] as $j => $id) {

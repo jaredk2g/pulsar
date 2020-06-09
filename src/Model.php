@@ -20,7 +20,7 @@ use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
-use Pulsar\Relation\RelationFactory;
+use Pulsar\Relation\Relationship;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
@@ -64,9 +64,13 @@ abstract class Model implements ArrayAccess
     /** @deprecated  */
     const TYPE_ARRAY = 'array';
 
+    /** @deprecated  */
     const RELATIONSHIP_HAS_ONE = 'has_one';
+    /** @deprecated  */
     const RELATIONSHIP_HAS_MANY = 'has_many';
+    /** @deprecated  */
     const RELATIONSHIP_BELONGS_TO = 'belongs_to';
+    /** @deprecated  */
     const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
 
     const DEFAULT_ID_NAME = 'id';
@@ -397,7 +401,7 @@ abstract class Model implements ArrayAccess
         // set local ID property on belongs_to relationship
         if ($value instanceof self) {
             $property = static::getProperty($name);
-            if ($property && self::RELATIONSHIP_BELONGS_TO == $property->getRelationType()) {
+            if ($property && Relationship::BELONGS_TO == $property->getRelationType()) {
                 $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
             }
         }
@@ -1295,7 +1299,7 @@ abstract class Model implements ArrayAccess
     public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $relation = RelationFactory::make($this, $k, self::getProperty($k));
+            $relation = Relationship::make($this, $k, self::getProperty($k));
             $this->_relationships[$k] = $relation->getResults();
         }
 

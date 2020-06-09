@@ -3,13 +3,14 @@
 namespace Pulsar\Tests\Models;
 
 use Pulsar\Model;
+use Pulsar\Relation\Relationship;
 
 class Post extends Model
 {
     protected static $properties = [
         'category' => [
             'relation' => Category::class,
-            'relation_type' => self::RELATIONSHIP_BELONGS_TO,
+            'relation_type' => Relationship::BELONGS_TO,
         ],
     ];
 }
