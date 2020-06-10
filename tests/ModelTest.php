@@ -685,6 +685,7 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel(['id' => 1]);
 
         $this->assertFalse(isset($model->test2));
+        $this->assertTrue(isset($model->answer));
 
         $model->test = 12345;
         $this->assertTrue(isset($model->test));
@@ -695,6 +696,7 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel();
         $this->assertFalse(isset($model->test));
         $this->assertFalse(isset($model->not_a_property));
+        $this->assertTrue(isset($model->answer));
 
         $model->test = 'hello world';
         $this->assertTrue(isset($model->test));
@@ -837,7 +839,7 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse(isset($model['test']));
     }
 
-    public function testDirty()
+    public function testDirtyNoHasChangedCheck()
     {
         $model = new TestModel();
         $this->assertFalse($model->dirty('test'));
@@ -852,9 +854,29 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel(['id' => 1, 'test' => 'hello world']);
         $this->assertFalse($model->dirty('test'));
         $model->test = 'hello world';
-        $this->assertFalse($model->dirty('test'));
+        $this->assertTrue($model->dirty('test'));
         $model->test = 'goodbye world';
         $this->assertTrue($model->dirty('test'));
+    }
+
+    public function testDirtyHasChangedCheck()
+    {
+        $model = new TestModel();
+        $this->assertFalse($model->dirty('test', true));
+        $this->assertFalse($model->dirty('not_a_property', true));
+
+        $model->test = 'hello world';
+        $this->assertTrue($model->dirty('test', true));
+
+        $model->not_a_property = 'hello world';
+        $this->assertTrue($model->dirty('not_a_property', true));
+
+        $model = new TestModel(['id' => 1, 'test' => 'hello world']);
+        $this->assertFalse($model->dirty('test', true));
+        $model->test = 'hello world';
+        $this->assertFalse($model->dirty('test', true));
+        $model->test = 'goodbye world';
+        $this->assertTrue($model->dirty('test', true));
     }
 
     /////////////////////////////

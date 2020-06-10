@@ -353,7 +353,11 @@ abstract class Model implements ArrayAccess
      */
     public function __isset($name)
     {
-        return array_key_exists($name, $this->_unsaved);
+        // isset() must return true for any value that could be returned by offsetGet
+        // because many callers will first check isset() to see if the value is accessible.
+        // This method is not supposed to only be valid for unsaved values, or properties
+        // that have a value.
+        return array_key_exists($name, $this->_unsaved) || static::hasProperty($name);
     }
 
     /**
@@ -874,9 +878,16 @@ abstract class Model implements ArrayAccess
     /**
      * Checks if the unsaved value for a property is present and
      * is different from the original value.
+     *
+     * @property string $name
+     * @property bool   $hasChanged when true, checks if the unsaved value is different from the saved value
      */
-    public function dirty(string $name): bool
+    public function dirty(string $name, bool $hasChanged = false): bool
     {
+        if (!$hasChanged) {
+            return isset($this->_unsaved[$name]);
+        }
+
         return isset($this->_unsaved[$name]) && (!isset($this->_values[$name]) || $this->_values[$name] != $this->_unsaved[$name]);
     }
 
