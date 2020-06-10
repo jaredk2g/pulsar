@@ -42,37 +42,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 abstract class Model implements ArrayAccess
 {
-    /** @deprecated  */
-    const IMMUTABLE = 'immutable';
-    /** @deprecated  */
-    const MUTABLE_CREATE_ONLY = 'mutable_create_only';
-    /** @deprecated  */
-    const MUTABLE = 'mutable';
-
-    /** @deprecated  */
-    const TYPE_STRING = 'string';
-    /** @deprecated  */
-    const TYPE_INTEGER = 'integer';
-    /** @deprecated  */
-    const TYPE_FLOAT = 'float';
-    /** @deprecated  */
-    const TYPE_BOOLEAN = 'boolean';
-    /** @deprecated  */
-    const TYPE_DATE = 'date';
-    /** @deprecated  */
-    const TYPE_OBJECT = 'object';
-    /** @deprecated  */
-    const TYPE_ARRAY = 'array';
-
-    /** @deprecated  */
-    const RELATIONSHIP_HAS_ONE = 'has_one';
-    /** @deprecated  */
-    const RELATIONSHIP_HAS_MANY = 'has_many';
-    /** @deprecated  */
-    const RELATIONSHIP_BELONGS_TO = 'belongs_to';
-    /** @deprecated  */
-    const RELATIONSHIP_BELONGS_TO_MANY = 'belongs_to_many';
-
     const DEFAULT_ID_NAME = 'id';
 
     /////////////////////////////

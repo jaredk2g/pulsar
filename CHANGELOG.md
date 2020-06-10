@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `Errors::setTranslator()` method can set the global translation implementation.
 - Models now have a `buildDefinition()` method that can be overridden to dynamically customize the model properties.
 - Added `Model::dirty()` to check if a property has an unsaved value that has changed.
+- Added `Type::*`, `Property::*`, and `Relationship::*` constants to replace removed `Model` constants.
 
 ### Changed
 - Make model internal properties private when possible.
@@ -16,9 +17,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - A new `Definition` class contains all the properties that belong to a method. Retrieving the model properties will return this object instead of an array.
 - A new `Property` class encapsulates the definition of a model property. The model property methods will return this object instead of an array.
 - Moved `Model::cast()` to `Type::cast()`
-- Deprecated the `Model::TYPE_*` constants in favor of `Type::*` constants.
-- Deprecated the `Model` mutability constants in favor of `Property::*` constants.
-- Deprecated the `Model::RELATIONSHIP_*` constants in favor of `Relationship::*` constants.
 - Marked classes as final when appropriate.
 - Calling `isset()` on model will no longer return true if the property exists but does not have an unsaved value.
 - The model constructor no longer has an `$id` argument. Instead you can use `new Model(['id' => 1234])`.
@@ -29,6 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Removed
 - Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`. It is now required to use `Errors::setTranslator()`.
 - Removed the `toArrayHook()` call. It is recommended to override `toArray()` if it is necessary to modify its output.
+- Removed `Model::TYPE_*`, `Model` mutability, and `Model::RELATIONSHIP_*` constants.
 
 ## 0.10 - 2020-04-22
 ### Added
