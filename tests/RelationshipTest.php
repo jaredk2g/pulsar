@@ -64,7 +64,7 @@ class RelationshipTest extends TestCase
         $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
         $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
+        $this->assertEquals('belongs_to_id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
     }
 
@@ -87,8 +87,8 @@ class RelationshipTest extends TestCase
 
         $this->assertInstanceOf(BelongsToMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
-        $this->assertEquals('id', $relation->getForeignKey());
-        $this->assertEquals('test_model2_id', $relation->getLocalKey());
+        $this->assertEquals('test_model2_id', $relation->getForeignKey());
+        $this->assertEquals('relationship_tester_id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
         $this->assertEquals('RelationshipTesterTestModel2', $relation->getTablename());
     }

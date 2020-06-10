@@ -76,7 +76,7 @@ final class DefinitionBuilder
             if (isset($property['relation']) && !isset($property['relation_type'])) {
                 self::buildBelongsToLegacy($k, $property);
             } elseif (isset($property['belongs_to'])) {
-                self::buildBelongsTo($property, $result);
+                self::buildBelongsTo($k, $property, $result);
             } elseif (isset($property['has_one'])) {
                 self::buildHasOne($property, $modelClass);
             } elseif (isset($property['belongs_to_many'])) {
@@ -115,7 +115,7 @@ final class DefinitionBuilder
         }
     }
 
-    private static function buildBelongsTo(array &$property, array &$result): void
+    private static function buildBelongsTo(string $name, array &$property, array &$result): void
     {
         $property['relation_type'] = Relationship::BELONGS_TO;
         $property['relation'] = $property['belongs_to'];
@@ -127,10 +127,9 @@ final class DefinitionBuilder
         }
 
         // the default local key would look like `user_id`
-        // for a model named User
+        // for a property named `user`
         if (!isset($property['local_key'])) {
-            $inflector = Inflector::get();
-            $property['local_key'] = strtolower($inflector->underscore($property['relation']::modelName())).'_id';
+            $property['local_key'] = $name.'_id';
         }
 
         // when a belongs_to relationship is used then we automatically add a
@@ -153,11 +152,12 @@ final class DefinitionBuilder
         // for a model named User
         if (!isset($property['local_key'])) {
             $inflector = Inflector::get();
-            $property['local_key'] = strtolower($inflector->underscore($property['relation']::modelName())).'_id';
+            $property['local_key'] = strtolower($inflector->underscore($modelClass::modelName())).'_id';
         }
 
         if (!isset($property['foreign_key'])) {
-            $property['foreign_key'] = Model::DEFAULT_ID_NAME;
+            $inflector = Inflector::get();
+            $property['foreign_key'] = strtolower($inflector->underscore($property['relation']::modelName())).'_id';
         }
 
         // the default pivot table name looks like
@@ -181,8 +181,8 @@ final class DefinitionBuilder
         $property['relation'] = $property['has_one'];
         $property['persisted'] = false;
 
-        // the default foreign key would look like
-        // `user_id` for a model named User
+        // the default foreign key would look like `user_id`
+        // for a model named User
         if (!isset($property['foreign_key'])) {
             $inflector = Inflector::get();
             $property['foreign_key'] = strtolower($inflector->underscore($modelClass::modelName())).'_id';
