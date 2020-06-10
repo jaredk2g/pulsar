@@ -137,6 +137,7 @@ final class DefinitionBuilder
         if (!isset($result[$property['local_key']])) {
             $result[$property['local_key']] = new Property([
                 'type' => Type::INTEGER,
+                'mutable' => $property['mutable'] ?? Property::MUTABLE,
             ], $property['local_key']);
         }
     }
