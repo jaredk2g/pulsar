@@ -348,7 +348,7 @@ abstract class Model implements ArrayAccess
         // set local ID property on belongs_to relationship
         if ($value instanceof self) {
             $property = static::getProperty($name);
-            if ($property && Relationship::BELONGS_TO == $property->getRelationType()) {
+            if ($property && Relationship::BELONGS_TO == $property->getRelationshipType()) {
                 $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
             }
         }

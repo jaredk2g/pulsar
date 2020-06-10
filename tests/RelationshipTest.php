@@ -68,6 +68,18 @@ class RelationshipTest extends TestCase
         $this->assertEquals($model, $relation->getLocalModel());
     }
 
+    public function testBelongsToLegacy()
+    {
+        $model = new RelationshipTester();
+        $relation = Relationship::make($model, RelationshipTester::getProperty('belongs_to_legacy'));
+
+        $this->assertInstanceOf(BelongsTo::class, $relation);
+        $this->assertEquals(TestModel2::class, $relation->getForeignModel());
+        $this->assertEquals('id', $relation->getForeignKey());
+        $this->assertEquals('belongs_to_legacy', $relation->getLocalKey());
+        $this->assertEquals($model, $relation->getLocalModel());
+    }
+
     public function testBelongsToMany()
     {
         $model = new RelationshipTester();

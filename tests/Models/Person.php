@@ -4,7 +4,6 @@ namespace Pulsar\Tests\Models;
 
 use Pulsar\ACLModel;
 use Pulsar\Model;
-use Pulsar\Relation\Relationship;
 use Pulsar\Type;
 
 class Person extends ACLModel
@@ -22,8 +21,7 @@ class Person extends ACLModel
             'validate' => 'email',
         ],
         'garage' => [
-            'relation' => Garage::class,
-            'relation_type' => Relationship::HAS_ONE,
+            'has_one' => Garage::class,
         ],
     ];
 

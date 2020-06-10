@@ -149,12 +149,12 @@ final class Property implements ArrayAccess
         return $this->persisted;
     }
 
-    public function getRelation(): ?string
+    public function getForeignModelClass(): ?string
     {
         return $this->relation;
     }
 
-    public function getRelationType(): ?string
+    public function getRelationshipType(): ?string
     {
         return $this->relation_type;
     }

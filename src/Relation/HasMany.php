@@ -11,7 +11,6 @@
 
 namespace Pulsar\Relation;
 
-use ICanBoogie\Inflector;
 use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
@@ -28,17 +27,6 @@ final class HasMany extends AbstractRelation
      */
     public function __construct(Model $localModel, ?string $localKey, string $foreignModel, ?string $foreignKey)
     {
-        // the default foreign key would look like
-        // `user_id` for a model named User
-        if (!$foreignKey) {
-            $inflector = Inflector::get();
-            $foreignKey = strtolower($inflector->underscore($localModel::modelName())).'_id';
-        }
-
-        if (!$localKey) {
-            $localKey = Model::DEFAULT_ID_NAME;
-        }
-
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
     }
 

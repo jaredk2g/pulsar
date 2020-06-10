@@ -18,33 +18,33 @@ final class Relationship
      */
     public static function make(Model $model, Property $property): AbstractRelation
     {
-        $relationModelClass = $property->getRelation();
-        if (!$relationModelClass) {
+        $foreignModel = $property->getForeignModelClass();
+        if (!$foreignModel) {
             throw new InvalidArgumentException('Property "'.$property->getName().'" does not have a relationship.');
         }
 
         $foreignKey = $property->getForeignKey();
         $localKey = $property->getLocalKey();
-        $relationType = $property->getRelationType();
+        $type = $property->getRelationshipType();
 
-        if (self::HAS_ONE == $relationType) {
-            return new HasOne($model, $localKey, $relationModelClass, $foreignKey);
+        if (self::BELONGS_TO == $type) {
+            return new BelongsTo($model, $localKey, $foreignModel, $foreignKey);
         }
 
-        if (self::HAS_MANY == $relationType) {
-            return new HasMany($model, $localKey, $relationModelClass, $foreignKey);
-        }
-
-        if (self::BELONGS_TO == $relationType) {
-            return new BelongsTo($model, $localKey, $relationModelClass, $foreignKey);
-        }
-
-        if (self::BELONGS_TO_MANY == $relationType) {
+        if (self::BELONGS_TO_MANY == $type) {
             $pivotTable = $property->getPivotTablename();
 
-            return new BelongsToMany($model, $localKey, $pivotTable, $relationModelClass, $foreignKey);
+            return new BelongsToMany($model, $localKey, $pivotTable, $foreignModel, $foreignKey);
         }
 
-        throw new InvalidArgumentException('Relationship type on "'.$property->getName().'" property not supported: '.$relationType);
+        if (self::HAS_ONE == $type) {
+            return new HasOne($model, $localKey, $foreignModel, $foreignKey);
+        }
+
+        if (self::HAS_MANY == $type) {
+            return new HasMany($model, $localKey, $foreignModel, $foreignKey);
+        }
+
+        throw new InvalidArgumentException('Relationship type on "'.$property->getName().'" property not supported: '.$type);
     }
 }

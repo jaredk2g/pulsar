@@ -3,26 +3,24 @@
 namespace Pulsar\Tests\Models;
 
 use Pulsar\Model;
-use Pulsar\Relation\Relationship;
 
 class RelationshipTester extends Model
 {
     protected static $properties = [
-        'belongs_to' => [
+        'belongs_to_legacy' => [
             'relation' => TestModel2::class,
-            'relation_type' => Relationship::BELONGS_TO,
+        ],
+        'belongs_to' => [
+            'belongs_to' => TestModel2::class,
         ],
         'belongs_to_many' => [
-            'relation' => TestModel2::class,
-            'relation_type' => Relationship::BELONGS_TO_MANY,
+            'belongs_to_many' => TestModel2::class,
         ],
         'has_one' => [
-            'relation' => TestModel2::class,
-            'relation_type' => Relationship::HAS_ONE,
+            'has_one' => TestModel2::class,
         ],
         'has_many' => [
-            'relation' => TestModel2::class,
-            'relation_type' => Relationship::HAS_MANY,
+            'has_many' => TestModel2::class,
         ],
         'name' => [],
     ];

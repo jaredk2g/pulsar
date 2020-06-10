@@ -11,7 +11,6 @@
 
 namespace Pulsar\Relation;
 
-use ICanBoogie\Inflector;
 use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
@@ -34,30 +33,6 @@ final class BelongsToMany extends AbstractRelation
      */
     public function __construct(Model $localModel, ?string $localKey, ?string $tablename, ?string $foreignModel, ?string $foreignKey)
     {
-        // the default local key would look like `user_id`
-        // for a model named User
-        if (!$localKey) {
-            $inflector = Inflector::get();
-            $localKey = strtolower($inflector->underscore($foreignModel::modelName())).'_id';
-        }
-
-        if (!$foreignKey) {
-            $foreignKey = Model::DEFAULT_ID_NAME;
-        }
-
-        // the default pivot table name looks like
-        // RoleUser for models named Role and User.
-        // the tablename is built from the model names
-        // in alphabetic order.
-        if (!$tablename) {
-            $names = [
-                $localModel::modelName(),
-                $foreignModel::modelName(),
-            ];
-            sort($names);
-            $tablename = implode($names);
-        }
-
         $this->tablename = $tablename;
 
         parent::__construct($localModel, $localKey, $foreignModel, $foreignKey);
