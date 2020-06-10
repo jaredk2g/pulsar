@@ -54,7 +54,6 @@ abstract class AbstractRelation
     {
         $this->localModel = $localModel;
         $this->localKey = $localKey;
-
         $this->foreignModel = $foreignModel;
         $this->foreignKey = $foreignKey;
     }

@@ -804,6 +804,13 @@ class ModelTest extends MockeryTestCase
 
     public function testToArrayWithRelationship()
     {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->andReturn([]);
+
+        RelationshipTestModel::setDriver($driver);
+
         $model = new RelationshipTestModel(['id' => 5]);
         $expected = [
             'id' => 5,
@@ -2086,6 +2093,21 @@ class ModelTest extends MockeryTestCase
             'customer_id' => 123,
         ];
         $this->assertEquals($expected, $invoice->toArray());
+    }
+
+    public function testGetFromDbBelongsTo()
+    {
+        $invoice = new Invoice(['id' => 10, 'customer_id' => 100]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('queryModels')
+            ->andReturn([['id' => 100, 'name' => 'Bob Loblaw']]);
+
+        Invoice::setDriver($driver);
+
+        $this->assertInstanceOf(Customer::class, $invoice->customer);
+        $this->assertEquals(100, $invoice->customer->id);
+        $this->assertEquals('Bob Loblaw', $invoice->customer->name);
     }
 
     /////////////////////////////

@@ -20,6 +20,7 @@ use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
+use Pulsar\Relation\AbstractRelation;
 use Pulsar\Relation\Relationship;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
@@ -83,6 +84,11 @@ abstract class Model implements ArrayAccess
      * @var array
      */
     protected $_relationships = [];
+
+    /**
+     * @var AbstractRelation[]
+     */
+    private $relationships = [];
 
     /////////////////////////////
     // Base model variables
@@ -785,22 +791,25 @@ abstract class Model implements ArrayAccess
      *  3. default value
      *  4. null
      *
-     * @param string $property
-     *
      * @return mixed
      */
-    protected function getValue($property, array $values)
+    private function getValue(string $name, array $values)
     {
         $value = null;
 
-        if (array_key_exists($property, $values)) {
-            $value = $values[$property];
-        } elseif (static::hasProperty($property)) {
-            $value = $this->_values[$property] = self::getProperty($property)->getDefault();
+        if (array_key_exists($name, $values)) {
+            $value = $values[$name];
+        } elseif ($property = self::getProperty($name)) {
+            if ($property->getRelationshipType() && !$property->isPersisted()) {
+                $relationship = $this->getRelationship($property);
+                $value = $this->_values[$name] = $relationship->getResults();
+            } else {
+                $value = $this->_values[$name] = $property->getDefault();
+            }
         }
 
         // call any accessors
-        if ($accessor = self::getAccessor($property)) {
+        if ($accessor = self::getAccessor($name)) {
             $value = $this->$accessor($value);
         }
 
@@ -810,7 +819,7 @@ abstract class Model implements ArrayAccess
     /**
      * Populates a newly created model with its ID.
      */
-    protected function getNewID()
+    private function getNewID()
     {
         $ids = [];
         $namedIds = [];
@@ -1264,6 +1273,21 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
     // Relationships
     /////////////////////////////
+
+    /**
+     * Gets the relationship manager for a property.
+     *
+     * @throws InvalidArgumentException when the relationship manager cannot be created
+     */
+    private function getRelationship(Property $property): AbstractRelation
+    {
+        $name = $property->getName();
+        if (!isset($this->relationships[$name])) {
+            $this->relationships[$name] = Relationship::make($this, $property);
+        }
+
+        return $this->relationships[$name];
+    }
 
     /**
      * @deprecated
