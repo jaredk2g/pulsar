@@ -894,11 +894,15 @@ abstract class Model implements ArrayAccess
      */
     public function dirty(string $name, bool $hasChanged = false): bool
     {
-        if (!$hasChanged) {
-            return isset($this->_unsaved[$name]);
+        if (!array_key_exists($name, $this->_unsaved)) {
+            return false;
         }
 
-        return isset($this->_unsaved[$name]) && (!isset($this->_values[$name]) || $this->_values[$name] != $this->_unsaved[$name]);
+        if (!$hasChanged) {
+            return true;
+        }
+
+        return $this->$name !== $this->ignoreUnsaved()->$name;
     }
 
     /**

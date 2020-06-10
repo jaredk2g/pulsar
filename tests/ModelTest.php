@@ -848,6 +848,9 @@ class ModelTest extends MockeryTestCase
         $model->test = 'hello world';
         $this->assertTrue($model->dirty('test'));
 
+        $model->test = null;
+        $this->assertTrue($model->dirty('test'));
+
         $model->not_a_property = 'hello world';
         $this->assertTrue($model->dirty('not_a_property'));
 
@@ -868,6 +871,9 @@ class ModelTest extends MockeryTestCase
         $model->test = 'hello world';
         $this->assertTrue($model->dirty('test', true));
 
+        $model->test = null;
+        $this->assertFalse($model->dirty('test', true));
+
         $model->not_a_property = 'hello world';
         $this->assertTrue($model->dirty('not_a_property', true));
 
@@ -876,6 +882,8 @@ class ModelTest extends MockeryTestCase
         $model->test = 'hello world';
         $this->assertFalse($model->dirty('test', true));
         $model->test = 'goodbye world';
+        $this->assertTrue($model->dirty('test', true));
+        $model->test = null;
         $this->assertTrue($model->dirty('test', true));
     }
 
