@@ -1959,7 +1959,7 @@ class ModelTest extends MockeryTestCase
                 'mutable' => 'mutable',
                 'null' => false,
                 'unique' => false,
-                'required' => false,
+                'required' => true,
                 'validate' => null,
                 'default' => null,
                 'persisted' => false,
@@ -1990,7 +1990,7 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testGetSetRelationshipBelongsTo()
+    public function testSetPropertyBelongsTo()
     {
         $customer = new Customer(['id' => 123]);
         $customer->name = 'Test';
@@ -1999,6 +1999,13 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($customer, $invoice->customer);
         $this->assertEquals('Test', $invoice->customer->name);
         $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testInvalidSetBelongsTo()
+    {
+        $this->expectException(ModelException::class);
+        $invoice = new Invoice();
+        $invoice->customer = 1234;
     }
 
     public function testCreateBelongsTo()
@@ -2029,6 +2036,15 @@ class ModelTest extends MockeryTestCase
         $this->assertTrue($invoice->persisted());
         $this->assertEquals($customer, $invoice->customer);
         $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testCreateBelongsToMissingRequired()
+    {
+        $invoice = new Invoice();
+        $errorStack = $invoice->getErrors();
+        $this->assertFalse($invoice->save());
+        $this->assertCount(1, $errorStack->all());
+        $this->assertEquals(['Customer is missing'], $errorStack->all());
     }
 
     public function testSetBelongsTo()

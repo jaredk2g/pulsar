@@ -346,11 +346,13 @@ abstract class Model implements ArrayAccess
         }
 
         // set local ID property on belongs_to relationship
-        if ($value instanceof self) {
-            $property = static::getProperty($name);
-            if ($property && Relationship::BELONGS_TO == $property->getRelationshipType()) {
-                $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
+        $property = static::getProperty($name);
+        if ($property && Relationship::BELONGS_TO == $property->getRelationshipType() && !$property->isPersisted()) {
+            if (!$value instanceof self) {
+                throw new ModelException('The value set on the "'.$name.'" property must be a model.');
             }
+
+            $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
         }
     }
 
@@ -668,9 +670,10 @@ abstract class Model implements ArrayAccess
 
         // check for required fields
         foreach ($requiredProperties as $property) {
-            if (!isset($insertArray[$property->getName()])) {
+            $name = $property->getName();
+            if (!isset($insertArray[$name]) && !isset($preservedValues[$name])) {
                 $params = [
-                    'field' => $property->getName(),
+                    'field' => $name,
                     'field_name' => $property->getTitle($this),
                 ];
                 $this->getErrors()->add('pulsar.validation.required', $params);
