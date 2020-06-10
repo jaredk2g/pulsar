@@ -98,7 +98,7 @@ trait Cacheable
 
     public function refresh()
     {
-        if (false === $this->id()) {
+        if (!$this->hasId()) {
             return $this;
         }
 

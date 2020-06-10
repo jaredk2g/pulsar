@@ -283,6 +283,16 @@ abstract class Model implements ArrayAccess
         return $this->idValues;
     }
 
+    /**
+     * Checks if the model has an identifier present.
+     * This does not indicate whether the model has been
+     * persisted to the database or loaded from the database.
+     */
+    public function hasId(): bool
+    {
+        return $this->hasId;
+    }
+
     /////////////////////////////
     // Magic Methods
     /////////////////////////////

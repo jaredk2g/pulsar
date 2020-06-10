@@ -9,6 +9,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Models now have a `buildDefinition()` method that can be overridden to dynamically customize the model properties.
 - Added `Model::dirty()` to check if a property has an unsaved value, and whether it has changed.
 - Added `Type::*`, `Property::*`, and `Relationship::*` constants to replace removed `Model` constants.
+- New method `Model::hasId()` will indicate when a model has a complete identifier.
 
 ### Changed
 - Make model internal properties private when possible.
