@@ -802,7 +802,7 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($expected, $model->toArray());
     }
 
-    public function testToArrayWithRelationship()
+    public function testToArrayWithModel()
     {
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -818,8 +818,8 @@ class ModelTest extends MockeryTestCase
                 'id' => 10,
                 'name' => 'Bob Loblaw',
                 'email' => 'bob@example.com',
-                'garage' => null,
                 'deleted_at' => null,
+                // the `garage` relationship should not be included by default
             ],
         ];
         $this->assertEquals($expected, $model->toArray());
@@ -2086,11 +2086,8 @@ class ModelTest extends MockeryTestCase
         $invoice->customer = $customer;
         $expected = [
             'id' => 10,
-            'customer' => [
-                'id' => 123,
-                'name' => 'Test',
-            ],
             'customer_id' => 123,
+            // the `customer` relationship should not be included by default
         ];
         $this->assertEquals($expected, $invoice->toArray());
     }

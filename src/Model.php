@@ -878,6 +878,15 @@ abstract class Model implements ArrayAccess
         // build the list of properties to retrieve
         $properties = self::getProperties()->propertyNames();
 
+        // remove any relationships
+        $relationships = [];
+        foreach (self::getProperties()->all() as $property) {
+            if ($property->getRelationshipType() && !$property->isPersisted()) {
+                $relationships[] = $property->getName();
+            }
+        }
+        $properties = array_diff($properties, $relationships);
+
         // remove any hidden properties
         $hide = (property_exists($this, 'hidden')) ? static::$hidden : [];
         $properties = array_diff($properties, $hide);
@@ -890,6 +899,15 @@ abstract class Model implements ArrayAccess
         $result = $this->get($properties);
 
         foreach ($result as $k => &$value) {
+            // convert arrays of models to arrays
+            if (is_array($value)) {
+                foreach ($value as &$subValue) {
+                    if ($subValue instanceof Model) {
+                        $subValue = $subValue->toArray();
+                    }
+                }
+            }
+
             // convert any models to arrays
             if ($value instanceof self) {
                 $value = $value->toArray();
