@@ -461,7 +461,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getProperty(string $property): ?Property
     {
-        return self::getProperties()->get($property);
+        return static::getProperties()->get($property);
     }
 
     /**
@@ -481,7 +481,7 @@ abstract class Model implements ArrayAccess
      */
     public static function hasProperty(string $property): bool
     {
-        return self::getProperties()->has($property);
+        return static::getProperties()->has($property);
     }
 
     /**
@@ -636,7 +636,7 @@ abstract class Model implements ArrayAccess
         }
 
         $requiredProperties = [];
-        foreach (self::getProperties()->all() as $name => $property) {
+        foreach (static::getProperties()->all() as $name => $property) {
             // build a list of the required properties
             if ($property->isRequired()) {
                 $requiredProperties[] = $property;
@@ -648,17 +648,21 @@ abstract class Model implements ArrayAccess
             }
         }
 
+        // save any relationships
+        if (!$this->saveRelationships($usesTransactions)) {
+            return false;
+        }
+
         // validate the values being saved
         $validated = true;
         $insertArray = [];
         $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            if (!self::getProperties()->has($name)) {
+            $property = static::getProperty($name);
+            if (!$property) {
                 continue;
             }
-
-            $property = self::getProperty($name);
 
             // check if this property is persisted to the DB
             if (!$property->isPersisted()) {
@@ -759,7 +763,7 @@ abstract class Model implements ArrayAccess
         // see if there are any model properties that do not exist.
         // when true then this means the model needs to be hydrated
         // NOTE: only looking at model properties and excluding dynamic/non-existent properties
-        $modelProperties = self::getProperties()->propertyNames();
+        $modelProperties = static::getProperties()->propertyNames();
         $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
 
         if ($numMissing > 0 && !$this->loaded) {
@@ -799,7 +803,7 @@ abstract class Model implements ArrayAccess
 
         if (array_key_exists($name, $values)) {
             $value = $values[$name];
-        } elseif ($property = self::getProperty($name)) {
+        } elseif ($property = static::getProperty($name)) {
             if ($property->getRelationshipType() && !$property->isPersisted()) {
                 $relationship = $this->getRelationship($property);
                 $value = $this->_values[$name] = $relationship->getResults();
@@ -876,11 +880,11 @@ abstract class Model implements ArrayAccess
     public function toArray(): array
     {
         // build the list of properties to retrieve
-        $properties = self::getProperties()->propertyNames();
+        $properties = static::getProperties()->propertyNames();
 
         // remove any relationships
         $relationships = [];
-        foreach (self::getProperties()->all() as $property) {
+        foreach (static::getProperties()->all() as $property) {
             if ($property->getRelationshipType() && !$property->isPersisted()) {
                 $relationships[] = $property->getName();
             }
@@ -974,17 +978,22 @@ abstract class Model implements ArrayAccess
             return false;
         }
 
+        // save any relationships
+        if (!$this->saveRelationships($usesTransactions)) {
+            return false;
+        }
+
         // validate the values being saved
         $validated = true;
         $updateArray = [];
         $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            if (!self::getProperties()->has($name)) {
+            if (!static::getProperties()->has($name)) {
                 continue;
             }
 
-            $property = self::getProperty($name);
+            $property = static::getProperty($name);
 
             // check if this property is persisted to the DB
             if (!$property->isPersisted()) {
@@ -1308,6 +1317,57 @@ abstract class Model implements ArrayAccess
     }
 
     /**
+     * Saves any unsaved models attached through a relationship. This will only
+     * save attached models that have not been saved yet.
+     */
+    private function saveRelationships(bool $usesTransactions): bool
+    {
+        try {
+            foreach ($this->_unsaved as $k => $value) {
+                if ($value instanceof self) {
+                    if (!$value->persisted()) {
+                        $value->saveOrFail();
+                        // set the model again to update any ID properties
+                        $this->$k = $value;
+                    }
+                } elseif (is_array($value)) {
+                    foreach ($value as $subValue) {
+                        if ($subValue instanceof self) {
+                            $value->saveOrFail();
+                        }
+                    }
+                }
+            }
+        } catch (ModelException $e) {
+            $this->getErrors()->add($e->getMessage());
+
+            if ($usesTransactions) {
+                self::$driver->rollBackTransaction($this->getConnection());
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * This.
+     *
+     * @internal
+     *
+     * @param $value
+     */
+    public function hydrateValue(string $name, $value): void
+    {
+        if ($property = static::getProperty($name)) {
+            $this->_values[$name] = Type::cast($property, $value);
+        } else {
+            $this->_values[$name] = $value;
+        }
+    }
+
+    /**
      * @deprecated
      *
      * Gets the model(s) for a relationship
@@ -1321,7 +1381,7 @@ abstract class Model implements ArrayAccess
     public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $relation = Relationship::make($this, self::getProperty($k));
+            $relation = Relationship::make($this, static::getProperty($k));
             $this->_relationships[$k] = $relation->getResults();
         }
 

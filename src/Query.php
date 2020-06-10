@@ -274,6 +274,7 @@ class Query
         }
 
         // fetch the models matching the query
+        /** @var Model[] $models */
         $models = [];
         foreach ($driver->queryModels($this) as $j => $row) {
             // create the model and cache the loaded values
@@ -298,6 +299,10 @@ class Query
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
                         $models[$j]->setRelation($k, $relationships[$id]);
+                        // older style properties do not support this type of hydration
+                        if (!$property->isPersisted()) {
+                            $models[$j]->hydrateValue($k, $relationships[$id]);
+                        }
                     }
                 }
             } elseif (Relationship::HAS_ONE == $type) {
@@ -306,12 +311,21 @@ class Query
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
                         $models[$j]->setRelation($k, $relationships[$id]);
+                        // older style properties do not support this type of hydration
+                        if (!$property->isPersisted()) {
+                            $models[$j]->hydrateValue($k, $relationships[$id]);
+                        }
                     } else {
                         // when using has one eager loading we must
                         // explicitly mark the relationship as null
                         // for models not found during eager loading
                         // or else it will trigger another DB call
                         $models[$j]->clearRelation($k);
+
+                        // older style properties do not support this type of hydration
+                        if (!$property->isPersisted()) {
+                            $models[$j]->hydrateValue($k, []);
+                        }
                     }
                 }
             } elseif (Relationship::HAS_MANY == $type) {
@@ -320,8 +334,16 @@ class Query
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
                         $models[$j]->setRelationCollection($k, $relationships[$id]);
+                        // older style properties do not support this type of hydration
+                        if (!$property->isPersisted()) {
+                            $models[$j]->hydrateValue($k, $relationships[$id]);
+                        }
                     } else {
                         $models[$j]->setRelationCollection($k, []);
+                        // older style properties do not support this type of hydration
+                        if (!$property->isPersisted()) {
+                            $models[$j]->hydrateValue($k, []);
+                        }
                     }
                 }
             }
@@ -462,6 +484,8 @@ class Query
      *
      * @param string $modelClass
      * @param bool   $multiple   when true will condense
+     *
+     * @return Model[]
      */
     private function fetchRelationships($modelClass, array $ids, string $foreignKey, bool $multiple): array
     {

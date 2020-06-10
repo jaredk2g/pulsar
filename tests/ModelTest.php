@@ -2059,6 +2059,46 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals(['Customer is missing'], $errorStack->all());
     }
 
+    public function testCreateBelongsToWithNewRelationshipModel()
+    {
+        $customer = new Customer(['name' => 'Test']);
+        $invoice = new Invoice();
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->withArgs([$customer, [
+                'name' => 'Test',
+            ]])
+            ->andReturn(true)
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$customer, 'id'])
+            ->andReturn(123);
+
+        $driver->shouldReceive('createModel')
+            ->withArgs([$invoice, [
+                'customer_id' => 123,
+            ]])
+            ->andReturn(true)
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$invoice, 'id'])
+            ->andReturn(1);
+
+        TestModel::setDriver($driver);
+
+        $invoice->customer = $customer;
+        $this->assertTrue($invoice->create());
+        $this->assertEquals(1, $invoice->id());
+        $this->assertEquals(1, $invoice->id);
+        $this->assertTrue($invoice->persisted());
+        $this->assertEquals($customer, $invoice->customer);
+        $this->assertEquals(123, $invoice->customer_id);
+    }
+
     public function testSetBelongsTo()
     {
         $invoice = new Invoice(['id' => 10]);
@@ -2072,6 +2112,37 @@ class ModelTest extends MockeryTestCase
         TestModel::setDriver($driver);
 
         $customer = new Customer(['id' => 123]);
+        $invoice->customer = $customer;
+        $this->assertTrue($invoice->save());
+        $this->assertTrue($invoice->persisted());
+        $this->assertEquals($customer, $invoice->customer);
+        $this->assertEquals(123, $invoice->customer_id);
+    }
+
+    public function testSetBelongsToWithNewRelationshipModel()
+    {
+        $customer = new Customer(['name' => 'Test']);
+        $invoice = new Invoice(['id' => 10]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->withArgs([$customer, [
+                'name' => 'Test',
+            ]])
+            ->andReturn(true)
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$customer, 'id'])
+            ->andReturn(123);
+
+        $driver->shouldReceive('updateModel')
+            ->withArgs([$invoice, ['customer_id' => 123]])
+            ->andReturn(true);
+
+        TestModel::setDriver($driver);
+
         $invoice->customer = $customer;
         $this->assertTrue($invoice->save());
         $this->assertTrue($invoice->persisted());
