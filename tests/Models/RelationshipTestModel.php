@@ -10,6 +10,6 @@ class RelationshipTestModel extends Model
 
     protected function getPersonValue()
     {
-        return new Person(10, ['name' => 'Bob Loblaw', 'email' => 'bob@example.com']);
+        return new Person(['id' => 10, 'name' => 'Bob Loblaw', 'email' => 'bob@example.com']);
     }
 }

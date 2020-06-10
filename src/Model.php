@@ -180,17 +180,31 @@ abstract class Model implements ArrayAccess
      * @param array|string|Model|false $id     ordered array of ids or comma-separated id string
      * @param array                    $values optional key-value map to pre-seed model
      */
-    public function __construct($id = false, array $values = [])
+    public function __construct(array $values = [])
     {
         // initialize the model
         $this->init();
 
-        // parse the supplied model ID
-        $this->parseId($id);
+        $ids = [];
+        $this->hasId = true;
+        foreach (static::$ids as $name) {
+            $id = false;
+            if (array_key_exists($name, $values)) {
+                $idProperty = static::getProperty($name);
+                $id = Type::cast($idProperty, $values[$name]);
+            }
+
+            $ids[$name] = $id;
+            $this->hasId = $this->hasId && $id;
+        }
+
+        $this->idValues = $ids;
 
         // load any given values
-        if (count($values) > 0) {
+        if ($this->hasId && count($values) > count($ids)) {
             $this->refreshWith($values);
+        } elseif (!$this->hasId) {
+            $this->_unsaved = $values;
         }
     }
 
@@ -223,57 +237,6 @@ abstract class Model implements ArrayAccess
             self::updating(function (ModelEvent $event) {
                 $event->getModel()->updated_at = time();
             });
-        }
-    }
-
-    /**
-     * Parses the given ID, which can be a single or composite primary key.
-     *
-     * @param mixed $id
-     */
-    private function parseId($id)
-    {
-        if (is_array($id)) {
-            // A model can be supplied as a primary key
-            foreach ($id as &$el) {
-                if ($el instanceof self) {
-                    $el = $el->id();
-                }
-            }
-
-            // The IDs come in as the same order as ::$ids.
-            // We need to match up the elements on that
-            // input into a key-value map for each ID property.
-            $ids = [];
-            $idQueue = array_reverse($id);
-            $this->hasId = true;
-            foreach (static::$ids as $k => $f) {
-                // type cast
-                if (count($idQueue) > 0) {
-                    $idProperty = static::getProperty($f);
-                    $ids[$f] = Type::cast($idProperty, array_pop($idQueue));
-                } else {
-                    $ids[$f] = false;
-                    $this->hasId = false;
-                }
-            }
-
-            $this->idValues = $ids;
-        } elseif ($id instanceof self) {
-            // A model can be supplied as a primary key
-            $this->hasId = $id->hasId;
-            $this->idValues = $id->ids();
-        } else {
-            // type cast the single primary key
-            $idName = static::$ids[0];
-            $this->hasId = false;
-            if (false !== $id) {
-                $idProperty = static::getProperty($idName);
-                $id = Type::cast($idProperty, $id);
-                $this->hasId = true;
-            }
-
-            $this->idValues = [$idName => $id];
         }
     }
 

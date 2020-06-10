@@ -190,7 +190,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $this->assertEquals(['name' => 'John'], $driver->loadModel($model));
     }
 
@@ -201,7 +201,7 @@ class DatabaseDriverTest extends MockeryTestCase
             ->andReturn(false);
         $driver = $this->getDriver($db);
 
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $this->assertNull($driver->loadModel($model));
     }
 
@@ -212,7 +212,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('select->from->where->one')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $driver->loadModel($model);
     }
 
@@ -237,7 +237,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(11);
+        $model = new Person(['id' => 11]);
 
         $this->assertTrue($driver->updateModel($model, []));
 
@@ -253,7 +253,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('update')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(11);
+        $model = new Person(['id' => 11]);
         $driver->updateModel($model, ['name' => 'John']);
     }
 
@@ -266,7 +266,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(10);
+        $model = new Person(['id' => 10]);
         $this->assertTrue($driver->deleteModel($model));
     }
 
@@ -278,7 +278,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $db->shouldReceive('delete->where->execute')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(10);
+        $model = new Person(['id' => 10]);
         $driver->deleteModel($model);
     }
 

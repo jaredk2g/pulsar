@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Deprecated the `Model::RELATIONSHIP_*` constants in favor of `Relationship::*` constants.
 - Marked classes as final when appropriate.
 - Calling `isset()` on model will no longer return true if the property exists but does not have an unsaved value.
+- The model constructor no longer has an `$id` argument. Instead you can use `new Model(['id' => 1234])`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

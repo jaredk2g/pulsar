@@ -49,7 +49,7 @@ class CacheableTest extends MockeryTestCase
 
     public function testGetCacheKey()
     {
-        $model = new CacheableModel(5);
+        $model = new CacheableModel(['id' => 5]);
         $this->assertEquals('models.cacheablemodel.5', $model->getCacheKey());
     }
 
@@ -58,12 +58,12 @@ class CacheableTest extends MockeryTestCase
         $cache = $this->getCache();
         CacheableModel::setCachePool($cache);
 
-        $model = new CacheableModel(5);
+        $model = new CacheableModel(['id' => 5]);
         $item = $model->getCacheItem();
         $this->assertInstanceOf(CacheItemInterface::class, $item);
         $this->assertEquals('models.cacheablemodel.5', $item->getKey());
 
-        $model = new CacheableModel(6);
+        $model = new CacheableModel(['id' => 6]);
         $item = $model->getCacheItem();
         $this->assertInstanceOf(CacheItemInterface::class, $item);
         $this->assertEquals('models.cacheablemodel.6', $item->getKey());
@@ -73,7 +73,7 @@ class CacheableTest extends MockeryTestCase
     {
         $cache = $this->getCache();
 
-        $model = new CacheableModel(100);
+        $model = new CacheableModel(['id' => 100]);
         CacheableModel::setCachePool($cache);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -96,7 +96,7 @@ class CacheableTest extends MockeryTestCase
         $this->assertEquals($expected, $value);
 
         // the next refresh() call should be a hit from the cache
-        $model = new CacheableModel(100);
+        $model = new CacheableModel(['id' => 100]);
         $this->assertEquals($model, $model->refresh());
         $this->assertEquals(42, $model->answer);
     }
@@ -108,7 +108,7 @@ class CacheableTest extends MockeryTestCase
             ->andReturn(['answer' => 42]);
         CacheableModel::setDriver($driver);
 
-        $model = new CacheableModel(5);
+        $model = new CacheableModel(['id' => 5]);
         $this->assertNull($model->getCachePool());
         $this->assertNull($model->getCacheItem());
         $this->assertEquals($model, $model->refresh());
@@ -126,7 +126,7 @@ class CacheableTest extends MockeryTestCase
         $cache = $this->getCache();
         CacheableModel::setCachePool($cache);
 
-        $model = new CacheableModel(102, ['id' => 102, 'answer' => 42]);
+        $model = new CacheableModel(['id' => 102, 'answer' => 42]);
 
         // cache
         $this->assertEquals($model, $model->cache());

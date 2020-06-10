@@ -276,14 +276,8 @@ class Query
         // fetch the models matching the query
         $models = [];
         foreach ($driver->queryModels($this) as $j => $row) {
-            // get the model's ID
-            $id = [];
-            foreach ($modelClass::getIDProperties() as $k) {
-                $id[] = $row[$k];
-            }
-
             // create the model and cache the loaded values
-            $models[] = new $modelClass($id, $row);
+            $models[] = new $modelClass($row);
             foreach ($this->eagerLoaded as $k) {
                 $localKey = $eagerLoadedProperties[$k]['local_key'];
                 if (isset($row[$localKey])) {

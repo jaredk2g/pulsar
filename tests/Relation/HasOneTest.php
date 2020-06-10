@@ -31,7 +31,7 @@ class HasOneTest extends MockeryTestCase
 
     public function testInitQuery()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 
@@ -43,7 +43,7 @@ class HasOneTest extends MockeryTestCase
 
     public function testGetResults()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 
@@ -66,11 +66,11 @@ class HasOneTest extends MockeryTestCase
 
     public function testSave()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 
-        $balance = new Balance(20);
+        $balance = new Balance(['id' => 20]);
         $balance->refreshWith(['amount' => 200]);
 
         self::$driver->shouldReceive('updateModel')
@@ -85,7 +85,7 @@ class HasOneTest extends MockeryTestCase
 
     public function testCreate()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 
@@ -109,7 +109,7 @@ class HasOneTest extends MockeryTestCase
 
     public function testAttach()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 
@@ -130,7 +130,7 @@ class HasOneTest extends MockeryTestCase
 
     public function testDetach()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasOne($person, 'id', Balance::class, 'person_id');
 

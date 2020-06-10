@@ -117,7 +117,7 @@ class DbalDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $this->assertEquals(['name' => 'John'], $driver->loadModel($model));
     }
 
@@ -128,7 +128,7 @@ class DbalDriverTest extends MockeryTestCase
             ->andReturn(null);
         $driver = $this->getDriver($db);
 
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $this->assertNull($driver->loadModel($model));
     }
 
@@ -140,7 +140,7 @@ class DbalDriverTest extends MockeryTestCase
         $db->shouldReceive('fetchAssoc')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(12);
+        $model = new Person(['id' => 12]);
         $driver->loadModel($model);
     }
 
@@ -190,7 +190,7 @@ class DbalDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(11);
+        $model = new Person(['id' => 11]);
 
         $this->assertTrue($driver->updateModel($model, []));
 
@@ -207,7 +207,7 @@ class DbalDriverTest extends MockeryTestCase
         $db->shouldReceive('executeQuery')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(11);
+        $model = new Person(['id' => 11]);
         $driver->updateModel($model, ['name' => 'John']);
     }
 
@@ -220,7 +220,7 @@ class DbalDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $model = new Person(10);
+        $model = new Person(['id' => 10]);
         $this->assertTrue($driver->deleteModel($model));
     }
 
@@ -232,7 +232,7 @@ class DbalDriverTest extends MockeryTestCase
         $db->shouldReceive('executeQuery')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
-        $model = new Person(10);
+        $model = new Person(['id' => 10]);
         $driver->deleteModel($model);
     }
 

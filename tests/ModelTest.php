@@ -34,11 +34,18 @@ use Pulsar\Tests\Models\RelationshipTestModel;
 use Pulsar\Tests\Models\TestModel;
 use Pulsar\Tests\Models\TestModel2;
 use Pulsar\Tests\Models\TransactionModel;
+use Pulsar\Translator;
 use Pulsar\Type;
 use stdClass;
 
 class ModelTest extends MockeryTestCase
 {
+    public static function setUpBeforeClass()
+    {
+        parent::setUpBeforeClass();
+        Errors::setTranslator(new Translator());
+    }
+
     protected function tearDown()
     {
         // discard the cached dispatcher to
@@ -592,7 +599,7 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel();
         $this->assertEquals('TestModels', $model->getTablename());
 
-        $model = new TestModel(4);
+        $model = new TestModel(['id' => 4]);
         $this->assertEquals('TestModels', $model->getTablename());
 
         $model = new Person();
@@ -607,56 +614,47 @@ class ModelTest extends MockeryTestCase
 
     public function testId()
     {
-        $model = new TestModel(5);
-
+        $model = new TestModel(['id' => 5]);
         $this->assertEquals(5, $model->id());
-
-        $model2 = new TestModel($model);
-        $this->assertEquals(5, $model2->id());
     }
 
     public function testMultipleIds()
     {
-        $model = new TestModel2([5, 2]);
-
+        $model = new TestModel2(['id' => 5, 'id2' => 2]);
         $this->assertEquals('5,2', $model->id());
-
-        $model2 = new TestModel(5);
-        $model3 = new TestModel2([$model2, 2]);
-        $this->assertEquals('5,2', $model3->id());
     }
 
     public function testIdTypeCast()
     {
-        $model = new TestModel('5');
+        $model = new TestModel(['id' => '5']);
         $this->assertTrue(5 === $model->id(), 'id() type casting failed');
 
-        $model = new TestModel(5);
+        $model = new TestModel(['id' => 5]);
         $this->assertTrue(5 === $model->id(), 'id() type casting failed');
     }
 
     public function testIds()
     {
-        $model = new TestModel(3);
+        $model = new TestModel(['id' => 3]);
         $this->assertEquals(['id' => 3], $model->ids());
 
-        $model = new TestModel2([5, 2]);
+        $model = new TestModel2(['id' => 5, 'id2' => 2]);
         $this->assertEquals(['id' => 5, 'id2' => 2], $model->ids());
     }
 
     public function testIdsTypeCast()
     {
-        $model = new TestModel('3');
+        $model = new TestModel(['id' => '3']);
         $this->assertTrue(3 === $model->ids()['id'], 'ids() type casting failed');
 
-        $model2 = new TestModel2(['5', '2']);
+        $model2 = new TestModel2(['id' => '5', 'id2' => '2']);
         $this->assertTrue(5 === $model2->ids()['id'], 'ids() type casting failed');
         $this->assertTrue(2 === $model2->ids()['id2'], 'ids() type casting failed');
     }
 
     public function testToString()
     {
-        $model = new TestModel(1);
+        $model = new TestModel(['id' => 1]);
         $model->answer = 42;
         $expected = 'Pulsar\Tests\Models\TestModel({
     "answer": 42,
@@ -667,7 +665,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetAndGetUnsaved()
     {
-        $model = new TestModel(2);
+        $model = new TestModel(['id' => 2]);
 
         $model->test = 12345;
         $this->assertEquals(12345, $model->test);
@@ -684,7 +682,7 @@ class ModelTest extends MockeryTestCase
 
     public function testIsset()
     {
-        $model = new TestModel(1);
+        $model = new TestModel(['id' => 1]);
 
         $this->assertFalse(isset($model->test2));
 
@@ -704,7 +702,7 @@ class ModelTest extends MockeryTestCase
         $model->not_a_property = 'hello world';
         $this->assertTrue(isset($model->not_a_property));
 
-        $model = new TestModel(1, ['test' => 'hello world']);
+        $model = new TestModel(['id' => 1, 'test' => 'hello world']);
         $this->assertFalse(isset($model->test));
         $model->test = 'hello world';
         $this->assertTrue(isset($model->test));
@@ -714,7 +712,7 @@ class ModelTest extends MockeryTestCase
 
     public function testUnset()
     {
-        $model = new TestModel(1);
+        $model = new TestModel(['id' => 1]);
 
         $model->test = 12345;
         unset($model->test);
@@ -729,7 +727,7 @@ class ModelTest extends MockeryTestCase
 
     public function testGetMultipleProperties()
     {
-        $model = new TestModel(3);
+        $model = new TestModel(['id' => 3]);
         $model->relation = '10';
         $model->answer = 42;
 
@@ -745,7 +743,7 @@ class ModelTest extends MockeryTestCase
 
     public function testGetFromDb()
     {
-        $model = new TestModel(12);
+        $model = new TestModel(['id' => 12]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -761,14 +759,14 @@ class ModelTest extends MockeryTestCase
 
     public function testGetNonExistentPropertyDoesNotRefresh()
     {
-        $model = new TestModel(12);
+        $model = new TestModel(['id' => 12]);
 
         $this->assertNull($model->non_existent_property);
     }
 
     public function testGetDefaultValue()
     {
-        $model = new TestModel2(12);
+        $model = new TestModel2(['id' => 12]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -789,7 +787,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        $model = new TestModel(5);
+        $model = new TestModel(['id' => 5]);
 
         $expected = [
             'id' => 5,
@@ -804,7 +802,7 @@ class ModelTest extends MockeryTestCase
 
     public function testToArrayWithRelationship()
     {
-        $model = new RelationshipTestModel(5);
+        $model = new RelationshipTestModel(['id' => 5]);
         $expected = [
             'id' => 5,
             'person' => [
@@ -851,7 +849,7 @@ class ModelTest extends MockeryTestCase
         $model->not_a_property = 'hello world';
         $this->assertTrue($model->dirty('not_a_property'));
 
-        $model = new TestModel(1, ['test' => 'hello world']);
+        $model = new TestModel(['id' => 1, 'test' => 'hello world']);
         $this->assertFalse($model->dirty('test'));
         $model->test = 'hello world';
         $this->assertFalse($model->dirty('test'));
@@ -1090,7 +1088,7 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $model = new TestModel(5);
+        $model = new TestModel(['id' => 5]);
         $this->assertFalse($model->create(['relation' => '', 'answer' => 42]));
     }
 
@@ -1260,7 +1258,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSet()
     {
-        $model = new TestModel(10);
+        $model = new TestModel(['id' => 10]);
 
         $this->assertTrue($model->set([]));
 
@@ -1278,7 +1276,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetWithSave()
     {
-        $model = new TestModel(10);
+        $model = new TestModel(['id' => 10]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -1296,7 +1294,7 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(ModelException::class);
         $this->expectExceptionMessage('Failed to save TestModel');
-        $model = new TestModel(10);
+        $model = new TestModel(['id' => 10]);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
@@ -1311,7 +1309,7 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(ModelException::class);
         $this->expectExceptionMessage('Failed to save TestModel2: ');
-        $model = new TestModel2(10);
+        $model = new TestModel2(['id' => 10]);
 
         $model->validate = 'not an email';
         $model->saveOrFail();
@@ -1319,7 +1317,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetMassAssignment()
     {
-        $model = new TestModel2(11);
+        $model = new TestModel2(['id' => 10, 'id2' => 11]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -1345,13 +1343,13 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(MassAssignmentException::class);
 
-        $newModel = new TestModel(2);
+        $newModel = new TestModel(['id' => 2]);
         $newModel->set(['protected' => true]);
     }
 
     public function testSetImmutableProperties()
     {
-        $model = new TestModel2(10, ['mutable_create_only' => 'test']);
+        $model = new TestModel2(['id' => 10, 'id2' => 11, 'mutable_create_only' => 'test']);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -1375,7 +1373,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetAutoTimestamps()
     {
-        $model = new TestModel2(10);
+        $model = new TestModel2(['id' => 10, 'id2' => 11]);
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
             ->andReturnUsing(function ($model, $params) {
@@ -1404,7 +1402,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $this->assertFalse($model->set(['answer' => 42]));
     }
 
@@ -1421,7 +1419,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $this->assertFalse($model->set(['answer' => 42]));
     }
 
@@ -1431,7 +1429,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $model->answer = 42;
         $this->assertFalse($model->save());
     }
@@ -1449,7 +1447,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $model->answer = 42;
         $this->assertFalse($model->save());
     }
@@ -1471,7 +1469,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel2::setDriver($driver);
 
-        $model = new TestModel2(12);
+        $model = new TestModel2(['id' => 12, 'id2' => 13]);
         $this->assertTrue($model->set(['unique' => 'works']));
 
         // validate query where statement
@@ -1490,13 +1488,13 @@ class ModelTest extends MockeryTestCase
 
         TestModel2::setDriver($driver);
 
-        $model = new TestModel2(12);
+        $model = new TestModel2(['id' => 12, 'id2' => 13]);
         $this->assertTrue($model->set(['unique' => 'works']));
     }
 
     public function testSetInvalid()
     {
-        $model = new TestModel2(15);
+        $model = new TestModel2(['id' => 15, 'id2' => 16]);
         $errorStack = $model->getErrors();
 
         $this->assertFalse($model->set(['validate2' => 'invalid']));
@@ -1511,7 +1509,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetTransactions()
     {
-        $model = new TransactionModel(10);
+        $model = new TransactionModel(['id' => 10]);
 
         $this->assertTrue($model->set([]));
 
@@ -1531,7 +1529,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetTransactionsFail()
     {
-        $model = new TransactionModel(10);
+        $model = new TransactionModel(['id' => 10]);
 
         $this->assertTrue($model->set([]));
 
@@ -1553,7 +1551,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDelete()
     {
-        $model = new TestModel(1);
+        $model = new TestModel(['id' => 1]);
         $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1585,7 +1583,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $model->refreshWith(['test' => true]);
 
         $this->assertFalse($model->delete());
@@ -1606,7 +1604,7 @@ class ModelTest extends MockeryTestCase
             $event->stopPropagation();
         });
 
-        $model = new TestModel(100);
+        $model = new TestModel(['id' => 100]);
         $model->refreshWith(['test' => true]);
 
         $this->assertFalse($model->delete());
@@ -1616,7 +1614,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeleteFail()
     {
-        $model = new TestModel2(1);
+        $model = new TestModel2(['id' => 1, 'id2' => 2]);
         $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1632,7 +1630,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeleteTransactions()
     {
-        $model = new TransactionModel(1);
+        $model = new TransactionModel(['id' => 1]);
         $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1650,7 +1648,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeleteTransactionsFail()
     {
-        $model = new TransactionModel(1);
+        $model = new TransactionModel(['id' => 1]);
         $model->refreshWith(['name' => 'delete fail']);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1666,7 +1664,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSoftDelete()
     {
-        $model = new Person(1);
+        $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1683,7 +1681,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSoftDeleteRestore()
     {
-        $model = new Person(1);
+        $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => time()]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1701,7 +1699,7 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $model = new TestModel(1);
+        $model = new TestModel(['id' => 1]);
 
         $model->restore();
     }
@@ -1710,7 +1708,7 @@ class ModelTest extends MockeryTestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $model = new Person(1);
+        $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => null]);
 
         $model->restore();
@@ -1718,7 +1716,7 @@ class ModelTest extends MockeryTestCase
 
     public function testRestoreUpdatingEventFail()
     {
-        $model = new Person(1);
+        $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => time()]);
 
         Person::updating(function (ModelEvent $event) {
@@ -1729,7 +1727,7 @@ class ModelTest extends MockeryTestCase
 
     public function testRestoreUpdatedEventFail()
     {
-        $model = new Person(1);
+        $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => time()]);
 
         $driver = Mockery::mock(DriverInterface::class);
@@ -1898,10 +1896,10 @@ class ModelTest extends MockeryTestCase
     public function testSetRelation()
     {
         $model = new TestModel();
-        $relation = new TestModel2(2);
+        $relation = new TestModel2(['id' => 2, 'id2' => 3]);
         $model->setRelation('relation', $relation);
         $this->assertEquals($relation, $model->relation('relation'));
-        $this->assertEquals(2, $model->relation);
+        $this->assertEquals('2,3', $model->relation);
     }
 
     /////////////////////////////
@@ -1964,7 +1962,7 @@ class ModelTest extends MockeryTestCase
 
     public function testGetSetRelationshipBelongsTo()
     {
-        $customer = new Customer(123);
+        $customer = new Customer(['id' => 123]);
         $customer->name = 'Test';
         $invoice = new Invoice();
         $invoice->customer = $customer;
@@ -1992,7 +1990,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        $customer = new Customer(123);
+        $customer = new Customer(['id' => 123]);
         $invoice->customer = $customer;
 
         $this->assertTrue($invoice->create());
@@ -2005,7 +2003,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetBelongsTo()
     {
-        $invoice = new Invoice(10);
+        $invoice = new Invoice(['id' => 10]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -2015,7 +2013,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        $customer = new Customer(123);
+        $customer = new Customer(['id' => 123]);
         $invoice->customer = $customer;
         $this->assertTrue($invoice->save());
         $this->assertTrue($invoice->persisted());
@@ -2025,8 +2023,8 @@ class ModelTest extends MockeryTestCase
 
     public function testToArrayBelongsTo()
     {
-        $invoice = new Invoice(10);
-        $customer = new Customer(123, ['name' => 'Test']);
+        $invoice = new Invoice(['id' => 10]);
+        $customer = new Customer(['id' => 123, 'name' => 'Test']);
         $invoice->customer = $customer;
         $expected = [
             'id' => 10,
@@ -2048,7 +2046,7 @@ class ModelTest extends MockeryTestCase
         $model = new TestModel2();
         $this->assertEquals($model, $model->refresh());
 
-        $model = new TestModel2(12);
+        $model = new TestModel2(['id' => 12, 'id2' => 13]);
 
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -2071,13 +2069,15 @@ class ModelTest extends MockeryTestCase
 
         TestModel2::setDriver($driver);
 
-        $model = new TestModel2(12);
+        $model = new TestModel2(['id' => 12]);
         $this->assertEquals($model, $model->refresh());
     }
 
     public function testPersisted()
     {
-        $model = new TestModel(1);
+        $model = new TestModel();
+        $this->assertFalse($model->persisted());
+        $model = new TestModel(['id' => 1]);
         $this->assertFalse($model->persisted());
         $model->refreshWith(['id' => 1, 'test' => true]);
         $this->assertTrue($model->persisted());

@@ -27,14 +27,14 @@ class ACLModelRequesterTest extends MockeryTestCase
     {
         $this->assertNull(ACLModelRequester::get());
 
-        $requester = new Person(2);
+        $requester = new Person(['id' => 2]);
         ACLModelRequester::set($requester);
         $this->assertEquals($requester, ACLModelRequester::get());
 
         ACLModelRequester::clear();
         $this->assertNull(ACLModelRequester::get());
 
-        $requester2 = new Person(3);
+        $requester2 = new Person(['id' => 3]);
         ACLModelRequester::set($requester2);
         $this->assertEquals($requester2, ACLModelRequester::get());
     }
@@ -45,7 +45,7 @@ class ACLModelRequesterTest extends MockeryTestCase
         ACLModelRequester::setCallable(function () use (&$i) {
             ++$i;
 
-            return new Person($i);
+            return new Person(['id' => $i]);
         });
 
         // callable should only fire once
@@ -56,7 +56,7 @@ class ACLModelRequesterTest extends MockeryTestCase
         }
 
         // set should override the callable
-        $requester = new Person(2);
+        $requester = new Person(['id' => 2]);
         ACLModelRequester::set($requester);
         $this->assertEquals($requester, ACLModelRequester::get());
 

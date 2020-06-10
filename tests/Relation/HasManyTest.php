@@ -31,7 +31,7 @@ class HasManyTest extends MockeryTestCase
 
     public function testInitQuery()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
@@ -40,7 +40,7 @@ class HasManyTest extends MockeryTestCase
 
     public function testGetResults()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
@@ -71,11 +71,11 @@ class HasManyTest extends MockeryTestCase
 
     public function testSave()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
-        $garage = new Garage(2);
+        $garage = new Garage(['id' => 2]);
         $garage->refreshWith(['location' => '']);
         $garage->location = 'My House';
 
@@ -91,7 +91,7 @@ class HasManyTest extends MockeryTestCase
 
     public function testCreate()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
@@ -113,11 +113,11 @@ class HasManyTest extends MockeryTestCase
 
     public function testAttach()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
-        $garage = new Garage(5);
+        $garage = new Garage(['id' => 5]);
         $garage->refreshWith(['person_id' => null]);
 
         self::$driver->shouldReceive('updateModel')
@@ -136,11 +136,11 @@ class HasManyTest extends MockeryTestCase
 
     public function testDetach()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
-        $garage = new Garage(2);
+        $garage = new Garage(['id' => 2]);
         $garage->refreshWith(['person_id' => 100]);
 
         self::$driver->shouldReceive('updateModel')
@@ -153,7 +153,7 @@ class HasManyTest extends MockeryTestCase
 
     public function testSync()
     {
-        $person = new Person(100);
+        $person = new Person(['id' => 100]);
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 

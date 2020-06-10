@@ -69,12 +69,12 @@ class BelongsToTest extends MockeryTestCase
 
     public function testSave()
     {
-        $post = new Post(100);
+        $post = new Post(['id' => 100]);
         $post->refreshWith(['category_id' => null]);
 
         $relation = new BelongsTo($post, 'category_id', Category::class, 'id');
 
-        $category = new Category(20);
+        $category = new Category(['id' => 20]);
         $category->name = 'Test';
 
         self::$driver->shouldReceive('updateModel')
@@ -122,7 +122,7 @@ class BelongsToTest extends MockeryTestCase
 
         $relation = new BelongsTo($post, 'category_id', Category::class, 'id');
 
-        $category = new Category(10);
+        $category = new Category(['id' => 10]);
 
         self::$driver->shouldReceive('createModel')
             ->withArgs([$post, ['category_id' => 10]])

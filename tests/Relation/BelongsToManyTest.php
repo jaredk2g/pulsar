@@ -32,7 +32,7 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testInitQuery()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
@@ -51,7 +51,7 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testGetResults()
     {
-        $person = new Person(10);
+        $person = new Person(['id' => 10]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
@@ -81,11 +81,11 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testSave()
     {
-        $person = new Person(2);
+        $person = new Person(['id' => 2]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
-        $group = new Group(5);
+        $group = new Group(['id' => 5]);
         $group->name = 'Test';
 
         self::$driver->shouldReceive('updateModel')
@@ -118,7 +118,7 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testCreate()
     {
-        $person = new Person(2);
+        $person = new Person(['id' => 2]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
@@ -142,11 +142,11 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testAttach()
     {
-        $person = new Person(2);
+        $person = new Person(['id' => 2]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
-        $group = new Group(3);
+        $group = new Group(['id' => 3]);
 
         self::$driver->shouldReceive('createModel')
             ->andReturnUsing(function ($model, $params) {
@@ -170,7 +170,7 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testDetach()
     {
-        $person = new Person(2);
+        $person = new Person(['id' => 2]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
@@ -184,7 +184,7 @@ class BelongsToManyTest extends MockeryTestCase
 
     public function testSync()
     {
-        $person = new Person(2);
+        $person = new Person(['id' => 2]);
 
         $relation = new BelongsToMany($person, 'person_id', 'group_person', Group::class, 'group_id');
 
