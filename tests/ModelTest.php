@@ -1999,6 +1999,11 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals($customer, $invoice->customer);
         $this->assertEquals('Test', $invoice->customer->name);
         $this->assertEquals(123, $invoice->customer_id);
+
+        // setting to null should be supported
+        $invoice->customer = null;
+        $this->assertNull($invoice->customer);
+        $this->assertNull($invoice->customer_id);
     }
 
     public function testInvalidSetBelongsTo()
