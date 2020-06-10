@@ -289,18 +289,19 @@ class Query
         // hydrate the eager loaded relationships
         foreach ($this->eagerLoaded as $k) {
             $property = $eagerLoadedProperties[$k];
-            $relationModelClass = $property['relation'];
+            $relationModelClass = $property->getForeignModelClass();
+            $type = $property->getRelationshipType();
 
-            if (Relationship::BELONGS_TO == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
+            if (Relationship::BELONGS_TO == $type) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
                         $models[$j]->setRelation($k, $relationships[$id]);
                     }
                 }
-            } elseif (Relationship::HAS_ONE == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], false);
+            } elseif (Relationship::HAS_ONE == $type) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
@@ -313,8 +314,8 @@ class Query
                         $models[$j]->clearRelation($k);
                     }
                 }
-            } elseif (Relationship::HAS_MANY == $property['relation_type']) {
-                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property['foreign_key'], true);
+            } elseif (Relationship::HAS_MANY == $type) {
+                $relationships = $this->fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), true);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
