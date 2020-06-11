@@ -12,6 +12,7 @@
 namespace Pulsar\Tests;
 
 use DateTimeZone;
+use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Tests\Models\TestModel;
 use Pulsar\Validator;
@@ -43,6 +44,14 @@ class ValidatorTest extends MockeryTestCase
 
         $validator = new Validator(['alpha', 'min' => 5]);
         $this->assertEquals([['alpha', 'min' => 5]], $validator->getRules());
+    }
+
+    public function testInvalid()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $validator = new Validator('invalid');
+        $s = 'abc';
+        $validator->validate($s, self::$model);
     }
 
     public function testAlpha()
