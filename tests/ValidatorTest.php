@@ -225,9 +225,9 @@ class ValidatorTest extends MockeryTestCase
         $this->assertFalse($validator->validate($s, self::$model));
     }
 
-    public function testPasswordPhp()
+    public function testPassword()
     {
-        $validator = new Validator(['password_php', 'cost' => 12, 'min' => 8]);
+        $validator = new Validator(['password', 'cost' => 12, 'min' => 8]);
         $password = 'testpassword';
         $this->assertTrue($validator->validate($password, self::$model));
         $this->assertTrue(password_verify('testpassword', $password));

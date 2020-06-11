@@ -61,7 +61,6 @@ final class Validator
         'matching' => Matching::class,
         'numeric' => Numeric::class,
         'password' => Password::class,
-        'password_php' => Password::class, // deprecated
         'range' => Range::class,
         'required' => Required::class,
         'string' => Strings::class,

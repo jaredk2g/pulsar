@@ -25,9 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The model constructor no longer has an `$id` argument. Instead you can use `new Model(['id' => 1234])`.
 - Changed the structure of the `validate` property setting to be an array with named options.
 - The unique constraint is now a validation rule specified as: `['validate' => ['unique', 'column' => 'email']]`.
-- Deprecated the `password_php` validation rule in favor of `password`.
 - Callable validation rules must now be specified as: `['validate' => ['callable', 'fn' => ...]]`.
-- Deprecated `Model::getProperties()`, `::hasProperty()`, and `::getProperty()`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
@@ -36,6 +34,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `Errors::setLocale`, `Errors::getLocale()`, and `Errors::setGlobalLocale()`. It is now required to use `Errors::setTranslator()`.
 - Removed the `toArrayHook()` call. It is recommended to override `toArray()` if it is necessary to modify its output.
 - Removed `Model::TYPE_*`, `Model` mutability, and `Model::RELATIONSHIP_*` constants.
+- Removed `Model::getProperties()`, `::hasProperty()`, and `::getProperty()`.
+- Removed the `password_php` validation rule in favor of `password`.
 
 ## 0.10 - 2020-04-22
 ### Added

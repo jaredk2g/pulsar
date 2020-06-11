@@ -518,42 +518,6 @@ abstract class Model implements ArrayAccess
         return self::$accessors[$k];
     }
 
-    /**
-     * @deprecated
-     *
-     * Gets the definition of all model properties
-     */
-    public static function getProperties(): Definition
-    {
-        return DefinitionBuilder::get(static::class);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Gets the definition of a specific property
-     *
-     * @param string $property property to lookup
-     */
-    public static function getProperty(string $property): ?Property
-    {
-        return static::definition()->get($property);
-    }
-
-    /**
-     * @deprecated
-     *
-     * Checks if the model has a property
-     *
-     * @param string $property property
-     *
-     * @return bool has property
-     */
-    public static function hasProperty(string $property): bool
-    {
-        return static::definition()->has($property);
-    }
-
     /////////////////////////////
     // CRUD Operations
     /////////////////////////////
