@@ -676,7 +676,7 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $validated = $validated && $this->filterAndValidate($property, $value);
+            $validated = $validated && Validator::validateProperty($this, $property, $value);
             $insertArray[$name] = $value;
         }
 
@@ -1006,7 +1006,7 @@ abstract class Model implements ArrayAccess
                 continue;
             }
 
-            $validated = $validated && $this->filterAndValidate($property, $value);
+            $validated = $validated && Validator::validateProperty($this, $property, $value);
             $updateArray[$name] = $value;
         }
 
@@ -1070,7 +1070,7 @@ abstract class Model implements ArrayAccess
         if (property_exists($this, 'softDelete')) {
             $t = time();
             $this->deleted_at = $t;
-            $t = $this->filterAndValidate(static::getProperty('deleted_at'), $t);
+            $t = Validator::validateProperty($this, static::getProperty('deleted_at'), $t);
             $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
             $hardDelete = false;
         } else {
@@ -1579,7 +1579,7 @@ abstract class Model implements ArrayAccess
         $validated = true;
         foreach ($values as $k => $v) {
             $property = static::getProperty($k);
-            $validated = $this->filterAndValidate($property, $v) && $validated;
+            $validated = Validator::validateProperty($this, $property, $v) && $validated;
         }
 
         // add back any modified unsaved values
@@ -1588,42 +1588,5 @@ abstract class Model implements ArrayAccess
         }
 
         return $validated;
-    }
-
-    /**
-     * Validates and marshals a property value prior to saving.
-     *
-     * @param Property $property property definition
-     * @param mixed    $value
-     */
-    private function filterAndValidate(Property $property, &$value): bool
-    {
-        // assume empty string is a null value for properties
-        // that are marked as optionally-null
-        if ($property->isNullable() && ('' === $value || null === $value)) {
-            $value = null;
-
-            return true;
-        }
-
-        $valid = true;
-        $validationRules = $property->getValidationRules();
-        if (is_callable($validationRules)) {
-            $valid = call_user_func_array($validationRules, [$value]);
-            $error = 'pulsar.validation.failed';
-        } elseif ($validationRules) {
-            $validator = new Validator($validationRules);
-            $valid = $validator->validate($value, $this);
-            $error = 'pulsar.validation.'.$validator->getFailingRule();
-        }
-
-        if (!$valid) {
-            $this->getErrors()->add($error, [
-                'field' => $property->getName(),
-                'field_name' => $property->getTitle($this),
-            ]);
-        }
-
-        return $valid;
     }
 }

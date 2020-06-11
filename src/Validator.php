@@ -162,4 +162,41 @@ final class Validator
 
         return self::$instances[$name];
     }
+
+    /**
+     * Validates and marshals a property value prior to saving.
+     *
+     * @param Property $property property definition
+     * @param mixed    $value
+     */
+    public static function validateProperty(Model $model, Property $property, &$value): bool
+    {
+        // assume empty string is a null value for properties
+        // that are marked as optionally-null
+        if ($property->isNullable() && ('' === $value || null === $value)) {
+            $value = null;
+
+            return true;
+        }
+
+        $valid = true;
+        $validationRules = $property->getValidationRules();
+        if (is_callable($validationRules)) {
+            $valid = call_user_func_array($validationRules, [$value]);
+            $error = 'pulsar.validation.failed';
+        } elseif ($validationRules) {
+            $validator = new Validator($validationRules);
+            $valid = $validator->validate($value, $model);
+            $error = 'pulsar.validation.'.$validator->getFailingRule();
+        }
+
+        if (!$valid) {
+            $model->getErrors()->add($error, [
+                'field' => $property->getName(),
+                'field_name' => $property->getTitle($model),
+            ]);
+        }
+
+        return $valid;
+    }
 }
