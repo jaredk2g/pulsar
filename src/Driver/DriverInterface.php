@@ -37,7 +37,7 @@ interface DriverInterface
      *
      * @throws DriverException when an exception occurs within the driver
      */
-    public function getCreatedID(Model $model, string $propertyName);
+    public function getCreatedId(Model $model, string $propertyName);
 
     /**
      * Loads a model.

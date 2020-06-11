@@ -19,7 +19,6 @@ use PDOStatement;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
-use Pulsar\Type;
 
 /**
  * Driver for storing models in a database using PDO.
@@ -116,15 +115,13 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedID(Model $model, string $propertyName)
+    public function getCreatedId(Model $model, string $propertyName)
     {
         try {
-            $id = $this->getConnection($model->getConnection())->lastInsertId();
+            return $this->getConnection($model->getConnection())->lastInsertId();
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
-
-        return Type::cast($model::definition()->get($propertyName), $id);
     }
 
     public function loadModel(Model $model): ?array

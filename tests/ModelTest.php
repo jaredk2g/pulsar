@@ -452,7 +452,6 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
             ],
         ];
-
         $model = new TestModel2(); // forces initialize()
         $result = array_map(function ($value) { return $value->toArray(); }, TestModel2::definition()->all());
         $this->assertEquals($expected, $result);

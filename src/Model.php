@@ -721,7 +721,7 @@ abstract class Model implements ArrayAccess
 
         if ($created) {
             // determine the model's new ID
-            $this->getNewID();
+            $this->getNewId();
 
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
@@ -837,7 +837,7 @@ abstract class Model implements ArrayAccess
     /**
      * Populates a newly created model with its ID.
      */
-    private function getNewID()
+    private function getNewId()
     {
         $ids = [];
         $namedIds = [];
@@ -847,7 +847,7 @@ abstract class Model implements ArrayAccess
             if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
                 $id = $this->_unsaved[$k];
             } else {
-                $id = self::$driver->getCreatedID($this, $k);
+                $id = Type::cast($property, self::$driver->getCreatedId($this, $k));
             }
 
             $ids[] = $id;

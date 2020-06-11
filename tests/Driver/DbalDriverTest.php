@@ -92,7 +92,7 @@ class DbalDriverTest extends MockeryTestCase
         $driver = $this->getDriver($db);
 
         $model = new Person();
-        $this->assertEquals(1, $driver->getCreatedID($model, 'id'));
+        $this->assertEquals(1, $driver->getCreatedId($model, 'id'));
     }
 
     public function testGetCreatedIDFail()
@@ -104,7 +104,7 @@ class DbalDriverTest extends MockeryTestCase
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $model = new Person();
-        $driver->getCreatedID($model, 'id');
+        $driver->getCreatedId($model, 'id');
     }
 
     public function testLoadModel()

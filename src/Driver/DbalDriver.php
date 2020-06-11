@@ -11,7 +11,6 @@ use JAQB\Query\UpdateQuery;
 use Pulsar\Exception\DriverException;
 use Pulsar\Model;
 use Pulsar\Query;
-use Pulsar\Type;
 
 final class DbalDriver extends AbstractDriver
 {
@@ -54,15 +53,13 @@ final class DbalDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedID(Model $model, string $propertyName)
+    public function getCreatedId(Model $model, string $propertyName)
     {
         try {
-            $id = $this->getConnection($model->getConnection())->lastInsertId();
+            return $this->getConnection($model->getConnection())->lastInsertId();
         } catch (DBALException $original) {
             throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
-
-        return Type::cast($model::definition()->get($propertyName), $id);
     }
 
     public function loadModel(Model $model): ?array
@@ -249,9 +246,9 @@ final class DbalDriver extends AbstractDriver
     /**
      * Executes a select query through DBAL and returns a scalar result.
      *
-     * @throws DriverException
-     *
      * @return false|mixed
+     *
+     * @throws DriverException
      */
     private function executeScalar(SelectQuery $query, Model $model, string $field)
     {
