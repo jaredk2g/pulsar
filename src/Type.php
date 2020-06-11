@@ -12,6 +12,8 @@
 namespace Pulsar;
 
 use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Encoding;
+use Defuse\Crypto\Exception\BadFormatException;
 use Defuse\Crypto\Key;
 
 /**
@@ -50,7 +52,18 @@ final class Type
 
         // perform decryption, if enabled
         if ($property->isEncrypted()) {
-            $value = Crypto::decrypt($value, self::$encryptionKey);
+            // Check if the value is encrypted and not the plain text version
+            // by checking if it is a valid hex string. In some cases we might
+            // have a Type::cast() call on a value belonging to an encrypted
+            // property that has not been encrypted yet. The expectation in this
+            // scenario is to not attempt to decrypt the value.
+            try {
+                Encoding::hexToBin($value);
+                // if the first line succeeds then we can expect decryption to work
+                $value = Crypto::decrypt($value, self::$encryptionKey);
+            } catch (BadFormatException $e) {
+                // do nothing, the value is already decrypted
+            }
         }
 
         $type = $property->getType();

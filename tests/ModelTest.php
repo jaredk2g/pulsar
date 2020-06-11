@@ -12,6 +12,7 @@
 namespace Pulsar\Tests;
 
 use BadMethodCallException;
+use Defuse\Crypto\Key;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
@@ -917,6 +918,9 @@ class ModelTest extends MockeryTestCase
     {
         $newModel = new TestModel();
 
+        $key = Key::loadFromAsciiSafeString('def000001ef79749946a5b1c38efd9fbc6b632c3feac272b57cf0d433ae129afd9e997dbaf74e62b66c846ca41b965a68799932eb197e1ef0499039b0d37462fc4eb9063');
+        Type::setEncryptionKey($key);
+
         $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
@@ -1304,6 +1308,36 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($newModel->create(['relation' => '', 'answer' => 42]));
     }
 
+    public function testCreateEncrypted()
+    {
+        $newModel = new TestModel();
+
+        $key = Key::loadFromAsciiSafeString('def000001ef79749946a5b1c38efd9fbc6b632c3feac272b57cf0d433ae129afd9e997dbaf74e62b66c846ca41b965a68799932eb197e1ef0499039b0d37462fc4eb9063');
+        Type::setEncryptionKey($key);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->andReturnUsing(function ($model, $values) {
+                $this->assertTrue(isset($values['encrypted']));
+                $this->assertNotEquals('encrypted value', $values['encrypted']);
+
+                return true;
+            })
+            ->once();
+
+        $driver->shouldReceive('getCreatedID')
+            ->withArgs([$newModel, 'id'])
+            ->andReturn(1);
+
+        TestModel::setDriver($driver);
+
+        $newModel->encrypted = 'encrypted value';
+
+        $this->assertTrue($newModel->create());
+        $this->assertEquals('encrypted value', $newModel->encrypted);
+    }
+
     /////////////////////////////
     // SET
     /////////////////////////////
@@ -1595,6 +1629,50 @@ class ModelTest extends MockeryTestCase
         TransactionModel::setDriver($driver);
 
         $model->set(['name' => 'fail']);
+    }
+
+    public function testSetEncrypted()
+    {
+        $model = new TestModel(['id' => 10]);
+
+        $this->assertTrue($model->set([]));
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('updateModel')
+            ->andReturnUsing(function ($model, $values) {
+                $this->assertTrue(isset($values['encrypted']));
+                $this->assertNotEquals('encrypted value', $values['encrypted']);
+
+                return true;
+            })
+            ->once();
+
+        TestModel::setDriver($driver);
+
+        $model->encrypted = 'encrypted value';
+        $this->assertTrue($model->set());
+        $this->assertTrue($model->persisted());
+        $this->assertEquals('encrypted value', $model->encrypted);
+    }
+
+    public function testSetEncryptedNotModified()
+    {
+        $model = new TestModel(['id' => 10, 'encrypted' => 'encrypted value']);
+
+        $this->assertTrue($model->set([]));
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('updateModel')
+            ->andReturn(true);
+
+        TestModel::setDriver($driver);
+
+        $model->answer = 42;
+        $this->assertTrue($model->set());
+        $this->assertTrue($model->persisted());
+        $this->assertEquals('encrypted value', $model->encrypted);
     }
 
     /////////////////////////////
