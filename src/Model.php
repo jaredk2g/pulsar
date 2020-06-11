@@ -1338,16 +1338,20 @@ abstract class Model implements ArrayAccess
     {
         try {
             foreach ($this->_unsaved as $k => $value) {
-                if ($value instanceof self) {
-                    if (!$value->persisted()) {
+                if ($value instanceof self && !$value->persisted()) {
+                    $property = static::definition()->get($k);
+                    if ($property && !$property->isPersisted()) {
                         $value->saveOrFail();
                         // set the model again to update any ID properties
                         $this->$k = $value;
                     }
                 } elseif (is_array($value)) {
                     foreach ($value as $subValue) {
-                        if ($subValue instanceof self) {
-                            $value->saveOrFail();
+                        if ($subValue instanceof self && !$subValue->persisted()) {
+                            $property = static::definition()->get($k);
+                            if ($property && !$property->isPersisted()) {
+                                $subValue->saveOrFail();
+                            }
                         }
                     }
                 }
