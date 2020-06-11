@@ -1591,7 +1591,7 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Validates and marshals a value to storage.
+     * Validates and marshals a property value prior to saving.
      *
      * @param Property $property property definition
      * @param mixed    $value
@@ -1606,28 +1606,13 @@ abstract class Model implements ArrayAccess
             return true;
         }
 
-        // validate
-        list($valid, $value) = $this->validateValue($property, $value);
-
-        return $valid;
-    }
-
-    /**
-     * Validates a value for a property.
-     *
-     * @param Property $property property definition
-     * @param mixed    $value
-     */
-    private function validateValue(Property $property, $value): array
-    {
         $valid = true;
-
-        $error = 'pulsar.validation.failed';
-        $validateRules = $property->getValidationRules();
-        if (is_callable($validateRules)) {
-            $valid = call_user_func_array($validateRules, [$value]);
-        } elseif ($validateRules) {
-            $validator = new Validator($validateRules);
+        $validationRules = $property->getValidationRules();
+        if (is_callable($validationRules)) {
+            $valid = call_user_func_array($validationRules, [$value]);
+            $error = 'pulsar.validation.failed';
+        } elseif ($validationRules) {
+            $validator = new Validator($validationRules);
             $valid = $validator->validate($value, $this);
             $error = 'pulsar.validation.'.$validator->getFailingRule();
         }
@@ -1639,6 +1624,6 @@ abstract class Model implements ArrayAccess
             ]);
         }
 
-        return [$valid, $value];
+        return $valid;
     }
 }
