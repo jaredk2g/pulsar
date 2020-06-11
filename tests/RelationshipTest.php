@@ -21,7 +21,7 @@ class RelationshipTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $model = new InvalidRelationship();
-        Relationship::make($model, InvalidRelationship::getProperty('name'));
+        Relationship::make($model, InvalidRelationship::definition()->get('name'));
     }
 
     public function testInvalidType()
@@ -29,13 +29,13 @@ class RelationshipTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         $model = new InvalidRelationship();
-        Relationship::make($model, InvalidRelationship2::getProperty('invalid_relationship'));
+        Relationship::make($model, InvalidRelationship2::definition()->get('invalid_relationship'));
     }
 
     public function testHasOne()
     {
         $model = new RelationshipTester();
-        $relation = Relationship::make($model, RelationshipTester::getProperty('has_one'));
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('has_one'));
 
         $this->assertInstanceOf(HasOne::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -47,7 +47,7 @@ class RelationshipTest extends TestCase
     public function testHasMany()
     {
         $model = new RelationshipTester();
-        $relation = Relationship::make($model, RelationshipTester::getProperty('has_many'));
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('has_many'));
 
         $this->assertInstanceOf(HasMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -59,7 +59,7 @@ class RelationshipTest extends TestCase
     public function testBelongsTo()
     {
         $model = new RelationshipTester();
-        $relation = Relationship::make($model, RelationshipTester::getProperty('belongs_to'));
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('belongs_to'));
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -71,7 +71,7 @@ class RelationshipTest extends TestCase
     public function testBelongsToLegacy()
     {
         $model = new RelationshipTester();
-        $relation = Relationship::make($model, RelationshipTester::getProperty('belongs_to_legacy'));
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('belongs_to_legacy'));
 
         $this->assertInstanceOf(BelongsTo::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());
@@ -83,7 +83,7 @@ class RelationshipTest extends TestCase
     public function testBelongsToMany()
     {
         $model = new RelationshipTester();
-        $relation = Relationship::make($model, RelationshipTester::getProperty('belongs_to_many'));
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('belongs_to_many'));
 
         $this->assertInstanceOf(BelongsToMany::class, $relation);
         $this->assertEquals(TestModel2::class, $relation->getForeignModel());

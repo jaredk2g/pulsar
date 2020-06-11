@@ -165,7 +165,7 @@ abstract class Model implements ArrayAccess
         foreach (static::$ids as $name) {
             $id = false;
             if (array_key_exists($name, $values)) {
-                $idProperty = static::getProperty($name);
+                $idProperty = static::definition()->get($name);
                 $id = Type::cast($idProperty, $values[$name]);
             }
 
@@ -352,7 +352,7 @@ abstract class Model implements ArrayAccess
         }
 
         // set local ID property on belongs_to relationship
-        $property = static::getProperty($name);
+        $property = static::definition()->get($name);
         if ($property && Relationship::BELONGS_TO == $property->getRelationshipType() && !$property->isPersisted()) {
             if ($value instanceof self) {
                 $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
@@ -377,7 +377,7 @@ abstract class Model implements ArrayAccess
         // because many callers will first check isset() to see if the value is accessible.
         // This method is not supposed to only be valid for unsaved values, or properties
         // that have a value.
-        return array_key_exists($name, $this->_unsaved) || static::hasProperty($name);
+        return array_key_exists($name, $this->_unsaved) || static::definition()->has($name);
     }
 
     /**
@@ -434,9 +434,9 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Gets the definition of all model properties.
+     * Gets the model definition.
      */
-    public static function getProperties(): Definition
+    public static function definition(): Definition
     {
         return DefinitionBuilder::get(static::class);
     }
@@ -455,33 +455,11 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Gets the definition of a specific property.
-     *
-     * @param string $property property to lookup
-     */
-    public static function getProperty(string $property): ?Property
-    {
-        return static::getProperties()->get($property);
-    }
-
-    /**
      * Gets the names of the model ID properties.
      */
     public static function getIDProperties(): array
     {
         return static::$ids;
-    }
-
-    /**
-     * Checks if the model has a property.
-     *
-     * @param string $property property
-     *
-     * @return bool has property
-     */
-    public static function hasProperty(string $property): bool
-    {
-        return static::getProperties()->has($property);
     }
 
     /**
@@ -538,6 +516,42 @@ abstract class Model implements ArrayAccess
         }
 
         return self::$accessors[$k];
+    }
+
+    /**
+     * @deprecated
+     *
+     * Gets the definition of all model properties
+     */
+    public static function getProperties(): Definition
+    {
+        return DefinitionBuilder::get(static::class);
+    }
+
+    /**
+     * @deprecated
+     *
+     * Gets the definition of a specific property
+     *
+     * @param string $property property to lookup
+     */
+    public static function getProperty(string $property): ?Property
+    {
+        return static::definition()->get($property);
+    }
+
+    /**
+     * @deprecated
+     *
+     * Checks if the model has a property
+     *
+     * @param string $property property
+     *
+     * @return bool has property
+     */
+    public static function hasProperty(string $property): bool
+    {
+        return static::definition()->has($property);
     }
 
     /////////////////////////////
@@ -636,7 +650,7 @@ abstract class Model implements ArrayAccess
         }
 
         $requiredProperties = [];
-        foreach (static::getProperties()->all() as $name => $property) {
+        foreach (static::definition()->all() as $name => $property) {
             // build a list of the required properties
             if ($property->isRequired()) {
                 $requiredProperties[] = $property;
@@ -659,7 +673,7 @@ abstract class Model implements ArrayAccess
         $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            $property = static::getProperty($name);
+            $property = static::definition()->get($name);
             if (!$property) {
                 continue;
             }
@@ -763,7 +777,7 @@ abstract class Model implements ArrayAccess
         // see if there are any model properties that do not exist.
         // when true then this means the model needs to be hydrated
         // NOTE: only looking at model properties and excluding dynamic/non-existent properties
-        $modelProperties = static::getProperties()->propertyNames();
+        $modelProperties = static::definition()->propertyNames();
         $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
 
         if ($numMissing > 0 && !$this->loaded) {
@@ -803,7 +817,7 @@ abstract class Model implements ArrayAccess
 
         if (array_key_exists($name, $values)) {
             $value = $values[$name];
-        } elseif ($property = static::getProperty($name)) {
+        } elseif ($property = static::definition()->get($name)) {
             if ($property->getRelationshipType() && !$property->isPersisted()) {
                 $relationship = $this->getRelationship($property);
                 $value = $this->_values[$name] = $relationship->getResults();
@@ -829,7 +843,7 @@ abstract class Model implements ArrayAccess
         $namedIds = [];
         foreach (static::$ids as $k) {
             // attempt use the supplied value if the ID property is mutable
-            $property = static::getProperty($k);
+            $property = static::definition()->get($k);
             if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
                 $id = $this->_unsaved[$k];
             } else {
@@ -880,11 +894,11 @@ abstract class Model implements ArrayAccess
     public function toArray(): array
     {
         // build the list of properties to retrieve
-        $properties = static::getProperties()->propertyNames();
+        $properties = static::definition()->propertyNames();
 
         // remove any relationships
         $relationships = [];
-        foreach (static::getProperties()->all() as $property) {
+        foreach (static::definition()->all() as $property) {
             if ($property->getRelationshipType() && !$property->isPersisted()) {
                 $relationships[] = $property->getName();
             }
@@ -989,11 +1003,11 @@ abstract class Model implements ArrayAccess
         $preservedValues = [];
         foreach ($this->_unsaved as $name => $value) {
             // exclude if value does not map to a property
-            if (!static::getProperties()->has($name)) {
+            if (!static::definition()->has($name)) {
                 continue;
             }
 
-            $property = static::getProperty($name);
+            $property = static::definition()->get($name);
 
             // check if this property is persisted to the DB
             if (!$property->isPersisted()) {
@@ -1070,7 +1084,7 @@ abstract class Model implements ArrayAccess
         if (property_exists($this, 'softDelete')) {
             $t = time();
             $this->deleted_at = $t;
-            $t = Validator::validateProperty($this, static::getProperty('deleted_at'), $t);
+            $t = Validator::validateProperty($this, static::definition()->get('deleted_at'), $t);
             $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
             $hardDelete = false;
         } else {
@@ -1270,7 +1284,7 @@ abstract class Model implements ArrayAccess
     {
         // type cast the values
         foreach ($values as $k => &$value) {
-            if ($property = static::getProperty($k)) {
+            if ($property = static::definition()->get($k)) {
                 $value = Type::cast($property, $value);
             }
         }
@@ -1361,7 +1375,7 @@ abstract class Model implements ArrayAccess
      */
     public function hydrateValue(string $name, $value): void
     {
-        if ($property = static::getProperty($name)) {
+        if ($property = static::definition()->get($name)) {
             $this->_values[$name] = Type::cast($property, $value);
         } else {
             $this->_values[$name] = $value;
@@ -1382,7 +1396,7 @@ abstract class Model implements ArrayAccess
     public function relation(string $k)
     {
         if (!array_key_exists($k, $this->_relationships)) {
-            $relation = Relationship::make($this, static::getProperty($k));
+            $relation = Relationship::make($this, static::definition()->get($k));
             $this->_relationships[$k] = $relation->getResults();
         }
 
@@ -1578,7 +1592,7 @@ abstract class Model implements ArrayAccess
 
         $validated = true;
         foreach ($values as $k => $v) {
-            $property = static::getProperty($k);
+            $property = static::definition()->get($k);
             $validated = Validator::validateProperty($this, $property, $v) && $validated;
         }
 

@@ -174,7 +174,7 @@ class ModelTest extends MockeryTestCase
         ];
 
         $model = new TestModel(); // ensure initialize() is called
-        $properties = TestModel::getProperties();
+        $properties = TestModel::definition();
         $result = array_map(function ($value) { return $value->toArray(); }, $properties->all());
         $this->assertEquals($expected, $result);
     }
@@ -196,7 +196,7 @@ class ModelTest extends MockeryTestCase
             'pivot_tablename' => null,
         ];
 
-        $this->assertEquals($expected, Person::getProperty('id')->toArray());
+        $this->assertEquals($expected, Person::definition()->get('id')->toArray());
     }
 
     public function testGetProperty()
@@ -215,7 +215,7 @@ class ModelTest extends MockeryTestCase
             'local_key' => null,
             'pivot_tablename' => null,
         ];
-        $this->assertEquals($expected, TestModel::getProperty('id')->toArray());
+        $this->assertEquals($expected, TestModel::definition()->get('id')->toArray());
 
         $expected = [
             'type' => Type::INTEGER,
@@ -231,7 +231,7 @@ class ModelTest extends MockeryTestCase
             'persisted' => true,
             'pivot_tablename' => null,
         ];
-        $this->assertEquals($expected, TestModel::getProperty('relation')->toArray());
+        $this->assertEquals($expected, TestModel::definition()->get('relation')->toArray());
     }
 
     public function testPropertiesAutoTimestamps()
@@ -454,7 +454,7 @@ class ModelTest extends MockeryTestCase
         ];
 
         $model = new TestModel2(); // forces initialize()
-        $result = array_map(function ($value) { return $value->toArray(); }, TestModel2::getProperties()->all());
+        $result = array_map(function ($value) { return $value->toArray(); }, TestModel2::definition()->all());
         $this->assertEquals($expected, $result);
     }
 
@@ -534,7 +534,7 @@ class ModelTest extends MockeryTestCase
         ];
 
         $model = new Person(); // forces initialize()
-        $result = array_map(function ($value) { return $value->toArray(); }, Person::getProperties()->all());
+        $result = array_map(function ($value) { return $value->toArray(); }, Person::definition()->all());
         $this->assertEquals($expected, $result);
     }
 
@@ -1961,7 +1961,7 @@ class ModelTest extends MockeryTestCase
             ],
         ];
 
-        $result = array_map(function ($value) { return $value->toArray(); }, Invoice::getProperties()->all());
+        $result = array_map(function ($value) { return $value->toArray(); }, Invoice::definition()->all());
         $this->assertEquals($expected, $result);
     }
 

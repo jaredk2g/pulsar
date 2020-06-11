@@ -269,7 +269,7 @@ class Query
         $model = new $modelClass();
         $ids = [];
         foreach ($this->eagerLoaded as $k) {
-            $eagerLoadedProperties[$k] = $modelClass::getProperty($k);
+            $eagerLoadedProperties[$k] = $modelClass::definition()->get($k);
             $ids[$k] = [];
         }
 

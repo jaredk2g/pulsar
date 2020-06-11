@@ -62,7 +62,7 @@ final class DbalDriver extends AbstractDriver
             throw new DriverException('An error occurred in the database driver when getting the ID of the new '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
 
-        return Type::cast($model::getProperty($propertyName), $id);
+        return Type::cast($model::definition()->get($propertyName), $id);
     }
 
     public function loadModel(Model $model): ?array
