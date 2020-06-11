@@ -22,7 +22,7 @@ class TestModel2 extends Model
             'default' => 'some default value',
         ],
         'validate' => [
-            'validate' => 'email|string:5',
+            'validate' => ['email', ['string', 'min' => 5]],
             'null' => true,
         ],
         'validate2' => [
@@ -30,7 +30,7 @@ class TestModel2 extends Model
             'null' => true,
         ],
         'unique' => [
-            'unique' => true,
+            'validate' => ['unique', 'column' => 'unique'],
         ],
         'required' => [
             'type' => Type::INTEGER,

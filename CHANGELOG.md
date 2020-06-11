@@ -21,6 +21,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Moved `Model::cast()` to `Type::cast()`
 - Marked classes as final when appropriate.
 - The model constructor no longer has an `$id` argument. Instead you can use `new Model(['id' => 1234])`.
+- Changed the structure of the `validate` property setting to be an array with named options.
+- The unique constraint is now a validation rule specified as: `['validate' => ['unique', 'column' => 'email']]`.
+- Deprecated the `password_php` validation rule in favor of `password`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

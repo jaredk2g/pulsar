@@ -1352,7 +1352,8 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * This.
+     * This hydrates an individual property in the model. It can be a
+     * scalar value or relationship.
      *
      * @internal
      *
@@ -1627,7 +1628,7 @@ abstract class Model implements ArrayAccess
             $valid = call_user_func_array($validateRules, [$value]);
         } elseif ($validateRules) {
             $validator = new Validator($validateRules);
-            $valid = $validator->validate($value);
+            $valid = $validator->validate($value, $this);
             $error = 'pulsar.validation.'.$validator->getFailingRule();
         }
 
@@ -1636,17 +1637,6 @@ abstract class Model implements ArrayAccess
                 'field' => $property->getName(),
                 'field_name' => $property->getTitle($this),
             ]);
-        }
-
-        // unique?
-        if ($valid && $property->isUnique() && (!$this->hasId || $value != $this->ignoreUnsaved()->{$property->getName()})) {
-            if (!Validator::isUnique($this, $property, $value)) {
-                $valid = false;
-                $this->getErrors()->add('pulsar.validation.unique', [
-                    'field' => $property->getName(),
-                    'field_name' => $property->getTitle($this),
-                ]);
-            }
         }
 
         return [$valid, $value];

@@ -24,9 +24,6 @@ final class Property implements ArrayAccess
     private $null = false;
 
     /** @var bool */
-    private $unique = false;
-
-    /** @var bool */
     private $required = false;
 
     /** @var callable|string|null */
@@ -113,11 +110,6 @@ final class Property implements ArrayAccess
         return $this->null;
     }
 
-    public function isUnique(): bool
-    {
-        return $this->unique;
-    }
-
     public function isRequired(): bool
     {
         return $this->required;
@@ -180,7 +172,6 @@ final class Property implements ArrayAccess
             'type' => $this->type,
             'mutable' => $this->mutable,
             'null' => $this->null,
-            'unique' => $this->unique,
             'required' => $this->required,
             'validate' => $this->validate,
             'default' => $this->default,

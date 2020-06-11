@@ -10,7 +10,7 @@ class TransactionModel extends Model
     protected static $properties = [
         'name' => [
             'required' => true,
-            'validate' => 'string:5',
+            'validate' => ['string', 'min' => 5],
         ],
     ];
 
