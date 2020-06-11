@@ -11,6 +11,9 @@
 
 namespace Pulsar;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
+
 /**
  * Handles value type casting.
  */
@@ -23,6 +26,9 @@ final class Type
     const DATE = 'date';
     const OBJECT = 'object';
     const ARRAY = 'array';
+
+    /** @var Key|null */
+    private static $encryptionKey;
 
     /**
      * Marshals a value for a given property from storage.
@@ -40,6 +46,11 @@ final class Type
         // handle empty strings as null
         if ($property->isNullable() && '' === $value) {
             return null;
+        }
+
+        // perform decryption, if enabled
+        if ($property->isEncrypted()) {
+            $value = Crypto::decrypt($value, self::$encryptionKey);
         }
 
         $type = $property->getType();
@@ -136,5 +147,21 @@ final class Type
         }
 
         return (object) $value;
+    }
+
+    /**
+     * Sets the encryption key to be used when encryption is enabled for a property.
+     */
+    public static function setEncryptionKey(Key $key): void
+    {
+        self::$encryptionKey = $key;
+    }
+
+    /**
+     * Gets the encryption key, if used.
+     */
+    public static function getEncryptionKey(): ?Key
+    {
+        return self::$encryptionKey;
     }
 }

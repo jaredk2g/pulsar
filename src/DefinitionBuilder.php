@@ -85,6 +85,11 @@ final class DefinitionBuilder
                 self::buildHasMany($property, $modelClass);
             }
 
+            // install validation rule for encrypted properties
+            if (isset($property['encrypted']) && $property['encrypted'] && !isset($property['validate'])) {
+                $property['validate'] = 'encrypt';
+            }
+
             $result[$k] = new Property($property, $k);
         }
 

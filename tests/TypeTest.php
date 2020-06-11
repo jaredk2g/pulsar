@@ -11,6 +11,8 @@
 
 namespace Pulsar\Tests;
 
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Property;
 use Pulsar\Type;
@@ -59,6 +61,26 @@ class TypeTest extends MockeryTestCase
         $expected->test = true;
         $this->assertEquals($expected, Type::cast($property, '{"test":true}'));
         $this->assertEquals($expected, Type::cast($property, $expected));
+    }
+
+    public function testCastEncrypted()
+    {
+        $key = Key::loadFromAsciiSafeString('def000008c6cd2d9a56c128d08773b38fe685c710f2bb7be08cc109c0841df42e8a9ed5995ac5f28354ff2ffaedffc9dd6d06bd6890fd12e44bef48c48b7a8a4bd94fe75');
+        Type::setEncryptionKey($key);
+
+        $property = new Property(['encrypted' => true, 'null' => true]);
+        $this->assertNull(Type::cast($property, null));
+        $this->assertNull(Type::cast($property, ''));
+
+        $encrypted = Crypto::encrypt('original value', $key);
+        $decrypted = Type::cast($property, $encrypted);
+        $this->assertEquals('original value', $decrypted);
+
+        $property = new Property(['type' => Type::OBJECT, 'encrypted' => true]);
+        $encrypted = Crypto::encrypt('{"test":true}', $key);
+        $expected = new stdClass();
+        $expected->test = true;
+        $this->assertEquals($expected, Type::cast($property, $encrypted));
     }
 
     public function testToString()

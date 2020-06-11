@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - New method `Model::hasId()` will indicate when a model has a complete identifier.
 - Model definitions have new shortcuts to define relationships: `belongs_to`, `belongs_to_many`, `has_many`, and `has_one`.
 - Added `encrypt` validation rule to encrypt values prior to saving to database using defuse/php-encryption.
+- Added `encrypt` setting to model definitions that when enabled will encrypt the property value in the database.
 
 ### Changed
 - Make model internal properties private when possible.

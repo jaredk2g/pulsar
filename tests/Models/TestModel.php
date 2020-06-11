@@ -19,6 +19,9 @@ class TestModel extends Model
         ],
         'mutator' => [],
         'accessor' => [],
+        'encrypted' => [
+            'encrypted' => true,
+        ],
     ];
     public $preDelete;
     public $postDelete;

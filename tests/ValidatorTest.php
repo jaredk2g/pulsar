@@ -18,6 +18,7 @@ use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Model;
 use Pulsar\Tests\Models\TestModel;
+use Pulsar\Type;
 use Pulsar\Validator;
 use stdClass;
 
@@ -153,7 +154,8 @@ class ValidatorTest extends MockeryTestCase
     {
         $keyAscii = 'def000004b2b3e1048422d3e526f49baf22f57ad94d9f11b35409af630a4ab0f40bcce2a9963dcb876da6df8ec06c7eb4f2cd32cfae385955918d43f49e633dc5d339f1d';
         $key = Key::loadFromAsciiSafeString($keyAscii);
-        $validator = new Validator(['encrypt', 'key' => $keyAscii]);
+        Type::setEncryptionKey($key);
+        $validator = new Validator(['encrypt']);
         $s = 'original value';
         $this->assertTrue($validator->validate($s, self::$model));
         $this->assertNotEquals('original value', $s);

@@ -36,6 +36,9 @@ final class Property implements ArrayAccess
     private $hasDefault;
 
     /** @var bool */
+    private $encrypted = false;
+
+    /** @var bool */
     private $persisted = true;
 
     /** @var string|null */
@@ -141,6 +144,11 @@ final class Property implements ArrayAccess
         return $this->persisted;
     }
 
+    public function isEncrypted(): bool
+    {
+        return $this->encrypted;
+    }
+
     public function getForeignModelClass(): ?string
     {
         return $this->relation;
@@ -176,6 +184,7 @@ final class Property implements ArrayAccess
             'validate' => $this->validate,
             'default' => $this->default,
             'persisted' => $this->persisted,
+            'encrypted' => $this->encrypted,
             'relation' => $this->relation,
             'relation_type' => $this->relation_type,
             'foreign_key' => $this->foreign_key,
