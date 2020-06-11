@@ -160,6 +160,11 @@ class ValidatorTest extends MockeryTestCase
         $this->assertTrue($validator->validate($s, self::$model));
         $this->assertNotEquals('original value', $s);
         $this->assertEquals('original value', Crypto::decrypt($s, $key));
+
+        $s = (object) ['test' => true];
+        $this->assertTrue($validator->validate($s, self::$model));
+        $this->assertNotEquals((object) ['test' => true], $s);
+        $this->assertEquals('{"test":true}', Crypto::decrypt($s, $key));
     }
 
     public function testEnum()

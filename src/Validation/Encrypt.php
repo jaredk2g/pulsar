@@ -18,6 +18,11 @@ class Encrypt implements ValidationRuleInterface
 {
     public function validate(&$value, array $options, Model $model): bool
     {
+        // Encryption only works with strings. Convert to JSON if an object or array is given.
+        if (is_object($value) || is_array($value)) {
+            $value = json_encode($value);
+        }
+
         $value = Crypto::encrypt($value, Type::getEncryptionKey());
 
         return true;
