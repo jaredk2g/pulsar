@@ -16,6 +16,7 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Pulsar\Model;
 use Pulsar\Tests\Models\TestModel;
 use Pulsar\Validator;
 use stdClass;
@@ -112,6 +113,18 @@ class ValidatorTest extends MockeryTestCase
         $s = '0';
         $this->assertTrue($validator->validate($s, self::$model));
         $this->assertFalse($s);
+    }
+
+    public function testCallable()
+    {
+        $validator = new Validator(['callable', 'fn' => function (&$value, array $options, Model $model) {
+            $value = 'changed';
+
+            return true;
+        }]);
+        $s = 'original value';
+        $this->assertTrue($validator->validate($s, self::$model));
+        $this->assertEquals('changed', $s);
     }
 
     public function testDate()

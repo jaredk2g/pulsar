@@ -295,7 +295,7 @@ class ModelTest extends MockeryTestCase
             ],
             'validate2' => [
                 'type' => null,
-                'validate' => 'modelValidate',
+                'validate' => ['callable', 'fn' => 'modelValidate'],
                 'null' => true,
                 'mutable' => Property::MUTABLE,
                 'required' => false,

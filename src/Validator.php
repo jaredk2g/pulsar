@@ -16,6 +16,7 @@ use Pulsar\Validation\Alpha;
 use Pulsar\Validation\AlphaDash;
 use Pulsar\Validation\AlphaNumeric;
 use Pulsar\Validation\Boolean;
+use Pulsar\Validation\Callables;
 use Pulsar\Validation\Date;
 use Pulsar\Validation\Email;
 use Pulsar\Validation\Encrypt;
@@ -50,6 +51,7 @@ final class Validator
         'alpha_dash' => AlphaDash::class,
         'alpha_numeric' => AlphaNumeric::class,
         'boolean' => Boolean::class,
+        'callable' => Callables::class,
         'date' => Date::class,
         'db_timestamp' => MySqlDatetime::class,
         'encrypt' => Encrypt::class,
@@ -181,24 +183,21 @@ final class Validator
             return true;
         }
 
-        $valid = true;
         $validationRules = $property->getValidationRules();
-        if (is_callable($validationRules)) {
-            $valid = call_user_func_array($validationRules, [$value]);
-            $error = 'pulsar.validation.failed';
-        } elseif ($validationRules) {
-            $validator = new Validator($validationRules);
-            $valid = $validator->validate($value, $model);
-            $error = 'pulsar.validation.'.$validator->getFailingRule();
+        if (!$validationRules) {
+            return true;
         }
 
-        if (!$valid) {
-            $model->getErrors()->add($error, [
-                'field' => $property->getName(),
-                'field_name' => $property->getTitle($model),
-            ]);
+        $validator = new Validator($validationRules);
+        if ($validator->validate($value, $model)) {
+            return true;
         }
 
-        return $valid;
+        $model->getErrors()->add('pulsar.validation.'.$validator->getFailingRule(), [
+            'field' => $property->getName(),
+            'field_name' => $property->getTitle($model),
+        ]);
+
+        return false;
     }
 }

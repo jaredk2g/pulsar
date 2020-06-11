@@ -30,7 +30,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
         'pulsar.validation.alpha_numeric' => '{{field_name}} only allows letters and numbers',
         'pulsar.validation.alpha_dash' => '{{field_name}} only allows letters and dashes',
         'pulsar.validation.boolean' => '{{field_name}} must be yes or no',
-        'pulsar.validation.custom' => '{{field_name}} validation failed',
+        'pulsar.validation.callable' => '{{field_name}} is invalid',
         'pulsar.validation.email' => '{{field_name}} must be a valid email address',
         'pulsar.validation.enum' => '{{field_name}} must be one of the allowed values',
         'pulsar.validation.date' => '{{field_name}} must be a date',
