@@ -12,6 +12,8 @@
 namespace Pulsar\Tests;
 
 use DateTimeZone;
+use Defuse\Crypto\Crypto;
+use Defuse\Crypto\Key;
 use InvalidArgumentException;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Tests\Models\TestModel;
@@ -112,26 +114,6 @@ class ValidatorTest extends MockeryTestCase
         $this->assertFalse($s);
     }
 
-    public function testEmail()
-    {
-        $validator = new Validator('email');
-        $s = 'test@example.com';
-        $this->assertTrue($validator->validate($s, self::$model));
-        $s = 'test';
-        $this->assertFalse($validator->validate($s, self::$model));
-    }
-
-    public function testEnum()
-    {
-        $validator = new Validator(['enum', 'choices' => ['red', 'orange', 'yellow', 'green', 'blue', 'violet']]);
-        $s = 'blue';
-        $this->assertTrue($validator->validate($s, self::$model));
-
-        $validator = new Validator(['enum', 'choices' => ['Austin', 'Dallas', 'OKC', 'Tulsa']]);
-        $s = 'Paris';
-        $this->assertFalse($validator->validate($s, self::$model));
-    }
-
     public function testDate()
     {
         date_default_timezone_set('UTC');
@@ -142,6 +124,37 @@ class ValidatorTest extends MockeryTestCase
         $s = '09/17/2013';
         $this->assertTrue($validator->validate($s, self::$model));
         $s = 'doesnotwork';
+        $this->assertFalse($validator->validate($s, self::$model));
+    }
+
+    public function testEmail()
+    {
+        $validator = new Validator('email');
+        $s = 'test@example.com';
+        $this->assertTrue($validator->validate($s, self::$model));
+        $s = 'test';
+        $this->assertFalse($validator->validate($s, self::$model));
+    }
+
+    public function testEncrypt()
+    {
+        $keyAscii = 'def000004b2b3e1048422d3e526f49baf22f57ad94d9f11b35409af630a4ab0f40bcce2a9963dcb876da6df8ec06c7eb4f2cd32cfae385955918d43f49e633dc5d339f1d';
+        $key = Key::loadFromAsciiSafeString($keyAscii);
+        $validator = new Validator(['encrypt', 'key' => $keyAscii]);
+        $s = 'original value';
+        $this->assertTrue($validator->validate($s, self::$model));
+        $this->assertNotEquals('original value', $s);
+        $this->assertEquals('original value', Crypto::decrypt($s, $key));
+    }
+
+    public function testEnum()
+    {
+        $validator = new Validator(['enum', 'choices' => ['red', 'orange', 'yellow', 'green', 'blue', 'violet']]);
+        $s = 'blue';
+        $this->assertTrue($validator->validate($s, self::$model));
+
+        $validator = new Validator(['enum', 'choices' => ['Austin', 'Dallas', 'OKC', 'Tulsa']]);
+        $s = 'Paris';
         $this->assertFalse($validator->validate($s, self::$model));
     }
 

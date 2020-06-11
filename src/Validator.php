@@ -18,6 +18,7 @@ use Pulsar\Validation\AlphaNumeric;
 use Pulsar\Validation\Boolean;
 use Pulsar\Validation\Date;
 use Pulsar\Validation\Email;
+use Pulsar\Validation\Encrypt;
 use Pulsar\Validation\Enum;
 use Pulsar\Validation\Ip;
 use Pulsar\Validation\Matching;
@@ -51,6 +52,7 @@ final class Validator
         'boolean' => Boolean::class,
         'date' => Date::class,
         'db_timestamp' => MySqlDatetime::class,
+        'encrypt' => Encrypt::class,
         'email' => Email::class,
         'enum' => Enum::class,
         'ip' => Ip::class,
@@ -61,8 +63,8 @@ final class Validator
         'range' => Range::class,
         'required' => Required::class,
         'string' => Strings::class,
-        'timestamp' => Timestamp::class,
         'time_zone' => Timezone::class,
+        'timestamp' => Timestamp::class,
         'unique' => Unique::class,
         'url' => Url::class,
     ];
