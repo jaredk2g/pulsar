@@ -865,24 +865,31 @@ class ModelTest extends MockeryTestCase
     public function testDirtyNoHasChangedCheck()
     {
         $model = new TestModel();
+        $this->assertFalse($model->dirty());
         $this->assertFalse($model->dirty('test'));
         $this->assertFalse($model->dirty('not_a_property'));
 
         $model->test = 'hello world';
         $this->assertTrue($model->dirty('test'));
+        $this->assertTrue($model->dirty());
 
         $model->test = null;
         $this->assertTrue($model->dirty('test'));
+        $this->assertTrue($model->dirty());
 
         $model->not_a_property = 'hello world';
         $this->assertTrue($model->dirty('not_a_property'));
+        $this->assertTrue($model->dirty());
 
         $model = new TestModel(['id' => 1, 'test' => 'hello world']);
         $this->assertFalse($model->dirty('test'));
+        $this->assertFalse($model->dirty());
         $model->test = 'hello world';
         $this->assertTrue($model->dirty('test'));
+        $this->assertTrue($model->dirty());
         $model->test = 'goodbye world';
         $this->assertTrue($model->dirty('test'));
+        $this->assertTrue($model->dirty());
     }
 
     public function testDirtyHasChangedCheck()

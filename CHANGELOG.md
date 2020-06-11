@@ -7,7 +7,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.
 - The `Errors::setTranslator()` method can set the global translation implementation.
 - Models now have a `buildDefinition()` method that can be overridden to dynamically customize the model properties.
-- Added `Model::dirty()` to check if a property has an unsaved value, and whether it has changed.
+- Added `Model::dirty()` to check for unsaved values, and detect changes to those values.
 - Added `Type::*`, `Property::*`, and `Relationship::*` constants to replace removed `Model` constants.
 - New method `Model::hasId()` will indicate when a model has a complete identifier.
 - Model definitions have new shortcuts to define relationships: `belongs_to`, `belongs_to_many`, `has_many`, and `has_one`.

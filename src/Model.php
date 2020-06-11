@@ -939,11 +939,19 @@ abstract class Model implements ArrayAccess
      * Checks if the unsaved value for a property is present and
      * is different from the original value.
      *
-     * @property string $name
-     * @property bool   $hasChanged when true, checks if the unsaved value is different from the saved value
+     * @property string|null $name
+     * @property bool        $hasChanged when true, checks if the unsaved value is different from the saved value
      */
-    public function dirty(string $name, bool $hasChanged = false): bool
+    public function dirty(?string $name = null, bool $hasChanged = false): bool
     {
+        if (!$name) {
+            if ($hasChanged) {
+                throw new \RuntimeException('Checking if all properties have changed is not supported');
+            }
+
+            return count($this->_unsaved) > 0;
+        }
+
         if (!array_key_exists($name, $this->_unsaved)) {
             return false;
         }
