@@ -73,7 +73,7 @@ abstract class Model implements ArrayAccess
     /**
      * @var array
      */
-    protected $_unsaved = [];
+    private $_unsaved = [];
 
     /**
      * @var bool
