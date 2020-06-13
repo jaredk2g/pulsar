@@ -689,7 +689,17 @@ abstract class Model implements ArrayAccess
 
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $this->refreshWith(array_replace($this->idValues, $preservedValues, $insertArray));
+            $hydrateValues = array_replace($this->idValues, $preservedValues);
+
+            // only type-cast the values that were converted to the database format
+            foreach ($insertArray as $k => $v) {
+                if ($property = static::definition()->get($k)) {
+                    $hydrateValues[$k] = Type::cast($property, $v);
+                } else {
+                    $hydrateValues[$k] = $v;
+                }
+            }
+            $this->refreshWith($hydrateValues);
 
             // dispatch the model.created event
             if (!$this->performDispatch(ModelEvent::CREATED, $usesTransactions)) {
@@ -811,6 +821,7 @@ abstract class Model implements ArrayAccess
             if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
                 $id = $this->_unsaved[$k];
             } else {
+                // type-cast the value because it came from the database
                 $id = Type::cast($property, self::$driver->getCreatedId($this, $k));
             }
 
@@ -1010,7 +1021,17 @@ abstract class Model implements ArrayAccess
         if ($updated) {
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $this->refreshWith(array_replace($this->_values, $preservedValues, $updateArray));
+            $hydrateValues = array_replace($this->_values, $this->idValues, $preservedValues);
+
+            // only type-cast the values that were converted to the database format
+            foreach ($updateArray as $k => $v) {
+                if ($property = static::definition()->get($k)) {
+                    $hydrateValues[$k] = Type::cast($property, $v);
+                } else {
+                    $hydrateValues[$k] = $v;
+                }
+            }
+            $this->refreshWith($hydrateValues);
 
             // dispatch the model.updated event
             if (!$this->performDispatch(ModelEvent::UPDATED, $usesTransactions)) {
@@ -1242,6 +1263,13 @@ abstract class Model implements ArrayAccess
         // clear any relations
         $this->_relationships = [];
 
+        // type-cast the values that come from the database
+        foreach ($values as $k => &$v) {
+            if ($property = static::definition()->get($k)) {
+                $v = Type::cast($property, $v);
+            }
+        }
+
         return $this->refreshWith($values);
     }
 
@@ -1254,13 +1282,6 @@ abstract class Model implements ArrayAccess
      */
     public function refreshWith(array $values)
     {
-        // type cast the values
-        foreach ($values as $k => &$value) {
-            if ($property = static::definition()->get($k)) {
-                $value = Type::cast($property, $value);
-            }
-        }
-
         $this->loaded = true;
         $this->_persisted = true;
         $this->_values = $values;
@@ -1351,6 +1372,7 @@ abstract class Model implements ArrayAccess
      */
     public function hydrateValue(string $name, $value): void
     {
+        // type-cast the value because it came from the database
         if ($property = static::definition()->get($name)) {
             $this->_values[$name] = Type::cast($property, $value);
         } else {

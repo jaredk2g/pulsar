@@ -277,8 +277,17 @@ class Query
         /** @var Model[] $models */
         $models = [];
         foreach ($driver->queryModels($this) as $j => $row) {
+            // type-cast the values because they came from the database
+            foreach ($row as $k => &$v) {
+                if ($property = $modelClass::definition()->get($k)) {
+                    $v = Type::cast($property, $v);
+                }
+            }
+
             // create the model and cache the loaded values
             $models[] = new $modelClass($row);
+
+            // capture any local ids for eager loading relationships
             foreach ($this->eagerLoaded as $k) {
                 $localKey = $eagerLoadedProperties[$k]['local_key'];
                 if (isset($row[$localKey])) {
@@ -324,7 +333,7 @@ class Query
 
                         // older style properties do not support this type of hydration
                         if (!$property->isPersisted()) {
-                            $models[$j]->hydrateValue($k, []);
+                            $models[$j]->hydrateValue($k, null);
                         }
                     }
                 }
