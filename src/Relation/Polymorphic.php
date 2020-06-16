@@ -54,13 +54,14 @@ final class Polymorphic extends AbstractRelation
      */
     public function getQuery(): Query
     {
-        $foreignModel = $this->modelMapping[$this->localModel->{$this->localTypeKey}];
-        if (null === $foreignModel) {
+        $type = $this->localModel->{$this->localTypeKey};
+        if (null === $type) {
             $this->empty = true;
 
             return new Query();
         }
 
+        $foreignModel = $this->modelMapping[$type];
         $query = new Query(new $foreignModel());
 
         $id = $this->localModel->{$this->localIdKey};

@@ -236,5 +236,21 @@ final class DefinitionBuilder
         if (!isset($property['local_key'])) {
             $property['local_key'] = $name;
         }
+
+        // when a polymorhpic relationship is used then we automatically add a
+        // new property for the type and ID fields which gets persisted to the DB
+        if (!isset($result[$property['local_key'].'_type'])) {
+            $result[$property['local_key'].'_type'] = new Property([
+                'type' => Type::STRING,
+                'mutable' => $property['mutable'] ?? Property::MUTABLE,
+            ], $property['local_key'].'_type');
+        }
+
+        if (!isset($result[$property['local_key'].'_id'])) {
+            $result[$property['local_key'].'_id'] = new Property([
+                'type' => Type::INTEGER,
+                'mutable' => $property['mutable'] ?? Property::MUTABLE,
+            ], $property['local_key'].'_id');
+        }
     }
 }
