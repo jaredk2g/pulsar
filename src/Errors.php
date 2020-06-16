@@ -23,33 +23,6 @@ use Pulsar\Interfaces\TranslatorInterface;
 final class Errors implements IteratorAggregate, Countable, ArrayAccess
 {
     /**
-     * @var array
-     */
-    private static $messages = [
-        'pulsar.validation.alpha' => '{{field_name}} only allows letters',
-        'pulsar.validation.alpha_numeric' => '{{field_name}} only allows letters and numbers',
-        'pulsar.validation.alpha_dash' => '{{field_name}} only allows letters and dashes',
-        'pulsar.validation.boolean' => '{{field_name}} must be yes or no',
-        'pulsar.validation.callable' => '{{field_name}} is invalid',
-        'pulsar.validation.email' => '{{field_name}} must be a valid email address',
-        'pulsar.validation.enum' => '{{field_name}} must be one of the allowed values',
-        'pulsar.validation.date' => '{{field_name}} must be a date',
-        'pulsar.validation.failed' => '{{field_name}} is invalid',
-        'pulsar.validation.ip' => '{{field_name}} only allows valid IP addresses',
-        'pulsar.validation.matching' => '{{field_name}} must match',
-        'pulsar.validation.numeric' => '{{field_name}} only allows numbers',
-        'pulsar.validation.password' => '{{field_name}} must meet the password requirements',
-        'pulsar.validation.password_php' => '{{field_name}} must meet the password requirements',
-        'pulsar.validation.range' => '{{field_name}} must be within the allowed range',
-        'pulsar.validation.required' => '{{field_name}} is missing',
-        'pulsar.validation.string' => '{{field_name}} must be a string of the proper length',
-        'pulsar.validation.time_zone' => '{{field_name}} only allows valid time zones',
-        'pulsar.validation.timestamp' => '{{field_name}} only allows timestamps',
-        'pulsar.validation.unique' => 'The {{field_name}} you chose has already been taken. Please try a different {{field_name}}.',
-        'pulsar.validation.url' => '{{field_name}} only allows valid URLs',
-    ];
-
-    /**
      * @var TranslatorInterface|null
      */
     private static $translator;
@@ -78,8 +51,12 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Gets the translator.
      */
-    public function getTranslator(): ?TranslatorInterface
+    public function getTranslator(): TranslatorInterface
     {
+        if (!self::$translator) {
+            self::$translator = new Translator();
+        }
+
         return self::$translator;
     }
 
@@ -190,15 +167,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      */
     private function parse($error, $locale, array $parameters): string
     {
-        if (!self::$translator) {
-            return $error;
-        }
-
-        // try to supply a fallback message in case
-        // the user does not have one specified
-        $fallback = self::$messages[$error] ?? $error;
-
-        return $this->getTranslator()->translate($error, $parameters, $locale, $fallback);
+        return $this->getTranslator()->translate($error, $parameters, $locale);
     }
 
     //////////////////////////

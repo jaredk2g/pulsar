@@ -16,6 +16,33 @@ use Pulsar\Interfaces\TranslatorInterface;
 final class Translator implements TranslatorInterface
 {
     /**
+     * @var array
+     */
+    private static $messages = [
+        'pulsar.validation.alpha' => '{{field_name}} only allows letters',
+        'pulsar.validation.alpha_numeric' => '{{field_name}} only allows letters and numbers',
+        'pulsar.validation.alpha_dash' => '{{field_name}} only allows letters and dashes',
+        'pulsar.validation.boolean' => '{{field_name}} must be yes or no',
+        'pulsar.validation.callable' => '{{field_name}} is invalid',
+        'pulsar.validation.email' => '{{field_name}} must be a valid email address',
+        'pulsar.validation.enum' => '{{field_name}} must be one of the allowed values',
+        'pulsar.validation.date' => '{{field_name}} must be a date',
+        'pulsar.validation.failed' => '{{field_name}} is invalid',
+        'pulsar.validation.ip' => '{{field_name}} only allows valid IP addresses',
+        'pulsar.validation.matching' => '{{field_name}} must match',
+        'pulsar.validation.numeric' => '{{field_name}} only allows numbers',
+        'pulsar.validation.password' => '{{field_name}} must meet the password requirements',
+        'pulsar.validation.password_php' => '{{field_name}} must meet the password requirements',
+        'pulsar.validation.range' => '{{field_name}} must be within the allowed range',
+        'pulsar.validation.required' => '{{field_name}} is missing',
+        'pulsar.validation.string' => '{{field_name}} must be a string of the proper length',
+        'pulsar.validation.time_zone' => '{{field_name}} only allows valid time zones',
+        'pulsar.validation.timestamp' => '{{field_name}} only allows timestamps',
+        'pulsar.validation.unique' => 'The {{field_name}} you chose has already been taken. Please try a different {{field_name}}.',
+        'pulsar.validation.url' => '{{field_name}} only allows valid URLs',
+    ];
+
+    /**
      * @var string
      */
     private $locale = 'en';
@@ -64,7 +91,7 @@ final class Translator implements TranslatorInterface
         $this->dataDir = $dir;
     }
 
-    public function translate(string $phrase, array $params = [], ?string $locale = null, ?string $fallback = null): string
+    public function translate(string $phrase, array $params = [], ?string $locale = null): string
     {
         if (!$locale) {
             $locale = $this->locale;
@@ -79,7 +106,9 @@ final class Translator implements TranslatorInterface
         // use the fallback phrase if a translated phrase is not
         // available
         if (!$translatedPhrase) {
-            $translatedPhrase = $fallback;
+            // try to supply a fallback message in case
+            // the user does not have one specified
+            $translatedPhrase = self::$messages[$phrase] ?? null;
         }
 
         if (null != $translatedPhrase) {

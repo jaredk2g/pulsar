@@ -35,7 +35,7 @@ class ErrorsTest extends MockeryTestCase
     {
         Errors::clearTranslator();
         $errorStack = new Errors();
-        $this->assertNull($errorStack->getTranslator());
+        $this->assertInstanceOf(Translator::class, $errorStack->getTranslator());
         $translator = new Translator();
         $errorStack->setTranslator($translator);
         $this->assertEquals($translator, $errorStack->getTranslator());

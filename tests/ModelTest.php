@@ -2364,7 +2364,7 @@ class ModelTest extends MockeryTestCase
             ->withArgs(['pulsar.properties.Person.email'])
             ->andReturn('Title');
         $translator->shouldReceive('translate')
-            ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false, '{{field_name}} must be a valid email address'])
+            ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false])
             ->andReturn('Title must be a valid email address');
         $errors = $model->getErrors();
         $errors->setTranslator($translator);

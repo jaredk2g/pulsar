@@ -46,8 +46,7 @@ class TranslatorTest extends MockeryTestCase
         $this->assertEquals('some_phrase', $translator->translate('some_phrase', [], 'pirate'));
 
         // fallback phrase
-        $this->assertEquals('Hello, world', $translator->translate('non_existent_phrase', [], false, 'Hello, world'));
-        $this->assertEquals('Fallback', $translator->translate('some_phrase', [], 'pirate', 'Fallback'));
+        $this->assertEquals('{{field_name}} is invalid', $translator->translate('pulsar.validation.failed', [], false));
     }
 
     public function testTranslateParameterInjection()
@@ -58,13 +57,14 @@ class TranslatorTest extends MockeryTestCase
         $parameters = [
             'parameter_1' => 1,
             'test' => 'testing',
-            'blah' => 'blah', ];
+            'blah' => 'blah',
+        ];
 
         $expected = 'Testing parameter injection: 1 blah testing';
 
         $this->assertEquals($expected, $translator->translate('parameter_injection', $parameters));
 
         // fallback phrase
-        $this->assertEquals($expected, $translator->translate('non_existent_phrase', $parameters, false, 'Testing parameter injection: {{parameter_1}} {{blah}} {{test}}'));
+        $this->assertEquals('Test is invalid', $translator->translate('pulsar.validation.failed', ['field_name' => 'Test'], false));
     }
 }
