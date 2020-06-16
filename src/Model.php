@@ -352,14 +352,16 @@ abstract class Model implements ArrayAccess
         }
 
         // set local ID property on belongs_to relationship
-        $property = static::definition()->get($name);
-        if ($property && Relationship::BELONGS_TO == $property->getRelationshipType() && !$property->isPersisted()) {
-            if ($value instanceof self) {
-                $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
-            } elseif (null === $value) {
-                $this->_unsaved[$property->getLocalKey()] = null;
-            } else {
-                throw new ModelException('The value set on the "'.$name.'" property must be a model or null.');
+        if (static::definition()->has($name)) {
+            $property = static::definition()->get($name);
+            if (Relationship::BELONGS_TO == $property->getRelationshipType() && !$property->isPersisted()) {
+                if ($value instanceof self) {
+                    $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
+                } elseif (null === $value) {
+                    $this->_unsaved[$property->getLocalKey()] = null;
+                } else {
+                    throw new ModelException('The value set on the "'.$name.'" property must be a model or null.');
+                }
             }
         }
     }
