@@ -22,6 +22,12 @@ class RelationshipTester extends Model
         'has_many' => [
             'has_many' => TestModel2::class,
         ],
+        'polymorphic' => [
+            'morphs_to' => [
+                'card' => Card::class,
+                'bank_account' => BankAccount::class,
+            ],
+        ],
         'name' => [],
     ];
 }

@@ -83,6 +83,8 @@ final class DefinitionBuilder
                 self::buildBelongsToMany($property, $modelClass);
             } elseif (isset($property['has_many'])) {
                 self::buildHasMany($property, $modelClass);
+            } elseif (isset($property['morphs_to'])) {
+                self::buildPolymorphic($property, $k);
             }
 
             // install validation rule for encrypted properties
@@ -216,6 +218,23 @@ final class DefinitionBuilder
         // the default local key is `id`
         if (!isset($property['local_key'])) {
             $property['local_key'] = Model::DEFAULT_ID_NAME;
+        }
+    }
+
+    private static function buildPolymorphic(array &$property, string $name): void
+    {
+        /* @var Model $modelClass */
+        $property['relation_type'] = Relationship::POLYMORPHIC;
+        $property['persisted'] = false;
+
+        // the default foreign key is `id`
+        if (!isset($property['foreign_key'])) {
+            $property['foreign_key'] = Model::DEFAULT_ID_NAME;
+        }
+
+        // the default local key type is the property name
+        if (!isset($property['local_key'])) {
+            $property['local_key'] = $name;
         }
     }
 }

@@ -102,6 +102,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'relation' => [
                 'type' => Type::INTEGER,
@@ -117,6 +118,7 @@ class ModelTest extends MockeryTestCase
                 'persisted' => true,
                 'encrypted' => false,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'answer' => [
                 'type' => Type::STRING,
@@ -132,6 +134,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'test_hook' => [
                 'type' => Type::STRING,
@@ -147,6 +150,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'mutator' => [
                 'type' => null,
@@ -162,6 +166,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'accessor' => [
                 'type' => null,
@@ -177,6 +182,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'encrypted' => [
                 'type' => null,
@@ -192,6 +198,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
         ];
 
@@ -217,6 +224,7 @@ class ModelTest extends MockeryTestCase
             'foreign_key' => null,
             'local_key' => null,
             'pivot_tablename' => null,
+            'morphs_to' => null,
         ];
 
         $this->assertEquals($expected, Person::definition()->get('id')->toArray());
@@ -238,6 +246,7 @@ class ModelTest extends MockeryTestCase
             'foreign_key' => null,
             'local_key' => null,
             'pivot_tablename' => null,
+            'morphs_to' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('id')->toArray());
 
@@ -255,6 +264,7 @@ class ModelTest extends MockeryTestCase
             'persisted' => true,
             'encrypted' => false,
             'pivot_tablename' => null,
+            'morphs_to' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('relation')->toArray());
     }
@@ -276,6 +286,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'id2' => [
                 'type' => Type::INTEGER,
@@ -291,6 +302,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'default' => [
                 'type' => null,
@@ -306,6 +318,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'validate' => [
                 'type' => null,
@@ -321,6 +334,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'validate2' => [
                 'type' => null,
@@ -336,6 +350,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'unique' => [
                 'type' => null,
@@ -351,6 +366,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'required' => [
                 'type' => Type::INTEGER,
@@ -366,6 +382,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'hidden' => [
                 'type' => Type::BOOLEAN,
@@ -381,6 +398,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'person' => [
                 'type' => Type::INTEGER,
@@ -396,6 +414,7 @@ class ModelTest extends MockeryTestCase
                 'required' => false,
                 'validate' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'array' => [
                 'type' => Type::ARRAY,
@@ -415,6 +434,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'object' => [
                 'type' => Type::OBJECT,
@@ -430,6 +450,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'mutable_create_only' => [
                 'type' => null,
@@ -445,6 +466,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'protected' => [
                 'type' => null,
@@ -460,6 +482,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'created_at' => [
                 'type' => Type::DATE,
@@ -475,6 +498,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'updated_at' => [
                 'type' => Type::DATE,
@@ -490,6 +514,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
         ];
         $model = new TestModel2(); // forces initialize()
@@ -514,6 +539,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'name' => [
                 'type' => Type::STRING,
@@ -529,6 +555,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'email' => [
                 'type' => Type::STRING,
@@ -544,6 +571,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'deleted_at' => [
                 'type' => Type::DATE,
@@ -559,6 +587,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'garage' => [
                 'type' => null,
@@ -574,6 +603,7 @@ class ModelTest extends MockeryTestCase
                 'persisted' => false,
                 'encrypted' => false,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
         ];
 
@@ -2060,6 +2090,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'customer' => [
                 'type' => null,
@@ -2075,6 +2106,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => 'id',
                 'local_key' => 'customer_id',
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
             'customer_id' => [
                 'type' => 'integer',
@@ -2090,6 +2122,7 @@ class ModelTest extends MockeryTestCase
                 'foreign_key' => null,
                 'local_key' => null,
                 'pivot_tablename' => null,
+                'morphs_to' => null,
             ],
         ];
 

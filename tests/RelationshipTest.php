@@ -8,7 +8,10 @@ use Pulsar\Relation\BelongsTo;
 use Pulsar\Relation\BelongsToMany;
 use Pulsar\Relation\HasMany;
 use Pulsar\Relation\HasOne;
+use Pulsar\Relation\Polymorphic;
 use Pulsar\Relation\Relationship;
+use Pulsar\Tests\Models\BankAccount;
+use Pulsar\Tests\Models\Card;
 use Pulsar\Tests\Models\InvalidRelationship;
 use Pulsar\Tests\Models\InvalidRelationship2;
 use Pulsar\Tests\Models\RelationshipTester;
@@ -91,5 +94,18 @@ class RelationshipTest extends TestCase
         $this->assertEquals('relationship_tester_id', $relation->getLocalKey());
         $this->assertEquals($model, $relation->getLocalModel());
         $this->assertEquals('RelationshipTesterTestModel2', $relation->getTablename());
+    }
+
+    public function testPolymorphic()
+    {
+        $model = new RelationshipTester();
+        $relation = Relationship::make($model, RelationshipTester::definition()->get('polymorphic'));
+
+        $this->assertInstanceOf(Polymorphic::class, $relation);
+        $this->assertEquals(['card' => Card::class, 'bank_account' => BankAccount::class], $relation->getModelMapping());
+        $this->assertEquals('id', $relation->getForeignKey());
+        $this->assertEquals('polymorphic_id', $relation->getLocalIdKey());
+        $this->assertEquals('polymorphic_type', $relation->getLocalTypeKey());
+        $this->assertEquals($model, $relation->getLocalModel());
     }
 }

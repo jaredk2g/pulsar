@@ -56,6 +56,9 @@ final class Property implements ArrayAccess
     /** @var string|null */
     private $pivot_tablename;
 
+    /** @var array|null */
+    private $morphs_to;
+
     public function __construct(array $values = [], string $name = '')
     {
         $this->name = $name;
@@ -174,6 +177,11 @@ final class Property implements ArrayAccess
         return $this->pivot_tablename;
     }
 
+    public function getMorphsTo(): ?array
+    {
+        return $this->morphs_to;
+    }
+
     public function toArray(): array
     {
         return [
@@ -189,7 +197,8 @@ final class Property implements ArrayAccess
             'relation_type' => $this->relation_type,
             'foreign_key' => $this->foreign_key,
             'local_key' => $this->local_key,
-            'pivot_tablename' => $this->getPivotTablename(),
+            'pivot_tablename' => $this->pivot_tablename,
+            'morphs_to' => $this->morphs_to,
         ];
     }
 
