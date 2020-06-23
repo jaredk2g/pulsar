@@ -9,6 +9,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 - [Relationships](#relationships)
 - [Validation](#validation)
 - [Lifecycle Events](#lifecycle-events)
+- [Learn More](#learn-more)
 
 ## Setup
 
@@ -227,3 +228,7 @@ Pulsar allows you to define relationships between models and makes it easy to ac
 ## Validation
 
 ## Lifecycle Events
+
+## Learn More
+
+- [Model Definition Reference](model-definitions)
