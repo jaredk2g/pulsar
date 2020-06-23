@@ -354,6 +354,21 @@ Coming soon....
 
 Coming soon....
 
+### I18n
+
+Validation messages can be translated to the user's locale by supplying an object that implements `TranslatorInterface`. There is a default translation implementation although it is trivial to implement your own that plugs into your existing i18n system. In order to enable translations you must at the beginning of script execution provide the translator object.
+
+```php
+<?php
+
+use Pulsar\Errors;
+use Pulsar\Translator;
+
+$translator = new Translator();
+$translator->setDataDir('...');
+Errors::setTranslator($translator);
+```
+
 ## Lifecycle Events
 
 ```php
@@ -387,7 +402,7 @@ class LineItem extends Model
 }
 ```
 
-Lifecycle event listeners can be added to a model. The best place to do this is by defining the `initialize()` which will only be called once per program execution.
+Lifecycle event listeners can be added to a model. The best place to do this is by defining the `initialize()` method, which will only be called once per program execution.
 
 - `creating()` - Executed before a model is inserted in the database
 - `created()` - Executed after a model is inserted in the database
