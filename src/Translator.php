@@ -89,7 +89,7 @@ final class Translator implements TranslatorInterface
         $this->dataDir = $dir;
     }
 
-    public function translate(string $phrase, array $params = [], ?string $locale = null): string
+    public function translate(string $phrase, array $context = [], ?string $locale = null): string
     {
         if (!$locale) {
             $locale = $this->locale;
@@ -111,8 +111,8 @@ final class Translator implements TranslatorInterface
 
         if (null != $translatedPhrase) {
             // inject parameters into phrase
-            if (count($params) > 0) {
-                foreach ($params as $param => $paramValue) {
+            if (count($context) > 0) {
+                foreach ($context as $param => $paramValue) {
                     $translatedPhrase = str_replace('{{'.$param.'}}', $paramValue, $translatedPhrase);
                 }
             }

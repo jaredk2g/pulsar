@@ -28,6 +28,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed the structure of the `validate` property setting to be an array with named options.
 - The unique constraint is now a validation rule specified as: `['validate' => ['unique', 'column' => 'email']]`.
 - Callable validation rules must now be specified as: `['validate' => ['callable', 'fn' => ...]]`.
+- The error stack represents error messages as objects instead of arrays.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
@@ -38,6 +39,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `Model::TYPE_*`, `Model` mutability, and `Model::RELATIONSHIP_*` constants.
 - Removed `Model::getProperties()`, `::hasProperty()`, and `::getProperty()`.
 - Removed the `password_php` validation rule in favor of `password`.
+- It is no longer possible to supply a locale when grabbing error messages.
 
 ## 0.10 - 2020-04-22
 ### Added

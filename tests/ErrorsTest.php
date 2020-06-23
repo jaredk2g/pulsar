@@ -14,6 +14,7 @@ namespace Pulsar\Tests;
 use Exception;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use OutOfBoundsException;
+use Pulsar\Error;
 use Pulsar\Errors;
 use Pulsar\Translator;
 
@@ -39,6 +40,15 @@ class ErrorsTest extends MockeryTestCase
         $translator = new Translator();
         $errorStack->setTranslator($translator);
         $this->assertEquals($translator, $errorStack->getTranslator());
+    }
+
+    public function testToString()
+    {
+        $errorStack = $this->getErrorStack();
+        $errorStack->add('Error message 1');
+        $errorStack->add('Error message 2');
+
+        $this->assertEquals("Error message 1\nError message 2", $errorStack);
     }
 
     public function testAll()
@@ -86,17 +96,18 @@ class ErrorsTest extends MockeryTestCase
         $this->assertEquals($errorStack, $errorStack->add('some_error'));
 
         // check the result
-        $expected = [
-            'error' => 'pulsar.validation.failed',
-            'message' => 'Username is invalid',
-            'params' => [
-                'field_name' => 'Username',
-                'field' => 'username',
-            ],
-        ];
+        $error = $errorStack->find('username');
+        $this->assertInstanceOf(Error::class, $error);
+        $this->assertEquals('pulsar.validation.failed', $error->getError());
+        $this->assertEquals('Username is invalid', $error->getMessage());
+        $this->assertEquals([
+            'field_name' => 'Username',
+            'field' => 'username',
+        ], $error->getContext());
 
-        $this->assertEquals($expected, $errorStack->find('username'));
-        $this->assertEquals($expected, $errorStack->find('username', 'field'));
+        $error = $errorStack->find('Username', 'field_name');
+        $this->assertInstanceOf(Error::class, $error);
+        $this->assertEquals('Username is invalid', $error);
 
         $this->assertNull($errorStack->find('non-existent'));
     }

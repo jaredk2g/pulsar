@@ -664,11 +664,11 @@ abstract class Model implements ArrayAccess
         foreach ($requiredProperties as $property) {
             $name = $property->getName();
             if (!isset($insertArray[$name]) && !isset($preservedValues[$name])) {
-                $params = [
+                $context = [
                     'field' => $name,
                     'field_name' => $property->getTitle($this),
                 ];
-                $this->getErrors()->add('pulsar.validation.required', $params);
+                $this->getErrors()->add('pulsar.validation.required', $context);
 
                 $validated = false;
             }

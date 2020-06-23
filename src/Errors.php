@@ -28,7 +28,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     private static $translator;
 
     /**
-     * @var array
+     * @var Error[]
      */
     private $stack = [];
 
@@ -67,26 +67,24 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return $this
      */
-    public function add($error, array $parameters = [])
+    public function add(string $error, array $context = [])
     {
-        $this->stack[] = [
-            'error' => $error,
-            'params' => $parameters,
-        ];
+        $message = $this->parse($error, $context);
+        $this->stack[] = new Error($error, $context, $message);
 
         return $this;
     }
 
     /**
-     * Gets all of the errors on the stack and also performs translation if enabled.
+     * Gets all of the error messages on the stack.
      *
-     * @return array error messages
+     * @return string[]
      */
-    public function all(?string $locale = null): array
+    public function all(): array
     {
         $messages = [];
         foreach ($this->stack as $error) {
-            $messages[] = $this->parse($error['error'], $locale, $error['params']);
+            $messages[] = $error->getMessage();
         }
 
         return $messages;
@@ -98,19 +96,13 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      * @param string $value value we are searching for
      * @param string $param parameter name
      */
-    public function find($value, $param = 'field'): ?array
+    public function find($value, $param = 'field'): ?Error
     {
         foreach ($this->stack as $error) {
-            $stackValue = $error['params'][$param] ?? null;
-            if ($stackValue !== $value) {
-                continue;
+            $stackValue = $error->getContext()[$param] ?? null;
+            if ($stackValue === $value) {
+                return $error;
             }
-
-            if (!isset($error['message'])) {
-                $error['message'] = $this->parse($error['error'], null, $error['params']);
-            }
-
-            return $error;
         }
 
         return null;
@@ -124,7 +116,16 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      */
     public function has($value, $param = 'field'): bool
     {
-        return null !== $this->find($value, $param);
+        foreach ($this->stack as $error) {
+            $stackValue = $error->getContext()[$param] ?? null;
+            if ($stackValue !== $value) {
+                continue;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -139,32 +140,35 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
         return $this;
     }
 
+    public function __toString()
+    {
+        return implode("\n", $this->all());
+    }
+
+    //////////////////////////
+    // Helpers
+    //////////////////////////
+
     /**
      * Formats an incoming error message.
      *
-     * @param array|string $error
+     * @param array|string $input
      */
-    private function sanitize($error): array
+    private function sanitize($input): Error
     {
-        if (!is_array($error)) {
-            $error = ['error' => $error];
-        }
+        $error = is_array($input) ? $input['error'] : $input;
+        $context = $input['context'] ?? [];
+        $message = $this->parse($error, $context);
 
-        if (!isset($error['params'])) {
-            $error['params'] = [];
-        }
-
-        return $error;
+        return new Error($error, $context, $message);
     }
 
     /**
      * Parses an error message before displaying it.
-     *
-     * @param string $error
      */
-    private function parse($error, ?string $locale, array $parameters): string
+    private function parse(string $error, array $context): string
     {
-        return $this->getTranslator()->translate($error, $parameters, $locale);
+        return $this->getTranslator()->translate($error, $context, null);
     }
 
     //////////////////////////
@@ -202,15 +206,10 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
-            throw new \OutOfBoundsException("$offset does not exist on this ErrorStack");
+            throw new \OutOfBoundsException("$offset does not exist on this error stack");
         }
 
-        $error = $this->stack[$offset];
-        if (!isset($error['message'])) {
-            $error['message'] = $this->parse($error['error'], null, $error['params']);
-        }
-
-        return $error;
+        return $this->stack[$offset];
     }
 
     public function offsetSet($offset, $error)

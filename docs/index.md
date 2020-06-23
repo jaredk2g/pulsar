@@ -403,27 +403,29 @@ $user->valid();
 If a model fails validation then any error messages can be retrieved with:
 
 ```php
-$errors = $user->getErrors();
+$user = new User(['email' => 'not valid']);
+$user->valid();
+echo $user->getErrors(); // Email must be a valid email address
 ```
 
-An instance of `Errors` will be returned that provides many useful methods for managing error messages.
+`getErrors()` will return an instance of `Errors` that provides many useful methods for accessing error messages.
 
 Get a list of all error messages:
 
 ```php
-$errors->all();
+$user->getErrors()->all();
 ```
 
 Find an error for a specific field:
 
 ```php
-$errors->find('password');
+$user->getErrors()->find('password');
 ```
 
 Check if an error exists for a specific field:
 
 ```php
-$errors->has('username');
+$user->getErrors()->has('username');
 ```
 
 ### I18n
