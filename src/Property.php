@@ -26,7 +26,7 @@ final class Property implements ArrayAccess
     /** @var bool */
     private $required = false;
 
-    /** @var callable|string|null */
+    /** @var array|string|null */
     private $validate = null;
 
     /** @var mixed|null */
@@ -122,7 +122,7 @@ final class Property implements ArrayAccess
     }
 
     /**
-     * @return callable|string|null
+     * @return array|string|null
      */
     public function getValidationRules()
     {

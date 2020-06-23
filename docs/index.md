@@ -8,6 +8,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 - [Querying Models](#querying-models)
 - [Relationships](#relationships)
 - [Validation](#validation)
+- [Lifecycle Events](#lifecycle-events)
 
 ## Setup
 
@@ -100,6 +101,8 @@ class User extends Model
 }
 ```
 
+## Using Models
+
 Properties can be accessed using normal property syntax on a model instance:
 
 ```php
@@ -112,6 +115,14 @@ $user = new User([
 
 echo 'Hello, '.$user->first_name;
 echo 'Your balance is $'.$user->balance;
+```
+
+### toArray()
+
+The `toArray()` method converts a model to an array:
+
+```php
+$user->toArray();
 ```
 
 ## Creating and Modifying Models
@@ -215,3 +226,4 @@ Pulsar allows you to define relationships between models and makes it easy to ac
 
 ## Validation
 
+## Lifecycle Events
