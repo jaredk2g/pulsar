@@ -390,25 +390,23 @@ class User extends Model
 }
 ``` 
 
-### valid()
-
-At any point you can check if a model passes validation without saving it.
-
-```php
-$user->valid();
-```
-
 ### Validation Errors
 
-If a model fails validation then any error messages can be retrieved with:
+If a model fails validation then any error messages can be retrieved with `getErrors()`. 
 
 ```php
 $user = new User(['email' => 'not valid']);
-$user->valid();
+$user->save();
 echo $user->getErrors(); // Email must be a valid email address
 ```
 
-`getErrors()` will return an instance of `Errors` that provides many useful methods for accessing error messages.
+### valid()
+
+You can also check if a model passes validation without saving it.
+
+```php
+$user->valid();
+```
 
 Get a list of all error messages:
 
