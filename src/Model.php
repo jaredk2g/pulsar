@@ -1587,18 +1587,11 @@ abstract class Model implements ArrayAccess
         // clear any previous errors
         $this->getErrors()->clear();
 
-        // run the validator against the model values
-        $values = $this->_unsaved + $this->_values;
-
+        // run the validator against the unsaved model values
         $validated = true;
-        foreach ($values as $k => $v) {
+        foreach ($this->_unsaved as $k => &$v) {
             $property = static::definition()->get($k);
             $validated = Validator::validateProperty($this, $property, $v) && $validated;
-        }
-
-        // add back any modified unsaved values
-        foreach (array_keys($this->_unsaved) as $k) {
-            $this->_unsaved[$k] = $values[$k];
         }
 
         return $validated;

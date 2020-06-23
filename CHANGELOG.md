@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `encrypt` validation rule to encrypt values prior to saving to database using defuse/php-encryption.
 - Added `encrypt` setting to model definitions that when enabled will encrypt the property value in the database.
 - Added polymorphic relationship type.
+- Saved values are no longer validated by `Model::valid()`. Only unsaved values will be validated.
 
 ### Changed
 - Make model internal properties private when possible.
