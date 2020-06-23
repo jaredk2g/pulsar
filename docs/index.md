@@ -85,9 +85,8 @@ class User extends Model
             'required' => true,
         ],
         'password' => [
-            // Validates that matching passwords are provided and at least 8 characters.
             // Then stores passwords hashed with password_hash().
-            'validate' => 'matching|password:8',
+            'validate' => 'password',
             'required' => true,
         ],
         'balance' => [
@@ -354,13 +353,82 @@ Coming soon....
 
 You can validate model properties before the model is saved to the database.
 
-More coming soon..
-
 [Available Validators](validators)
+
+Validation can be enabled on a per-property basis with the `validate` parameter. Different rule syntaxes are supported for simple and complex validation rules.
+
+```php
+<?php
+
+use Pulsar\Model;
+
+class User extends Model
+{
+    protected static $properties = [
+        // single validation rule
+        'email' => [
+            'validate' => 'email',
+        ],
+        // multiple validation rules
+        'password' => [
+            'validate' => [
+                'matching',
+                ['password', 'min' => 8],
+            ],
+        ],
+        // single validation rule with options
+        'balance' => [
+            'validate' => ['callable', 'fn' => [self::class, 'validateBalance']],
+        ],
+    ];
+
+    static function validateBalance(&$value, array $options, Model $model): bool
+    {
+        // custom validation logic goes here
+        return true;
+    }
+}
+``` 
+
+### valid()
+
+At any point you can check if a model passes validation without saving it.
+
+```php
+$user->valid();
+```
+
+### Validation Errors
+
+If a model fails validation then any error messages can be retrieved with:
+
+```php
+$errors = $user->getErrors();
+```
+
+An instance of `Errors` will be returned that provides many useful methods for managing error messages.
+
+Get a list of all error messages:
+
+```php
+$errors->all();
+```
+
+Find an error for a specific field:
+
+```php
+$errors->find('password');
+```
+
+Check if an error exists for a specific field:
+
+```php
+$errors->has('username');
+```
 
 ### I18n
 
-Validation messages can be translated to the user's locale by supplying an object that implements `TranslatorInterface`. There is a default translation implementation although it is trivial to implement your own that plugs into your existing i18n system. In order to enable translations you must at the beginning of script execution provide the translator object.
+Validation messages can be translated to the user's locale. Pulsar provides a simple translation implementation although it is trivial to implement `TranslatorInterface` to plug into your existing i18n system. In order to enable translations you must at the beginning of script execution provide a translator object.
 
 ```php
 <?php
