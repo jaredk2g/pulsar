@@ -4,6 +4,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 
 - [Setup](#setup)
 - [Defining Models](#defining-models)
+- [Using Models](#using-models)
 - [Creating and Modifying Models](#creating-and-modifying-models)
 - [Querying Models](#querying-models)
 - [Relationships](#relationships)
@@ -118,6 +119,12 @@ echo 'Hello, '.$user->first_name;
 echo 'Your balance is $'.$user->balance;
 ```
 
+Properties can be set using the same syntax. The values are kept in memory until save() is called.
+
+```php
+$user->email = 'bob@gmail.com';
+```
+
 ### toArray()
 
 The `toArray()` method converts a model to an array:
@@ -128,6 +135,43 @@ $user->toArray();
 
 ## Creating and Modifying Models
 
+The model can be saved with the `save()` method. If the model does not exist yet then `create()` will be used and a new record is inserted. If the model does exist then `set()` will be called which updates an existing row.
+
+```php
+$user = new User([
+    'first_name' => 'Bob',
+    'last_name' => 'Smith',
+    'email' => 'bob@example.com',
+]);
+$user->save(); // creates a new row in Users table
+
+$user->last_sign_in = time();
+$user->balance = 1000;
+$user->save(); // changes the `last_sign_in` and `balance` columns 
+``` 
+
+### dirty()
+
+The dirty method allows checking if a model has unsaved values. If you want to check if a model has ANY unsaved value then use:
+
+```php
+$user = new User();
+$user->dirty(); // returns false
+$user->first_name = 'Bob';
+$user->dirty(); // returns true 
+```
+
+You can check if a specific property has an unsaved value:
+
+```php
+$user->dirty('email');
+```
+
+And you can also check if a property has an unsaved value that is different from the saved value. If the model has not been saved yet then this will only check for the presence of an unsaved value.
+
+```php
+$user->dirty('email', true);
+```
 
 ## Querying Models
 
