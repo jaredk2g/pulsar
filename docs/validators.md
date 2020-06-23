@@ -30,21 +30,21 @@ Validators
 Validates an alpha string.
 
 Options:
-- min: specifies a minimum length
+- `min`: specifies a minimum length
 
 ## alpha_dash
 
 Validates an alpha-numeric string with dashes and underscores.
 
 Options:
-- min: specifies a minimum length
+- `min`: specifies a minimum length
 
 ## alpha_numeric
 
 Validates an alpha-numeric string.
 
 Options:
-- min: specifies a minimum length
+- `min`: specifies a minimum length
 
 ## boolean
 
@@ -55,7 +55,7 @@ Validates a boolean value.
 Calls a custom validation function.
 
 Options:
-- fn: specifies a callable value (required)
+- `fn`: specifies a callable value (required)
 
 ## date
 
@@ -83,7 +83,7 @@ Validates an e-mail address.
 Validates a value matches one of the available choices.
 
 Options:
-- choices: specifies a list of valid choices (required)
+- `choices`: specifies a list of valid choices (required)
 
 ## ip
 
@@ -100,7 +100,7 @@ be flattened to a single value if it matches.
 Validates a number.
 
 Options:
-- type: specifies a PHP type to validate with is_(defaults to numeric)
+- `type`: specifies a PHP type to validate with is_(defaults to numeric)
 
 ## password
 
@@ -109,16 +109,16 @@ Validates a password and hashes the value using
 password_hash().
 
 Options:
-- min: minimum password length
-- cost: desired cost used to generate hash
+- `min`: minimum password length
+- `cost`: desired cost used to generate hash
 
 ## range
 
 Validates that a number falls within a range.
 
 Options:
-- min: minimum value that is valid
-- max: maximum value that is valid
+- `min`: minimum value that is valid
+- `max`: maximum value that is valid
 
 ## required
 
@@ -129,8 +129,8 @@ Makes sure that a variable is not empty.
 Validates a string.
 
 Options:
-- min: specifies a minimum length
-- max:  specifies a maximum length
+- `min`: specifies a minimum length
+- `max`:  specifies a maximum length
 
 ## time_zone
 
@@ -146,7 +146,7 @@ converted to one with `strtotime()`.
 Checks if a value is unique for a property.
 
 Options:
-- column: specifies which column must be unique (required)
+- `column`: specifies which column must be unique (required)
 
 ## url
 
