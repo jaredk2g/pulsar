@@ -10,9 +10,11 @@ Pulsar ORM
 
 Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/Active_record_pattern) pattern in PHP.
 
-## Requirements
+## Getting Started
 
-- PHP 7.1+
+### Requirements
+
+The main requirement is that PHP version 7.1 or later is used. The library depends on PDO or Doctrine DBAL to interact with the database.
 
 ## Installation
 
@@ -22,15 +24,21 @@ The easiest way to install Pulsar is with [composer](http://getcomposer.org):
 composer require pulsar/pulsar
 ```
 
-## Tests
+### Using Pulsar
+
+See the [Pulsar Documentation](https://jaredtking.github.io/pulsar) for more information on how to use the library.
+
+## Developing
+
+### Tests
 
 Use phpunit to run the included tests:
 
 ```
-phpunit
+vendor/bin/phpunit
 ```
 
-## Contributing
+### Contributing
 
 Please feel free to contribute by participating in the issues or by submitting a pull request. :-)
 
