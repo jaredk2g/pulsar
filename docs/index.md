@@ -259,19 +259,97 @@ Pulsar allows you to define relationships between models and makes it easy to ac
 
 ### Belongs To
 
+```php
+use Pulsar\Model;
+
+class Car extends Model
+{
+    protected static $properties = [
+        'garage' => [
+            'belongs_to' => Garage::class,
+        ],
+    ];
+}
+```
+
+The garage model can be set or accessed with `$car->garage`.
+
 ### Has One
+
+```php
+use Pulsar\Model;
+
+class Person extends Model
+{
+    protected static $properties = [
+        'garage' => [
+            'has_one' => Garage::class,
+        ],
+    ];
+}
+```
 
 ### Belongs To Many
 
+``php
+use Pulsar\Model;
+
+class BlogPost extends Model
+{
+    protected static $properties = [
+        'categories' => [
+            'belongs_to_many' => Category::class,
+        ],
+    ];
+}
+``
+
 ### Has Many
+
+```php
+use Pulsar\Model;
+
+class Garage extends Model
+{
+    protected static $properties = [
+        'cars' => [
+            'has_many' => Car::class,
+        ],
+    ];
+}
+```
+
+The cars can then be accessed with `$garage->cars`.
 
 ### Polymorphic
 
+```php
+use Pulsar\Model;
+
+class Customer extends Model
+{
+    protected static $properties = [
+        'payment_method' => [
+            'morphs_to' => [
+                'card' => Card::class,
+                'bank_account' => BankAccount::class,
+            ],
+        ],
+    ];
+}
+```
+
 ### Eager Loading
+
+Coming soon....
 
 ## Validation
 
+Coming soon....
+
 ## Lifecycle Events
+
+Coming soon....
 
 ## Learn More
 
