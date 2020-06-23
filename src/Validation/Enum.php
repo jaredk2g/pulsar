@@ -6,7 +6,7 @@ use Pulsar\Interfaces\ValidationRuleInterface;
 use Pulsar\Model;
 
 /**
- * Validates a value exists in an array.
+ * Validates a value matches one of the available choices.
  *
  * Options:
  * - choices: specifies a list of valid choices (required)

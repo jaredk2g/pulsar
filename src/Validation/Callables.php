@@ -6,7 +6,7 @@ use Pulsar\Interfaces\ValidationRuleInterface;
 use Pulsar\Model;
 
 /**
- * Validates a boolean value.
+ * Calls a custom validation function.
  *
  * Options:
  * - fn: specifies a callable value (required)
