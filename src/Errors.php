@@ -80,11 +80,9 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Gets all of the errors on the stack and also performs translation if enabled.
      *
-     * @param string|bool $locale optional locale
-     *
      * @return array error messages
      */
-    public function all($locale = false): array
+    public function all(?string $locale = null): array
     {
         $messages = [];
         foreach ($this->stack as $error) {
@@ -109,7 +107,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
             }
 
             if (!isset($error['message'])) {
-                $error['message'] = $this->parse($error['error'], false, $error['params']);
+                $error['message'] = $this->parse($error['error'], null, $error['params']);
             }
 
             return $error;
@@ -162,10 +160,9 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Parses an error message before displaying it.
      *
-     * @param string       $error
-     * @param string|false $locale
+     * @param string $error
      */
-    private function parse($error, $locale, array $parameters): string
+    private function parse($error, ?string $locale, array $parameters): string
     {
         return $this->getTranslator()->translate($error, $parameters, $locale);
     }
@@ -210,7 +207,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
 
         $error = $this->stack[$offset];
         if (!isset($error['message'])) {
-            $error['message'] = $this->parse($error['error'], false, $error['params']);
+            $error['message'] = $this->parse($error['error'], null, $error['params']);
         }
 
         return $error;
