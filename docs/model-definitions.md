@@ -1,11 +1,9 @@
-Models
+Model Definitions
 =====
 
-## Properties
+The properties for each model are defined using the `$properties` variable on every model class. Each element is a key-value array, with the key corresponding to the property name.
 
-The properties for each model are defined using the `$properties` variable on every model class.
-
-### Schema Options
+## Options
 
 #### `type`
 
@@ -13,7 +11,8 @@ The type of the property.
 
 Accepted Types:
 - string
-- number
+- float
+- integer
 - boolean
 - date
 - array
@@ -62,20 +61,6 @@ Specifies whether the column is allowed to have null values
 Boolean, Optional, Default: `false`
 
 ### Query Options
-
-#### `searchable`
-
-Specifies whether the property should be searched when querying models
-
-Boolean, Optional, Default: `false`
-
-### Meta Options
-
-#### `title`
-
-Title of the property that shows up in admin panel
-
-String, Optional, Default: Derived from property name
 
 #### `relation`
 
