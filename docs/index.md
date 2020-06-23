@@ -289,9 +289,11 @@ class Person extends Model
 }
 ```
 
+The garage model can be accessed with `$person->garage`.
+
 ### Belongs To Many
 
-``php
+```php
 use Pulsar\Model;
 
 class BlogPost extends Model
@@ -302,7 +304,9 @@ class BlogPost extends Model
         ],
     ];
 }
-``
+```
+
+The category models can then be set or accessed with `$customer->categories`.
 
 ### Has Many
 
@@ -319,7 +323,7 @@ class Garage extends Model
 }
 ```
 
-The cars can then be accessed with `$garage->cars`.
+The car models can then be set or accessed with `$garage->cars`.
 
 ### Polymorphic
 
@@ -338,6 +342,8 @@ class Customer extends Model
     ];
 }
 ```
+
+The payment method model can then be set or accessed with `$customer->payment_method`.
 
 ### Eager Loading
 
