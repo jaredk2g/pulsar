@@ -16,7 +16,7 @@ class Unique implements ValidationRuleInterface
     public function validate(&$value, array $options, Model $model): bool
     {
         $name = $options['column'];
-        if ($model->hasId() && $value === $model->ignoreUnsaved()->$name) {
+        if (!$model->dirty($name, true)) {
             return true;
         }
 
