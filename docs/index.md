@@ -5,11 +5,12 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 - [Setup](#setup)
 - [Defining Models](#defining-models)
 - [Using Models](#using-models)
-- [Creating and Modifying Models](#creating-and-modifying-models)
+- [Saving Models](#saving-models)
 - [Querying Models](#querying-models)
 - [Relationships](#relationships)
 - [Validation](#validation)
 - [Lifecycle Events](#lifecycle-events)
+- [Transactions](#transactions)
 - [Learn More](#learn-more)
 
 ## Setup
@@ -133,7 +134,7 @@ The `toArray()` method converts a model to an array:
 $user->toArray();
 ```
 
-## Creating and Modifying Models
+## Saving Models
 
 The model can be saved with the `save()` method. If the model does not exist yet then `create()` will be used and a new record is inserted. If the model does exist then `set()` will be called which updates an existing row.
 
@@ -355,7 +356,94 @@ Coming soon....
 
 ## Lifecycle Events
 
-Coming soon....
+```php
+<?php
+
+use Pulsar\Model;
+use Pulsar\ModelEvent;
+use Pulsar\Type;
+
+class LineItem extends Model
+{
+    protected static $properties = [
+        'quantity' => [
+            'type' => Type::FLOAT,
+        ],
+        'unit_cost' => [
+            'type' => Type::FLOAT,
+        ],
+        'amount' => [
+            'type' => Type::FLOAT,
+        ],
+    ];
+
+    protected function initialize()
+    {
+        self::saving(function(ModelEvent $event) {
+            $model = $event->getModel();
+            $model->amount = $model->quantity * $model->unit_cost;
+        });
+    }
+}
+```
+
+Lifecycle event listeners can be added to a model. The best place to do this is by defining the `initialize()` which will only be called once per program execution.
+
+- `creating()` - Executed before a model is inserted in the database
+- `created()` - Executed after a model is inserted in the database
+- `updating()` - Executed before a model is updated in the database
+- `updated()` - Executed after a model is updated in the database
+- `saving()` - Executed before a model is inserted or updated in the database
+- `saved()` - Executed after a model is inserted or updated in the database
+- `deleting()` - Executed before a model is deleted from the database
+- `deleted()` - Executed after a model is deleted from the database
+
+### Stopping event propagation
+
+Using `stopPropagation()` in an event listener will stop the save operation. Any future event listeners will not be called. If transactions are used then the database will be rolled back. 
+
+```php
+<?php
+
+use Pulsar\Model;
+use Pulsar\ModelEvent;
+
+class User extends Model
+{
+    // ...
+
+    protected function initialize()
+    {
+        self::creating(function(ModelEvent $event) {
+            $model = $event->getModel();
+            if ($model->mfa_enabled && !$model->phone) {
+                $model->getErrors()->add('You must supply a phone number to enable 2FA');
+                $event->stopPropagation();
+            }
+        });
+    }
+}
+```
+
+## Transactions
+
+You can wrap the model save operations in a database transaction by returning true in `useTransactions()`. Transactions are disabled by default.
+
+```php
+<?php
+
+use Pulsar\Model;
+
+class Payment extends Model
+{
+    // ...
+
+    protected function usesTransactions(): bool
+    {
+        return true;
+    }
+}
+```
 
 ## Learn More
 
