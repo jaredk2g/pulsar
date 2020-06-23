@@ -192,10 +192,15 @@ final class Validator
             return true;
         }
 
-        $model->getErrors()->add('pulsar.validation.'.$validator->getFailingRule(), [
-            'field' => $property->getName(),
-            'field_name' => $property->getTitle($model),
-        ]);
+        // add a validation error message if one was not already added
+        $errors = $model->getErrors();
+        if (!$errors->has($property->getName())) {
+            $errors->add('pulsar.validation.'.$validator->getFailingRule(), [
+                'field' => $property->getName(),
+                'field_name' => $property->getTitle($model),
+                'rule' => $validator->getFailingRule(),
+            ]);
+        }
 
         return false;
     }

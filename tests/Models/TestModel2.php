@@ -26,7 +26,7 @@ class TestModel2 extends Model
             'null' => true,
         ],
         'validate2' => [
-            'validate' => ['callable', 'fn' => 'modelValidate'],
+            'validate' => ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
             'null' => true,
         ],
         'unique' => [

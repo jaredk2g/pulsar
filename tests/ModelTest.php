@@ -338,7 +338,7 @@ class ModelTest extends MockeryTestCase
             ],
             'validate2' => [
                 'type' => null,
-                'validate' => ['callable', 'fn' => 'modelValidate'],
+                'validate' => ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
                 'null' => true,
                 'mutable' => Property::MUTABLE,
                 'required' => false,
@@ -1622,12 +1622,12 @@ class ModelTest extends MockeryTestCase
 
         $this->assertFalse($model->set(['validate2' => 'invalid']));
         $this->assertCount(1, $errorStack->all());
-        $this->assertEquals(['Validate2 is invalid'], $errorStack->all());
+        $this->assertEquals(['Custom error message from callable'], $errorStack->all());
 
         // repeating the save should reset the error stack
         $this->assertFalse($model->set(['validate2' => 'invalid']));
         $this->assertCount(1, $errorStack->all());
-        $this->assertEquals(['Validate2 is invalid'], $errorStack->all());
+        $this->assertEquals(['Custom error message from callable'], $errorStack->all());
     }
 
     public function testSetTransactions()
@@ -2397,7 +2397,11 @@ class ModelTest extends MockeryTestCase
             ->withArgs(['pulsar.properties.Person.email'])
             ->andReturn('Title');
         $translator->shouldReceive('translate')
-            ->withArgs(['pulsar.validation.email', ['field' => 'email', 'field_name' => 'Title'], false])
+            ->withArgs(['pulsar.validation.email', [
+                'field' => 'email',
+                'field_name' => 'Title',
+                'rule' => 'email',
+            ], false])
             ->andReturn('Title must be a valid email address');
         $errors = $model->getErrors();
         $errors->setTranslator($translator);

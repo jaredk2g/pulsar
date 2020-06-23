@@ -14,7 +14,9 @@ date_default_timezone_set('America/Chicago');
 
 require __DIR__.'/../vendor/autoload.php';
 
-function modelValidate()
+function modelValidate(&$value, array $options, \Pulsar\Model $model)
 {
+    $model->getErrors()->add('Custom error message from callable', ['field' => $options['field']]);
+
     return false;
 }

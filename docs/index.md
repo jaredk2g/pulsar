@@ -384,7 +384,9 @@ class User extends Model
 
     static function validateBalance(&$value, array $options, Model $model): bool
     {
-        // custom validation logic goes here
+        // Custom validation logic goes here.
+        // Supply your own error message with:
+        // $model->getErrors()->add('my error', ['field' => 'balance']);
         return true;
     }
 }
@@ -459,7 +461,7 @@ class LineItem extends Model
         'unit_cost' => [
             'type' => Type::FLOAT,
         ],
-        'amount' => [
+        'total' => [
             'type' => Type::FLOAT,
         ],
     ];
@@ -468,7 +470,7 @@ class LineItem extends Model
     {
         self::saving(function(ModelEvent $event) {
             $model = $event->getModel();
-            $model->amount = $model->quantity * $model->unit_cost;
+            $model->total = $model->quantity * $model->unit_cost;
         });
     }
 }
