@@ -45,7 +45,7 @@ final class Translator implements TranslatorInterface
     /**
      * @var string
      */
-    private $locale = 'en';
+    private $locale;
 
     /**
      * @var string
@@ -57,11 +57,9 @@ final class Translator implements TranslatorInterface
      */
     private $data = [];
 
-    public function __construct(?string $locale = null)
+    public function __construct(?string $locale = 'en')
     {
-        if ($locale) {
-            $this->locale = $locale;
-        }
+        $this->locale = $locale;
     }
 
     /**
@@ -129,13 +127,11 @@ final class Translator implements TranslatorInterface
 
     /**
      * Loads locale data for a supplied locale.
-     *
-     * @return $this
      */
-    private function loadLocaleData(string $locale)
+    private function loadLocaleData(string $locale): void
     {
         if (isset($this->data[$locale])) {
-            return $this;
+            return;
         }
 
         $filename = str_replace('//', '/', $this->dataDir.'/').$locale.'.php';
@@ -145,7 +141,5 @@ final class Translator implements TranslatorInterface
         } else {
             $this->data[$locale] = [];
         }
-
-        return $this;
     }
 }
