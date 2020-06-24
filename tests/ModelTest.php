@@ -1227,7 +1227,7 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateSavedListenerFail()
     {
-        $driver = Mockery::mock(\Pulsar\Driver\DriverInterface::class);
+        $driver = Mockery::mock(DriverInterface::class);
 
         $driver->shouldReceive('createModel')
             ->andReturn(true);
@@ -1238,6 +1238,36 @@ class ModelTest extends MockeryTestCase
         Model::setDriver($driver);
 
         TestModel::saved(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $newModel = new TestModel();
+        $this->assertFalse($newModel->create());
+    }
+
+    public function testCreateBeforePersistListenerFail()
+    {
+        TestModel::beforePersist(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $newModel = new TestModel();
+        $this->assertFalse($newModel->create());
+    }
+
+    public function testCreateAfterPersistListenerFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('createModel')
+            ->andReturn(true);
+
+        $driver->shouldReceive('getCreatedID')
+            ->andReturn(1);
+
+        Model::setDriver($driver);
+
+        TestModel::afterPersist(function (ModelEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1575,6 +1605,35 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($model->save());
     }
 
+    public function testUpdateBeforePersistListenerFail()
+    {
+        TestModel::beforePersist(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(['id' => 100]);
+        $model->answer = 42;
+        $this->assertFalse($model->save());
+    }
+
+    public function testUpdateAfterPersistListenerFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('updateModel')
+            ->andReturn(true);
+
+        Model::setDriver($driver);
+
+        TestModel::afterPersist(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(['id' => 100]);
+        $model->answer = 42;
+        $this->assertFalse($model->save());
+    }
+
     public function testSetUnique()
     {
         $query = TestModel2::query();
@@ -1768,6 +1827,41 @@ class ModelTest extends MockeryTestCase
         TestModel::setDriver($driver);
 
         TestModel::deleted(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(['id' => 100]);
+        $model->refreshWith(['test' => true]);
+
+        $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
+        $this->assertFalse($model->isDeleted());
+    }
+
+    public function testDeleteBeforePersistListenerFail()
+    {
+        TestModel::beforePersist(function (ModelEvent $event) {
+            $event->stopPropagation();
+        });
+
+        $model = new TestModel(['id' => 100]);
+        $model->refreshWith(['test' => true]);
+
+        $this->assertFalse($model->delete());
+        $this->assertTrue($model->persisted());
+        $this->assertFalse($model->isDeleted());
+    }
+
+    public function testDeleteAfterPersistListenerFail()
+    {
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('deleteModel')
+            ->andReturn(true);
+
+        TestModel::setDriver($driver);
+
+        TestModel::afterPersist(function (ModelEvent $event) {
             $event->stopPropagation();
         });
 

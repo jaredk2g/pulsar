@@ -1494,6 +1494,26 @@ abstract class Model implements ArrayAccess
     }
 
     /**
+     * Adds a listener to the model.creating, model.updating, and model.deleting events.
+     */
+    public static function beforePersist(callable $listener, int $priority = 0)
+    {
+        static::listen(ModelEvent::CREATING, $listener, $priority);
+        static::listen(ModelEvent::UPDATING, $listener, $priority);
+        static::listen(ModelEvent::DELETING, $listener, $priority);
+    }
+
+    /**
+     * Adds a listener to the model.created, model.updated, and model.deleted events.
+     */
+    public static function afterPersist(callable $listener, int $priority = 0)
+    {
+        static::listen(ModelEvent::CREATED, $listener, $priority);
+        static::listen(ModelEvent::UPDATED, $listener, $priority);
+        static::listen(ModelEvent::DELETED, $listener, $priority);
+    }
+
+    /**
      * Adds a listener to the model.creating event.
      */
     public static function creating(callable $listener, int $priority = 0)

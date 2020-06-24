@@ -476,16 +476,20 @@ class LineItem extends Model
 }
 ```
 
-Lifecycle event listeners can be added to a model. The best place to do this is by defining the `initialize()` method, which will only be called once per program execution.
+Lifecycle event listeners can be added to a model. The best place to do this is by defining the `initialize()` method, which will only be called once per program execution. The second argument allows an optional priority to be specified. Higher priority listeners execute first.
 
 - `creating()` - Executed before a model is inserted in the database
 - `created()` - Executed after a model is inserted in the database
 - `updating()` - Executed before a model is updated in the database
 - `updated()` - Executed after a model is updated in the database
-- `saving()` - Executed before a model is inserted or updated in the database
-- `saved()` - Executed after a model is inserted or updated in the database
 - `deleting()` - Executed before a model is deleted from the database
 - `deleted()` - Executed after a model is deleted from the database
+
+Aliases:
+- `saving()` - Alias for `creating` and `updating`
+- `saved()` - Alias for `created` and `updated`
+- `beforePersist()` - Alias for `creating`, `updating`, and `deleting`
+- `afterPersist()` - Alias for `created`, `updated`, and `deleted`
 
 ### Stopping event propagation
 

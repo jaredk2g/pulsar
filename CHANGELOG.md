@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added polymorphic relationship type.
 - Saved values are no longer validated by `Model::valid()`. Only unsaved values will be validated.
 - Callable validation rules can now set their own validation error message.
+- Added `Model::beforePersist()` and `Model::afterPersist()` shortcut to install lifecycle event listeners for all create, update, and delete.
 
 ### Changed
 - Make model internal properties private when possible.
