@@ -5,10 +5,13 @@ namespace Pulsar\Tests\Models;
 use Pulsar\Model;
 use Pulsar\Property;
 use Pulsar\Query;
+use Pulsar\Traits\AutoTimestamps;
 use Pulsar\Type;
 
 class TestModel2 extends Model
 {
+    use AutoTimestamps;
+
     protected static $ids = ['id', 'id2'];
 
     protected static $properties = [
@@ -62,7 +65,6 @@ class TestModel2 extends Model
         'protected' => [],
     ];
 
-    protected static $autoTimestamps;
     protected static $hidden = ['validate2', 'hidden', 'person', 'array', 'object', 'mutable_create_only'];
     protected static $protected = ['protected'];
 

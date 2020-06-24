@@ -32,6 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Callable validation rules must now be specified as: `['validate' => ['callable', 'fn' => ...]]`.
 - The error stack represents error messages as objects instead of arrays.
 - Lifecycle events are now represented as a different class for each event type.
+- Automatic timestamps are now installed with the `AutoTimestamps` trait.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

@@ -209,18 +209,9 @@ abstract class Model implements ArrayAccess
      */
     protected function initialize()
     {
-        if (property_exists(static::class, 'autoTimestamps')) {
+        if (method_exists($this, 'setAutoTimestamps')) {
             self::saving([static::class, 'setAutoTimestamps']);
         }
-    }
-
-    public static function setAutoTimestamps(AbstractEvent $event): void
-    {
-        $model = $event->getModel();
-        if ($event instanceof ModelCreating) {
-            $model->created_at = time();
-        }
-        $model->updated_at = time();
     }
 
     /**
@@ -458,7 +449,7 @@ abstract class Model implements ArrayAccess
      */
     public static function buildDefinition(): Definition
     {
-        $autoTimestamps = property_exists(static::class, 'autoTimestamps');
+        $autoTimestamps = method_exists(static::class, 'setAutoTimestamps');
         $softDelete = property_exists(static::class, 'softDelete');
 
         return DefinitionBuilder::build(static::$properties, static::class, $autoTimestamps, $softDelete);

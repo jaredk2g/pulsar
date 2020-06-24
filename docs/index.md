@@ -68,10 +68,14 @@ The example below shows how to create a user model. Please consult the model def
 <?php
 
 use Pulsar\Model;
+use Pulsar\Traits\AutoTimestamps;
 use Pulsar\Type;
 
 class User extends Model
 {
+    // Add `created_at` and `updated_at` properties
+    use AutoTimestamps;
+
     // Unless specified the `id` property is automatically added as an autoincrement integer
     protected static $properties = [
         'first_name' => [
@@ -97,9 +101,6 @@ class User extends Model
             'null' => true,
         ]
     ];
-    
-    // Add `created_at` and `updated_at` properties
-    protected static $autoTimestamps;
 }
 ```
 
