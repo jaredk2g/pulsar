@@ -17,13 +17,13 @@ use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
+use Pulsar\Event\AbstractEvent;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Interfaces\TranslatorInterface;
 use Pulsar\Model;
-use Pulsar\ModelEvent;
 use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Relation\Relationship;
@@ -1187,7 +1187,7 @@ class ModelTest extends MockeryTestCase
 
     public function testCreatingListenerFail()
     {
-        TestModel::creating(function (ModelEvent $event) {
+        TestModel::creating(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1207,7 +1207,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        TestModel::created(function (ModelEvent $event) {
+        TestModel::created(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1217,7 +1217,7 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateSavingListenerFail()
     {
-        TestModel::saving(function (ModelEvent $event) {
+        TestModel::saving(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1237,7 +1237,7 @@ class ModelTest extends MockeryTestCase
 
         Model::setDriver($driver);
 
-        TestModel::saved(function (ModelEvent $event) {
+        TestModel::saved(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1247,7 +1247,7 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateBeforePersistListenerFail()
     {
-        TestModel::beforePersist(function (ModelEvent $event) {
+        TestModel::beforePersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1267,7 +1267,7 @@ class ModelTest extends MockeryTestCase
 
         Model::setDriver($driver);
 
-        TestModel::afterPersist(function (ModelEvent $event) {
+        TestModel::afterPersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1551,7 +1551,7 @@ class ModelTest extends MockeryTestCase
 
     public function testUpdatingListenerFail()
     {
-        TestModel::updating(function (ModelEvent $event) {
+        TestModel::updating(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1568,7 +1568,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        TestModel::updated(function (ModelEvent $event) {
+        TestModel::updated(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1578,7 +1578,7 @@ class ModelTest extends MockeryTestCase
 
     public function testUpdateSavingListenerFail()
     {
-        TestModel::saving(function (ModelEvent $event) {
+        TestModel::saving(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1596,7 +1596,7 @@ class ModelTest extends MockeryTestCase
 
         Model::setDriver($driver);
 
-        TestModel::saved(function (ModelEvent $event) {
+        TestModel::saved(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1607,7 +1607,7 @@ class ModelTest extends MockeryTestCase
 
     public function testUpdateBeforePersistListenerFail()
     {
-        TestModel::beforePersist(function (ModelEvent $event) {
+        TestModel::beforePersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1625,7 +1625,7 @@ class ModelTest extends MockeryTestCase
 
         Model::setDriver($driver);
 
-        TestModel::afterPersist(function (ModelEvent $event) {
+        TestModel::afterPersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1805,7 +1805,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeletingListenerFail()
     {
-        TestModel::deleting(function (ModelEvent $event) {
+        TestModel::deleting(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1826,7 +1826,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        TestModel::deleted(function (ModelEvent $event) {
+        TestModel::deleted(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1840,7 +1840,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeleteBeforePersistListenerFail()
     {
-        TestModel::beforePersist(function (ModelEvent $event) {
+        TestModel::beforePersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1861,7 +1861,7 @@ class ModelTest extends MockeryTestCase
 
         TestModel::setDriver($driver);
 
-        TestModel::afterPersist(function (ModelEvent $event) {
+        TestModel::afterPersist(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 
@@ -1980,7 +1980,7 @@ class ModelTest extends MockeryTestCase
         $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => time()]);
 
-        Person::updating(function (ModelEvent $event) {
+        Person::updating(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
         $this->assertFalse($model->restore());
@@ -1996,7 +1996,7 @@ class ModelTest extends MockeryTestCase
             ->andReturn(true);
         Person::setDriver($driver);
 
-        Person::updated(function (ModelEvent $event) {
+        Person::updated(function (AbstractEvent $event) {
             $event->stopPropagation();
         });
 

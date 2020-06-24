@@ -13,15 +13,15 @@ namespace Pulsar\Tests;
 
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Pulsar\Event\ModelCreated;
 use Pulsar\Model;
-use Pulsar\ModelEvent;
 
 class ModelEventTest extends MockeryTestCase
 {
     public function testGetModel()
     {
         $model = Mockery::mock(Model::class);
-        $event = new ModelEvent($model);
+        $event = new ModelCreated($model);
         $this->assertEquals($model, $event->getModel());
     }
 }

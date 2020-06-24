@@ -31,6 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The unique constraint is now a validation rule specified as: `['validate' => ['unique', 'column' => 'email']]`.
 - Callable validation rules must now be specified as: `['validate' => ['callable', 'fn' => ...]]`.
 - The error stack represents error messages as objects instead of arrays.
+- Lifecycle events are now represented as a different class for each event type.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.
@@ -42,6 +43,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `Model::getProperties()`, `::hasProperty()`, and `::getProperty()`.
 - Removed the `password_php` validation rule in favor of `password`.
 - It is no longer possible to supply a locale when grabbing error messages.
+- Removed the `ModelEvent` class.
 
 ## 0.10 - 2020-04-22
 ### Added
@@ -64,9 +66,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Removed `Query::totalRecords()`
 - Removed the `preSetHook()` method call during the `model.updating` event. If you need to use this functionality install the below event listener in your model.
   ```php
-   use Pulsar\ModelEvent;
+   use Pulsar\Event\AbstractEvent;
 
-   self::updating(function (ModelEvent $modelEvent) {
+   self::updating(function (AbstractEvent $modelEvent) {
      $model = $modelEvent->getModel();
      if (!$model->preSetHook($model->_unsaved)) {
          $modelEvent->stopPropagation();

@@ -2,8 +2,8 @@
 
 namespace Pulsar\Tests\Models;
 
+use Pulsar\Event\AbstractEvent;
 use Pulsar\Model;
-use Pulsar\ModelEvent;
 
 class TransactionModel extends Model
 {
@@ -18,7 +18,7 @@ class TransactionModel extends Model
     {
         parent::initialize();
 
-        self::deleting(function (ModelEvent $modelEvent) {
+        self::deleting(function (AbstractEvent $modelEvent) {
             if ('delete fail' == $modelEvent->getModel()->name) {
                 $modelEvent->stopPropagation();
             }

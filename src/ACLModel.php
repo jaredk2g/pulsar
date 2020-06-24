@@ -11,6 +11,10 @@
 
 namespace Pulsar;
 
+use Pulsar\Event\ModelCreating;
+use Pulsar\Event\ModelDeleting;
+use Pulsar\Event\ModelUpdating;
+
 /**
  * Class ACLModel.
  */
@@ -85,38 +89,47 @@ abstract class ACLModel extends Model
 
         // check the if the requester has the `create`
         // permission before creating
-        static::creating(function (ModelEvent $event) {
-            $model = $event->getModel();
-
-            if (!$model->can('create', ACLModelRequester::get())) {
-                $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
-
-                $event->stopPropagation();
-            }
-        }, self::LISTENER_PRIORITY);
+        static::creating([self::class, 'checkCreatePermission'], self::LISTENER_PRIORITY);
 
         // check the if the requester has the `edit`
         // permission before updating
-        static::updating(function (ModelEvent $event) {
-            $model = $event->getModel();
-
-            if (!$model->can('edit', ACLModelRequester::get())) {
-                $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
-
-                $event->stopPropagation();
-            }
-        }, self::LISTENER_PRIORITY);
+        static::updating([self::class, 'checkUpdatePermission'], self::LISTENER_PRIORITY);
 
         // check the if the requester has the `delete`
         // permission before deleting
-        static::deleting(function (ModelEvent $event) {
-            $model = $event->getModel();
+        static::deleting([self::class, 'checkDeletePermission'], self::LISTENER_PRIORITY);
+    }
 
-            if (!$model->can('delete', ACLModelRequester::get())) {
-                $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
+    public static function checkCreatePermission(ModelCreating $event): void
+    {
+        $model = $event->getModel();
 
-                $event->stopPropagation();
-            }
-        }, self::LISTENER_PRIORITY);
+        if (!$model->can('create', ACLModelRequester::get())) {
+            $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
+
+            $event->stopPropagation();
+        }
+    }
+
+    public static function checkUpdatePermission(ModelUpdating $event): void
+    {
+        $model = $event->getModel();
+
+        if (!$model->can('edit', ACLModelRequester::get())) {
+            $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
+
+            $event->stopPropagation();
+        }
+    }
+
+    public static function checkDeletePermission(ModelDeleting $event): void
+    {
+        $model = $event->getModel();
+
+        if (!$model->can('delete', ACLModelRequester::get())) {
+            $model->getErrors()->add(ACLModel::ERROR_NO_PERMISSION);
+
+            $event->stopPropagation();
+        }
     }
 }

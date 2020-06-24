@@ -9,19 +9,13 @@
  * @license MIT
  */
 
-namespace Pulsar;
+namespace Pulsar\Event;
 
+use Pulsar\Model;
 use Symfony\Contracts\EventDispatcher\Event;
 
-final class ModelEvent extends Event
+abstract class AbstractEvent extends Event
 {
-    const CREATING = 'model.creating';
-    const CREATED = 'model.created';
-    const UPDATING = 'model.updating';
-    const UPDATED = 'model.updated';
-    const DELETING = 'model.deleting';
-    const DELETED = 'model.deleted';
-
     /**
      * @var Model
      */

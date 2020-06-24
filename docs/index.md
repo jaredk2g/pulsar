@@ -449,7 +449,7 @@ Errors::setTranslator($translator);
 <?php
 
 use Pulsar\Model;
-use Pulsar\ModelEvent;
+use Pulsar\Event\AbstractEvent;
 use Pulsar\Type;
 
 class LineItem extends Model
@@ -468,7 +468,7 @@ class LineItem extends Model
 
     protected function initialize()
     {
-        self::saving(function(ModelEvent $event) {
+        self::saving(function(AbstractEvent $event) {
             $model = $event->getModel();
             $model->total = $model->quantity * $model->unit_cost;
         });
@@ -499,7 +499,7 @@ Using `stopPropagation()` in an event listener will stop the save operation. Any
 <?php
 
 use Pulsar\Model;
-use Pulsar\ModelEvent;
+use Pulsar\Event\AbstractEvent;
 
 class User extends Model
 {
@@ -507,7 +507,7 @@ class User extends Model
 
     protected function initialize()
     {
-        self::creating(function(ModelEvent $event) {
+        self::creating(function(AbstractEvent $event) {
             $model = $event->getModel();
             if ($model->mfa_enabled && !$model->phone) {
                 $model->getErrors()->add('You must supply a phone number to enable 2FA');
