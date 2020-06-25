@@ -499,8 +499,8 @@ Using `stopPropagation()` in an event listener will stop the save operation. Any
 ```php
 <?php
 
+use Pulsar\Event\ModelCreating;
 use Pulsar\Model;
-use Pulsar\Event\AbstractEvent;
 
 class User extends Model
 {
@@ -508,7 +508,7 @@ class User extends Model
 
     protected function initialize()
     {
-        self::creating(function(AbstractEvent $event) {
+        self::creating(function(ModelCreating $event) {
             $model = $event->getModel();
             if ($model->mfa_enabled && !$model->phone) {
                 $model->getErrors()->add('You must supply a phone number to enable 2FA');

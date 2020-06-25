@@ -846,6 +846,24 @@ abstract class Model implements ArrayAccess
         $this->idValues = $namedIds;
     }
 
+    protected function getMassAssignmentWhitelist(): ?array
+    {
+        if (!property_exists($this, 'permitted')) {
+            return null;
+        }
+
+        return static::$permitted;
+    }
+
+    protected function getMassAssignmentBlacklist(): ?array
+    {
+        if (!property_exists($this, 'protected')) {
+            return null;
+        }
+
+        return static::$protected;
+    }
+
     /**
      * Sets a collection values on the model from an untrusted input.
      *
@@ -857,20 +875,31 @@ abstract class Model implements ArrayAccess
      */
     public function setValues($values)
     {
-        // check if the model has a mass assignment whitelist
-        $permitted = (property_exists($this, 'permitted')) ? static::$permitted : false;
+        if ($permitted = $this->getMassAssignmentWhitelist()) {
+            // use a mass assignment whitelist
+            foreach ($values as $k => $value) {
+                // check for mass assignment violations
+                if (!in_array($k, $permitted)) {
+                    throw new MassAssignmentException("Mass assignment of $k on ".static::modelName().' is not allowed');
+                }
 
-        // if no whitelist, then check for a blacklist
-        $protected = (!is_array($permitted) && property_exists($this, 'protected')) ? static::$protected : false;
-
-        foreach ($values as $k => $value) {
-            // check for mass assignment violations
-            if (($permitted && !in_array($k, $permitted)) ||
-                ($protected && in_array($k, $protected))) {
-                throw new MassAssignmentException("Mass assignment of $k on ".static::modelName().' is not allowed');
+                $this->$k = $value;
             }
+        } elseif ($protected = $this->getMassAssignmentBlacklist()) {
+            // use a mass assignment blacklist
+            foreach ($values as $k => $value) {
+                // check for mass assignment violations
+                if (in_array($k, $protected)) {
+                    throw new MassAssignmentException("Mass assignment of $k on ".static::modelName().' is not allowed');
+                }
 
-            $this->$k = $value;
+                $this->$k = $value;
+            }
+        } else {
+            // no mass assignment protection enabled
+            foreach ($values as $k => $value) {
+                $this->$k = $value;
+            }
         }
 
         return $this;
