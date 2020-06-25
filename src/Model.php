@@ -205,12 +205,18 @@ abstract class Model implements ArrayAccess
 
     /**
      * The initialize() method is called once per model. This is a great
-     * place to install event listeners.
+     * place to install event listeners. Any methods on the model that have
+     * "autoInitialize" in the name will automatically be called.
      */
     protected function initialize()
     {
-        if (method_exists($this, 'setAutoTimestamps')) {
-            self::saving([static::class, 'setAutoTimestamps']);
+        // Use reflection to automatically call any method here that has a name
+        // that starts with "autoInitialize". This is useful for traits to install listeners.
+        $methods = get_class_methods(static::class);
+        foreach ($methods as $method) {
+            if (0 === strpos($method, 'autoInitialize')) {
+                $this->$method();
+            }
         }
     }
 
@@ -449,10 +455,16 @@ abstract class Model implements ArrayAccess
      */
     public static function buildDefinition(): Definition
     {
-        $autoTimestamps = method_exists(static::class, 'setAutoTimestamps');
-        $softDelete = property_exists(static::class, 'softDelete');
+        // Use reflection to automatically call any method on the model that has a name
+        // that starts with "buildDefinition". This is useful for traits to add properties.
+        $methods = get_class_methods(static::class);
+        foreach ($methods as $method) {
+            if (0 === strpos($method, 'autoDefinition')) {
+                static::$method();
+            }
+        }
 
-        return DefinitionBuilder::build(static::$properties, static::class, $autoTimestamps, $softDelete);
+        return DefinitionBuilder::build(static::$properties, static::class);
     }
 
     /**
@@ -1075,7 +1087,7 @@ abstract class Model implements ArrayAccess
 
         // perform a hard (default) or soft delete
         $hardDelete = true;
-        if (property_exists($this, 'softDelete')) {
+        if (isset($this->deleted_at)) {
             $t = time();
             $this->deleted_at = $t;
             $t = Validator::validateProperty($this, static::definition()->get('deleted_at'), $t);
@@ -1109,7 +1121,7 @@ abstract class Model implements ArrayAccess
      */
     public function restore(): bool
     {
-        if (!property_exists($this, 'softDelete') || !$this->deleted_at) {
+        if (!isset($this->deleted_at) || !$this->deleted_at) {
             throw new BadMethodCallException('Can only call restore() on a soft-deleted model');
         }
 
@@ -1147,7 +1159,7 @@ abstract class Model implements ArrayAccess
      */
     public function isDeleted(): bool
     {
-        if (property_exists($this, 'softDelete') && $this->deleted_at) {
+        if (isset($this->deleted_at) && $this->deleted_at) {
             return true;
         }
 
@@ -1170,7 +1182,7 @@ abstract class Model implements ArrayAccess
         $query = new Query($model);
 
         // scope soft-deleted models to only include non-deleted models
-        if (property_exists($model, 'softDelete')) {
+        if (self::definition()->has('deleted_at')) {
             $query->where('deleted_at IS NOT NULL');
         }
 

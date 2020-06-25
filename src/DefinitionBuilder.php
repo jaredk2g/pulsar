@@ -12,25 +12,6 @@ final class DefinitionBuilder
         'mutable' => Property::IMMUTABLE,
     ];
 
-    const AUTO_TIMESTAMPS = [
-        'created_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-        'updated_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ],
-    ];
-
-    const SOFT_DELETE_TIMESTAMPS = [
-        'deleted_at' => [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-            'null' => true,
-        ],
-    ];
-
     /** @var Definition[] */
     private static $definitions;
 
@@ -52,22 +33,12 @@ final class DefinitionBuilder
     /**
      * Builds a model definition given certain parameters.
      */
-    public static function build(array $properties, string $modelClass, bool $autoTimestamps, bool $softDelete): Definition
+    public static function build(array $properties, string $modelClass): Definition
     {
         /** @var Model $modelClass */
         // add in the default ID property
         if (!isset($properties[Model::DEFAULT_ID_NAME]) && $modelClass::getIDProperties() == [Model::DEFAULT_ID_NAME]) {
             $properties[Model::DEFAULT_ID_NAME] = self::DEFAULT_ID_PROPERTY;
-        }
-
-        // generates created_at and updated_at timestamps
-        if ($autoTimestamps) {
-            $properties = array_replace(self::AUTO_TIMESTAMPS, $properties);
-        }
-
-        // generates deleted_at timestamps
-        if ($softDelete) {
-            $properties = array_replace(self::SOFT_DELETE_TIMESTAMPS, $properties);
         }
 
         $result = [];

@@ -4,10 +4,13 @@ namespace Pulsar\Tests\Models;
 
 use Pulsar\ACLModel;
 use Pulsar\Model;
+use Pulsar\Traits\SoftDelete;
 use Pulsar\Type;
 
 class Person extends ACLModel
 {
+    use SoftDelete;
+
     protected static $properties = [
         'id' => [
             'type' => Type::STRING,
@@ -24,8 +27,6 @@ class Person extends ACLModel
             'has_one' => Garage::class,
         ],
     ];
-
-    protected static $softDelete;
 
     protected function hasPermission($permission, Model $requester)
     {

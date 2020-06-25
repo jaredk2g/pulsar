@@ -2,8 +2,8 @@
 
 namespace Pulsar\Tests\Models;
 
-use Pulsar\Cacheable;
 use Pulsar\Model;
+use Pulsar\Traits\Cacheable;
 
 class CacheableModel extends Model
 {

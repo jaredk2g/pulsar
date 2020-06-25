@@ -9,13 +9,13 @@
  * @license MIT
  */
 
-namespace Pulsar;
+namespace Pulsar\Traits;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
 /**
- * Trait Cacheable.
+ * Adds a caching layer to a model that is queried before refresh() is called.
  */
 trait Cacheable
 {
