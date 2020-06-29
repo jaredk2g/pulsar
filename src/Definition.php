@@ -32,11 +32,6 @@ final class Definition implements ArrayAccess
         return $this->properties;
     }
 
-    public function propertyNames(): array
-    {
-        return array_keys($this->properties);
-    }
-
     public function offsetExists($offset)
     {
         return isset($this->properties[$offset]);
