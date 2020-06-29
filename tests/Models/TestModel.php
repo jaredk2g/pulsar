@@ -17,17 +17,28 @@ class TestModel extends Model
         'answer' => [
             'type' => Type::STRING,
         ],
-        'mutator' => [],
-        'accessor' => [],
+        'mutator' => [
+            'in_array' => false,
+        ],
+        'accessor' => [
+            'in_array' => false,
+        ],
+        'hidden_legacy' => [],
         'encrypted' => [
             'encrypted' => true,
+        ],
+        'appended' => [
+            'persisted' => false,
+            'in_array' => true,
         ],
     ];
     public $preDelete;
     public $postDelete;
 
-    protected static $hidden = ['mutator', 'accessor'];
-    protected static $appended = ['appended'];
+    protected static $hidden = ['hidden_legacy'];
+
+    protected static $appended = ['appended_legacy'];
+
     protected static $permitted = ['id', 'relation', 'answer', 'mutator', 'accessor', 'fail'];
 
     public static $query;
@@ -69,6 +80,11 @@ class TestModel extends Model
     }
 
     protected function getAppendedValue()
+    {
+        return true;
+    }
+
+    protected function getAppendedLegacyValue()
     {
         return true;
     }

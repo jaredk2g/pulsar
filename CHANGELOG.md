@@ -17,6 +17,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Saved values are no longer validated by `Model::valid()`. Only unsaved values will be validated.
 - Callable validation rules can now set their own validation error message.
 - Added `Model::beforePersist()` and `Model::afterPersist()` shortcut to install lifecycle event listeners for all create, update, and delete.
+- Added `Model::getMassAssignmentWhitelist()` and `Model::getMassAssignmentBlacklist()` that can be overriden to define mass assignment rules.
+- Added `in_array` model definition setting to indicate whether a property is included in the array representation.
 
 ### Changed
 - Make model internal properties private when possible.
@@ -34,6 +36,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Lifecycle events are now represented as a different class for each event type.
 - Automatic timestamps are now installed with the `AutoTimestamps` trait.
 - Soft delete is now enabled with the `SoftDelete` trait.
+- Deprecated `Model::$hidden`, `Model::$appended`, `Model::$permitted`, and `Model::$protected`.
 
 ### Fixed
 - Use a strict equality check when casting an empty string to null on a nullable property. Previously this would check for a falsey value.

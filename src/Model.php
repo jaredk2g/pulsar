@@ -154,7 +154,7 @@ abstract class Model implements ArrayAccess
     /**
      * @var bool
      */
-    private $ignoreUnsaved;
+    private $ignoreUnsaved = false;
 
     /**
      * Creates a new model object.
@@ -170,7 +170,7 @@ abstract class Model implements ArrayAccess
         $ids = [];
         $this->hasId = true;
         foreach (static::$ids as $name) {
-            $id = false;
+            $id = null;
             if (array_key_exists($name, $values)) {
                 $idProperty = static::definition()->get($name);
                 $id = Type::cast($idProperty, $values[$name]);
@@ -187,6 +187,8 @@ abstract class Model implements ArrayAccess
             $this->refreshWith($values);
         } elseif (!$this->hasId) {
             $this->_unsaved = $values;
+        } else {
+            $this->_values = $this->idValues;
         }
     }
 
@@ -461,6 +463,27 @@ abstract class Model implements ArrayAccess
         foreach ($methods as $method) {
             if (0 === strpos($method, 'autoDefinition')) {
                 static::$method();
+            }
+        }
+
+        // Deprecated: this setting is deprecated
+        // remove any hidden properties
+        if (property_exists(static::class, 'hidden')) {
+            foreach (static::$hidden as $k) {
+                if (isset(static::$properties[$k])) {
+                    static::$properties[$k]['in_array'] = false;
+                }
+            }
+        }
+
+        // Deprecated: this setting is deprecated
+        // add any appended properties
+        if (property_exists(static::class, 'appended')) {
+            foreach (static::$appended as $k) {
+                static::$properties[$k] = [
+                    'in_array' => true,
+                    'persisted' => false,
+                ];
             }
         }
 
@@ -750,41 +773,45 @@ abstract class Model implements ArrayAccess
      */
     public function get(array $properties): array
     {
-        // load the values from the IDs and local model cache
-        $values = array_replace($this->ids(), $this->_values);
-
-        // unless specified, use any unsaved values
+        // check if unsaved values will be returned
         $ignoreUnsaved = $this->ignoreUnsaved;
         $this->ignoreUnsaved = false;
 
-        if (!$ignoreUnsaved) {
-            $values = array_replace($values, $this->_unsaved);
-        }
-
-        // see if there are any model properties that do not exist.
-        // when true then this means the model needs to be hydrated
-        // NOTE: only looking at model properties and excluding dynamic/non-existent properties
-        $modelProperties = static::definition()->propertyNames();
-        $numMissing = count(array_intersect($modelProperties, array_diff($properties, array_keys($values))));
-
-        if ($numMissing > 0 && !$this->loaded) {
-            // load the model from the storage layer, if needed
-            $this->refresh();
-
-            $values = array_replace($values, $this->_values);
-
-            if (!$ignoreUnsaved) {
-                $values = array_replace($values, $this->_unsaved);
-            }
-        }
+        // Check if the model needs to be loaded from the database. This
+        // is used if an ID was supplied for the model but the values have
+        // not been hydrated from the database. We only want to load values
+        // from the database if there are properties requested that are both
+        // persisted to the database AND do not already have a value present.
+        $this->loadIfNeeded($properties, $ignoreUnsaved);
 
         // build a key-value map of the requested properties
         $return = [];
         foreach ($properties as $k) {
-            $return[$k] = $this->getValue($k, $values);
+            $return[$k] = $this->getValue($k, $ignoreUnsaved);
         }
 
         return $return;
+    }
+
+    /**
+     * Loads the model from the database if needed.
+     */
+    private function loadIfNeeded(array $properties, bool $ignoreUnsaved): void
+    {
+        if ($this->loaded | !$this->hasId) {
+            return;
+        }
+
+        foreach ($properties as $k) {
+            if (!isset($this->_values[$k]) && ($ignoreUnsaved || !isset($this->_unsaved[$k]))) {
+                $property = static::definition()->get($k);
+                if ($property && $property->isPersisted()) {
+                    $this->refresh();
+
+                    return;
+                }
+            }
+        }
     }
 
     /**
@@ -798,12 +825,13 @@ abstract class Model implements ArrayAccess
      *
      * @return mixed
      */
-    private function getValue(string $name, array $values)
+    private function getValue(string $name, bool $ignoreUnsaved)
     {
         $value = null;
-
-        if (array_key_exists($name, $values)) {
-            $value = $values[$name];
+        if (!$ignoreUnsaved && array_key_exists($name, $this->_unsaved)) {
+            $value = $this->_unsaved[$name];
+        } elseif (array_key_exists($name, $this->_values)) {
+            $value = $this->_values[$name];
         } elseif ($property = static::definition()->get($name)) {
             if ($property->getRelationshipType() && !$property->isPersisted()) {
                 $relationship = $this->getRelationship($property);
@@ -844,24 +872,27 @@ abstract class Model implements ArrayAccess
 
         $this->hasId = true;
         $this->idValues = $namedIds;
+        $this->_values = array_replace($this->_values, $namedIds);
     }
 
     protected function getMassAssignmentWhitelist(): ?array
     {
-        if (!property_exists($this, 'permitted')) {
-            return null;
+        // Deprecated: this is deprecated
+        if (property_exists($this, 'permitted')) {
+            return static::$permitted;
         }
 
-        return static::$permitted;
+        return null;
     }
 
     protected function getMassAssignmentBlacklist(): ?array
     {
-        if (!property_exists($this, 'protected')) {
-            return null;
+        // Deprecated: this is deprecated
+        if (property_exists($this, 'protected')) {
+            return static::$protected;
         }
 
-        return static::$protected;
+        return null;
     }
 
     /**
@@ -910,25 +941,13 @@ abstract class Model implements ArrayAccess
      */
     public function toArray(): array
     {
-        // build the list of properties to retrieve
-        $properties = static::definition()->propertyNames();
-
-        // remove any relationships
-        $relationships = [];
+        // build the list of properties to return
+        $properties = [];
         foreach (static::definition()->all() as $property) {
-            if ($property->getRelationshipType() && !$property->isPersisted()) {
-                $relationships[] = $property->getName();
+            if ($property->isInArray()) {
+                $properties[] = $property->getName();
             }
         }
-        $properties = array_diff($properties, $relationships);
-
-        // remove any hidden properties
-        $hide = (property_exists($this, 'hidden')) ? static::$hidden : [];
-        $properties = array_diff($properties, $hide);
-
-        // add any appended properties
-        $append = (property_exists($this, 'appended')) ? static::$appended : [];
-        $properties = array_merge($properties, $append);
 
         // get the values for the properties
         $result = $this->get($properties);
@@ -1063,7 +1082,7 @@ abstract class Model implements ArrayAccess
         if ($updated) {
             // store the persisted values to the in-memory cache
             $this->_unsaved = [];
-            $hydrateValues = array_replace($this->_values, $this->idValues, $preservedValues);
+            $hydrateValues = array_replace($this->_values, $preservedValues);
 
             // only type-cast the values that were converted to the database format
             foreach ($updateArray as $k => $v) {

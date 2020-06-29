@@ -41,6 +41,9 @@ final class Property implements ArrayAccess
     /** @var bool */
     private $persisted = true;
 
+    /** @var bool */
+    private $in_array = true;
+
     /** @var string|null */
     private $relation;
 
@@ -152,6 +155,11 @@ final class Property implements ArrayAccess
         return $this->encrypted;
     }
 
+    public function isInArray(): bool
+    {
+        return $this->in_array;
+    }
+
     public function getForeignModelClass(): ?string
     {
         return $this->relation;
@@ -193,6 +201,7 @@ final class Property implements ArrayAccess
             'default' => $this->default,
             'persisted' => $this->persisted,
             'encrypted' => $this->encrypted,
+            'in_array' => $this->in_array,
             'relation' => $this->relation,
             'relation_type' => $this->relation_type,
             'foreign_key' => $this->foreign_key,

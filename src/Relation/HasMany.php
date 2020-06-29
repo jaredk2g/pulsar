@@ -35,7 +35,7 @@ final class HasMany extends AbstractRelation
         $localKey = $this->localKey;
         $id = $this->localModel->$localKey;
 
-        if (false === $id) {
+        if (null === $id) {
             $this->empty = true;
         }
 

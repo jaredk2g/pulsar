@@ -98,6 +98,7 @@ final class DefinitionBuilder
         $property['relation_type'] = Relationship::BELONGS_TO;
         $property['relation'] = $property['belongs_to'];
         $property['persisted'] = false;
+        $property['in_array'] = false;
 
         // the default foreign key is `id`
         if (!isset($property['foreign_key'])) {
@@ -126,6 +127,7 @@ final class DefinitionBuilder
         $property['relation_type'] = Relationship::BELONGS_TO_MANY;
         $property['relation'] = $property['belongs_to_many'];
         $property['persisted'] = false;
+        $property['in_array'] = false;
 
         // the default local key would look like `user_id`
         // for a model named User
@@ -159,6 +161,7 @@ final class DefinitionBuilder
         $property['relation_type'] = Relationship::HAS_ONE;
         $property['relation'] = $property['has_one'];
         $property['persisted'] = false;
+        $property['in_array'] = false;
 
         // the default foreign key would look like `user_id`
         // for a model named User
@@ -178,6 +181,7 @@ final class DefinitionBuilder
         $property['relation_type'] = Relationship::HAS_MANY;
         $property['relation'] = $property['has_many'];
         $property['persisted'] = false;
+        $property['in_array'] = false;
 
         // the default foreign key would look like
         // `user_id` for a model named User
@@ -197,6 +201,7 @@ final class DefinitionBuilder
         /* @var Model $modelClass */
         $property['relation_type'] = Relationship::POLYMORPHIC;
         $property['persisted'] = false;
+        $property['in_array'] = false;
 
         // the default foreign key is `id`
         if (!isset($property['foreign_key'])) {

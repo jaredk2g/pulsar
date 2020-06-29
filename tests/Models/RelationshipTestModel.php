@@ -6,7 +6,12 @@ use Pulsar\Model;
 
 class RelationshipTestModel extends Model
 {
-    protected static $appended = ['person'];
+    protected static $properties = [
+        'person' => [
+            'persisted' => false,
+            'in_array' => true,
+        ],
+    ];
 
     protected function getPersonValue()
     {

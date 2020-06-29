@@ -31,6 +31,7 @@ class TestModel2 extends Model
         'validate2' => [
             'validate' => ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
             'null' => true,
+            'in_array' => false,
         ],
         'unique' => [
             'validate' => ['unique', 'column' => 'unique'],
@@ -42,11 +43,13 @@ class TestModel2 extends Model
         'hidden' => [
             'type' => Type::BOOLEAN,
             'default' => false,
+            'in_array' => false,
         ],
         'person' => [
             'type' => Type::INTEGER,
             'relation' => Person::class,
             'default' => 20,
+            'in_array' => false,
         ],
         'array' => [
             'type' => Type::ARRAY,
@@ -55,17 +58,19 @@ class TestModel2 extends Model
                 'discounts' => false,
                 'shipping' => false,
             ],
+            'in_array' => false,
         ],
         'object' => [
             'type' => Type::OBJECT,
+            'in_array' => false,
         ],
         'mutable_create_only' => [
             'mutable' => Property::MUTABLE_CREATE_ONLY,
+            'in_array' => false,
         ],
         'protected' => [],
     ];
 
-    protected static $hidden = ['validate2', 'hidden', 'person', 'array', 'object', 'mutable_create_only'];
     protected static $protected = ['protected'];
 
     public static $query;

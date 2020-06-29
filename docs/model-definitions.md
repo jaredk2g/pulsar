@@ -14,6 +14,7 @@ Standard Options:
 - [validate](#validate)
 - [default](#default)
 - [encrypted](#encrypted)
+- [in_array](#in_array)
 
 Relationships:
 - [belongs_to](#belongs_to)
@@ -88,6 +89,12 @@ Optional, Default: `null`
 Enables property-level encryption. Pulsar will handle encryption to/from the databse using [php-encyrption](https://github.com/defuse/php-encryption).
 
 Boolean, Optional, Default: `false`
+
+### in_array
+
+Indicates whether the property will be included in the array representation of the model via `Model::toArray()`.
+
+Boolean, Optional, Default: `true` (`false` for relationships)
 
 ## Relationships
 

@@ -45,7 +45,7 @@ final class BelongsToMany extends AbstractRelation
 
         $ids = $this->localModel->ids();
         foreach ($ids as $idProperty => $id) {
-            if (false === $id) {
+            if (null === $id) {
                 $this->empty = true;
             }
 
