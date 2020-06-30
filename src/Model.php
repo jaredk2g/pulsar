@@ -466,31 +466,6 @@ abstract class Model implements ArrayAccess
             }
         }
 
-        // Deprecated: this setting is deprecated
-        // remove any hidden properties
-        if (property_exists(static::class, 'hidden')) {
-            foreach (static::$hidden as $k) {
-                if (isset(static::$properties[$k])) {
-                    static::$properties[$k]['in_array'] = false;
-                }
-            }
-        }
-
-        // Deprecated: this setting is deprecated
-        // add any appended properties
-        if (property_exists(static::class, 'appended')) {
-            foreach (static::$appended as $k) {
-                if (isset(static::$properties[$k])) {
-                    static::$properties[$k]['in_array'] = true;
-                } else {
-                    static::$properties[$k] = [
-                        'in_array' => true,
-                        'persisted' => false,
-                    ];
-                }
-            }
-        }
-
         return DefinitionBuilder::build(static::$properties, static::class);
     }
 
@@ -951,6 +926,22 @@ abstract class Model implements ArrayAccess
             if ($property->isInArray()) {
                 $properties[] = $property->getName();
             }
+        }
+
+        // Deprecated: this setting is deprecated
+        // remove any hidden properties
+        if (property_exists(static::class, 'hidden')) {
+            foreach (static::$hidden as $k) {
+                if (false !== ($key = array_search($k, $properties))) {
+                    unset($properties[$key]);
+                }
+            }
+        }
+
+        // Deprecated: this setting is deprecated
+        // add any appended properties
+        if (property_exists(static::class, 'appended')) {
+            $properties = array_merge($properties, static::$appended);
         }
 
         // get the values for the properties
