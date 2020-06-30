@@ -480,10 +480,14 @@ abstract class Model implements ArrayAccess
         // add any appended properties
         if (property_exists(static::class, 'appended')) {
             foreach (static::$appended as $k) {
-                static::$properties[$k] = [
-                    'in_array' => true,
-                    'persisted' => false,
-                ];
+                if (isset(static::$properties[$k])) {
+                    static::$properties[$k]['in_array'] = true;
+                } else {
+                    static::$properties[$k] = [
+                        'in_array' => true,
+                        'persisted' => false,
+                    ];
+                }
             }
         }
 
