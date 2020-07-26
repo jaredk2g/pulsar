@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.11 - 2020-07-26
 ### Added
 - You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.
 - The `Errors::setTranslator()` method can set the global translation implementation.
