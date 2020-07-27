@@ -1225,7 +1225,7 @@ abstract class Model implements ArrayAccess
         $query = new Query($model);
 
         // scope soft-deleted models to only include non-deleted models
-        if (self::definition()->has('deleted_at')) {
+        if (static::definition()->has('deleted_at')) {
             $query->where('deleted_at IS NOT NULL');
         }
 
