@@ -20,6 +20,7 @@ use Pulsar\Errors;
 use Pulsar\Event\AbstractEvent;
 use Pulsar\EventManager;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\ListenerException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
@@ -1339,6 +1340,18 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create());
+    }
+
+    public function testListenerFailException()
+    {
+        TestModel::beforePersist(function (AbstractEvent $event) {
+            throw new ListenerException('This is an error message', ['test' => true]);
+        });
+
+        $newModel = new TestModel();
+        $this->assertFalse($newModel->create());
+        $this->assertEquals('This is an error message', $newModel->getErrors()[0]);
+        $this->assertEquals(['test' => true], $newModel->getErrors()[0]->getContext());
     }
 
     public function testCreateNotUnique()

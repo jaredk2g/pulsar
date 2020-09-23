@@ -24,6 +24,7 @@ use Pulsar\Event\ModelDeleting;
 use Pulsar\Event\ModelUpdated;
 use Pulsar\Event\ModelUpdating;
 use Pulsar\Exception\DriverMissingException;
+use Pulsar\Exception\ListenerException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
@@ -1603,7 +1604,15 @@ abstract class Model implements ArrayAccess
      */
     private function performDispatch(AbstractEvent $event, bool $usesTransactions): bool
     {
-        EventManager::getDispatcher(static::class)->dispatch($event, $event::NAME);
+        // Model events can fail whenever $event->stopPropagation() is called
+        // or when a specific exception type is thrown by the listener.
+        try {
+            EventManager::getDispatcher(static::class)->dispatch($event, $event::NAME);
+        } catch (ListenerException $e) {
+            // Listener exceptions provide the error message to be stored on the model
+            $this->getErrors()->add($e->getMessage(), $e->getContext());
+            $event->stopPropagation();
+        }
 
         if (!$event->isPropagationStopped()) {
             return true;

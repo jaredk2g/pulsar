@@ -492,14 +492,17 @@ Aliases:
 - `beforePersist()` - Alias for `creating`, `updating`, and `deleting`
 - `afterPersist()` - Alias for `created`, `updated`, and `deleted`
 
-### Stopping event propagation
+### Stopping save operations
 
-Using `stopPropagation()` in an event listener will stop the save operation. Any future event listeners will not be called. If transactions are used then the database will be rolled back. 
+The easiest way to stop the save operation in an event listener is to throw a `ListenerException`. Any future event listeners will not be called. If transactions are used then the database will be rolled back. The exception message and context will be set on the model as a validation error.
+
+Calling `stopPropagation()` on the event will also stop the save operation. 
 
 ```php
 <?php
 
 use Pulsar\Event\ModelCreating;
+use Pulsar\Exception\ListenerException;
 use Pulsar\Model;
 
 class User extends Model
@@ -511,8 +514,7 @@ class User extends Model
         self::creating(function(ModelCreating $event) {
             $model = $event->getModel();
             if ($model->mfa_enabled && !$model->phone) {
-                $model->getErrors()->add('You must supply a phone number to enable 2FA');
-                $event->stopPropagation();
+                throw new ListenerException('You must supply a phone number to enable 2FA');
             }
         });
     }

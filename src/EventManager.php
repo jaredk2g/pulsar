@@ -9,9 +9,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class EventManager
 {
-    /**
-     * @var array
-     */
+    /** @var array */
     private static $dispatchers = [];
 
     /**
