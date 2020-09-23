@@ -62,7 +62,9 @@ class EventManager
             self::getDispatcher(get_class($model))->dispatch($event, $event::NAME);
         } catch (ListenerException $e) {
             // Listener exceptions provide the error message to be stored on the model
-            $model->getErrors()->add($e->getMessage(), $e->getContext());
+            if ($message = $e->getMessage()) {
+                $model->getErrors()->add($e->getMessage(), $e->getContext());
+            }
             $event->stopPropagation();
         }
 
