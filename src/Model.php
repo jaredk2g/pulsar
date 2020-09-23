@@ -16,7 +16,6 @@ use BadMethodCallException;
 use ICanBoogie\Inflector;
 use InvalidArgumentException;
 use Pulsar\Driver\DriverInterface;
-use Pulsar\Event\AbstractEvent;
 use Pulsar\Event\ModelCreated;
 use Pulsar\Event\ModelCreating;
 use Pulsar\Event\ModelDeleted;
@@ -24,7 +23,6 @@ use Pulsar\Event\ModelDeleting;
 use Pulsar\Event\ModelUpdated;
 use Pulsar\Event\ModelUpdating;
 use Pulsar\Exception\DriverMissingException;
-use Pulsar\Exception\ListenerException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
@@ -32,8 +30,6 @@ use Pulsar\Relation\AbstractRelation;
 use Pulsar\Relation\Relationship;
 
 /**
- * Class Model.
- *
  * @method Query             where($where, $value = null, $condition = null)
  * @method Query             limit($limit)
  * @method Query             start($start)
@@ -619,7 +615,7 @@ abstract class Model implements ArrayAccess
         }
 
         // dispatch the model.creating event
-        if (!$this->performDispatch(new ModelCreating($this), $usesTransactions)) {
+        if (!EventManager::dispatch($this, new ModelCreating($this), $usesTransactions)) {
             return false;
         }
 
@@ -712,7 +708,7 @@ abstract class Model implements ArrayAccess
             $this->refreshWith($hydrateValues);
 
             // dispatch the model.created event
-            if (!$this->performDispatch(new ModelCreated($this), $usesTransactions)) {
+            if (!EventManager::dispatch($this, new ModelCreated($this), $usesTransactions)) {
                 return false;
             }
         }
@@ -1022,7 +1018,7 @@ abstract class Model implements ArrayAccess
         }
 
         // dispatch the model.updating event
-        if (!$this->performDispatch(new ModelUpdating($this), $usesTransactions)) {
+        if (!EventManager::dispatch($this, new ModelUpdating($this), $usesTransactions)) {
             return false;
         }
 
@@ -1085,7 +1081,7 @@ abstract class Model implements ArrayAccess
             $this->refreshWith($hydrateValues);
 
             // dispatch the model.updated event
-            if (!$this->performDispatch(new ModelUpdated($this), $usesTransactions)) {
+            if (!EventManager::dispatch($this, new ModelUpdated($this), $usesTransactions)) {
                 return false;
             }
         }
@@ -1119,7 +1115,7 @@ abstract class Model implements ArrayAccess
         }
 
         // dispatch the model.deleting event
-        if (!$this->performDispatch(new ModelDeleting($this), $usesTransactions)) {
+        if (!EventManager::dispatch($this, new ModelDeleting($this), $usesTransactions)) {
             return false;
         }
 
@@ -1137,7 +1133,7 @@ abstract class Model implements ArrayAccess
 
         if ($deleted) {
             // dispatch the model.deleted event
-            if (!$this->performDispatch(new ModelDeleted($this), $usesTransactions)) {
+            if (!EventManager::dispatch($this, new ModelDeleted($this), $usesTransactions)) {
                 return false;
             }
 
@@ -1170,7 +1166,7 @@ abstract class Model implements ArrayAccess
         }
 
         // dispatch the model.updating event
-        if (!$this->performDispatch(new ModelUpdating($this), $usesTransactions)) {
+        if (!EventManager::dispatch($this, new ModelUpdating($this), $usesTransactions)) {
             return false;
         }
 
@@ -1179,7 +1175,7 @@ abstract class Model implements ArrayAccess
 
         if ($restored) {
             // dispatch the model.updated event
-            if (!$this->performDispatch(new ModelUpdated($this), $usesTransactions)) {
+            if (!EventManager::dispatch($this, new ModelUpdated($this), $usesTransactions)) {
                 return false;
             }
         }
@@ -1501,23 +1497,12 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Subscribes to a listener to an event.
-     *
-     * @param string $event    event name
-     * @param int    $priority optional priority, higher #s get called first
-     */
-    public static function listen(string $event, callable $listener, int $priority = 0): void
-    {
-        EventManager::getDispatcher(static::class)->addListener($event, $listener, $priority);
-    }
-
-    /**
      * Adds a listener to the model.creating and model.updating events.
      */
     public static function saving(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreating::NAME, $listener, $priority);
-        static::listen(ModelUpdating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdating::NAME, $listener, $priority);
     }
 
     /**
@@ -1525,8 +1510,8 @@ abstract class Model implements ArrayAccess
      */
     public static function saved(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreated::NAME, $listener, $priority);
-        static::listen(ModelUpdated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdated::NAME, $listener, $priority);
     }
 
     /**
@@ -1534,9 +1519,9 @@ abstract class Model implements ArrayAccess
      */
     public static function beforePersist(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreating::NAME, $listener, $priority);
-        static::listen(ModelUpdating::NAME, $listener, $priority);
-        static::listen(ModelDeleting::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelDeleting::NAME, $listener, $priority);
     }
 
     /**
@@ -1544,9 +1529,9 @@ abstract class Model implements ArrayAccess
      */
     public static function afterPersist(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreated::NAME, $listener, $priority);
-        static::listen(ModelUpdated::NAME, $listener, $priority);
-        static::listen(ModelDeleted::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelDeleted::NAME, $listener, $priority);
     }
 
     /**
@@ -1554,7 +1539,7 @@ abstract class Model implements ArrayAccess
      */
     public static function creating(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreating::NAME, $listener, $priority);
     }
 
     /**
@@ -1562,7 +1547,7 @@ abstract class Model implements ArrayAccess
      */
     public static function created(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelCreated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelCreated::NAME, $listener, $priority);
     }
 
     /**
@@ -1570,7 +1555,7 @@ abstract class Model implements ArrayAccess
      */
     public static function updating(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelUpdating::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdating::NAME, $listener, $priority);
     }
 
     /**
@@ -1578,7 +1563,7 @@ abstract class Model implements ArrayAccess
      */
     public static function updated(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelUpdated::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelUpdated::NAME, $listener, $priority);
     }
 
     /**
@@ -1586,7 +1571,7 @@ abstract class Model implements ArrayAccess
      */
     public static function deleting(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelDeleting::NAME, $listener, $priority);
+        EventManager::listen(static::class, ModelDeleting::NAME, $listener, $priority);
     }
 
     /**
@@ -1594,36 +1579,7 @@ abstract class Model implements ArrayAccess
      */
     public static function deleted(callable $listener, int $priority = 0): void
     {
-        static::listen(ModelDeleted::NAME, $listener, $priority);
-    }
-
-    /**
-     * Dispatches the given event and checks if it was successful.
-     *
-     * @return bool true if the events were successfully propagated
-     */
-    private function performDispatch(AbstractEvent $event, bool $usesTransactions): bool
-    {
-        // Model events can fail whenever $event->stopPropagation() is called
-        // or when a specific exception type is thrown by the listener.
-        try {
-            EventManager::getDispatcher(static::class)->dispatch($event, $event::NAME);
-        } catch (ListenerException $e) {
-            // Listener exceptions provide the error message to be stored on the model
-            $this->getErrors()->add($e->getMessage(), $e->getContext());
-            $event->stopPropagation();
-        }
-
-        if (!$event->isPropagationStopped()) {
-            return true;
-        }
-
-        // when listeners fail roll back any database transaction
-        if ($usesTransactions) {
-            self::$driver->rollBackTransaction($this->getConnection());
-        }
-
-        return false;
+        EventManager::listen(static::class, ModelDeleted::NAME, $listener, $priority);
     }
 
     /////////////////////////////

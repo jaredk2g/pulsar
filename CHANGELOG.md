@@ -6,6 +6,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - The new `ListenerException` class can be thrown from event listeners as a shortcut to stop events.
 
+### Changed
+- Moved adding event listeners and dispatching events to `EventManager`
+
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class
 
