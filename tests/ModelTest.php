@@ -18,6 +18,7 @@ use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
 use Pulsar\Errors;
 use Pulsar\Event\AbstractEvent;
+use Pulsar\EventManager;
 use Pulsar\Exception\DriverMissingException;
 use Pulsar\Exception\MassAssignmentException;
 use Pulsar\Exception\ModelException;
@@ -51,8 +52,8 @@ class ModelTest extends MockeryTestCase
     {
         // discard the cached dispatcher to
         // remove any event listeners
-        TestModel::getDispatcher(true);
-        Person::getDispatcher(true);
+        EventManager::reset(TestModel::class);
+        EventManager::reset(Person::class);
     }
 
     public function testDriverMissing()

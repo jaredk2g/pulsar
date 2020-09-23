@@ -2,6 +2,13 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Ensure `Model::definition()` is always called in static context
+
+### Removed
+- `Model::getDispatcher()` was removed and replaced with the `EventManager` class
+
 ## 0.11 - 2020-07-26
 ### Added
 - You can now supply your own translation implementation with `TranslatorInterface`. A simple translation implementation is provided with Pulsar.

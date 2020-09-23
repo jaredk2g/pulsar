@@ -29,7 +29,6 @@ use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\AbstractRelation;
 use Pulsar\Relation\Relationship;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class Model.
@@ -120,11 +119,6 @@ abstract class Model implements ArrayAccess
      * @var array
      */
     private static $mutators = [];
-
-    /**
-     * @var array
-     */
-    private static $dispatchers = [];
 
     /**
      * @var string
@@ -1506,33 +1500,20 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Gets the event dispatcher.
-     */
-    public static function getDispatcher($ignoreCache = false): EventDispatcher
-    {
-        $class = static::class;
-        if ($ignoreCache || !isset(self::$dispatchers[$class])) {
-            self::$dispatchers[$class] = new EventDispatcher();
-        }
-
-        return self::$dispatchers[$class];
-    }
-
-    /**
      * Subscribes to a listener to an event.
      *
      * @param string $event    event name
      * @param int    $priority optional priority, higher #s get called first
      */
-    public static function listen(string $event, callable $listener, int $priority = 0)
+    public static function listen(string $event, callable $listener, int $priority = 0): void
     {
-        static::getDispatcher()->addListener($event, $listener, $priority);
+        EventManager::getDispatcher(static::class)->addListener($event, $listener, $priority);
     }
 
     /**
      * Adds a listener to the model.creating and model.updating events.
      */
-    public static function saving(callable $listener, int $priority = 0)
+    public static function saving(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreating::NAME, $listener, $priority);
         static::listen(ModelUpdating::NAME, $listener, $priority);
@@ -1541,7 +1522,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.created and model.updated events.
      */
-    public static function saved(callable $listener, int $priority = 0)
+    public static function saved(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreated::NAME, $listener, $priority);
         static::listen(ModelUpdated::NAME, $listener, $priority);
@@ -1550,7 +1531,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.creating, model.updating, and model.deleting events.
      */
-    public static function beforePersist(callable $listener, int $priority = 0)
+    public static function beforePersist(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreating::NAME, $listener, $priority);
         static::listen(ModelUpdating::NAME, $listener, $priority);
@@ -1560,7 +1541,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.created, model.updated, and model.deleted events.
      */
-    public static function afterPersist(callable $listener, int $priority = 0)
+    public static function afterPersist(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreated::NAME, $listener, $priority);
         static::listen(ModelUpdated::NAME, $listener, $priority);
@@ -1570,7 +1551,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.creating event.
      */
-    public static function creating(callable $listener, int $priority = 0)
+    public static function creating(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreating::NAME, $listener, $priority);
     }
@@ -1578,7 +1559,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.created event.
      */
-    public static function created(callable $listener, int $priority = 0)
+    public static function created(callable $listener, int $priority = 0): void
     {
         static::listen(ModelCreated::NAME, $listener, $priority);
     }
@@ -1586,7 +1567,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.updating event.
      */
-    public static function updating(callable $listener, int $priority = 0)
+    public static function updating(callable $listener, int $priority = 0): void
     {
         static::listen(ModelUpdating::NAME, $listener, $priority);
     }
@@ -1594,7 +1575,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.updated event.
      */
-    public static function updated(callable $listener, int $priority = 0)
+    public static function updated(callable $listener, int $priority = 0): void
     {
         static::listen(ModelUpdated::NAME, $listener, $priority);
     }
@@ -1602,7 +1583,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.deleting event.
      */
-    public static function deleting(callable $listener, int $priority = 0)
+    public static function deleting(callable $listener, int $priority = 0): void
     {
         static::listen(ModelDeleting::NAME, $listener, $priority);
     }
@@ -1610,7 +1591,7 @@ abstract class Model implements ArrayAccess
     /**
      * Adds a listener to the model.deleted event.
      */
-    public static function deleted(callable $listener, int $priority = 0)
+    public static function deleted(callable $listener, int $priority = 0): void
     {
         static::listen(ModelDeleted::NAME, $listener, $priority);
     }
@@ -1622,7 +1603,7 @@ abstract class Model implements ArrayAccess
      */
     private function performDispatch(AbstractEvent $event, bool $usesTransactions): bool
     {
-        static::getDispatcher()->dispatch($event, $event::NAME);
+        EventManager::getDispatcher(static::class)->dispatch($event, $event::NAME);
 
         if (!$event->isPropagationStopped()) {
             return true;
