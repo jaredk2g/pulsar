@@ -1,6 +1,10 @@
-Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/Active_record_pattern) pattern in PHP.
+## Pulsar Documentation
 
-## Table of Contents
+Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/Active_record_pattern) pattern in PHP. This page contains documentation on how to use Pulsar ORM.
+
+### Table of Contents
+
+The Pulsar Documentation is divided into the following sections.
 
 - [Setup](#setup)
 - [Defining Models](#defining-models)
