@@ -637,6 +637,23 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
             ],
+            'deleted' => [
+                'type' => Type::BOOLEAN,
+                'mutable' => Property::MUTABLE,
+                'null' => false,
+                'required' => false,
+                'validate' => null,
+                'default' => null,
+                'persisted' => true,
+                'encrypted' => false,
+                'relation' => null,
+                'relation_type' => null,
+                'foreign_key' => null,
+                'local_key' => null,
+                'pivot_tablename' => null,
+                'morphs_to' => null,
+                'in_array' => true,
+            ],
             'deleted_at' => [
                 'type' => Type::DATE,
                 'mutable' => Property::MUTABLE,
@@ -932,6 +949,7 @@ class ModelTest extends MockeryTestCase
                 'name' => 'Bob Loblaw',
                 'email' => 'bob@example.com',
                 'deleted_at' => null,
+                'deleted' => null,
                 // the `garage` relationship should not be included by default
             ],
         ];
@@ -2022,7 +2040,7 @@ class ModelTest extends MockeryTestCase
     public function testSoftDeleteRestore()
     {
         $model = new Person(['id' => 1]);
-        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+        $model->refreshWith(['test' => true, 'deleted' => true, 'deleted_at' => time()]);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
@@ -2031,17 +2049,9 @@ class ModelTest extends MockeryTestCase
 
         $this->assertTrue($model->grantAllPermissions()->restore());
         $this->assertTrue($model->persisted());
+        $this->assertFalse($model->deleted);
         $this->assertNull($model->deleted_at);
         $this->assertFalse($model->isDeleted());
-    }
-
-    public function testRestoreUnsupportedModel()
-    {
-        $this->expectException(BadMethodCallException::class);
-
-        $model = new TestModel(['id' => 1]);
-
-        $model->restore();
     }
 
     public function testRestoreNotDeleted()
@@ -2057,7 +2067,7 @@ class ModelTest extends MockeryTestCase
     public function testRestoreUpdatingEventFail()
     {
         $model = new Person(['id' => 1]);
-        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+        $model->refreshWith(['test' => true, 'deleted' => true, 'deleted_at' => time()]);
 
         Person::updating(function (AbstractEvent $event) {
             $event->stopPropagation();
@@ -2068,7 +2078,7 @@ class ModelTest extends MockeryTestCase
     public function testRestoreUpdatedEventFail()
     {
         $model = new Person(['id' => 1]);
-        $model->refreshWith(['test' => true, 'deleted_at' => time()]);
+        $model->refreshWith(['test' => true, 'deleted' => true, 'deleted_at' => time()]);
 
         $driver = Mockery::mock(DriverInterface::class);
         $driver->shouldReceive('updateModel')
@@ -2107,16 +2117,16 @@ class ModelTest extends MockeryTestCase
 
         $this->assertInstanceOf(Query::class, $query);
         $this->assertInstanceOf(Person::class, $query->getModel());
-        $this->assertEquals(['deleted_at IS NOT NULL'], $query->getWhere());
+        $this->assertEquals([], $query->getWhere());
     }
 
-    public function testWithDeleted()
+    public function testWithoutDeleted()
     {
-        $query = Person::withDeleted();
+        $query = Person::withoutDeleted();
 
         $this->assertInstanceOf(Query::class, $query);
         $this->assertInstanceOf(Person::class, $query->getModel());
-        $this->assertEquals([], $query->getWhere());
+        $this->assertEquals(['deleted' => false], $query->getWhere());
     }
 
     public function testFind()

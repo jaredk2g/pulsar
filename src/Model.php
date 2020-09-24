@@ -1119,26 +1119,15 @@ abstract class Model implements ArrayAccess
             return false;
         }
 
-        // perform a hard (default) or soft delete
-        $hardDelete = true;
-        if (isset($this->deleted_at)) {
-            $t = time();
-            $this->deleted_at = $t;
-            $t = Validator::validateProperty($this, static::definition()->get('deleted_at'), $t);
-            $deleted = self::$driver->updateModel($this, ['deleted_at' => $t]);
-            $hardDelete = false;
-        } else {
-            $deleted = self::$driver->deleteModel($this);
-        }
+        // perform the delete operation in the data store
+        $deleted = $this->performDelete();
 
         if ($deleted) {
             // dispatch the model.deleted event
             if (!EventManager::dispatch($this, new ModelDeleted($this), $usesTransactions)) {
-                return false;
-            }
+                $this->_persisted = true;
 
-            if ($hardDelete) {
-                $this->_persisted = false;
+                return false;
             }
         }
 
@@ -1151,41 +1140,18 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Restores a soft-deleted model.
+     * Performs the delete operation against the database driver.
+     * This is a separate protected method to allow traits to override
+     * the behavior (i.e. soft deletes).
      */
-    public function restore(): bool
+    protected function performDelete(): bool
     {
-        if (!isset($this->deleted_at) || !$this->deleted_at) {
-            throw new BadMethodCallException('Can only call restore() on a soft-deleted model');
+        $deleted = self::$driver->deleteModel($this);
+        if ($deleted) {
+            $this->_persisted = false;
         }
 
-        // start a DB transaction if needed
-        $usesTransactions = $this->usesTransactions();
-        if ($usesTransactions) {
-            self::$driver->startTransaction($this->getConnection());
-        }
-
-        // dispatch the model.updating event
-        if (!EventManager::dispatch($this, new ModelUpdating($this), $usesTransactions)) {
-            return false;
-        }
-
-        $this->deleted_at = null;
-        $restored = self::$driver->updateModel($this, ['deleted_at' => null]);
-
-        if ($restored) {
-            // dispatch the model.updated event
-            if (!EventManager::dispatch($this, new ModelUpdated($this), $usesTransactions)) {
-                return false;
-            }
-        }
-
-        // commit the transaction, if used
-        if ($usesTransactions) {
-            self::$driver->commitTransaction($this->getConnection());
-        }
-
-        return $restored;
+        return $deleted;
     }
 
     /**
@@ -1193,10 +1159,6 @@ abstract class Model implements ArrayAccess
      */
     public function isDeleted(): bool
     {
-        if (isset($this->deleted_at) && $this->deleted_at) {
-            return true;
-        }
-
         return !$this->_persisted;
     }
 
@@ -1212,28 +1174,7 @@ abstract class Model implements ArrayAccess
         // Create a new model instance for the query to ensure
         // that the model's initialize() method gets called.
         // Otherwise, the property definitions will be incomplete.
-        $model = new static();
-        $query = new Query($model);
-
-        // scope soft-deleted models to only include non-deleted models
-        if (static::definition()->has('deleted_at')) {
-            $query->where('deleted_at IS NOT NULL');
-        }
-
-        return $query;
-    }
-
-    /**
-     * Generates a new query instance that includes soft-deleted models.
-     */
-    public static function withDeleted(): Query
-    {
-        // Create a new model instance for the query to ensure
-        // that the model's initialize() method gets called.
-        // Otherwise, the property definitions will be incomplete.
-        $model = new static();
-
-        return new Query($model);
+        return new Query(new static());
     }
 
     /**

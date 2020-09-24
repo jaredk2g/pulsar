@@ -200,7 +200,7 @@ class QueryTest extends MockeryTestCase
 
         $driver->shouldReceive('queryModels')
             ->andReturnUsing(function ($query) {
-                if ($query->getModel() instanceof Person && $query->getWhere() == ['deleted_at IS NOT NULL', 'id IN (1,2)']) {
+                if ($query->getModel() instanceof Person && $query->getWhere() == ['id IN (1,2)']) {
                     return [
                         [
                             'id' => 2,

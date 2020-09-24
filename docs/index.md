@@ -7,6 +7,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 - [Using Models](#using-models)
 - [Saving Models](#saving-models)
 - [Querying Models](#querying-models)
+- [Deleting Models](#deleting-models)
 - [Relationships](#relationships)
 - [Validation](#validation)
 - [Lifecycle Events](#lifecycle-events)
@@ -253,6 +254,46 @@ User::min('balance');
 ```php
 User::max('balance');
 ``` 
+
+## Deleting Models
+
+Models can be deleted with:
+
+```php
+$model->delete();
+```
+
+### Soft Deletes
+
+It is easy to change the behavior of deletes to be a soft delete. When enabled, soft deletes will not actually delete a model from the database. Instead, calling `delete()` on the model will set `deleted=true`.
+
+Add the `SoftDelete` trait to a model to use soft deletes. This trait will install `deleted` and `deleted_at` properties.
+
+```php
+<?php
+
+use Pulsar\Model;
+use Pulsar\Traits\SoftDelete;
+
+class Customer extends Model
+{
+    use SoftDelete;
+
+    // ...
+}
+``` 
+
+#### Restoring deleted models
+
+One of the advantages of soft deletes over the default delete behavior is that deletes can be reversed! If
+
+#### Hide deleted models in queries
+
+Queries will by default still include deleted models. You can exclude deleted models by using `withoutDeleted()`.
+
+```php
+$customers = Customer::withoutDeleted()->all();
+```
 
 ## Relationships
 

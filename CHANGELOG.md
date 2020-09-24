@@ -5,9 +5,12 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Unreleased
 ### Added
 - The new `ListenerException` class can be thrown from event listeners as a shortcut to stop events.
+- A `deleted` property has been added to soft deleted models.
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`
+- Queries against models that support soft deletes now return all models by default. Use `::withoutDeleted()` to exclude deleted models from a query.
+- Soft delete logic has been moved to the `SoftDelete` trait
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class
