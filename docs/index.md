@@ -269,9 +269,9 @@ $model->delete();
 
 ### Soft Deletes
 
-It is easy to change the behavior of deletes to be a soft delete. When enabled, soft deletes will not actually delete a model from the database. Instead, calling `delete()` on the model will set `deleted=true`.
+Pulsar also supports what is known as a soft delete. When enabled for a model, soft deletes set `deleted=true` on the model but do not permanently delete it from the database.
 
-Add the `SoftDelete` trait to a model to use soft deletes. This trait will install `deleted` and `deleted_at` properties.
+Soft deletes can be enabled by adding the `SoftDelete` trait to any model class. This trait will install `deleted` and `deleted_at` properties. You still use `delete()` to delete the model, however, this method will now update the model to set `deleted=true` instead of deleting the row in the database.
 
 ```php
 <?php
@@ -287,9 +287,22 @@ class Customer extends Model
 }
 ``` 
 
+```php
+$customer->delete();
+
+$customer->persisted(); // returns true
+$customer->deleted; // returns true
+$customer->deleted_at; // returns timestamp
+$customer->isDeleted(); // returns true
+```
+
 #### Restoring deleted models
 
-One of the advantages of soft deletes over the default delete behavior is that deletes can be reversed! If
+One of the advantages of soft deletes over the default delete behavior is that deletes can be reversed!
+
+```
+$customer->restore();
+```
 
 #### Hide deleted models in queries
 
