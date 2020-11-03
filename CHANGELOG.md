@@ -11,6 +11,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Moved adding event listeners and dispatching events to `EventManager`
 - Queries against models that support soft deletes now return all models by default. Use `::withoutDeleted()` to exclude deleted models from a query.
 - Soft delete logic has been moved to the `SoftDelete` trait
+- Use @mixin instead of @method for query operations on model
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class
