@@ -1203,7 +1203,7 @@ abstract class Model implements ArrayAccess
      *
      * @return static|null
      */
-    public static function find($id): ?self
+    public static function find($id)
     {
         $ids = [];
         $id = (array) $id;
@@ -1230,7 +1230,7 @@ abstract class Model implements ArrayAccess
      *
      * @throws ModelNotFoundException when a model could not be found
      */
-    public static function findOrFail($id): self
+    public static function findOrFail($id)
     {
         $model = static::find($id);
         if (!$model) {

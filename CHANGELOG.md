@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - The new `ListenerException` class can be thrown from event listeners as a shortcut to stop events.
 - A `deleted` property has been added to soft deleted models.
+- The `Query::one()` method finds exactly one model or throws an exception.
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`

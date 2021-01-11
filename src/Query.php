@@ -11,6 +11,7 @@
 
 namespace Pulsar;
 
+use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\Relationship;
 
 /**
@@ -256,7 +257,7 @@ class Query
     /**
      * Executes the query against the model's driver.
      *
-     * @return array results
+     * @return Model[] results
      */
     public function execute(): array
     {
@@ -279,9 +280,30 @@ class Query
     }
 
     /**
+     * Finds exactly one model. If zero or more than one are found
+     * then this function will fail.
+     *
+     * @throws ModelNotFoundException when the result is not exactly one model
+     */
+    public function one(): Model
+    {
+        $models = $this->limit(1)->execute();
+
+        if (0 == count($models)) {
+            $model = $this->model;
+            throw new ModelNotFoundException('Could not find '.$model::modelName());
+        } elseif (count($models) > 1) {
+            $model = $this->model;
+            throw new ModelNotFoundException('Found more than one '.$model::modelName().' when only one result should have been found.');
+        }
+
+        return $models[0];
+    }
+
+    /**
      * Executes the query against the model's driver and returns the first result.
      *
-     * @return array|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
+     * @return Model[]|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
      */
     public function first(int $limit = 1)
     {

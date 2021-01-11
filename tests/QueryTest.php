@@ -15,6 +15,7 @@ use Iterator;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
+use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Query;
 use Pulsar\Tests\Models\Category;
 use Pulsar\Tests\Models\Garage;
@@ -452,6 +453,80 @@ class QueryTest extends MockeryTestCase
 
         $all = $query->all();
         $this->assertInstanceOf(Iterator::class, $all);
+    }
+
+    public function testOne()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $data = [
+            [
+                'id' => 100,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+        ];
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn($data);
+
+        Person::setDriver($driver);
+
+        $result = $query->one();
+
+        $this->assertInstanceOf(Person::class, $result);
+        $this->assertEquals(100, $result->id());
+        $this->assertEquals('Sherlock', $result->name);
+    }
+
+    public function testOneZeroResults()
+    {
+        $this->expectException(ModelNotFoundException::class);
+
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn([]);
+
+        Person::setDriver($driver);
+
+        $query->one();
+    }
+
+    public function testOneTooManyResults()
+    {
+        $this->expectException(ModelNotFoundException::class);
+
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $data = [
+            [
+                'id' => 100,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+            [
+                'id' => 101,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+        ];
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn($data);
+
+        Person::setDriver($driver);
+
+        $query->one();
     }
 
     public function testFirst()
