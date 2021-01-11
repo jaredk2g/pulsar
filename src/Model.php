@@ -28,6 +28,7 @@ use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\AbstractRelation;
 use Pulsar\Relation\Relationship;
+use Throwable;
 
 /**
  * @mixin Query
@@ -602,103 +603,113 @@ abstract class Model implements ArrayAccess
             self::$driver->startTransaction($this->getConnection());
         }
 
-        // dispatch the model.creating event
-        if (!EventManager::dispatch($this, new ModelCreating($this), $usesTransactions)) {
-            return false;
-        }
-
-        $requiredProperties = [];
-        foreach (static::definition()->all() as $name => $property) {
-            // build a list of the required properties
-            if ($property->isRequired()) {
-                $requiredProperties[] = $property;
+        try {
+            // dispatch the model.creating event
+            if (!EventManager::dispatch($this, new ModelCreating($this), $usesTransactions)) {
+                return false;
             }
 
-            // add in default values
-            if (!array_key_exists($name, $this->_unsaved) && $property->hasDefault()) {
-                $this->_unsaved[$name] = $property->getDefault();
-            }
-        }
+            $requiredProperties = [];
+            foreach (static::definition()->all() as $name => $property) {
+                // build a list of the required properties
+                if ($property->isRequired()) {
+                    $requiredProperties[] = $property;
+                }
 
-        // save any relationships
-        if (!$this->saveRelationships($usesTransactions)) {
-            return false;
-        }
-
-        // validate the values being saved
-        $validated = true;
-        $insertArray = [];
-        $preservedValues = [];
-        foreach ($this->_unsaved as $name => $value) {
-            // exclude if value does not map to a property
-            $property = static::definition()->get($name);
-            if (!$property) {
-                continue;
+                // add in default values
+                if (!array_key_exists($name, $this->_unsaved) && $property->hasDefault()) {
+                    $this->_unsaved[$name] = $property->getDefault();
+                }
             }
 
-            // check if this property is persisted to the DB
-            if (!$property->isPersisted()) {
-                $preservedValues[$name] = $value;
-                continue;
+            // save any relationships
+            if (!$this->saveRelationships($usesTransactions)) {
+                return false;
             }
 
-            // cannot insert immutable values
-            // (unless using the default value)
-            if ($property->isImmutable() && $value !== $property->getDefault()) {
-                continue;
+            // validate the values being saved
+            $validated = true;
+            $insertArray = [];
+            $preservedValues = [];
+            foreach ($this->_unsaved as $name => $value) {
+                // exclude if value does not map to a property
+                $property = static::definition()->get($name);
+                if (!$property) {
+                    continue;
+                }
+
+                // check if this property is persisted to the DB
+                if (!$property->isPersisted()) {
+                    $preservedValues[$name] = $value;
+                    continue;
+                }
+
+                // cannot insert immutable values
+                // (unless using the default value)
+                if ($property->isImmutable() && $value !== $property->getDefault()) {
+                    continue;
+                }
+
+                $validated = $validated && Validator::validateProperty($this, $property, $value);
+                $insertArray[$name] = $value;
             }
 
-            $validated = $validated && Validator::validateProperty($this, $property, $value);
-            $insertArray[$name] = $value;
-        }
+            // check for required fields
+            foreach ($requiredProperties as $property) {
+                $name = $property->getName();
+                if (!isset($insertArray[$name]) && !isset($preservedValues[$name])) {
+                    $context = [
+                        'field' => $name,
+                        'field_name' => $property->getTitle($this),
+                    ];
+                    $this->getErrors()->add('pulsar.validation.required', $context);
 
-        // check for required fields
-        foreach ($requiredProperties as $property) {
-            $name = $property->getName();
-            if (!isset($insertArray[$name]) && !isset($preservedValues[$name])) {
-                $context = [
-                    'field' => $name,
-                    'field_name' => $property->getTitle($this),
-                ];
-                $this->getErrors()->add('pulsar.validation.required', $context);
-
-                $validated = false;
+                    $validated = false;
+                }
             }
-        }
 
-        if (!$validated) {
-            // when validations fail roll back any database transaction
+            if (!$validated) {
+                // when validations fail roll back any database transaction
+                if ($usesTransactions) {
+                    self::$driver->rollBackTransaction($this->getConnection());
+                }
+
+                return false;
+            }
+
+            $created = self::$driver->createModel($this, $insertArray);
+
+            if ($created) {
+                // determine the model's new ID
+                $this->getNewId();
+
+                // store the persisted values to the in-memory cache
+                $this->_unsaved = [];
+                $hydrateValues = array_replace($this->idValues, $preservedValues);
+
+                // only type-cast the values that were converted to the database format
+                foreach ($insertArray as $k => $v) {
+                    if ($property = static::definition()->get($k)) {
+                        $hydrateValues[$k] = Type::cast($property, $v);
+                    } else {
+                        $hydrateValues[$k] = $v;
+                    }
+                }
+                $this->refreshWith($hydrateValues);
+
+                // dispatch the model.created event
+                if (!EventManager::dispatch($this, new ModelCreated($this), $usesTransactions)) {
+                    return false;
+                }
+            }
+        } catch (Throwable $e) {
+            // roll back the transaction, if used
             if ($usesTransactions) {
                 self::$driver->rollBackTransaction($this->getConnection());
             }
 
-            return false;
-        }
-
-        $created = self::$driver->createModel($this, $insertArray);
-
-        if ($created) {
-            // determine the model's new ID
-            $this->getNewId();
-
-            // store the persisted values to the in-memory cache
-            $this->_unsaved = [];
-            $hydrateValues = array_replace($this->idValues, $preservedValues);
-
-            // only type-cast the values that were converted to the database format
-            foreach ($insertArray as $k => $v) {
-                if ($property = static::definition()->get($k)) {
-                    $hydrateValues[$k] = Type::cast($property, $v);
-                } else {
-                    $hydrateValues[$k] = $v;
-                }
-            }
-            $this->refreshWith($hydrateValues);
-
-            // dispatch the model.created event
-            if (!EventManager::dispatch($this, new ModelCreated($this), $usesTransactions)) {
-                return false;
-            }
+            // now that the transaction is rolled back we can rethrow
+            throw $e;
         }
 
         // commit the transaction, if used
@@ -1005,73 +1016,83 @@ abstract class Model implements ArrayAccess
             self::$driver->startTransaction($this->getConnection());
         }
 
-        // dispatch the model.updating event
-        if (!EventManager::dispatch($this, new ModelUpdating($this), $usesTransactions)) {
-            return false;
-        }
-
-        // save any relationships
-        if (!$this->saveRelationships($usesTransactions)) {
-            return false;
-        }
-
-        // validate the values being saved
-        $validated = true;
-        $updateArray = [];
-        $preservedValues = [];
-        foreach ($this->_unsaved as $name => $value) {
-            // exclude if value does not map to a property
-            if (!static::definition()->has($name)) {
-                continue;
+        try {
+            // dispatch the model.updating event
+            if (!EventManager::dispatch($this, new ModelUpdating($this), $usesTransactions)) {
+                return false;
             }
 
-            $property = static::definition()->get($name);
-
-            // check if this property is persisted to the DB
-            if (!$property->isPersisted()) {
-                $preservedValues[$name] = $value;
-                continue;
+            // save any relationships
+            if (!$this->saveRelationships($usesTransactions)) {
+                return false;
             }
 
-            // can only modify mutable properties
-            if (!$property->isMutable()) {
-                continue;
+            // validate the values being saved
+            $validated = true;
+            $updateArray = [];
+            $preservedValues = [];
+            foreach ($this->_unsaved as $name => $value) {
+                // exclude if value does not map to a property
+                if (!static::definition()->has($name)) {
+                    continue;
+                }
+
+                $property = static::definition()->get($name);
+
+                // check if this property is persisted to the DB
+                if (!$property->isPersisted()) {
+                    $preservedValues[$name] = $value;
+                    continue;
+                }
+
+                // can only modify mutable properties
+                if (!$property->isMutable()) {
+                    continue;
+                }
+
+                $validated = $validated && Validator::validateProperty($this, $property, $value);
+                $updateArray[$name] = $value;
             }
 
-            $validated = $validated && Validator::validateProperty($this, $property, $value);
-            $updateArray[$name] = $value;
-        }
+            if (!$validated) {
+                // when validations fail roll back any database transaction
+                if ($usesTransactions) {
+                    self::$driver->rollBackTransaction($this->getConnection());
+                }
 
-        if (!$validated) {
-            // when validations fail roll back any database transaction
+                return false;
+            }
+
+            $updated = self::$driver->updateModel($this, $updateArray);
+
+            if ($updated) {
+                // store the persisted values to the in-memory cache
+                $this->_unsaved = [];
+                $hydrateValues = array_replace($this->_values, $preservedValues);
+
+                // only type-cast the values that were converted to the database format
+                foreach ($updateArray as $k => $v) {
+                    if ($property = static::definition()->get($k)) {
+                        $hydrateValues[$k] = Type::cast($property, $v);
+                    } else {
+                        $hydrateValues[$k] = $v;
+                    }
+                }
+                $this->refreshWith($hydrateValues);
+
+                // dispatch the model.updated event
+                if (!EventManager::dispatch($this, new ModelUpdated($this), $usesTransactions)) {
+                    return false;
+                }
+            }
+        } catch (Throwable $e) {
+            // roll back the transaction, if used
             if ($usesTransactions) {
                 self::$driver->rollBackTransaction($this->getConnection());
             }
 
-            return false;
-        }
-
-        $updated = self::$driver->updateModel($this, $updateArray);
-
-        if ($updated) {
-            // store the persisted values to the in-memory cache
-            $this->_unsaved = [];
-            $hydrateValues = array_replace($this->_values, $preservedValues);
-
-            // only type-cast the values that were converted to the database format
-            foreach ($updateArray as $k => $v) {
-                if ($property = static::definition()->get($k)) {
-                    $hydrateValues[$k] = Type::cast($property, $v);
-                } else {
-                    $hydrateValues[$k] = $v;
-                }
-            }
-            $this->refreshWith($hydrateValues);
-
-            // dispatch the model.updated event
-            if (!EventManager::dispatch($this, new ModelUpdated($this), $usesTransactions)) {
-                return false;
-            }
+            // now that the transaction is rolled back we can rethrow
+            throw $e;
         }
 
         // commit the transaction, if used
@@ -1102,21 +1123,31 @@ abstract class Model implements ArrayAccess
             self::$driver->startTransaction($this->getConnection());
         }
 
-        // dispatch the model.deleting event
-        if (!EventManager::dispatch($this, new ModelDeleting($this), $usesTransactions)) {
-            return false;
-        }
-
-        // perform the delete operation in the data store
-        $deleted = $this->performDelete();
-
-        if ($deleted) {
-            // dispatch the model.deleted event
-            if (!EventManager::dispatch($this, new ModelDeleted($this), $usesTransactions)) {
-                $this->_persisted = true;
-
+        try {
+            // dispatch the model.deleting event
+            if (!EventManager::dispatch($this, new ModelDeleting($this), $usesTransactions)) {
                 return false;
             }
+
+            // perform the delete operation in the data store
+            $deleted = $this->performDelete();
+
+            if ($deleted) {
+                // dispatch the model.deleted event
+                if (!EventManager::dispatch($this, new ModelDeleted($this), $usesTransactions)) {
+                    $this->_persisted = true;
+
+                    return false;
+                }
+            }
+        } catch (Throwable $e) {
+            // roll back the transaction, if used
+            if ($usesTransactions) {
+                self::$driver->rollBackTransaction($this->getConnection());
+            }
+
+            // now that the transaction is rolled back we can rethrow
+            throw $e;
         }
 
         // commit the transaction, if used

@@ -13,6 +13,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Soft delete logic has been moved to the `SoftDelete` trait
 - Use @mixin instead of @method for query operations on model
 
+### Fixed
+- Rollback database transaction after uncaught exception during model persistance.
+
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class
 
