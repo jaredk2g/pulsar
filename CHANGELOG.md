@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Queries against models that support soft deletes now return all models by default. Use `::withoutDeleted()` to exclude deleted models from a query.
 - Soft delete logic has been moved to the `SoftDelete` trait
 - Use @mixin instead of @method for query operations on model
+- Deprecated returning null or single result in `Query::first()`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistance.

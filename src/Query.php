@@ -303,13 +303,15 @@ class Query
     /**
      * Executes the query against the model's driver and returns the first result.
      *
-     * @return Model[]|Model|null when $limit = 1, returns a single model or null, otherwise returns an array
+     * @param bool $alwaysArray when false (deprecated) returns a single model if 1 result and null if no results
+     *
+     * @return Model[]|Model|null when $limit = 1 and $alwaysArray = false, returns a single model or null, otherwise returns an array
      */
-    public function first(int $limit = 1)
+    public function first(int $limit = 1, bool $alwaysArray = false)
     {
         $models = $this->limit($limit)->execute();
 
-        if (1 == $limit) {
+        if (1 == $limit && !$alwaysArray) {
             return (1 == count($models)) ? $models[0] : null;
         }
 

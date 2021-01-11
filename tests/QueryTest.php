@@ -554,6 +554,13 @@ class QueryTest extends MockeryTestCase
         $this->assertInstanceOf(Person::class, $result);
         $this->assertEquals(100, $result->id());
         $this->assertEquals('Sherlock', $result->name);
+
+        $result = $query->first(1, true);
+
+        $this->assertCount(1, $result);
+        $this->assertInstanceOf(Person::class, $result[0]);
+        $this->assertEquals(100, $result[0]->id());
+        $this->assertEquals('Sherlock', $result[0]->name);
     }
 
     public function testFirstLimit()
