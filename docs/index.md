@@ -192,13 +192,15 @@ The `find()` method allows a model to be loaded from the database given its ID.
 User::find(1234);
 ``` 
 
-### one()
+### one() / oneOrNull()
 
 The one() method will return exactly one model. It will throw an exception if there are no results or more than one result.
 
 ```php
-// returns a User model
+// returns a User model or throws exception
 $user = User::where('email', 'alice@example.com')->one();
+// returns a User model or null
+$user = User::where('email', 'alice@example.com')->oneOrNull();
 ```
 
 ### first()

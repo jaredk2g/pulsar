@@ -41,7 +41,7 @@ final class HasOne extends AbstractRelation
             return null;
         }
 
-        return $query->first();
+        return $query->oneOrNull();
     }
 
     public function save(Model $model): Model

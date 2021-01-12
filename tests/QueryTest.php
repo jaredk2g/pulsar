@@ -529,6 +529,82 @@ class QueryTest extends MockeryTestCase
         $query->one();
     }
 
+    public function testOneOrNull()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $data = [
+            [
+                'id' => 100,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+        ];
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn($data);
+
+        Person::setDriver($driver);
+
+        $result = $query->oneOrNull();
+
+        $this->assertInstanceOf(Person::class, $result);
+        $this->assertEquals(100, $result->id());
+        $this->assertEquals('Sherlock', $result->name);
+
+        $result = $query->oneOrNull();
+
+        $this->assertInstanceOf(Person::class, $result);
+        $this->assertEquals(100, $result->id());
+        $this->assertEquals('Sherlock', $result->name);
+    }
+
+    public function testOneOrNullZeroResults()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn([]);
+
+        Person::setDriver($driver);
+
+        $this->assertNull($query->oneOrNull());
+    }
+
+    public function testOneOrNullTooManyResults()
+    {
+        $query = new Query(Person::class);
+
+        $driver = Mockery::mock(DriverInterface::class);
+
+        $data = [
+            [
+                'id' => 100,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+            [
+                'id' => 101,
+                'name' => 'Sherlock',
+                'email' => 'sherlock@example.com',
+            ],
+        ];
+
+        $driver->shouldReceive('queryModels')
+            ->withArgs([$query])
+            ->andReturn($data);
+
+        Person::setDriver($driver);
+
+        $this->assertNull($query->oneOrNull());
+    }
+
     public function testFirst()
     {
         $query = new Query(Person::class);

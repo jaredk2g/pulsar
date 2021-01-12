@@ -301,6 +301,19 @@ class Query
     }
 
     /**
+     * Finds exactly one model. If zero or more than one are found
+     * then this function will return null.
+     *
+     * @throws ModelNotFoundException when the result is not exactly one model
+     */
+    public function oneOrNull(): ?Model
+    {
+        $models = $this->limit(1)->execute();
+
+        return 1 == count($models) ? $models[0] : null;
+    }
+
+    /**
      * Executes the query against the model's driver and returns the first result.
      *
      * @param bool $alwaysArray when false (deprecated) returns a single model if 1 result and null if no results

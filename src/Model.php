@@ -1218,7 +1218,7 @@ abstract class Model implements ArrayAccess
             return null;
         }
 
-        return static::query()->where($ids)->first();
+        return static::query()->where($ids)->oneOrNull();
     }
 
     /**
