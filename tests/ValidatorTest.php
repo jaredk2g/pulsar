@@ -352,6 +352,7 @@ class ValidatorTest extends MockeryTestCase
         $t = ['test', 'no match'];
         $this->assertFalse($validator->validate($t, self::$model));
         $this->assertEquals('matching', $validator->getFailingRule());
+        $this->assertEquals([], $validator->getFailingRuleOptions());
     }
 
     public function testGetFailingRule()
@@ -361,5 +362,6 @@ class ValidatorTest extends MockeryTestCase
         $t = ['test', 'test'];
         $this->assertFalse($validator->validate($t, self::$model));
         $this->assertEquals('string', $validator->getFailingRule());
+        $this->assertEquals(['min' => 5], $validator->getFailingRuleOptions());
     }
 }

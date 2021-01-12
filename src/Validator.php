@@ -86,6 +86,11 @@ final class Validator
     private $failingRule;
 
     /**
+     * @var array
+     */
+    private $failingOptions;
+
+    /**
      * Rules can be defined in these formats:
      * - [['matching'], ['string', 'min' => '5']]
      * - ['matching', ['string', 'min' => '5']]
@@ -136,6 +141,7 @@ final class Validator
 
             if (!$this->getRule($name)->validate($value, $options, $model)) {
                 $this->failingRule = $name;
+                $this->failingOptions = $options;
 
                 return false;
             }
@@ -150,6 +156,14 @@ final class Validator
     public function getFailingRule(): ?string
     {
         return $this->failingRule;
+    }
+
+    /**
+     * Gets the options of the failing rule.
+     */
+    public function getFailingRuleOptions(): ?array
+    {
+        return $this->failingOptions;
     }
 
     private function getRule(string $name): ValidationRuleInterface
@@ -195,11 +209,13 @@ final class Validator
         // add a validation error message if one was not already added
         $errors = $model->getErrors();
         if (!$errors->has($property->getName())) {
-            $errors->add('pulsar.validation.'.$validator->getFailingRule(), [
+            $params = [
                 'field' => $property->getName(),
                 'field_name' => $property->getTitle($model),
                 'rule' => $validator->getFailingRule(),
-            ]);
+            ];
+            $params = array_replace($validator->getFailingRuleOptions(), $params);
+            $errors->add('pulsar.validation.'.$validator->getFailingRule(), $params);
         }
 
         return false;
