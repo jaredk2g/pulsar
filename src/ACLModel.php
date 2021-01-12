@@ -55,7 +55,12 @@ abstract class ACLModel extends Model
         return $this->permissionsCache[$k];
     }
 
-    abstract protected function hasPermission($permission, Model $requester);
+    /**
+     * Checks if a requester has a specific permission.
+     *
+     * @param string $permission
+     */
+    abstract protected function hasPermission($permission, Model $requester): bool;
 
     /**
      * Disables all permissions checking in can() for this object

@@ -28,7 +28,7 @@ class Person extends ACLModel
         ],
     ];
 
-    protected function hasPermission($permission, Model $requester)
+    protected function hasPermission($permission, Model $requester): bool
     {
         return false;
     }

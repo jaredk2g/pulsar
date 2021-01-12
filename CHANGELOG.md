@@ -16,6 +16,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Soft delete logic has been moved to the `SoftDelete` trait
 - Use @mixin instead of @method for query operations on model
 - `Query::first()` now returns an array of results when the limit is 1
+- Added return typehint to `AclModel::hasPermission()`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistance.
