@@ -243,7 +243,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     }
 
     /**
-     * Cast Iterator to array
+     * Cast Iterator to array.
      */
     public function toArray(): array
     {
