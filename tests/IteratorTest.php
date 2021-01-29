@@ -233,8 +233,13 @@ class IteratorTest extends MockeryTestCase
         $query = new Query(IteratorTestModel::class);
         $query->limit(3);
         $iterator = new Iterator($query);
-        $iterator->next();
 
+        $arr = $iterator->toArray();
+        $this->assertEquals($iterator[0]->id(), $arr[0]->id());
+        $this->assertEquals($iterator[1]->id(), $arr[1]->id());
+        $this->assertEquals($iterator[2]->id(), $arr[2]->id());
+
+        $iterator->next();
         $arr = $iterator->toArray();
         $this->assertEquals($iterator[0]->id(), $arr[0]->id());
         $this->assertEquals($iterator[1]->id(), $arr[1]->id());
