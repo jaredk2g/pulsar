@@ -241,4 +241,16 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     {
         return floor($pointer / $limit) * $limit;
     }
+
+    /**
+     * Cast Iterator to array
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = [];
+        $this->rewind();
+        array_push ($array, ...$this);
+        return $array;
+    }
 }
