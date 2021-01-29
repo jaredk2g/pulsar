@@ -248,9 +248,6 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
      */
     public function toArray(): array
     {
-        $array = [];
-        $this->rewind();
-        array_push ($array, ...$this);
-        return $array;
+        return iterator_to_array($this);
     }
 }
