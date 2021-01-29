@@ -99,8 +99,9 @@ class IteratorTest extends MockeryTestCase
 
     public function testRewind()
     {
+        self::$iterator->next();
+        $this->assertNotEquals(self::$start, self::$iterator->key());
         self::$iterator->rewind();
-
         $this->assertEquals(self::$start, self::$iterator->key());
     }
 
@@ -225,6 +226,24 @@ class IteratorTest extends MockeryTestCase
     {
         $this->assertEquals(0, self::$iterator[0]->id());
         $this->assertEquals(1, self::$iterator[1]->id());
+    }
+
+    public function testToArray()
+    {
+        $query = new Query(IteratorTestModel::class);
+        $query->limit(3);
+        $iterator = new Iterator($query);
+
+        $arr = $iterator->toArray();
+        $this->assertEquals($iterator[0]->id(), $arr[0]->id());
+        $this->assertEquals($iterator[1]->id(), $arr[1]->id());
+        $this->assertEquals($iterator[2]->id(), $arr[2]->id());
+
+        $iterator->next();
+        $arr = $iterator->toArray();
+        $this->assertEquals($iterator[0]->id(), $arr[0]->id());
+        $this->assertEquals($iterator[1]->id(), $arr[1]->id());
+        $this->assertEquals($iterator[2]->id(), $arr[2]->id());
     }
 
     public function testOffsetGetOOB()
