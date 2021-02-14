@@ -1,8 +1,4 @@
 <phpunit bootstrap="tests/bootstrap.php" colors="true">
-  <php>
-    <const name="INFUSE_BASE_DIR">.</const>
-  </php>
-
   <testsuites>
     <testsuite name="ORM">
       <directory>tests</directory>
