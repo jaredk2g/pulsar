@@ -6,6 +6,7 @@ php:
   - 7.1
 
 before_script:
+  - if [ $TRAVIS_PHP_VERSION == "7.3" ] || [ $TRAVIS_PHP_VERSION == "7.4" ]; then phpenv config-add travis.ini fi
   - composer install
   - mkdir -p build/logs
 
