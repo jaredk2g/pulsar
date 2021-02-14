@@ -9,6 +9,8 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The `Query::one()` method finds exactly one model or throws an exception.
 - The `Query::oneOrNull()` method finds exactly one model or returns null.
 - Capture the options of the failing validation rule for more accurate error messages.
+- Added `Iterator::toArray()` as a shortcut to `iterator_to_array`
+- `Query::where()` now accepts models as conditions
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`

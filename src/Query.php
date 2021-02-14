@@ -180,8 +180,15 @@ class Query
     {
         // handles i.
         if (is_array($where)) {
-            $this->where = array_merge($this->where, $where);
+            // only key-value format is accepted in arrays
+            foreach ($where as $key => $value) {
+                $this->where($key, $value);
+            }
         } else {
+            if ($value instanceof Model) {
+                $value = $value->id();
+            }
+
             // handles iii.
             $args = func_num_args();
             if ($args > 2) {

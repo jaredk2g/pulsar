@@ -71,10 +71,45 @@ class QueryTest extends MockeryTestCase
         $this->assertEquals(['test' => false], $query->getWhere());
 
         $query->where('some condition');
-        $this->assertEquals(['test' => false, 'some condition'], $query->getWhere());
+        $this->assertEquals([
+            'test' => false,
+            'some condition',
+        ], $query->getWhere());
 
         $query->where('balance', 100, '>=');
-        $this->assertEquals(['test' => false, 'some condition', ['balance', 100, '>=']], $query->getWhere());
+        $this->assertEquals([
+            'test' => false,
+            'some condition',
+            ['balance', 100, '>='],
+        ], $query->getWhere());
+
+        $post = new Post(['id' => 1]);
+        $query->where('post', $post);
+        $this->assertEquals([
+            'test' => false,
+            'some condition',
+            ['balance', 100, '>='],
+            'post' => 1,
+        ], $query->getWhere());
+
+        $post = new Post(['id' => 2]);
+        $query->where(['post' => $post]);
+        $this->assertEquals([
+            'test' => false,
+            'some condition',
+            ['balance', 100, '>='],
+            'post' => 2,
+        ], $query->getWhere());
+
+        $post = new Post(['id' => 3]);
+        $query->where('post', $post, '<>');
+        $this->assertEquals([
+            'test' => false,
+            'some condition',
+            ['balance', 100, '>='],
+            'post' => 2,
+            ['post', 3, '<>'],
+        ], $query->getWhere());
     }
 
     public function testJoin()
