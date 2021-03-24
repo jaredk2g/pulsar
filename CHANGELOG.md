@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class
+- `Model::$hidden` was removed
 
 ## 0.11 - 2020-07-26
 ### Added

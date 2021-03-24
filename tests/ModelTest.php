@@ -226,23 +226,6 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
             ],
-            'hidden_legacy' => [
-                'type' => null,
-                'default' => null,
-                'persisted' => true,
-                'encrypted' => false,
-                'mutable' => Property::MUTABLE,
-                'null' => false,
-                'required' => false,
-                'validate' => null,
-                'relation' => null,
-                'relation_type' => null,
-                'foreign_key' => null,
-                'local_key' => null,
-                'pivot_tablename' => null,
-                'morphs_to' => null,
-                'in_array' => true,
-            ],
         ];
 
         $model = new TestModel(); // ensure initialize() is called

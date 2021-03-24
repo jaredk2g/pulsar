@@ -23,7 +23,6 @@ class TestModel extends Model
         'accessor' => [
             'in_array' => false,
         ],
-        'hidden_legacy' => [],
         'encrypted' => [
             'encrypted' => true,
         ],
@@ -34,8 +33,6 @@ class TestModel extends Model
     ];
     public $preDelete;
     public $postDelete;
-
-    protected static $hidden = ['hidden_legacy'];
 
     protected static $appended = ['appended_legacy'];
 

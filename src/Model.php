@@ -919,16 +919,6 @@ abstract class Model implements ArrayAccess
         }
 
         // Deprecated: this setting is deprecated
-        // remove any hidden properties
-        if (property_exists(static::class, 'hidden')) {
-            foreach (static::$hidden as $k) {
-                if (false !== ($key = array_search($k, $properties))) {
-                    unset($properties[$key]);
-                }
-            }
-        }
-
-        // Deprecated: this setting is deprecated
         // add any appended properties
         if (property_exists(static::class, 'appended')) {
             $properties = array_merge($properties, static::$appended);
