@@ -71,8 +71,6 @@ class TestModel2 extends Model
         'protected' => [],
     ];
 
-    protected static $protected = ['protected'];
-
     public static $query;
 
     public static function query(): Query
@@ -89,5 +87,10 @@ class TestModel2 extends Model
     public static function setQuery(Query $query)
     {
         self::$query = $query;
+    }
+
+    protected function getMassAssignmentBlacklist(): ?array
+    {
+        return ['protected'];
     }
 }

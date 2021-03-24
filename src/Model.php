@@ -846,21 +846,11 @@ abstract class Model implements ArrayAccess
 
     protected function getMassAssignmentWhitelist(): ?array
     {
-        // Deprecated: this is deprecated
-        if (property_exists($this, 'permitted')) {
-            return static::$permitted;
-        }
-
         return null;
     }
 
     protected function getMassAssignmentBlacklist(): ?array
     {
-        // Deprecated: this is deprecated
-        if (property_exists($this, 'protected')) {
-            return static::$protected;
-        }
-
         return null;
     }
 

@@ -36,8 +36,6 @@ class TestModel extends Model
 
     protected static $appended = ['appended_legacy'];
 
-    protected static $permitted = ['id', 'relation', 'answer', 'mutator', 'accessor', 'fail'];
-
     public static $query;
 
     protected function initialize()
@@ -48,6 +46,11 @@ class TestModel extends Model
         ];
 
         parent::initialize();
+    }
+
+    protected function getMassAssignmentWhitelist(): ?array
+    {
+        return ['id', 'relation', 'answer', 'mutator', 'accessor', 'fail'];
     }
 
     public static function query(): Query
