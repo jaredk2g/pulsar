@@ -66,7 +66,7 @@ class HasManyTest extends MockeryTestCase
 
         $relation = new HasMany($person, 'id', Garage::class, 'person_id');
 
-        $this->assertNull($relation->getResults());
+        $this->assertEquals([], $relation->getResults());
     }
 
     public function testSave()

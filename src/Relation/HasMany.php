@@ -48,7 +48,7 @@ final class HasMany extends AbstractRelation
     {
         $query = $this->getQuery();
         if ($this->empty) {
-            return null;
+            return [];
         }
 
         return $query->execute();
