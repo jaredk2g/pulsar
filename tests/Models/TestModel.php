@@ -34,8 +34,6 @@ class TestModel extends Model
     public $preDelete;
     public $postDelete;
 
-    protected static $appended = ['appended_legacy'];
-
     public static $query;
 
     protected function initialize()
@@ -80,11 +78,6 @@ class TestModel extends Model
     }
 
     protected function getAppendedValue()
-    {
-        return true;
-    }
-
-    protected function getAppendedLegacyValue()
     {
         return true;
     }

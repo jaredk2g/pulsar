@@ -908,12 +908,6 @@ abstract class Model implements ArrayAccess
             }
         }
 
-        // Deprecated: this setting is deprecated
-        // add any appended properties
-        if (property_exists(static::class, 'appended')) {
-            $properties = array_merge($properties, static::$appended);
-        }
-
         // get the values for the properties
         $result = $this->get($properties);
 

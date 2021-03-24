@@ -21,11 +21,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added return typehint to `AclModel::hasPermission()`
 
 ### Fixed
-- Rollback database transaction after uncaught exception during model persistance.
+- Rollback database transaction after uncaught exception during model persistence.
 
 ### Removed
-- `Model::getDispatcher()` was removed and replaced with the `EventManager` class
-- `Model::$hidden`, `Model::$permitted`, and `Model::$protected` was removed
+- `Model::getDispatcher()` was removed and replaced with the `EventManager` class.
+- `Model::$hidden`, `Model::$appended`, `Model::$permitted`, and `Model::$protected` were removed.
 
 ## 0.11 - 2020-07-26
 ### Added
