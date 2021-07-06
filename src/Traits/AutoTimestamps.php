@@ -8,6 +8,9 @@ use Pulsar\Type;
 
 /**
  * Installs `created_at` and `updated_at` properties on the model.
+ *
+ * @property int $created_at
+ * @property int $updated_at
  */
 trait AutoTimestamps
 {
