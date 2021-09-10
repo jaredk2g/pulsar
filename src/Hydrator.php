@@ -54,9 +54,10 @@ class Hydrator
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
-                        $models[$j]->setRelation($k, $relationships[$id]);
+                        if ($property->isPersisted()) {
+                            $models[$j]->setRelation($k, $relationships[$id]);
                         // older style properties do not support this type of hydration
-                        if (!$property->isPersisted()) {
+                        } else {
                             $models[$j]->hydrateValue($k, $relationships[$id]);
                         }
                     }
@@ -66,9 +67,10 @@ class Hydrator
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
-                        $models[$j]->setRelation($k, $relationships[$id]);
+                        if ($property->isPersisted()) {
+                            $models[$j]->setRelation($k, $relationships[$id]);
                         // older style properties do not support this type of hydration
-                        if (!$property->isPersisted()) {
+                        } else {
                             $models[$j]->hydrateValue($k, $relationships[$id]);
                         }
                     } else {
