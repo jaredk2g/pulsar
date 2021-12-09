@@ -360,17 +360,17 @@ class QueryTest extends MockeryTestCase
 
         $this->assertCount(5, $result);
 
-        $garage1 = $result[0]->relation('garage');
+        $garage1 = $result[0]->garage;
         $this->assertInstanceOf(Garage::class, $garage1);
         $this->assertEquals(100, $garage1->id());
-        $garage2 = $result[1]->relation('garage');
+        $garage2 = $result[1]->garage;
         $this->assertInstanceOf(Garage::class, $garage2);
         $this->assertEquals(101, $garage2->id());
-        $this->assertNull($result[2]->relation('garage'));
-        $garage4 = $result[3]->relation('garage');
+        $this->assertNull($result[2]->garage);
+        $garage4 = $result[3]->garage;
         $this->assertInstanceOf(Garage::class, $garage4);
         $this->assertEquals(103, $garage4->id());
-        $garage5 = $result[4]->relation('garage');
+        $garage5 = $result[4]->garage;
         $this->assertInstanceOf(Garage::class, $garage5);
         $this->assertEquals(104, $garage5->id());
     }
