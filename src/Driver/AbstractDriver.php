@@ -27,8 +27,6 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Serializes an array of values.
      *
-     * @param array $values
-     *
      * @return array
      */
     protected function serialize(array $values)
@@ -124,14 +122,13 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Adds join conditions to a select query.
      *
-     * @param Query       $query
      * @param string      $tablename
      * @param SelectQuery $dbQuery
      */
     protected function addJoins(Query $query, $tablename, $dbQuery)
     {
         foreach ($query->getJoins() as $join) {
-            list($foreignModelClass, $column, $foreignKey) = $join;
+            [$foreignModelClass, $column, $foreignKey] = $join;
 
             $foreignModel = new $foreignModelClass();
             $foreignTablename = $foreignModel->getTablename();

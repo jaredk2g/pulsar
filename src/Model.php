@@ -581,9 +581,9 @@ abstract class Model implements ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @return bool true when the operation was successful
-     *
      * @throws BadMethodCallException when called on an existing model
+     *
+     * @return bool true when the operation was successful
      */
     public function create(array $data = []): bool
     {
@@ -963,9 +963,9 @@ abstract class Model implements ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @return bool true when the operation was successful
-     *
      * @throws BadMethodCallException when not called on an existing model
+     *
+     * @return bool true when the operation was successful
      */
     public function set(array $data = []): bool
     {
@@ -1200,9 +1200,9 @@ abstract class Model implements ArrayAccess
      *
      * @param mixed $id
      *
-     * @return static
-     *
      * @throws ModelNotFoundException when a model could not be found
+     *
+     * @return static
      */
     public static function findOrFail($id)
     {

@@ -85,10 +85,10 @@ final class DatabaseDriver extends AbstractDriver
             try {
                 if ($id) {
                     return $this->connections->get($id);
-                } else {
-                    return $this->connections->getDefault();
                 }
-            } catch (JAQBException | PDOException $e) {
+
+                return $this->connections->getDefault();
+            } catch (JAQBException|PDOException $e) {
                 throw new DriverException($e->getMessage(), $e->getCode(), $e);
             }
         }
@@ -108,8 +108,8 @@ final class DatabaseDriver extends AbstractDriver
 
         try {
             return $db->insert($values)
-                    ->into($tablename)
-                    ->execute() instanceof PDOStatement;
+                ->into($tablename)
+                ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver when creating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -157,9 +157,9 @@ final class DatabaseDriver extends AbstractDriver
 
         try {
             return $db->update($tablename)
-                    ->values($values)
-                    ->where($model->ids())
-                    ->execute() instanceof PDOStatement;
+                ->values($values)
+                ->where($model->ids())
+                ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver when updating the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -172,8 +172,8 @@ final class DatabaseDriver extends AbstractDriver
 
         try {
             return $db->delete($tablename)
-                    ->where($model->ids())
-                    ->execute() instanceof PDOStatement;
+                ->where($model->ids())
+                ->execute() instanceof PDOStatement;
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver while deleting the '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }

@@ -23,9 +23,9 @@ interface DriverInterface
     /**
      * Creates a model.
      *
-     * @return mixed result
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return mixed result
      */
     public function createModel(Model $model, array $parameters);
 
@@ -33,9 +33,9 @@ interface DriverInterface
      * Gets the last inserted ID. Used for drivers that generate
      * IDs for models after creation.
      *
-     * @return mixed
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return mixed
      */
     public function getCreatedId(Model $model, string $propertyName);
 
@@ -49,9 +49,9 @@ interface DriverInterface
     /**
      * Performs a query to find models of the given type.
      *
-     * @return array raw data from storage
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return array raw data from storage
      */
     public function queryModels(Query $query): array;
 
@@ -79,36 +79,36 @@ interface DriverInterface
     /**
      * Gets the sum matching the given query.
      *
-     * @return number
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return number
      */
     public function sum(Query $query, string $field);
 
     /**
      * Gets the average matching the given query.
      *
-     * @return number
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return number
      */
     public function average(Query $query, string $field);
 
     /**
      * Gets the max matching the given query.
      *
-     * @return number
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return number
      */
     public function max(Query $query, string $field);
 
     /**
      * Gets the min matching the given query.
      *
-     * @return number
-     *
      * @throws DriverException when an exception occurs within the driver
+     *
+     * @return number
      */
     public function min(Query $query, string $field);
 
