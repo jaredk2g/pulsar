@@ -180,7 +180,7 @@ final class DbalDriver extends AbstractDriver
         $dbQuery->sum($this->prefixColumn($field, $tablename));
 
         // then execute the query through DBAL
-        return (int) $this->executeScalar($dbQuery, $model, $field);
+        return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
     public function average(Query $query, string $field)
@@ -194,7 +194,7 @@ final class DbalDriver extends AbstractDriver
         $dbQuery->average($this->prefixColumn($field, $tablename));
 
         // then execute the query through DBAL
-        return (int) $this->executeScalar($dbQuery, $model, $field);
+        return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
     public function max(Query $query, string $field)
@@ -208,7 +208,7 @@ final class DbalDriver extends AbstractDriver
         $dbQuery->max($this->prefixColumn($field, $tablename));
 
         // then execute the query through DBAL
-        return (int) $this->executeScalar($dbQuery, $model, $field);
+        return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
     public function min(Query $query, string $field)
@@ -222,7 +222,7 @@ final class DbalDriver extends AbstractDriver
         $dbQuery->min($this->prefixColumn($field, $tablename));
 
         // then execute the query through DBAL
-        return (int) $this->executeScalar($dbQuery, $model, $field);
+        return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
     //////////////////////////

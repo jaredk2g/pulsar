@@ -329,7 +329,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $scalar = Mockery::mock();
         $scalar->shouldReceive('scalar')
-            ->andReturn(1);
+            ->andReturn(123.45);
         $where = Mockery::mock();
         $where->shouldReceive('where')
             ->withArgs([[]])
@@ -348,7 +348,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->sum($query, 'balance'));
+        $this->assertEquals(123.45, $driver->sum($query, 'balance'));
     }
 
     public function testSumFail()
@@ -370,7 +370,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $scalar = Mockery::mock();
         $scalar->shouldReceive('scalar')
-            ->andReturn(1);
+            ->andReturn(123.45);
         $where = Mockery::mock();
         $where->shouldReceive('where')
             ->withArgs([[]])
@@ -389,7 +389,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->average($query, 'balance'));
+        $this->assertEquals(123.45, $driver->average($query, 'balance'));
     }
 
     public function testAverageFail()
@@ -411,7 +411,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $scalar = Mockery::mock();
         $scalar->shouldReceive('scalar')
-            ->andReturn(1);
+            ->andReturn(123.45);
         $where = Mockery::mock();
         $where->shouldReceive('where')
             ->withArgs([[]])
@@ -430,7 +430,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->max($query, 'balance'));
+        $this->assertEquals(123.45, $driver->max($query, 'balance'));
     }
 
     public function testMaxFail()
@@ -452,7 +452,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $scalar = Mockery::mock();
         $scalar->shouldReceive('scalar')
-            ->andReturn(1);
+            ->andReturn(123.45);
         $where = Mockery::mock();
         $where->shouldReceive('where')
             ->withArgs([[]])
@@ -471,7 +471,7 @@ class DatabaseDriverTest extends MockeryTestCase
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->min($query, 'balance'));
+        $this->assertEquals(123.45, $driver->min($query, 'balance'));
     }
 
     public function testMinFail()

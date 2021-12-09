@@ -272,11 +272,11 @@ class DbalDriverTest extends MockeryTestCase
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchColumn')
             ->withArgs(['SELECT SUM(People.balance) FROM `People`', []])
-            ->andReturn(1);
+            ->andReturn(123.45);
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->sum($query, 'balance'));
+        $this->assertEquals(123.45, $driver->sum($query, 'balance'));
     }
 
     public function testSumFail()
@@ -300,11 +300,11 @@ class DbalDriverTest extends MockeryTestCase
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchColumn')
             ->withArgs(['SELECT AVG(People.balance) FROM `People`', []])
-            ->andReturn(1);
+            ->andReturn(123.45);
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->average($query, 'balance'));
+        $this->assertEquals(123.45, $driver->average($query, 'balance'));
     }
 
     public function testAverageFail()
@@ -328,11 +328,11 @@ class DbalDriverTest extends MockeryTestCase
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchColumn')
             ->withArgs(['SELECT MAX(People.balance) FROM `People`', []])
-            ->andReturn(1);
+            ->andReturn(123.45);
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->max($query, 'balance'));
+        $this->assertEquals(123.45, $driver->max($query, 'balance'));
     }
 
     public function testMaxFail()
@@ -356,11 +356,11 @@ class DbalDriverTest extends MockeryTestCase
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchColumn')
             ->withArgs(['SELECT MIN(People.balance) FROM `People`', []])
-            ->andReturn(1);
+            ->andReturn(123.45);
 
         $driver = $this->getDriver($db);
 
-        $this->assertEquals(1, $driver->min($query, 'balance'));
+        $this->assertEquals(123.45, $driver->min($query, 'balance'));
     }
 
     public function testMinFail()

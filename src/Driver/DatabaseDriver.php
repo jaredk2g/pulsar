@@ -237,7 +237,7 @@ final class DatabaseDriver extends AbstractDriver
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
-            return (int) $dbQuery->scalar();
+            return (float) $dbQuery->scalar();
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver while getting the sum of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -257,7 +257,7 @@ final class DatabaseDriver extends AbstractDriver
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
-            return (int) $dbQuery->scalar();
+            return (float) $dbQuery->scalar();
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver while getting the average of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -277,7 +277,7 @@ final class DatabaseDriver extends AbstractDriver
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
-            return (int) $dbQuery->scalar();
+            return (float) $dbQuery->scalar();
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver while getting the max of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -297,7 +297,7 @@ final class DatabaseDriver extends AbstractDriver
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
-            return (int) $dbQuery->scalar();
+            return (float) $dbQuery->scalar();
         } catch (PDOException $original) {
             throw new DriverException('An error occurred in the database driver while getting the min of '.$model::modelName().' '.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }

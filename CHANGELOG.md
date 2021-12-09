@@ -22,6 +22,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.
+- The return types of average, min, max, and sum in the database drivers was incorrect.
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class.
