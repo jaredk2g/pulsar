@@ -246,9 +246,9 @@ final class DbalDriver extends AbstractDriver
     /**
      * Executes a select query through DBAL and returns a scalar result.
      *
-     * @return false|mixed
-     *
      * @throws DriverException
+     *
+     * @return false|mixed
      */
     private function executeScalar(SelectQuery $query, Model $model, string $field)
     {

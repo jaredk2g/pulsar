@@ -112,9 +112,9 @@ final class Type
     {
         if (!is_numeric($value)) {
             return strtotime($value);
-        } else {
-            return $value + 0;
         }
+
+        return $value + 0;
     }
 
     /**

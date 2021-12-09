@@ -15,7 +15,7 @@ final class Property implements ArrayAccess
     private $name;
 
     /** @var string|null */
-    private $type = null;
+    private $type;
 
     /** @var string */
     private $mutable = self::MUTABLE;
@@ -27,10 +27,10 @@ final class Property implements ArrayAccess
     private $required = false;
 
     /** @var array|string|null */
-    private $validate = null;
+    private $validate;
 
     /** @var mixed|null */
-    private $default = null;
+    private $default;
 
     /** @var bool */
     private $hasDefault;
