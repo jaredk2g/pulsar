@@ -699,10 +699,14 @@ abstract class Model implements ArrayAccess
 
                 // dispatch the model.created event
                 if (!EventManager::dispatch($this, new ModelCreated($this), $usesTransactions)) {
+                    $this->_persisted = false;
+
                     return false;
                 }
             }
         } catch (Throwable $e) {
+            $this->_persisted = false;
+
             // roll back the transaction, if used
             if ($usesTransactions) {
                 self::$driver->rollBackTransaction($this->getConnection());

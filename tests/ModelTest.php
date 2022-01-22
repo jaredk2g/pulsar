@@ -1250,6 +1250,7 @@ class ModelTest extends MockeryTestCase
 
         $model = new TestModel(['id' => 5]);
         $this->assertFalse($model->create(['relation' => '', 'answer' => 42]));
+        $this->assertFalse($model->persisted());
     }
 
     public function testCreatingListenerFail()
@@ -1260,6 +1261,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create([]));
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreatedListenerFail()
@@ -1280,6 +1282,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create([]));
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateSavingListenerFail()
@@ -1290,6 +1293,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateSavedListenerFail()
@@ -1310,6 +1314,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateBeforePersistListenerFail()
@@ -1320,6 +1325,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateAfterPersistListenerFail()
@@ -1340,6 +1346,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testListenerFailException()
@@ -1352,6 +1359,7 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($newModel->create());
         $this->assertEquals('This is an error message', $newModel->getErrors()[0]);
         $this->assertEquals(['test' => true], $newModel->getErrors()[0]->getContext());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateNotUnique()
@@ -1380,6 +1388,7 @@ class ModelTest extends MockeryTestCase
         // verify error
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['The Unique you chose has already been taken. Please try a different Unique.'], $errorStack->all());
+        $this->assertFalse($model->persisted());
 
         $this->assertEquals(['unique' => 'fail'], $query->getWhere());
     }
@@ -1391,11 +1400,13 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
+        $this->assertFalse($newModel->persisted());
 
         // repeating the save should clear the error stack
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1, 'validate' => 'notanemail', 'required' => true]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Validate must be a valid email address'], $errorStack->all());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateMissingRequired()
@@ -1405,6 +1416,7 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($newModel->create(['id' => 10, 'id2' => 1]));
         $this->assertCount(1, $errorStack->all());
         $this->assertEquals(['Required is missing'], $errorStack->all());
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateTransactions()
@@ -1439,6 +1451,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TransactionModel();
         $newModel->create([]);
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateFail()
@@ -1452,6 +1465,7 @@ class ModelTest extends MockeryTestCase
 
         $newModel = new TestModel();
         $this->assertFalse($newModel->create(['relation' => '', 'answer' => 42]));
+        $this->assertFalse($newModel->persisted());
     }
 
     public function testCreateEncrypted()
