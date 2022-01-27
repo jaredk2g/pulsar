@@ -504,7 +504,7 @@ class DatabaseDriverTest extends MockeryTestCase
         $all->shouldReceive('all')
             ->andReturn([['test' => true]]);
         $all->shouldReceive('join')
-            ->withArgs(['Groups', 'People.group=Groups.id'])
+            ->withArgs(['Groups', 'People.group=Groups.id', null, 'JOIN'])
             ->andReturn($db)
             ->once();
         $orderBy = Mockery::mock();
