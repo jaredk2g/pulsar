@@ -128,13 +128,13 @@ abstract class AbstractDriver implements DriverInterface
     protected function addJoins(Query $query, $tablename, $dbQuery)
     {
         foreach ($query->getJoins() as $join) {
-            [$foreignModelClass, $column, $foreignKey] = $join;
+            [$foreignModelClass, $column, $foreignKey, $type] = $join;
 
             $foreignModel = new $foreignModelClass();
             $foreignTablename = $foreignModel->getTablename();
             $condition = $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
 
-            $dbQuery->join($foreignTablename, $condition);
+            $dbQuery->join($foreignTablename, $condition, null, $type);
         }
     }
 }

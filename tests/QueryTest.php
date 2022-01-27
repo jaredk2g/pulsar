@@ -119,7 +119,7 @@ class QueryTest extends MockeryTestCase
         $this->assertEquals([], $query->getJoins());
 
         $this->assertEquals($query, $query->join('Person', 'author', 'id'));
-        $this->assertEquals([['Person', 'author', 'id']], $query->getJoins());
+        $this->assertEquals([['Person', 'author', 'id', 'JOIN']], $query->getJoins());
     }
 
     public function testWith()
