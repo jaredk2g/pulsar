@@ -12,7 +12,7 @@ namespace Pulsar\Tests\Driver;
  */
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DbalDriver;
@@ -26,7 +26,7 @@ class DbalDriverTest extends MockeryTestCase
 {
     private function getDriver($connection = null): DbalDriver
     {
-        $connection = $connection ? $connection : Mockery::mock(Connection::class);
+        $connection = $connection ?: Mockery::mock(Connection::class);
 
         return new DbalDriver($connection);
     }
@@ -61,7 +61,7 @@ class DbalDriverTest extends MockeryTestCase
     public function testCreateModel()
     {
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->withArgs(['INSERT INTO `People` (`answer`, `array`) VALUES (?, ?)', [0 => 42, 1 => '{"test":true}']])
             ->once();
 
@@ -76,7 +76,7 @@ class DbalDriverTest extends MockeryTestCase
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('An error occurred in the database driver when creating the Person: error');
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $model = new Person();
@@ -111,7 +111,7 @@ class DbalDriverTest extends MockeryTestCase
     {
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchAssoc')
+        $db->shouldReceive('fetchAssociative')
             ->withArgs(['SELECT * FROM `People` WHERE `id` = ?', [0 => '12']])
             ->andReturn(['name' => 'John']);
 
@@ -124,7 +124,7 @@ class DbalDriverTest extends MockeryTestCase
     public function testLoadModelNotFound()
     {
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchAssoc')
+        $db->shouldReceive('fetchAssociative')
             ->andReturn(null);
         $driver = $this->getDriver($db);
 
@@ -137,7 +137,7 @@ class DbalDriverTest extends MockeryTestCase
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('An error occurred in the database driver when loading an instance of Person: error');
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchAssoc')
+        $db->shouldReceive('fetchAssociative')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $model = new Person(['id' => 12]);
@@ -158,7 +158,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchAll')
+        $db->shouldReceive('fetchAllAssociative')
             ->withArgs(['SELECT `People`.* FROM `People` JOIN `Groups` ON People.group=Groups.id WHERE `People`.`id` > ? AND `People`.`city` = ? AND RAW SQL AND `People`.`alreadyDotted` = ? ORDER BY `People`.`name` asc LIMIT 10,5', [0 => 50, 1 => 'Austin', 2 => true]])
             ->andReturn([['test' => true]]);
 
@@ -174,7 +174,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchAll')
+        $db->shouldReceive('fetchAllAssociative')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->queryModels($query);
@@ -184,7 +184,7 @@ class DbalDriverTest extends MockeryTestCase
     {
         // update query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->withArgs(['UPDATE `People` SET `name` = ?, `array` = ? WHERE `id` = ?', [0 => 'John', 1 => '{"test":true}', 2 => '11']])
             ->once();
 
@@ -204,7 +204,7 @@ class DbalDriverTest extends MockeryTestCase
         $this->expectExceptionMessage('An error occurred in the database driver when updating the Person: error');
         // update query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $model = new Person(['id' => 11]);
@@ -214,7 +214,7 @@ class DbalDriverTest extends MockeryTestCase
     public function testDeleteModel()
     {
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->withArgs(['DELETE FROM `People` WHERE `id` = ?', [0 => '10']])
             ->once();
 
@@ -229,7 +229,7 @@ class DbalDriverTest extends MockeryTestCase
         $this->expectException(DriverException::class);
         $this->expectExceptionMessage('An error occurred in the database driver while deleting the Person: error');
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('executeQuery')
+        $db->shouldReceive('executeStatement')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $model = new Person(['id' => 10]);
@@ -242,7 +242,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->withArgs(['SELECT COUNT(*) FROM `People`', []])
             ->andReturn(1);
 
@@ -258,7 +258,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->count($query);
@@ -270,7 +270,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->withArgs(['SELECT SUM(People.balance) FROM `People`', []])
             ->andReturn(123.45);
 
@@ -286,7 +286,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->sum($query, 'Person.balance');
@@ -298,7 +298,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->withArgs(['SELECT AVG(People.balance) FROM `People`', []])
             ->andReturn(123.45);
 
@@ -314,7 +314,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->average($query, 'balance');
@@ -326,7 +326,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->withArgs(['SELECT MAX(People.balance) FROM `People`', []])
             ->andReturn(123.45);
 
@@ -342,7 +342,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->max($query, 'balance');
@@ -354,7 +354,7 @@ class DbalDriverTest extends MockeryTestCase
 
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->withArgs(['SELECT MIN(People.balance) FROM `People`', []])
             ->andReturn(123.45);
 
@@ -370,7 +370,7 @@ class DbalDriverTest extends MockeryTestCase
         $query = new Query(new Person());
         // select query mock
         $db = Mockery::mock(Connection::class);
-        $db->shouldReceive('fetchColumn')
+        $db->shouldReceive('fetchOne')
             ->andThrow(new DBALException('error'));
         $driver = $this->getDriver($db);
         $driver->min($query, 'balance');

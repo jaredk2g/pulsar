@@ -3,7 +3,7 @@
 namespace Pulsar\Driver;
 
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DBALException;
+use Doctrine\DBAL\Exception as DBALException;
 use JAQB\Query\DeleteQuery;
 use JAQB\Query\InsertQuery;
 use JAQB\Query\SelectQuery;
@@ -45,7 +45,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            $db->executeQuery($dbQuery->build(), $dbQuery->getValues());
+            $db->executeStatement($dbQuery->build(), $dbQuery->getValues());
 
             return true;
         } catch (DBALException $original) {
@@ -75,7 +75,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            $row = $db->fetchAssoc($dbQuery->build(), $dbQuery->getValues());
+            $row = $db->fetchAssociative($dbQuery->build(), $dbQuery->getValues());
         } catch (DBALException $original) {
             throw new DriverException('An error occurred in the database driver when loading an instance of '.$model::modelName().': '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -103,7 +103,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            return $db->fetchAll($dbQuery->build(), $dbQuery->getValues());
+            return $db->fetchAllAssociative($dbQuery->build(), $dbQuery->getValues());
         } catch (DBALException $original) {
             throw new DriverException('An error occurred in the database driver while performing the '.$model::modelName().' query: '.$original->getMessage(), $original->getCode(), $original);
         }
@@ -127,7 +127,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            $db->executeQuery($dbQuery->build(), $dbQuery->getValues());
+            $db->executeStatement($dbQuery->build(), $dbQuery->getValues());
 
             return true;
         } catch (DBALException $original) {
@@ -147,7 +147,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            $db->executeQuery($dbQuery->build(), $dbQuery->getValues());
+            $db->executeStatement($dbQuery->build(), $dbQuery->getValues());
 
             return true;
         } catch (DBALException $original) {
@@ -255,7 +255,7 @@ final class DbalDriver extends AbstractDriver
         $db = $this->getConnection($model->getConnection());
 
         try {
-            return $db->fetchColumn($query->build(), $query->getValues());
+            return $db->fetchOne($query->build(), $query->getValues());
         } catch (DBALException $original) {
             throw new DriverException('An error occurred in the database driver while getting the value of '.$model::modelName().'.'.$field.': '.$original->getMessage(), $original->getCode(), $original);
         }
