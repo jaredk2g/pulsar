@@ -175,7 +175,7 @@ abstract class Model implements ArrayAccess
     /**
      * Performs initialization on this model.
      */
-    private function init()
+    private function init(): void
     {
         // ensure the initialize function is called only once
         $k = static::class;
@@ -186,11 +186,11 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * The initialize() method is called once per model. This is a great
+     * This method is called once per model and is a great
      * place to install event listeners. Any methods on the model that have
      * "autoInitialize" in the name will automatically be called.
      */
-    protected function initialize()
+    protected function initialize(): void
     {
         // Use reflection to automatically call any method here that has a name
         // that starts with "autoInitialize". This is useful for traits to install listeners.
@@ -227,7 +227,7 @@ abstract class Model implements ArrayAccess
     /**
      * Clears the driver for all models.
      */
-    public static function clearDriver()
+    public static function clearDriver(): void
     {
         self::$driver = null;
     }
@@ -827,7 +827,7 @@ abstract class Model implements ArrayAccess
     /**
      * Populates a newly created model with its ID.
      */
-    private function getNewId()
+    private function getNewId(): void
     {
         $ids = [];
         $namedIds = [];

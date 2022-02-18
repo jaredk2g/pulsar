@@ -14,7 +14,7 @@ class TransactionModel extends Model
         ],
     ];
 
-    protected function initialize()
+    protected function initialize(): void
     {
         parent::initialize();
 

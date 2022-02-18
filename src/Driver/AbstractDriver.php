@@ -26,10 +26,8 @@ abstract class AbstractDriver implements DriverInterface
 
     /**
      * Serializes an array of values.
-     *
-     * @return array
      */
-    protected function serialize(array $values)
+    protected function serialize(array $values): array
     {
         foreach ($values as &$value) {
             $value = $this->serializeValue($value);
@@ -40,13 +38,8 @@ abstract class AbstractDriver implements DriverInterface
 
     /**
      * Returns a prefixed select statement.
-     *
-     * @param string $columns
-     * @param string $tablename
-     *
-     * @return string
      */
-    protected function prefixSelect($columns, $tablename)
+    protected function prefixSelect(string $columns, string $tablename): string
     {
         $prefixed = [];
         foreach (explode(',', $columns) as $column) {
@@ -58,13 +51,8 @@ abstract class AbstractDriver implements DriverInterface
 
     /**
      * Returns a prefixed where statement.
-     *
-     * @param string $columns
-     * @param string $tablename
-     *
-     * @return array
      */
-    protected function prefixWhere(array $where, $tablename)
+    protected function prefixWhere(array $where, string $tablename): array
     {
         $return = [];
         foreach ($where as $key => $condition) {
@@ -86,13 +74,8 @@ abstract class AbstractDriver implements DriverInterface
 
     /**
      * Returns a prefixed sort statement.
-     *
-     * @param string $columns
-     * @param string $tablename
-     *
-     * @return array
      */
-    protected function prefixSort(array $sort, $tablename)
+    protected function prefixSort(array $sort, string $tablename): array
     {
         foreach ($sort as &$condition) {
             $condition[0] = $this->prefixColumn($condition[0], $tablename);
@@ -104,13 +87,8 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Prefix columns with tablename that contains only
      * alphanumeric/underscores/*.
-     *
-     * @param string $column
-     * @param string $tablename
-     *
-     * @return string prefixed column
      */
-    protected function prefixColumn($column, $tablename)
+    protected function prefixColumn(string $column, string $tablename): string
     {
         if ('*' === $column || preg_match('/^[a-z0-9_]+$/i', $column)) {
             return "$tablename.$column";
@@ -121,11 +99,8 @@ abstract class AbstractDriver implements DriverInterface
 
     /**
      * Adds join conditions to a select query.
-     *
-     * @param string      $tablename
-     * @param SelectQuery $dbQuery
      */
-    protected function addJoins(Query $query, $tablename, $dbQuery)
+    protected function addJoins(Query $query, string $tablename, SelectQuery $dbQuery): void
     {
         foreach ($query->getJoins() as $join) {
             [$foreignModelClass, $column, $foreignKey, $type] = $join;

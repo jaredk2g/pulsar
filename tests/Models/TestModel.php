@@ -36,7 +36,7 @@ class TestModel extends Model
 
     public static $query;
 
-    protected function initialize()
+    protected function initialize(): void
     {
         self::$properties['test_hook'] = [
             'type' => Type::STRING,

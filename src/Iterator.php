@@ -189,7 +189,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     /**
      * Load the next round of models.
      */
-    private function loadModels()
+    private function loadModels(): void
     {
         $start = $this->rangeStart($this->pointer, $this->limit);
         if ($this->loadedStart !== $start) {
@@ -205,7 +205,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
      * the count is only updated on edges, which is when new models
      * need to be loaded.
      */
-    private function updateCount()
+    private function updateCount(): void
     {
         // The count only needs to be updated when the pointer is
         // on the edges
@@ -234,7 +234,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     /**
      * Generates the starting page given a pointer and limit.
      */
-    private function rangeStart(int $pointer, int $limit)
+    private function rangeStart(int $pointer, int $limit): int
     {
         return floor($pointer / $limit) * $limit;
     }

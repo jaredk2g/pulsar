@@ -88,7 +88,7 @@ abstract class ACLModel extends Model
         return $this;
     }
 
-    protected function initialize()
+    protected function initialize(): void
     {
         parent::initialize();
 
