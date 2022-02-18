@@ -20,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Use @mixin instead of @method for query operations on model
 - `Query::first()` now returns an array of results when the limit is 1
 - Added return typehint to `AclModel::hasPermission()`
+- PHP 7.2 is required at minimum
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

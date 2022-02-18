@@ -4,7 +4,6 @@ php:
   - 7.4
   - 7.3
   - 7.2
-  - 7.1
 
 jobs:
   allow_failures:
@@ -19,7 +18,7 @@ script:
   - vendor/bin/phpunit
 
 after_script:
-  - if [ "$TRAVIS_BRANCH" == "master" ] && [ $TRAVIS_PHP_VERSION == "7.1" ]; then vendor/bin/coveralls; fi
+  - if [ "$TRAVIS_BRANCH" == "master" ] && [ $TRAVIS_PHP_VERSION == "7.2" ]; then vendor/bin/coveralls; fi
 
 notifications:
   email: false

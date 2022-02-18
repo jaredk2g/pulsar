@@ -14,7 +14,7 @@ Pulsar is an ORM implementing the [Active Record](https://en.wikipedia.org/wiki/
 
 ### Requirements
 
-The main requirement is that PHP version 7.1 or later is used. The library depends on PDO or Doctrine DBAL to interact with the database.
+The main requirement is that PHP version 7.2 or later is used. The library depends on PDO or Doctrine DBAL to interact with the database.
 
 ## Installation
 
