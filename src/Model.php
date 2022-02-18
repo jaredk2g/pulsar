@@ -354,7 +354,7 @@ abstract class Model implements ArrayAccess
     }
 
     /**
-     * Checks if an unsaved value or property exists by this name.
+     * Checks if an unsaved value or property exists by this name.
      *
      * @param string $name
      *
@@ -390,21 +390,23 @@ abstract class Model implements ArrayAccess
     // ArrayAccess Interface
     /////////////////////////////
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return isset($this->$offset);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return $this->$offset;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->$offset = $value;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         unset($this->$offset);

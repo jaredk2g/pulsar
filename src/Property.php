@@ -211,11 +211,12 @@ final class Property implements ArrayAccess
         ];
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return property_exists($this, $offset) && $this->$offset !== null;
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (!property_exists($this, $offset)) {
@@ -225,11 +226,12 @@ final class Property implements ArrayAccess
         return $this->$offset;
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         throw new \RuntimeException('Modifying a model property is not allowed.');
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         throw new \RuntimeException('Modifying a model property is not allowed.');

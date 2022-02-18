@@ -21,6 +21,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `Query::first()` now returns an array of results when the limit is 1
 - Added return typehint to `AclModel::hasPermission()`
 - PHP 7.2 is required at minimum
+- Compatible with PHP 8.1
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

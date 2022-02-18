@@ -80,7 +80,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     /**
      * Rewind the Iterator to the first element.
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->pointer = $this->start;
         $this->loadedStart = false;
@@ -93,6 +93,7 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
      *
      * @return mixed
      */
+    #[\ReturnTypeWillChange]
     public function current()
     {
         if ($this->pointer >= $this->count()) {
@@ -111,10 +112,8 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Return the key of the current element.
-     *
-     * @return int
      */
-    public function key()
+    public function key(): int
     {
         return $this->pointer;
     }
@@ -122,17 +121,15 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     /**
      * Move forward to the next element.
      */
-    public function next()
+    public function next(): void
     {
         ++$this->pointer;
     }
 
     /**
      * Checks if current position is valid.
-     *
-     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->pointer < $this->count();
     }
@@ -143,10 +140,8 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Get total number of models matching query.
-     *
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         $this->updateCount();
 
@@ -157,11 +152,12 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     // ArrayAccess Interface
     //////////////////////////
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return is_numeric($offset) && $offset < $this->count();
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         if (!$this->offsetExists($offset)) {
@@ -173,12 +169,13 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         return $this->current();
     }
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         // iterators are immutable
         throw new \Exception('Cannot perform set on immutable Iterator');
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetUnset($offset)
     {
         // iterators are immutable
