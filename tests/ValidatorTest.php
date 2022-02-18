@@ -26,7 +26,7 @@ class ValidatorTest extends MockeryTestCase
 {
     public static $model;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$model = new TestModel();

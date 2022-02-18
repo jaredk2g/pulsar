@@ -24,7 +24,7 @@ class BelongsToManyTest extends MockeryTestCase
 {
     public static $driver;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$driver = Mockery::mock(DriverInterface::class);
         Model::setDriver(self::$driver);

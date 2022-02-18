@@ -30,7 +30,7 @@ class IteratorTest extends MockeryTestCase
     public static $count = 123;
     public static $noResults;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $driver = Mockery::mock(DriverInterface::class);
 
@@ -63,7 +63,7 @@ class IteratorTest extends MockeryTestCase
         self::$iterator = new Iterator(self::$query);
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         self::$count = 123;
         self::$noResults = false;

@@ -11,13 +11,13 @@ use Pulsar\Tests\Models\Person;
 
 class ACLModelRequesterTest extends MockeryTestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         parent::tearDown();
         ACLModelRequester::clear();

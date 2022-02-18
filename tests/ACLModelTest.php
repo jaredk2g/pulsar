@@ -23,7 +23,7 @@ class ACLModelTest extends MockeryTestCase
 {
     public static $requester;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         $driver = Mockery::mock(DriverInterface::class);
         ACLModel::setDriver($driver);

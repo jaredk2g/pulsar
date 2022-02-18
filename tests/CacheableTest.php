@@ -20,7 +20,7 @@ use Symfony\Component\Cache\Adapter\ArrayAdapter;
 
 class CacheableTest extends MockeryTestCase
 {
-    protected function tearDown()
+    protected function tearDown(): void
     {
         CacheableModel::clearCachePool();
     }

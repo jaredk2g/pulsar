@@ -43,13 +43,13 @@ use stdClass;
 
 class ModelTest extends MockeryTestCase
 {
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         Errors::setTranslator(new Translator());
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         // discard the cached dispatcher to
         // remove any event listeners
