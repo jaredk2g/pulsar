@@ -131,7 +131,12 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
      */
     public function valid(): bool
     {
-        return $this->pointer < $this->count();
+        // The only way that we can know if the current position
+        // is valid is to attempt to load the current position.
+        // This may result in a database call due to lazy loading.
+        // We cannot trust the count here in case the data is being
+        // inserted or deleted during iteration.
+        return null !== $this->current();
     }
 
     //////////////////////////

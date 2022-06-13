@@ -29,6 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Rollback database transaction after uncaught exception during model persistence.
 - The return types of average, min, max, and sum in the database drivers was incorrect.
 - The model is unmarked as persisted if the post-create listener fails.
+- The iterator no longer returns null values in a foreach loop.
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class.

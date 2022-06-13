@@ -196,7 +196,7 @@ class IteratorTest extends MockeryTestCase
         $start = 0;
         $limit = 101;
         $query = new Query(IteratorTestModel::class);
-        $query->limit(101);
+        $query->limit($limit);
         $iterator = new Iterator($query);
 
         $i = $start;
@@ -272,9 +272,13 @@ class IteratorTest extends MockeryTestCase
         // simulate the queryModels() method acting up
         self::$noResults = true;
 
-        foreach (self::$iterator as $k => $model) {
-            // should always return a null model
-            $this->assertNull($model);
+        $numIterations = 0;
+        foreach (self::$iterator as $model) {
+            $numIterations++;
         }
+
+        // when the end of the results is reached then the loop
+        // should terminate producing no iterations
+        $this->assertEquals(0, $numIterations);
     }
 }
