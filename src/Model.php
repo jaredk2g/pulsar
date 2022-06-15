@@ -12,7 +12,6 @@
 namespace Pulsar;
 
 use ArrayAccess;
-use BadMethodCallException;
 use ICanBoogie\Inflector;
 use InvalidArgumentException;
 use Pulsar\Driver\DriverInterface;
@@ -583,14 +582,14 @@ abstract class Model implements ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @throws BadMethodCallException when called on an existing model
+     * @throws ModelException when called on an existing model
      *
      * @return bool true when the operation was successful
      */
     public function create(array $data = []): bool
     {
         if ($this->hasId) {
-            throw new BadMethodCallException('Cannot call create() on an existing model');
+            throw new ModelException('Cannot call create() on an existing model');
         }
 
         // mass assign values passed into create()
@@ -969,14 +968,14 @@ abstract class Model implements ArrayAccess
      *
      * @param array $data optional key-value properties to set
      *
-     * @throws BadMethodCallException when not called on an existing model
+     * @throws ModelException when not called on an existing model
      *
      * @return bool true when the operation was successful
      */
     public function set(array $data = []): bool
     {
         if (!$this->hasId) {
-            throw new BadMethodCallException('Can only call set() on an existing model');
+            throw new ModelException('Can only call set() on an existing model');
         }
 
         // mass assign values passed into set()
@@ -1086,12 +1085,14 @@ abstract class Model implements ArrayAccess
     /**
      * Delete the model.
      *
+     * @throws ModelException when not called on an existing model
+     *
      * @return bool true when the operation was successful
      */
     public function delete(): bool
     {
         if (!$this->hasId) {
-            throw new BadMethodCallException('Can only call delete() on an existing model');
+            throw new ModelException('Can only call delete() on an existing model');
         }
 
         // clear any previous errors
@@ -1136,6 +1137,23 @@ abstract class Model implements ArrayAccess
         }
 
         return $deleted;
+    }
+
+    /**
+     * Delete the model.
+     *
+     * @throws ModelException when the model cannot be deleted
+     */
+    public function deleteOrFail(): void
+    {
+        if (!$this->delete()) {
+            $msg = 'Failed to delete '.static::modelName();
+            if ($validationErrors = $this->getErrors()->all()) {
+                $msg .= ': '.implode(', ', $validationErrors);
+            }
+
+            throw new ModelException($msg);
+        }
     }
 
     /**

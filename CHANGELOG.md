@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Iterator::toArray()` as a shortcut to `iterator_to_array`
 - `Query::where()` now accepts models as conditions
 - Doctrine 3 compatibility if using the DBAL driver
+- Added `Model::deleteOrFail()` method.
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`
@@ -22,6 +23,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added return typehint to `AclModel::hasPermission()`
 - PHP 7.2 is required at minimum
 - Compatible with PHP 8.1
+- Changed all `BadMethodCallException` to `ModelException`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

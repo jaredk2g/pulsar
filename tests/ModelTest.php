@@ -11,7 +11,6 @@
 
 namespace Pulsar\Tests;
 
-use BadMethodCallException;
 use Defuse\Crypto\Key;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
@@ -1246,7 +1245,7 @@ class ModelTest extends MockeryTestCase
 
     public function testCreateWithId()
     {
-        $this->expectException(BadMethodCallException::class);
+        $this->expectException(ModelException::class);
 
         $model = new TestModel(['id' => 5]);
         $this->assertFalse($model->create(['relation' => '', 'answer' => 42]));
@@ -1636,7 +1635,7 @@ class ModelTest extends MockeryTestCase
 
     public function testSetFailWithNoId()
     {
-        $this->expectException(BadMethodCallException::class);
+        $this->expectException(ModelException::class);
 
         $model = new TestModel();
         $this->assertFalse($model->set(['answer' => 42]));
@@ -1887,7 +1886,7 @@ class ModelTest extends MockeryTestCase
 
     public function testDeleteWithNoId()
     {
-        $this->expectException(BadMethodCallException::class);
+        $this->expectException(ModelException::class);
 
         $model = new TestModel();
         $model->refreshWith(['test' => true]);
@@ -1982,6 +1981,22 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($model->isDeleted());
     }
 
+    public function testDeleteOrFail()
+    {
+        $this->expectException(ModelException::class);
+
+        $model = new TestModel2(['id' => 1, 'id2' => 2]);
+        $model->refreshWith(['test' => true]);
+
+        $driver = Mockery::mock(DriverInterface::class);
+        $driver->shouldReceive('deleteModel')
+            ->withArgs([$model])
+            ->andReturn(false);
+        TestModel2::setDriver($driver);
+
+        $model->deleteOrFail();
+    }
+
     public function testDeleteTransactions()
     {
         $model = new TransactionModel(['id' => 1]);
@@ -2052,7 +2067,7 @@ class ModelTest extends MockeryTestCase
 
     public function testRestoreNotDeleted()
     {
-        $this->expectException(BadMethodCallException::class);
+        $this->expectException(ModelException::class);
 
         $model = new Person(['id' => 1]);
         $model->refreshWith(['test' => true, 'deleted_at' => null]);

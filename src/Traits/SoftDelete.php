@@ -2,7 +2,7 @@
 
 namespace Pulsar\Traits;
 
-use BadMethodCallException;
+use Pulsar\Exception\ModelException;
 use Pulsar\Query;
 use Pulsar\Type;
 use Pulsar\Validator;
@@ -52,7 +52,7 @@ trait SoftDelete
     public function restore(): bool
     {
         if (!$this->deleted) {
-            throw new BadMethodCallException('restore() can only be called on a deleted model');
+            throw new ModelException('restore() can only be called on a deleted model');
         }
 
         $this->deleted = false;
