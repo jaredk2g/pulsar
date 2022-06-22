@@ -11,6 +11,7 @@
 
 namespace Pulsar;
 
+use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Relation\Relationship;
 
@@ -394,19 +395,24 @@ class Query
     }
 
     /**
-     * Updates all of the models matched by this query.
+     * Updates all the models matched by this query.
      *
      * @todo should be optimized to be done in a single call to the data layer
      *
      * @param array $params key-value update parameters
+     *
+     * @throws ModelException
      *
      * @return int # of models updated
      */
     public function set(array $params): int
     {
         $n = 0;
+        /** @var Model $model */
         foreach ($this->all() as $model) {
-            $model->set($params);
+            if (!$model->set($params)) {
+                throw new ModelException('Could not modify '.$model::modelName().': '.$model->getErrors());
+            }
             ++$n;
         }
 
@@ -414,17 +420,20 @@ class Query
     }
 
     /**
-     * Deletes all of the models matched by this query.
+     * Deletes all the models matched by this query.
      *
      * @todo should be optimized to be done in a single call to the data layer
+     *
+     * @throws ModelException
      *
      * @return int # of models deleted
      */
     public function delete(): int
     {
         $n = 0;
+        /** @var Model $model */
         foreach ($this->all() as $model) {
-            $model->delete();
+            $model->deleteOrFail();
             ++$n;
         }
 

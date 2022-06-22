@@ -24,6 +24,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - PHP 7.2 is required at minimum
 - Compatible with PHP 8.1
 - Changed all `BadMethodCallException` to `ModelException`
+- `Query::set()` and `Query::delete()` now throw  an exception if any operation fails
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

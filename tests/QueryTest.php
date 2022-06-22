@@ -15,6 +15,8 @@ use Iterator;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Driver\DriverInterface;
+use Pulsar\Errors;
+use Pulsar\Exception\ModelException;
 use Pulsar\Exception\ModelNotFoundException;
 use Pulsar\Query;
 use Pulsar\Tests\Models\Category;
@@ -784,10 +786,12 @@ class QueryTest extends MockeryTestCase
         $model = Mockery::mock();
         $model->shouldReceive('set')
             ->withArgs([['test' => true]])
+            ->andReturn(true)
             ->once();
         $model2 = Mockery::mock();
         $model2->shouldReceive('set')
             ->withArgs([['test' => true]])
+            ->andReturn(true)
             ->once();
         $query = Mockery::mock('Pulsar\Query[all]', [new TestModel()]);
         $query->shouldReceive('all')
@@ -795,12 +799,30 @@ class QueryTest extends MockeryTestCase
         $this->assertEquals(2, $query->set(['test' => true]));
     }
 
+    public function testSetFail()
+    {
+        $this->expectException(ModelException::class);
+        $model = Mockery::mock();
+        $model->shouldReceive('set')
+            ->withArgs([['test' => true]])
+            ->andReturn(false)
+            ->once();
+        $model->shouldReceive('getErrors')
+            ->andReturn(new Errors());
+        $model->shouldReceive('modelName')
+            ->andReturn('Test');
+        $query = Mockery::mock('Pulsar\Query[all]', [new TestModel()]);
+        $query->shouldReceive('all')
+            ->andReturn([$model]);
+        $query->set(['test' => true]);
+    }
+
     public function testDelete()
     {
         $model = Mockery::mock();
-        $model->shouldReceive('delete')->once();
+        $model->shouldReceive('deleteOrFail')->once();
         $model2 = Mockery::mock();
-        $model2->shouldReceive('delete')->once();
+        $model2->shouldReceive('deleteOrFail')->once();
         $query = Mockery::mock('Pulsar\Query[all]', [new TestModel()]);
         $query->shouldReceive('all')
             ->andReturn([$model, $model2]);
