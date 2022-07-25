@@ -225,7 +225,14 @@ class Query
      */
     public function join($model, string $column, string $foreignKey, string $type = 'JOIN')
     {
-        $this->joins[] = [$model, $column, $foreignKey, $type];
+        $join = [$model, $column, $foreignKey, $type];
+        // Ensure there are no duplicate joins
+        foreach ($this->joins as $join2) {
+            if ($join == $join2) {
+                return $this;
+            }
+        }
+        $this->joins[] = $join;
 
         return $this;
     }

@@ -25,6 +25,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Compatible with PHP 8.1
 - Changed all `BadMethodCallException` to `ModelException`
 - `Query::set()` and `Query::delete()` now throw  an exception if any operation fails
+- Queries attempt to detect and prevent duplicate joins
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.
