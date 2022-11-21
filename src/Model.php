@@ -41,13 +41,6 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * List of model ID property names.
-     *
-     * @var array
-     */
-    protected static $ids = [self::DEFAULT_ID_NAME];
-
-    /**
      * Property definitions expressed as a key-value map with
      * property names as the keys.
      * i.e. ['enabled' => ['type' => Type::BOOLEAN]].
@@ -148,7 +141,7 @@ abstract class Model implements ArrayAccess
 
         $ids = [];
         $this->hasId = true;
-        foreach (static::$ids as $name) {
+        foreach (static::getIDProperties() as $name) {
             $id = null;
             if (array_key_exists($name, $values)) {
                 $idProperty = static::definition()->get($name);
@@ -258,7 +251,7 @@ abstract class Model implements ArrayAccess
         }
 
         $result = [];
-        foreach (static::$ids as $k) {
+        foreach (static::getIDProperties() as $k) {
             $result[] = $this->idValues[$k];
         }
 
@@ -455,7 +448,7 @@ abstract class Model implements ArrayAccess
      */
     public static function getIDProperties(): array
     {
-        return static::$ids;
+        return [self::DEFAULT_ID_NAME];
     }
 
     /**
@@ -830,7 +823,7 @@ abstract class Model implements ArrayAccess
     {
         $ids = [];
         $namedIds = [];
-        foreach (static::$ids as $k) {
+        foreach (static::getIDProperties() as $k) {
             // attempt use the supplied value if the ID property is mutable
             $property = static::definition()->get($k);
             if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
@@ -1205,14 +1198,15 @@ abstract class Model implements ArrayAccess
     {
         $ids = [];
         $id = (array) $id;
-        foreach (static::$ids as $j => $k) {
+        $idProperties = static::getIDProperties();
+        foreach ($idProperties as $j => $k) {
             if (isset($id[$j])) {
                 $ids[$k] = $id[$j];
             }
         }
 
         // malformed ID
-        if (count($ids) < count(static::$ids)) {
+        if (count($ids) < count($idProperties)) {
             return null;
         }
 

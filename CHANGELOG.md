@@ -26,6 +26,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed all `BadMethodCallException` to `ModelException`
 - `Query::set()` and `Query::delete()` now throw  an exception if any operation fails
 - Queries attempt to detect and prevent duplicate joins
+- Model ID properties are now provided by `Model::getIDProperties()` instead of `Model::$ids`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

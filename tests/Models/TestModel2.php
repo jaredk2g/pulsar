@@ -12,8 +12,6 @@ class TestModel2 extends Model
 {
     use AutoTimestamps;
 
-    protected static $ids = ['id', 'id2'];
-
     protected static $properties = [
         'id' => [
             'type' => Type::INTEGER,
@@ -72,6 +70,11 @@ class TestModel2 extends Model
     ];
 
     public static $query;
+
+    public static function getIDProperties(): array
+    {
+        return ['id', 'id2'];
+    }
 
     public static function query(): Query
     {
