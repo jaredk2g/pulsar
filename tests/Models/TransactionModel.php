@@ -7,12 +7,15 @@ use Pulsar\Model;
 
 class TransactionModel extends Model
 {
-    protected static $properties = [
-        'name' => [
-            'required' => true,
-            'validate' => ['string', 'min' => 5],
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'name' => [
+                'required' => true,
+                'validate' => ['string', 'min' => 5],
+            ],
+        ];
+    }
 
     protected function initialize(): void
     {

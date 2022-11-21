@@ -43,4 +43,9 @@ final class Pivot extends Model
         ];
         $this->initialize();
     }
+
+    protected static function getProperties(): array
+    {
+        return self::$properties;
+    }
 }

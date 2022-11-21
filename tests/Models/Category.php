@@ -6,10 +6,13 @@ use Pulsar\Model;
 
 class Category extends Model
 {
-    protected static $properties = [
-        'name' => [],
-        'posts' => [
-            'has_many' => Post::class,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'name' => [],
+            'posts' => [
+                'has_many' => Post::class,
+            ],
+        ];
+    }
 }

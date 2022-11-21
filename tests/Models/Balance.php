@@ -7,12 +7,15 @@ use Pulsar\Type;
 
 class Balance extends Model
 {
-    protected static $properties = [
-        'person' => [
-            'belongs_to' => Person::class,
-        ],
-        'amount' => [
-            'type' => Type::FLOAT,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'person' => [
+                'belongs_to' => Person::class,
+            ],
+            'amount' => [
+                'type' => Type::FLOAT,
+            ],
+        ];
+    }
 }

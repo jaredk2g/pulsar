@@ -6,11 +6,14 @@ use Pulsar\Model;
 
 class Car extends Model
 {
-    protected static $properties = [
-        'make' => [],
-        'model' => [],
-        'garage' => [
-            'belongs_to' => Garage::class,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'make' => [],
+            'model' => [],
+            'garage' => [
+                'belongs_to' => Garage::class,
+            ],
+        ];
+    }
 }

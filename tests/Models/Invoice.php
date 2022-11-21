@@ -6,10 +6,13 @@ use Pulsar\Model;
 
 class Invoice extends Model
 {
-    public static $properties = [
-        'customer' => [
-            'belongs_to' => Customer::class,
-            'required' => true,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'customer' => [
+                'belongs_to' => Customer::class,
+                'required' => true,
+            ],
+        ];
+    }
 }

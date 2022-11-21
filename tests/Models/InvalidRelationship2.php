@@ -6,10 +6,13 @@ use Pulsar\Model;
 
 class InvalidRelationship2 extends Model
 {
-    protected static $properties = [
-        'invalid_relationship' => [
-            'relation' => TestModel2::class,
-            'relation_type' => 'not a valid type',
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'invalid_relationship' => [
+                'relation' => TestModel2::class,
+                'relation_type' => 'not a valid type',
+            ],
+        ];
+    }
 }

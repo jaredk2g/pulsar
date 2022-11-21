@@ -41,15 +41,6 @@ abstract class Model implements ArrayAccess
     /////////////////////////////
 
     /**
-     * Property definitions expressed as a key-value map with
-     * property names as the keys.
-     * i.e. ['enabled' => ['type' => Type::BOOLEAN]].
-     *
-     * @var array
-     */
-    protected static $properties = [];
-
-    /**
      * @var array
      */
     protected $_values = [];
@@ -455,10 +446,14 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the model properties.
+     *
+     * Property definitions expressed as a key-value map with
+     * property names as the keys.
+     * i.e. ['enabled' => ['type' => Type::BOOLEAN]].
      */
     protected static function getProperties(): array
     {
-        return static::$properties;
+        return [];
     }
 
     /**

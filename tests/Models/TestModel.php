@@ -8,29 +8,7 @@ use Pulsar\Type;
 
 class TestModel extends Model
 {
-    protected static $properties = [
-        'relation' => [
-            'type' => Type::INTEGER,
-            'relation' => TestModel2::class,
-            'null' => true,
-        ],
-        'answer' => [
-            'type' => Type::STRING,
-        ],
-        'mutator' => [
-            'in_array' => false,
-        ],
-        'accessor' => [
-            'in_array' => false,
-        ],
-        'encrypted' => [
-            'encrypted' => true,
-        ],
-        'appended' => [
-            'persisted' => false,
-            'in_array' => true,
-        ],
-    ];
+    protected static $properties = [];
     public $preDelete;
     public $postDelete;
 
@@ -44,6 +22,33 @@ class TestModel extends Model
         ];
 
         parent::initialize();
+    }
+
+    protected static function getProperties(): array
+    {
+        return array_replace([
+            'relation' => [
+                'type' => Type::INTEGER,
+                'relation' => TestModel2::class,
+                'null' => true,
+            ],
+            'answer' => [
+                'type' => Type::STRING,
+            ],
+            'mutator' => [
+                'in_array' => false,
+            ],
+            'accessor' => [
+                'in_array' => false,
+            ],
+            'encrypted' => [
+                'encrypted' => true,
+            ],
+            'appended' => [
+                'persisted' => false,
+                'in_array' => true,
+            ],
+        ], self::$properties);
     }
 
     protected function getMassAssignmentWhitelist(): ?array

@@ -6,7 +6,10 @@ use Pulsar\Model;
 
 class IteratorTestModel extends Model
 {
-    protected static $properties = [
-        'name' => [],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'name' => [],
+        ];
+    }
 }
