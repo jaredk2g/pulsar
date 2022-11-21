@@ -19,15 +19,17 @@ trait AutoTimestamps
         self::saving([static::class, 'setAutoTimestamps']);
     }
 
-    protected static function autoDefinitionAutoTimestamps(): void
+    protected static function autoDefinitionAutoTimestamps(): array
     {
-        static::$properties['created_at'] = [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-        ];
-        static::$properties['updated_at'] = [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
+        return [
+            'created_at' => [
+                'type' => Type::DATE,
+                'validate' => 'timestamp|db_timestamp',
+            ],
+            'updated_at' => [
+                'type' => Type::DATE,
+                'validate' => 'timestamp|db_timestamp',
+            ],
         ];
     }
 

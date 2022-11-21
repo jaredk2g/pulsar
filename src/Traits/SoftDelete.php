@@ -15,15 +15,17 @@ use Pulsar\Validator;
  */
 trait SoftDelete
 {
-    protected static function autoDefinitionSoftDelete(): void
+    protected static function autoDefinitionSoftDelete(): array
     {
-        static::$properties['deleted'] = [
-            'type' => Type::BOOLEAN,
-        ];
-        static::$properties['deleted_at'] = [
-            'type' => Type::DATE,
-            'validate' => 'timestamp|db_timestamp',
-            'null' => true,
+        return [
+            'deleted' => [
+                'type' => Type::BOOLEAN,
+            ],
+            'deleted_at' => [
+                'type' => Type::DATE,
+                'validate' => 'timestamp|db_timestamp',
+                'null' => true,
+            ],
         ];
     }
 

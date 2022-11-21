@@ -431,16 +431,18 @@ abstract class Model implements ArrayAccess
      */
     public static function buildDefinition(): Definition
     {
+        $properties = static::getProperties();
+
         // Use reflection to automatically call any method on the model that has a name
-        // that starts with "buildDefinition". This is useful for traits to add properties.
+        // that starts with "autoDefinition". This is useful for traits to add properties.
         $methods = get_class_methods(static::class);
         foreach ($methods as $method) {
             if (0 === strpos($method, 'autoDefinition')) {
-                static::$method();
+                $properties = array_replace(static::$method(), $properties);
             }
         }
 
-        return DefinitionBuilder::build(static::getIDProperties(), static::$properties, static::class);
+        return DefinitionBuilder::build(static::getIDProperties(), $properties, static::class);
     }
 
     /**
@@ -449,6 +451,14 @@ abstract class Model implements ArrayAccess
     protected static function getIDProperties(): array
     {
         return [self::DEFAULT_ID_NAME];
+    }
+
+    /**
+     * Gets the model properties.
+     */
+    protected static function getProperties(): array
+    {
+        return static::$properties;
     }
 
     /**
