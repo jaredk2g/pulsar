@@ -251,7 +251,7 @@ abstract class Model implements ArrayAccess
         }
 
         $result = [];
-        foreach (static::getIDProperties() as $k) {
+        foreach (static::definition()->getIds() as $k) {
             $result[] = $this->idValues[$k];
         }
 
@@ -440,13 +440,13 @@ abstract class Model implements ArrayAccess
             }
         }
 
-        return DefinitionBuilder::build(static::$properties, static::class);
+        return DefinitionBuilder::build(static::getIDProperties(), static::$properties, static::class);
     }
 
     /**
      * Gets the names of the model ID properties.
      */
-    public static function getIDProperties(): array
+    protected static function getIDProperties(): array
     {
         return [self::DEFAULT_ID_NAME];
     }
@@ -823,9 +823,10 @@ abstract class Model implements ArrayAccess
     {
         $ids = [];
         $namedIds = [];
-        foreach (static::getIDProperties() as $k) {
+        $definition = static::definition();
+        foreach ($definition->getIds() as $k) {
             // attempt use the supplied value if the ID property is mutable
-            $property = static::definition()->get($k);
+            $property = $definition->get($k);
             if (!$property->isImmutable() && isset($this->_unsaved[$k])) {
                 $id = $this->_unsaved[$k];
             } else {
@@ -1198,7 +1199,7 @@ abstract class Model implements ArrayAccess
     {
         $ids = [];
         $id = (array) $id;
-        $idProperties = static::getIDProperties();
+        $idProperties = static::definition()->getIds();
         foreach ($idProperties as $j => $k) {
             if (isset($id[$j])) {
                 $ids[$k] = $id[$j];

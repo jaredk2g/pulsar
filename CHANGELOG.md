@@ -13,6 +13,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - `Query::where()` now accepts models as conditions
 - Doctrine 3 compatibility if using the DBAL driver
 - Added `Model::deleteOrFail()` method.
+- The model ID property names can be obtained with `Definition::getIds()`
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`
@@ -26,7 +27,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Changed all `BadMethodCallException` to `ModelException`
 - `Query::set()` and `Query::delete()` now throw  an exception if any operation fails
 - Queries attempt to detect and prevent duplicate joins
-- Model ID properties are now provided by `Model::getIDProperties()` instead of `Model::$ids`
+- Model ID properties are now provided by `Model::getIDProperties()` instead of `Model::$ids`. `Model::getIDProperties()` is now a protected method instead of public.
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

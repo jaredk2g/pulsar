@@ -679,9 +679,9 @@ class ModelTest extends MockeryTestCase
 
     public function testGetIDProperties()
     {
-        $this->assertEquals(['id'], TestModel::getIDProperties());
+        $this->assertEquals(['id'], TestModel::definition()->getIds());
 
-        $this->assertEquals(['id', 'id2'], TestModel2::getIDProperties());
+        $this->assertEquals(['id', 'id2'], TestModel2::definition()->getIds());
     }
 
     public function testGetMutator()

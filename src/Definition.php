@@ -6,14 +6,18 @@ use ArrayAccess;
 
 final class Definition implements ArrayAccess
 {
+    /** @var string[] */
+    private $ids;
+
     /** @var Property[] */
     private $properties;
 
     /**
      * @param Property[] $properties
      */
-    public function __construct(array $properties)
+    public function __construct(array $ids, array $properties)
     {
+        $this->ids = $ids;
         $this->properties = $properties;
     }
 
@@ -30,6 +34,11 @@ final class Definition implements ArrayAccess
     public function all(): array
     {
         return $this->properties;
+    }
+
+    public function getIds(): array
+    {
+        return $this->ids;
     }
 
     public function offsetExists($offset): bool

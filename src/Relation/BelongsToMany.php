@@ -110,13 +110,13 @@ final class BelongsToMany extends AbstractRelation
 
         // build the local side
         $ids = $this->localModel->ids();
-        foreach ($ids as $property => $id) {
+        foreach ($ids as $id) {
             $pivot->{$this->localKey} = $id;
         }
 
         // build the foreign side
         $ids = $model->ids();
-        foreach ($ids as $property => $id) {
+        foreach ($ids as $id) {
             $pivot->{$this->foreignKey} = $id;
         }
 

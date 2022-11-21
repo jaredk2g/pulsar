@@ -32,12 +32,13 @@ final class DefinitionBuilder
 
     /**
      * Builds a model definition given certain parameters.
+     *
+     * @param string[] $ids
      */
-    public static function build(array $properties, string $modelClass): Definition
+    public static function build(array $ids, array $properties, string $modelClass): Definition
     {
-        /** @var Model $modelClass */
         // add in the default ID property
-        if (!isset($properties[Model::DEFAULT_ID_NAME]) && $modelClass::getIDProperties() == [Model::DEFAULT_ID_NAME]) {
+        if (!isset($properties[Model::DEFAULT_ID_NAME]) && $ids == [Model::DEFAULT_ID_NAME]) {
             $properties[Model::DEFAULT_ID_NAME] = self::DEFAULT_ID_PROPERTY;
         }
 
@@ -70,7 +71,7 @@ final class DefinitionBuilder
         // since it is constructed in a random order
         ksort($result);
 
-        return new Definition($result);
+        return new Definition($ids, $result);
     }
 
     /////////////////////////////////

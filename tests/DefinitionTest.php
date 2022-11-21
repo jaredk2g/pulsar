@@ -11,7 +11,7 @@ class DefinitionTest extends TestCase
     public function testArrayAccess()
     {
         $property = new Property();
-        $definition = new Definition(['test' => $property]);
+        $definition = new Definition(['id'], ['test' => $property]);
         $this->assertFalse(isset($definition['does_not_exist']));
         $this->assertNull($definition['does_not_exist']);
 
