@@ -618,6 +618,9 @@ class DatabaseDriverTest extends MockeryTestCase
         $driver->rollBackTransaction(null);
     }
 
+    /**
+     * @doesNotPerformAssertions
+     */
     public function testCommitTransactionExistingTransaction()
     {
         $db = Mockery::mock(QueryBuilder::class);
