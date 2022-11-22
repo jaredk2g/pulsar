@@ -3,6 +3,7 @@
 namespace Pulsar\Tests\Models;
 
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Type;
 
 class Balance extends Model
@@ -10,12 +11,12 @@ class Balance extends Model
     protected static function getProperties(): array
     {
         return [
-            'person' => [
+            'person' => new Property([
                 'belongs_to' => Person::class,
-            ],
-            'amount' => [
+            ]),
+            'amount' => new Property([
                 'type' => Type::FLOAT,
-            ],
+            ]),
         ];
     }
 }

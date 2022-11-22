@@ -3,6 +3,7 @@
 namespace Pulsar\Tests\Models;
 
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Type;
 
@@ -27,27 +28,27 @@ class TestModel extends Model
     protected static function getProperties(): array
     {
         return array_replace([
-            'relation' => [
+            'relation' => new Property([
                 'type' => Type::INTEGER,
                 'relation' => TestModel2::class,
                 'null' => true,
-            ],
-            'answer' => [
+            ]),
+            'answer' => new Property([
                 'type' => Type::STRING,
-            ],
-            'mutator' => [
+            ]),
+            'mutator' => new Property([
                 'in_array' => false,
-            ],
-            'accessor' => [
+            ]),
+            'accessor' => new Property([
                 'in_array' => false,
-            ],
-            'encrypted' => [
+            ]),
+            'encrypted' => new Property([
                 'encrypted' => true,
-            ],
-            'appended' => [
+            ]),
+            'appended' => new Property([
                 'persisted' => false,
                 'in_array' => true,
-            ],
+            ]),
         ], self::$properties);
     }
 

@@ -11,6 +11,8 @@ final class Property implements ArrayAccess
     const MUTABLE_CREATE_ONLY = 'mutable_create_only';
     const MUTABLE = 'mutable';
 
+    private const RELATIONSHIP_SHORTCUTS = ['belongs_to', 'belongs_to_many', 'has_one', 'has_many'];
+
     /** @var string */
     private $name;
 
@@ -62,9 +64,21 @@ final class Property implements ArrayAccess
     /** @var array|null */
     private $morphs_to;
 
-    public function __construct(array $values = [], string $name = '')
+    public function __construct(array $values = [])
     {
-        $this->name = $name;
+        // Relationship shortcuts
+        foreach (self::RELATIONSHIP_SHORTCUTS as $k) {
+            if (isset($values[$k])) {
+                $values = array_replace([
+                    'persisted' => false,
+                    'in_array' => false,
+                    'relation' => $values[$k],
+                    'relation_type' => $k,
+                ], $values);
+                unset($values[$k]);
+            }
+        }
+
         foreach ($values as $k => $v) {
             $this->$k = $v;
         }

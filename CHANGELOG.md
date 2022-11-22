@@ -14,6 +14,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Doctrine 3 compatibility if using the DBAL driver
 - Added `Model::deleteOrFail()` method.
 - The model ID property names can be obtained with `Definition::getIds()`
+- Property definitions can now be objects instead of arrays
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`

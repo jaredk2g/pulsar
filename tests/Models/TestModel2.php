@@ -22,43 +22,43 @@ class TestModel2 extends Model
     protected static function getProperties(): array
     {
         return [
-            'id' => [
+            'id' => new Property([
                 'type' => Type::INTEGER,
-            ],
-            'id2' => [
+            ]),
+            'id2' => new Property([
                 'type' => Type::INTEGER,
-            ],
-            'default' => [
+            ]),
+            'default' => new Property([
                 'default' => 'some default value',
-            ],
-            'validate' => [
+            ]),
+            'validate' => new Property([
                 'validate' => ['email', ['string', 'min' => 5]],
                 'null' => true,
-            ],
-            'validate2' => [
+            ]),
+            'validate2' => new Property([
                 'validate' => ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
                 'null' => true,
                 'in_array' => false,
-            ],
-            'unique' => [
+            ]),
+            'unique' => new Property([
                 'validate' => ['unique', 'column' => 'unique'],
-            ],
-            'required' => [
+            ]),
+            'required' => new Property([
                 'type' => Type::INTEGER,
                 'required' => true,
-            ],
-            'hidden' => [
+            ]),
+            'hidden' => new Property([
                 'type' => Type::BOOLEAN,
                 'default' => false,
                 'in_array' => false,
-            ],
-            'person' => [
+            ]),
+            'person' => new Property([
                 'type' => Type::INTEGER,
                 'relation' => Person::class,
                 'default' => 20,
                 'in_array' => false,
-            ],
-            'array' => [
+            ]),
+            'array' => new Property([
                 'type' => Type::ARRAY,
                 'default' => [
                     'tax' => '%',
@@ -66,16 +66,16 @@ class TestModel2 extends Model
                     'shipping' => false,
                 ],
                 'in_array' => false,
-            ],
-            'object' => [
+            ]),
+            'object' => new Property([
                 'type' => Type::OBJECT,
                 'in_array' => false,
-            ],
-            'mutable_create_only' => [
+            ]),
+            'mutable_create_only' => new Property([
                 'mutable' => Property::MUTABLE_CREATE_ONLY,
                 'in_array' => false,
-            ],
-            'protected' => [],
+            ]),
+            'protected' => new Property(),
         ];
     }
 

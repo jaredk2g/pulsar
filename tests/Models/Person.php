@@ -4,6 +4,7 @@ namespace Pulsar\Tests\Models;
 
 use Pulsar\ACLModel;
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Traits\SoftDelete;
 use Pulsar\Type;
 
@@ -14,20 +15,20 @@ class Person extends ACLModel
     protected static function getProperties(): array
     {
         return [
-            'id' => [
+            'id' => new Property([
                 'type' => Type::STRING,
-            ],
-            'name' => [
+            ]),
+            'name' => new Property([
                 'type' => Type::STRING,
                 'default' => 'Jared',
-            ],
-            'email' => [
+            ]),
+            'email' => new Property([
                 'type' => Type::STRING,
                 'validate' => 'email',
-            ],
-            'garage' => [
+            ]),
+            'garage' => new Property([
                 'has_one' => Garage::class,
-            ],
+            ]),
         ];
     }
 

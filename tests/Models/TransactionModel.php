@@ -4,16 +4,17 @@ namespace Pulsar\Tests\Models;
 
 use Pulsar\Event\AbstractEvent;
 use Pulsar\Model;
+use Pulsar\Property;
 
 class TransactionModel extends Model
 {
     protected static function getProperties(): array
     {
         return [
-            'name' => [
+            'name' => new Property([
                 'required' => true,
                 'validate' => ['string', 'min' => 5],
-            ],
+            ]),
         ];
     }
 

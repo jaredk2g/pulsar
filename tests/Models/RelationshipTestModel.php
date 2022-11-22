@@ -3,16 +3,17 @@
 namespace Pulsar\Tests\Models;
 
 use Pulsar\Model;
+use Pulsar\Property;
 
 class RelationshipTestModel extends Model
 {
     protected static function getProperties(): array
     {
         return [
-            'person' => [
+            'person' => new Property([
                 'persisted' => false,
                 'in_array' => true,
-            ],
+            ]),
         ];
     }
 

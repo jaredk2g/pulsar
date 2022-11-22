@@ -44,16 +44,26 @@ final class DefinitionBuilder
 
         $result = [];
         foreach ($properties as $k => $property) {
+            // convert to an array in order to fill in additional settings
+            if ($property instanceof Property) {
+                $hasDefault = $property->hasDefault();
+                $property = $property->toArray();
+                if (!$hasDefault) {
+                    unset($property['default']);
+                }
+            }
+
             // handle relationship shortcuts
-            if (isset($property['relation']) && !isset($property['relation_type'])) {
+            $relationType = $property['relation_type'] ?? null;
+            if (isset($property['relation']) && !$relationType) {
                 self::buildBelongsToLegacy($k, $property);
-            } elseif (isset($property['belongs_to'])) {
+            } elseif (isset($property['belongs_to']) || $relationType == Relationship::BELONGS_TO) {
                 self::buildBelongsTo($k, $property, $result);
-            } elseif (isset($property['has_one'])) {
+            } elseif (isset($property['has_one']) || $relationType == Relationship::HAS_ONE) {
                 self::buildHasOne($property, $modelClass);
-            } elseif (isset($property['belongs_to_many'])) {
+            } elseif (isset($property['belongs_to_many']) || $relationType == Relationship::BELONGS_TO_MANY) {
                 self::buildBelongsToMany($property, $modelClass);
-            } elseif (isset($property['has_many'])) {
+            } elseif (isset($property['has_many']) || $relationType == Relationship::HAS_MANY) {
                 self::buildHasMany($property, $modelClass);
             } elseif (isset($property['morphs_to'])) {
                 self::buildPolymorphic($property, $k);
@@ -64,7 +74,8 @@ final class DefinitionBuilder
                 $property['validate'] = 'encrypt';
             }
 
-            $result[$k] = new Property($property, $k);
+            $property['name'] = $k;
+            $result[$k] = new Property($property);
         }
 
         // order the properties array by name for consistency
@@ -96,20 +107,15 @@ final class DefinitionBuilder
 
     private static function buildBelongsTo(string $name, array &$property, array &$result): void
     {
-        $property['relation_type'] = Relationship::BELONGS_TO;
-        $property['relation'] = $property['belongs_to'];
-        $property['persisted'] = false;
-        $property['in_array'] = false;
-
-        // the default foreign key is `id`
-        if (!isset($property['foreign_key'])) {
-            $property['foreign_key'] = Model::DEFAULT_ID_NAME;
-        }
-
         // the default local key would look like `user_id`
         // for a property named `user`
         if (!isset($property['local_key'])) {
             $property['local_key'] = $name.'_id';
+        }
+
+        // the default foreign key is `id`
+        if (!isset($property['foreign_key'])) {
+            $property['foreign_key'] = Model::DEFAULT_ID_NAME;
         }
 
         // when a belongs_to relationship is used then we automatically add a
@@ -118,17 +124,14 @@ final class DefinitionBuilder
             $result[$property['local_key']] = new Property([
                 'type' => Type::INTEGER,
                 'mutable' => $property['mutable'] ?? Property::MUTABLE,
-            ], $property['local_key']);
+                'name' => $property['local_key'],
+            ]);
         }
     }
 
     private static function buildBelongsToMany(array &$property, string $modelClass): void
     {
         /* @var Model $modelClass */
-        $property['relation_type'] = Relationship::BELONGS_TO_MANY;
-        $property['relation'] = $property['belongs_to_many'];
-        $property['persisted'] = false;
-        $property['in_array'] = false;
 
         // the default local key would look like `user_id`
         // for a model named User
@@ -159,10 +162,6 @@ final class DefinitionBuilder
     private static function buildHasOne(array &$property, string $modelClass): void
     {
         /* @var Model $modelClass */
-        $property['relation_type'] = Relationship::HAS_ONE;
-        $property['relation'] = $property['has_one'];
-        $property['persisted'] = false;
-        $property['in_array'] = false;
 
         // the default foreign key would look like `user_id`
         // for a model named User
@@ -179,10 +178,6 @@ final class DefinitionBuilder
     private static function buildHasMany(array &$property, string $modelClass): void
     {
         /* @var Model $modelClass */
-        $property['relation_type'] = Relationship::HAS_MANY;
-        $property['relation'] = $property['has_many'];
-        $property['persisted'] = false;
-        $property['in_array'] = false;
 
         // the default foreign key would look like
         // `user_id` for a model named User
@@ -220,14 +215,16 @@ final class DefinitionBuilder
             $result[$property['local_key'].'_type'] = new Property([
                 'type' => Type::STRING,
                 'mutable' => $property['mutable'] ?? Property::MUTABLE,
-            ], $property['local_key'].'_type');
+                'name' => $property['local_key'].'_type',
+            ]);
         }
 
         if (!isset($result[$property['local_key'].'_id'])) {
             $result[$property['local_key'].'_id'] = new Property([
                 'type' => Type::INTEGER,
                 'mutable' => $property['mutable'] ?? Property::MUTABLE,
-            ], $property['local_key'].'_id');
+                'name' => $property['local_key'].'_id',
+            ]);
         }
     }
 }
