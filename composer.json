@@ -22,7 +22,7 @@
 		"psr-4": { "Pulsar\\Tests\\": "tests/" }
 	},
 	"require": {
-		"php": ">=7.2",
+		"php": ">=8.0",
 		"icanboogie/inflector": "^2.0",
 		"symfony/event-dispatcher": ">=4.3",
 		"jaqb/jaqb": "^1.6",
