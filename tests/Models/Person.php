@@ -15,20 +15,20 @@ class Person extends ACLModel
     protected static function getProperties(): array
     {
         return [
-            'id' => new Property([
-                'type' => Type::STRING,
-            ]),
-            'name' => new Property([
-                'type' => Type::STRING,
-                'default' => 'Jared',
-            ]),
-            'email' => new Property([
-                'type' => Type::STRING,
-                'validate' => 'email',
-            ]),
-            'garage' => new Property([
-                'has_one' => Garage::class,
-            ]),
+            'id' => new Property(
+                type: Type::STRING,
+            ),
+            'name' => new Property(
+                type: Type::STRING,
+                default: 'Jared',
+            ),
+            'email' => new Property(
+                type: Type::STRING,
+                validate: 'email',
+            ),
+            'garage' => new Property(
+                has_one: Garage::class,
+            ),
         ];
     }
 

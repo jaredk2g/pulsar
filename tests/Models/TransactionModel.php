@@ -11,10 +11,10 @@ class TransactionModel extends Model
     protected static function getProperties(): array
     {
         return [
-            'name' => new Property([
-                'required' => true,
-                'validate' => ['string', 'min' => 5],
-            ]),
+            'name' => new Property(
+                required: true,
+                validate: ['string', 'min' => 5],
+            ),
         ];
     }
 

@@ -22,59 +22,59 @@ class TestModel2 extends Model
     protected static function getProperties(): array
     {
         return [
-            'id' => new Property([
-                'type' => Type::INTEGER,
-            ]),
-            'id2' => new Property([
-                'type' => Type::INTEGER,
-            ]),
-            'default' => new Property([
-                'default' => 'some default value',
-            ]),
-            'validate' => new Property([
-                'validate' => ['email', ['string', 'min' => 5]],
-                'null' => true,
-            ]),
-            'validate2' => new Property([
-                'validate' => ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
-                'null' => true,
-                'in_array' => false,
-            ]),
-            'unique' => new Property([
-                'validate' => ['unique', 'column' => 'unique'],
-            ]),
-            'required' => new Property([
-                'type' => Type::INTEGER,
-                'required' => true,
-            ]),
-            'hidden' => new Property([
-                'type' => Type::BOOLEAN,
-                'default' => false,
-                'in_array' => false,
-            ]),
-            'person' => new Property([
-                'type' => Type::INTEGER,
-                'relation' => Person::class,
-                'default' => 20,
-                'in_array' => false,
-            ]),
-            'array' => new Property([
-                'type' => Type::ARRAY,
-                'default' => [
+            'id' => new Property(
+                type: Type::INTEGER,
+            ),
+            'id2' => new Property(
+                type: Type::INTEGER,
+            ),
+            'default' => new Property(
+                default: 'some default value',
+            ),
+            'validate' => new Property(
+                validate: ['email', ['string', 'min' => 5]],
+                null: true,
+            ),
+            'validate2' => new Property(
+                validate: ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
+                null: true,
+                in_array: false,
+            ),
+            'unique' => new Property(
+                validate: ['unique', 'column' => 'unique'],
+            ),
+            'required' => new Property(
+                type: Type::INTEGER,
+                required: true,
+            ),
+            'hidden' => new Property(
+                type: Type::BOOLEAN,
+                default: false,
+                in_array: false,
+            ),
+            'person' => new Property(
+                type: Type::INTEGER,
+                relation: Person::class,
+                default: 20,
+                in_array: false,
+            ),
+            'array' => new Property(
+                type: Type::ARRAY,
+                default: [
                     'tax' => '%',
                     'discounts' => false,
                     'shipping' => false,
                 ],
-                'in_array' => false,
-            ]),
-            'object' => new Property([
-                'type' => Type::OBJECT,
-                'in_array' => false,
-            ]),
-            'mutable_create_only' => new Property([
-                'mutable' => Property::MUTABLE_CREATE_ONLY,
-                'in_array' => false,
-            ]),
+                in_array: false,
+            ),
+            'object' => new Property(
+                type: Type::OBJECT,
+                in_array: false,
+            ),
+            'mutable_create_only' => new Property(
+                mutable: Property::MUTABLE_CREATE_ONLY,
+                in_array: false,
+            ),
             'protected' => new Property(),
         ];
     }

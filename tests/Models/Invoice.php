@@ -10,10 +10,10 @@ class Invoice extends Model
     protected static function getProperties(): array
     {
         return [
-            'customer' => new Property([
-                'belongs_to' => Customer::class,
-                'required' => true,
-            ]),
+            'customer' => new Property(
+                required: true,
+                belongs_to: Customer::class,
+            ),
         ];
     }
 }

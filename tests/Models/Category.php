@@ -11,9 +11,9 @@ class Category extends Model
     {
         return [
             'name' => new Property(),
-            'posts' => new Property([
-                'has_many' => Post::class,
-            ]),
+            'posts' => new Property(
+                has_many: Post::class,
+            ),
         ];
     }
 }

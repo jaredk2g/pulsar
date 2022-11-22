@@ -12,77 +12,48 @@ final class Property implements ArrayAccess
     const MUTABLE = 'mutable';
 
     private const RELATIONSHIP_SHORTCUTS = ['belongs_to', 'belongs_to_many', 'has_one', 'has_many'];
+    private const MISSING_DEFAULT = '_____missing_default_____';
 
-    /** @var string */
-    private $name;
+    private bool $hasDefault;
 
-    /** @var string|null */
-    private $type;
-
-    /** @var string */
-    private $mutable = self::MUTABLE;
-
-    /** @var bool */
-    private $null = false;
-
-    /** @var bool */
-    private $required = false;
-
-    /** @var array|string|null */
-    private $validate;
-
-    /** @var mixed|null */
-    private $default;
-
-    /** @var bool */
-    private $hasDefault;
-
-    /** @var bool */
-    private $encrypted = false;
-
-    /** @var bool */
-    private $persisted = true;
-
-    /** @var bool */
-    private $in_array = true;
-
-    /** @var string|null */
-    private $relation;
-
-    /** @var string|null */
-    private $relation_type;
-
-    /** @var string|null */
-    private $foreign_key;
-
-    /** @var string|null */
-    private $local_key;
-
-    /** @var string|null */
-    private $pivot_tablename;
-
-    /** @var array|null */
-    private $morphs_to;
-
-    public function __construct(array $values = [])
+    public function __construct(
+        private string $name = '',
+        private ?string $type = null,
+        private string $mutable = self::MUTABLE,
+        private bool $null = false,
+        private bool $required = false,
+        /** @param array|string|null $valdate */
+        private $validate = null,
+        private mixed $default = self::MISSING_DEFAULT,
+        private bool $encrypted = false,
+        private bool $persisted = true,
+        private bool $in_array = true,
+        private ?string $relation = null,
+        private ?string $relation_type = null,
+        private ?string $foreign_key = null,
+        private ?string $local_key = null,
+        private ?string $pivot_tablename = null,
+        private ?array $morphs_to = null,
+        ?string $belongs_to = null,
+        ?string $belongs_to_many = null,
+        ?string $has_one = null,
+        ?string $has_many = null,
+    )
     {
         // Relationship shortcuts
         foreach (self::RELATIONSHIP_SHORTCUTS as $k) {
-            if (isset($values[$k])) {
-                $values = array_replace([
-                    'persisted' => false,
-                    'in_array' => false,
-                    'relation' => $values[$k],
-                    'relation_type' => $k,
-                ], $values);
-                unset($values[$k]);
+            if ($$k) {
+                $this->persisted = false;
+                $this->in_array = false;
+                $this->relation = $$k;
+                $this->relation_type = $k;
             }
         }
 
-        foreach ($values as $k => $v) {
-            $this->$k = $v;
+        $this->hasDefault = $this->default != self::MISSING_DEFAULT;
+        if (!$this->hasDefault) {
+            $this->default = null;
         }
-        $this->hasDefault = array_key_exists('default', $values);
     }
 
     public function getName(): string

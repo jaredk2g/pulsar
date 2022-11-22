@@ -11,12 +11,12 @@ class Customer extends Model
     {
         return [
             'name' => new Property(),
-            'payment_method' => new Property([
-                'morphs_to' => [
+            'payment_method' => new Property(
+                morphs_to: [
                     'card' => Card::class,
                     'bank_account' => BankAccount::class,
                 ],
-            ]),
+            ),
         ];
     }
 }

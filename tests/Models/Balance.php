@@ -11,12 +11,12 @@ class Balance extends Model
     protected static function getProperties(): array
     {
         return [
-            'person' => new Property([
-                'belongs_to' => Person::class,
-            ]),
-            'amount' => new Property([
-                'type' => Type::FLOAT,
-            ]),
+            'person' => new Property(
+                belongs_to: Person::class,
+            ),
+            'amount' => new Property(
+                type: Type::FLOAT,
+            ),
         ];
     }
 }

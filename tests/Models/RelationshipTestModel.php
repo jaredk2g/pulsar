@@ -10,10 +10,10 @@ class RelationshipTestModel extends Model
     protected static function getProperties(): array
     {
         return [
-            'person' => new Property([
-                'persisted' => false,
-                'in_array' => true,
-            ]),
+            'person' => new Property(
+                persisted: false,
+                in_array: true,
+            ),
         ];
     }
 

@@ -12,9 +12,9 @@ class Car extends Model
         return [
             'make' => new Property(),
             'model' => new Property(),
-            'garage' => new Property([
-                'belongs_to' => Garage::class,
-            ]),
+            'garage' => new Property(
+                belongs_to: Garage::class,
+            ),
         ];
     }
 }

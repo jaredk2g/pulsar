@@ -22,41 +22,41 @@ class TypeTest extends MockeryTestCase
 {
     public function testCast()
     {
-        $property = new Property(['null' => true]);
+        $property = new Property(null: true);
         $this->assertNull(Type::cast($property, ''));
         $this->assertTrue(false === Type::cast($property, false));
 
-        $property = new Property(['type' => Type::STRING, 'null' => false]);
+        $property = new Property(type: Type::STRING, null: false);
         $this->assertEquals('string', Type::cast($property, 'string'));
         $this->assertNull(Type::cast($property, null));
 
-        $property = new Property(['type' => Type::BOOLEAN, 'null' => false]);
+        $property = new Property(type: Type::BOOLEAN, null: false);
         $this->assertTrue(Type::cast($property, true));
         $this->assertTrue(Type::cast($property, '1'));
         $this->assertFalse(Type::cast($property, false));
 
-        $property = new Property(['type' => Type::INTEGER, 'null' => false]);
+        $property = new Property(type: Type::INTEGER, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Type::FLOAT, 'null' => false]);
+        $property = new Property(type: Type::FLOAT, null: false);
         $this->assertEquals(1.23, Type::cast($property, 1.23));
         $this->assertEquals(123.0, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Type::INTEGER, 'null' => false]);
+        $property = new Property(type: Type::INTEGER, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
 
-        $property = new Property(['type' => Type::DATE, 'null' => false]);
+        $property = new Property(type: Type::DATE, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
         $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::cast($property, 'Aug-20-2015'));
 
-        $property = new Property(['type' => Type::ARRAY, 'null' => false]);
+        $property = new Property(type: Type::ARRAY, null: false);
         $this->assertEquals(['test' => true], Type::cast($property, '{"test":true}'));
         $this->assertEquals(['test' => true], Type::cast($property, ['test' => true]));
 
-        $property = new Property(['type' => Type::OBJECT, 'null' => false]);
+        $property = new Property(type: Type::OBJECT, null: false);
         $expected = new stdClass();
         $expected->test = true;
         $this->assertEquals($expected, Type::cast($property, '{"test":true}'));
@@ -68,7 +68,7 @@ class TypeTest extends MockeryTestCase
         $key = Key::loadFromAsciiSafeString('def000008c6cd2d9a56c128d08773b38fe685c710f2bb7be08cc109c0841df42e8a9ed5995ac5f28354ff2ffaedffc9dd6d06bd6890fd12e44bef48c48b7a8a4bd94fe75');
         Type::setEncryptionKey($key);
 
-        $property = new Property(['encrypted' => true, 'null' => true]);
+        $property = new Property(encrypted: true, null: true);
         $this->assertNull(Type::cast($property, null));
         $this->assertNull(Type::cast($property, ''));
 
@@ -76,7 +76,7 @@ class TypeTest extends MockeryTestCase
         $decrypted = Type::cast($property, $encrypted);
         $this->assertEquals('original value', $decrypted);
 
-        $property = new Property(['type' => Type::OBJECT, 'encrypted' => true]);
+        $property = new Property(type: Type::OBJECT, encrypted: true);
         $encrypted = Crypto::encrypt('{"test":true}', $key);
         $expected = new stdClass();
         $expected->test = true;

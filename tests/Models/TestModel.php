@@ -17,10 +17,10 @@ class TestModel extends Model
 
     protected function initialize(): void
     {
-        self::$properties['test_hook'] = [
-            'type' => Type::STRING,
-            'null' => true,
-        ];
+        self::$properties['test_hook'] = new Property(
+            type: Type::STRING,
+            null: true,
+        );
 
         parent::initialize();
     }
@@ -28,27 +28,27 @@ class TestModel extends Model
     protected static function getProperties(): array
     {
         return array_replace([
-            'relation' => new Property([
-                'type' => Type::INTEGER,
-                'relation' => TestModel2::class,
-                'null' => true,
-            ]),
-            'answer' => new Property([
-                'type' => Type::STRING,
-            ]),
-            'mutator' => new Property([
-                'in_array' => false,
-            ]),
-            'accessor' => new Property([
-                'in_array' => false,
-            ]),
-            'encrypted' => new Property([
-                'encrypted' => true,
-            ]),
-            'appended' => new Property([
-                'persisted' => false,
-                'in_array' => true,
-            ]),
+            'relation' => new Property(
+                type: Type::INTEGER,
+                null: true,
+                relation: TestModel2::class,
+            ),
+            'answer' => new Property(
+                type: Type::STRING,
+            ),
+            'mutator' => new Property(
+                in_array: false,
+            ),
+            'accessor' => new Property(
+                in_array: false,
+            ),
+            'encrypted' => new Property(
+                encrypted: true,
+            ),
+            'appended' => new Property(
+                persisted: false,
+                in_array: true,
+            ),
         ], self::$properties);
     }
 

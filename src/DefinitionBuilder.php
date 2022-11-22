@@ -75,7 +75,7 @@ final class DefinitionBuilder
             }
 
             $property['name'] = $k;
-            $result[$k] = new Property($property);
+            $result[$k] = new Property(...$property);
         }
 
         // order the properties array by name for consistency
@@ -121,11 +121,11 @@ final class DefinitionBuilder
         // when a belongs_to relationship is used then we automatically add a
         // new property for the ID field which gets persisted to the DB
         if (!isset($result[$property['local_key']])) {
-            $result[$property['local_key']] = new Property([
-                'type' => Type::INTEGER,
-                'mutable' => $property['mutable'] ?? Property::MUTABLE,
-                'name' => $property['local_key'],
-            ]);
+            $result[$property['local_key']] = new Property(
+                type: Type::INTEGER,
+                mutable: $property['mutable'] ?? Property::MUTABLE,
+                name: $property['local_key'],
+            );
         }
     }
 
@@ -212,19 +212,19 @@ final class DefinitionBuilder
         // when a polymorhpic relationship is used then we automatically add a
         // new property for the type and ID fields which gets persisted to the DB
         if (!isset($result[$property['local_key'].'_type'])) {
-            $result[$property['local_key'].'_type'] = new Property([
-                'type' => Type::STRING,
-                'mutable' => $property['mutable'] ?? Property::MUTABLE,
-                'name' => $property['local_key'].'_type',
-            ]);
+            $result[$property['local_key'].'_type'] = new Property(
+                name: $property['local_key'].'_type',
+                type: Type::STRING,
+                mutable: $property['mutable'] ?? Property::MUTABLE,
+            );
         }
 
         if (!isset($result[$property['local_key'].'_id'])) {
-            $result[$property['local_key'].'_id'] = new Property([
-                'type' => Type::INTEGER,
-                'mutable' => $property['mutable'] ?? Property::MUTABLE,
-                'name' => $property['local_key'].'_id',
-            ]);
+            $result[$property['local_key'].'_id'] = new Property(
+                name: $property['local_key'].'_id',
+                type: Type::INTEGER,
+                mutable: $property['mutable'] ?? Property::MUTABLE,
+            );
         }
     }
 }
