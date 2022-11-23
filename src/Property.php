@@ -50,7 +50,7 @@ final class Property implements ArrayAccess
             }
         }
 
-        $this->hasDefault = $this->default != self::MISSING_DEFAULT;
+        $this->hasDefault = $this->default !== self::MISSING_DEFAULT;
         if (!$this->hasDefault) {
             $this->default = null;
         }
