@@ -73,6 +73,7 @@ The example below shows how to create a user model. Please consult the model def
 <?php
 
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Traits\AutoTimestamps;
 use Pulsar\Type;
 
@@ -81,31 +82,34 @@ class User extends Model
     // Add `created_at` and `updated_at` properties
     use AutoTimestamps;
 
-    // Unless specified the `id` property is automatically added as an autoincrement integer
-    protected static $properties = [
-        'first_name' => [
-            'required' => true,
-        ],
-        'last_name' => [
-            'null' => true,
-        ],
-        'email' => [
-            'validate' => 'email',
-            'required' => true,
-        ],
-        'password' => [
-            // Then stores passwords hashed with password_hash().
-            'validate' => 'password',
-            'required' => true,
-        ],
-        'balance' => [
-            'type' => Type::FLOAT,
-        ],
-        'last_sign_in' => [
-            'type' => Type::DATE,
-            'null' => true,
-        ]
-    ];
+    protected static function getProperties(): array
+    {
+        // Unless specified the `id` property is automatically added as an autoincrement integer
+        return [
+            'first_name' => new Property(
+                required: true,
+            ),
+            'last_name' => new Property(
+                null: true,
+            ),
+            'email' => new Property(
+                validate: 'email',
+                required: true,
+            ),
+            'password' => new Property(
+                // Then stores passwords hashed with password_hash().
+                validate: 'password',
+                required: true,
+            ),
+            'balance' => new Property(
+                type: Type::FLOAT,
+            ),
+            'last_sign_in' => new Property(
+                type: Type::DATE,
+                null: true,
+            ),
+        ];
+    }
 }
 ```
 
@@ -331,14 +335,19 @@ Pulsar allows you to define relationships between models and makes it easy to ac
 
 ```php
 use Pulsar\Model;
+use Pulsar\Property;
 
 class Car extends Model
 {
-    protected static $properties = [
-        'garage' => [
-            'belongs_to' => Garage::class,
-        ],
-    ];
+
+    protected static function getProperties(): array
+    {
+        return [
+            'garage' => new Property(
+                belongs_to: Garage::class,
+            ),
+        ];
+    }
 }
 ```
 
@@ -348,14 +357,18 @@ The garage model can be set or accessed with `$car->garage`.
 
 ```php
 use Pulsar\Model;
+use Pulsar\Property;
 
 class Person extends Model
 {
-    protected static $properties = [
-        'garage' => [
-            'has_one' => Garage::class,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'garage' => new Property(
+                has_one: Garage::class,
+            ),
+        ];
+    }
 }
 ```
 
@@ -365,14 +378,18 @@ The garage model can be accessed with `$person->garage`.
 
 ```php
 use Pulsar\Model;
+use Pulsar\Property;
 
 class BlogPost extends Model
 {
-    protected static $properties = [
-        'categories' => [
-            'belongs_to_many' => Category::class,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'categories' => new Property(
+               belongs_to_many: Category::class,
+            ),
+        ];
+    }
 }
 ```
 
@@ -382,14 +399,18 @@ The category models can then be set or accessed with `$customer->categories`.
 
 ```php
 use Pulsar\Model;
+use Pulsar\Property;
 
 class Garage extends Model
 {
-    protected static $properties = [
-        'cars' => [
-            'has_many' => Car::class,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'cars' => new Property(
+                has_many: Car::class,
+            ),
+        ];
+    }
 }
 ```
 
@@ -399,17 +420,21 @@ The car models can then be set or accessed with `$garage->cars`.
 
 ```php
 use Pulsar\Model;
+use Pulsar\Property;
 
 class Customer extends Model
 {
-    protected static $properties = [
-        'payment_method' => [
-            'morphs_to' => [
-                'card' => Card::class,
-                'bank_account' => BankAccount::class,
-            ],
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'payment_method' => new Property(
+                morphs_to: [
+                    'card' => Card::class,
+                    'bank_account' => BankAccount::class,
+                ],
+            ),
+        ];
+    }
 }
 ```
 
@@ -431,26 +456,30 @@ Validation can be enabled on a per-property basis with the `validate` parameter.
 <?php
 
 use Pulsar\Model;
+use Pulsar\Property;
 
 class User extends Model
 {
-    protected static $properties = [
-        // single validation rule
-        'email' => [
-            'validate' => 'email',
-        ],
-        // multiple validation rules
-        'password' => [
-            'validate' => [
-                'matching',
-                ['password', 'min' => 8],
-            ],
-        ],
-        // single validation rule with options
-        'balance' => [
-            'validate' => ['callable', 'fn' => [self::class, 'validateBalance']],
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            // single validation rule
+            'email' => new Property(
+                validate: 'email',
+            ),
+            // multiple validation rules
+            'password' => new Property(
+                validate: [
+                    'matching',
+                    ['password', 'min' => 8],
+                ],
+            ),
+            // single validation rule with options
+            'balance' => new Property(
+                validate: ['callable', 'fn' => [self::class, 'validateBalance']],
+            ),
+        ];
+    }
 
     static function validateBalance(&$value, array $options, Model $model): bool
     {
@@ -519,22 +548,26 @@ Errors::setTranslator($translator);
 <?php
 
 use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Event\AbstractEvent;
 use Pulsar\Type;
 
 class LineItem extends Model
 {
-    protected static $properties = [
-        'quantity' => [
-            'type' => Type::FLOAT,
-        ],
-        'unit_cost' => [
-            'type' => Type::FLOAT,
-        ],
-        'total' => [
-            'type' => Type::FLOAT,
-        ],
-    ];
+    protected static function getProperties(): array
+    {
+        return [
+            'quantity' => new Property(
+                type: Type::FLOAT,
+            ),
+            'unit_cost' => new Property(
+                type: Type::FLOAT,
+            ),
+            'total' => new Property(
+                type: Type::FLOAT,
+            ),
+        ];
+    }
 
     protected function initialize()
     {
