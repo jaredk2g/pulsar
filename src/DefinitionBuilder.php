@@ -7,11 +7,6 @@ use Pulsar\Relation\Relationship;
 
 final class DefinitionBuilder
 {
-    const DEFAULT_ID_PROPERTY = [
-        'type' => Type::INTEGER,
-        'mutable' => Property::IMMUTABLE,
-    ];
-
     /** @var Definition[] */
     private static $definitions;
 
@@ -34,23 +29,25 @@ final class DefinitionBuilder
      * Builds a model definition given certain parameters.
      *
      * @param string[] $ids
+     * @param Property[] $properties
      */
     public static function build(array $ids, array $properties, string $modelClass): Definition
     {
         // add in the default ID property
         if (!isset($properties[Model::DEFAULT_ID_NAME]) && $ids == [Model::DEFAULT_ID_NAME]) {
-            $properties[Model::DEFAULT_ID_NAME] = self::DEFAULT_ID_PROPERTY;
+            $properties[Model::DEFAULT_ID_NAME] = new Property(
+                type: Type::INTEGER,
+                mutable: Property::IMMUTABLE,
+            );
         }
 
         $result = [];
         foreach ($properties as $k => $property) {
             // convert to an array in order to fill in additional settings
-            if ($property instanceof Property) {
-                $hasDefault = $property->hasDefault();
-                $property = $property->toArray();
-                if (!$hasDefault) {
-                    unset($property['default']);
-                }
+            $hasDefault = $property->hasDefault();
+            $property = $property->toArray();
+            if (!$hasDefault) {
+                unset($property['default']);
             }
 
             // handle relationship shortcuts
@@ -122,9 +119,9 @@ final class DefinitionBuilder
         // new property for the ID field which gets persisted to the DB
         if (!isset($result[$property['local_key']])) {
             $result[$property['local_key']] = new Property(
+                name: $property['local_key'],
                 type: Type::INTEGER,
                 mutable: $property['mutable'] ?? Property::MUTABLE,
-                name: $property['local_key'],
             );
         }
     }

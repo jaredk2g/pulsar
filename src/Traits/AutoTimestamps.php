@@ -4,6 +4,7 @@ namespace Pulsar\Traits;
 
 use Pulsar\Event\AbstractEvent;
 use Pulsar\Event\ModelCreating;
+use Pulsar\Property;
 use Pulsar\Type;
 
 /**
@@ -22,14 +23,14 @@ trait AutoTimestamps
     protected static function autoDefinitionAutoTimestamps(): array
     {
         return [
-            'created_at' => [
-                'type' => Type::DATE,
-                'validate' => 'timestamp|db_timestamp',
-            ],
-            'updated_at' => [
-                'type' => Type::DATE,
-                'validate' => 'timestamp|db_timestamp',
-            ],
+            'created_at' => new Property(
+                type: Type::DATE,
+                validate: 'timestamp|db_timestamp',
+            ),
+            'updated_at' => new Property(
+                type: Type::DATE,
+                validate: 'timestamp|db_timestamp',
+            ),
         ];
     }
 

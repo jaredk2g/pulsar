@@ -14,7 +14,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Doctrine 3 compatibility if using the DBAL driver
 - Added `Model::deleteOrFail()` method.
 - The model ID property names can be obtained with `Definition::getIds()`
-- Property definitions can now be objects instead of arrays
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`
@@ -33,6 +32,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Any `autoDefinition` methods should return an array of properties that will be added to the list of model properties
 - Minimum required version is PHP 8.0
 - The constructor arguments to `Property` are now typed and promoted to constructor properties. An array of properties is no longer accepted.
+- Property definitions must return `Property` objects instead of arrays
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

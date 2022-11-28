@@ -12,6 +12,7 @@
 namespace Pulsar\Relation;
 
 use Pulsar\Model;
+use Pulsar\Property;
 
 /**
  * Pivot model shim for use by relationships.
@@ -38,8 +39,8 @@ final class Pivot extends Model
     public function setProperties(string $localKey, string $foreignKey)
     {
         self::$properties = [
-            $localKey => [],
-            $foreignKey => [],
+            $localKey => new Property(),
+            $foreignKey => new Property(),
         ];
         $this->initialize();
     }

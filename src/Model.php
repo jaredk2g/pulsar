@@ -428,7 +428,7 @@ abstract class Model implements ArrayAccess
         // that starts with "autoDefinition". This is useful for traits to add properties.
         $methods = get_class_methods(static::class);
         foreach ($methods as $method) {
-            if (0 === strpos($method, 'autoDefinition')) {
+            if (str_starts_with($method, 'autoDefinition')) {
                 $properties = array_replace(static::$method(), $properties);
             }
         }
@@ -449,7 +449,9 @@ abstract class Model implements ArrayAccess
      *
      * Property definitions expressed as a key-value map with
      * property names as the keys.
-     * i.e. ['enabled' => ['type' => Type::BOOLEAN]].
+     * i.e. ['enabled' => new Property(type: Type::BOOLEAN)].
+     *
+     * @return Property[]
      */
     protected static function getProperties(): array
     {

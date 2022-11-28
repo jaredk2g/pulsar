@@ -3,6 +3,7 @@
 namespace Pulsar\Traits;
 
 use Pulsar\Exception\ModelException;
+use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Type;
 use Pulsar\Validator;
@@ -18,14 +19,14 @@ trait SoftDelete
     protected static function autoDefinitionSoftDelete(): array
     {
         return [
-            'deleted' => [
-                'type' => Type::BOOLEAN,
-            ],
-            'deleted_at' => [
-                'type' => Type::DATE,
-                'validate' => 'timestamp|db_timestamp',
-                'null' => true,
-            ],
+            'deleted' => new Property(
+                type: Type::BOOLEAN,
+            ),
+            'deleted_at' => new Property(
+                type: Type::DATE,
+                null: true,
+                validate: 'timestamp|db_timestamp',
+            ),
         ];
     }
 
