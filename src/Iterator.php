@@ -17,14 +17,13 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
     private int $start;
     private int $pointer;
     private int $limit;
-    private int|bool $loadedStart;
-    private array $models;
-    private int|bool $count;
+    private int|bool $loadedStart = false;
+    private array $models = [];
+    private int|bool $count = false;
 
     public function __construct(Query $query)
     {
         $this->query = $query;
-        $this->models = [];
         $this->start = $query->getStart();
         $this->limit = $query->getLimit();
         $this->pointer = $this->start;

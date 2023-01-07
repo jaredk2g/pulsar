@@ -9,7 +9,7 @@ class AclObject extends ACLModel
 {
     public $first = true;
 
-    protected function hasPermission($permission, Model $requester): bool
+    protected function hasPermission(string $permission, Model $requester): bool
     {
         if ('whatever' == $permission) {
             // always say no the first time
