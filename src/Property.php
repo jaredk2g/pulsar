@@ -22,8 +22,7 @@ final class Property implements ArrayAccess
         private string $mutable = self::MUTABLE,
         private bool $null = false,
         private bool $required = false,
-        /** @param array|string|null $valdate */
-        private $validate = null,
+        private array|string|null $validate = null,
         private mixed $default = self::MISSING_DEFAULT,
         private bool $encrypted = false,
         private bool $persisted = true,
@@ -38,6 +37,7 @@ final class Property implements ArrayAccess
         ?string $belongs_to_many = null,
         ?string $has_one = null,
         ?string $has_many = null,
+        private ?string $enum_class = null,
     )
     {
         // Relationship shortcuts
@@ -109,18 +109,12 @@ final class Property implements ArrayAccess
         return $this->required;
     }
 
-    /**
-     * @return array|string|null
-     */
-    public function getValidationRules()
+    public function getValidationRules(): array|string|null
     {
         return $this->validate;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getDefault()
+    public function getDefault(): mixed
     {
         return $this->default;
     }
@@ -175,6 +169,11 @@ final class Property implements ArrayAccess
         return $this->morphs_to;
     }
 
+    public function getEnumClass(): ?string
+    {
+        return $this->enum_class;
+    }
+
     public function toArray(): array
     {
         return [
@@ -193,6 +192,7 @@ final class Property implements ArrayAccess
             'local_key' => $this->local_key,
             'pivot_tablename' => $this->pivot_tablename,
             'morphs_to' => $this->morphs_to,
+            'enum_class' => $this->enum_class,
         ];
     }
 

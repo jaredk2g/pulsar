@@ -105,6 +105,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'relation' => [
                 'type' => Type::INTEGER,
@@ -122,6 +123,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'answer' => [
                 'type' => Type::STRING,
@@ -139,6 +141,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'test_hook' => [
                 'type' => Type::STRING,
@@ -156,6 +159,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'mutator' => [
                 'type' => null,
@@ -173,6 +177,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'accessor' => [
                 'type' => null,
@@ -190,6 +195,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'encrypted' => [
                 'type' => null,
@@ -207,6 +213,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'appended' => [
                 'type' => null,
@@ -224,6 +231,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
         ];
 
@@ -251,6 +259,7 @@ class ModelTest extends MockeryTestCase
             'pivot_tablename' => null,
             'morphs_to' => null,
             'in_array' => true,
+            'enum_class' => null,
         ];
 
         $this->assertEquals($expected, Person::definition()->get('id')->toArray());
@@ -274,6 +283,7 @@ class ModelTest extends MockeryTestCase
             'pivot_tablename' => null,
             'morphs_to' => null,
             'in_array' => true,
+            'enum_class' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('id')->toArray());
 
@@ -293,6 +303,7 @@ class ModelTest extends MockeryTestCase
             'pivot_tablename' => null,
             'morphs_to' => null,
             'in_array' => true,
+            'enum_class' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('relation')->toArray());
     }
@@ -316,6 +327,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'id2' => [
                 'type' => Type::INTEGER,
@@ -333,6 +345,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'default' => [
                 'type' => null,
@@ -350,6 +363,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'validate' => [
                 'type' => null,
@@ -367,6 +381,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'validate2' => [
                 'type' => null,
@@ -384,6 +399,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'unique' => [
                 'type' => null,
@@ -401,6 +417,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'required' => [
                 'type' => Type::INTEGER,
@@ -418,6 +435,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'hidden' => [
                 'type' => Type::BOOLEAN,
@@ -435,6 +453,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'person' => [
                 'type' => Type::INTEGER,
@@ -452,6 +471,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'array' => [
                 'type' => Type::ARRAY,
@@ -473,6 +493,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'object' => [
                 'type' => Type::OBJECT,
@@ -490,6 +511,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'mutable_create_only' => [
                 'type' => null,
@@ -507,6 +529,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'protected' => [
                 'type' => null,
@@ -524,6 +547,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'created_at' => [
                 'type' => Type::DATE,
@@ -541,6 +565,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'updated_at' => [
                 'type' => Type::DATE,
@@ -558,6 +583,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
         ];
         $model = new TestModel2(); // forces initialize()
@@ -584,6 +610,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'name' => [
                 'type' => Type::STRING,
@@ -601,6 +628,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'email' => [
                 'type' => Type::STRING,
@@ -618,6 +646,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'deleted' => [
                 'type' => Type::BOOLEAN,
@@ -635,6 +664,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'deleted_at' => [
                 'type' => Type::DATE,
@@ -652,6 +682,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'garage' => [
                 'type' => null,
@@ -669,6 +700,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
         ];
 
@@ -2286,6 +2318,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
             'customer' => [
                 'type' => null,
@@ -2303,6 +2336,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => false,
+                'enum_class' => null,
             ],
             'customer_id' => [
                 'type' => 'integer',
@@ -2320,6 +2354,7 @@ class ModelTest extends MockeryTestCase
                 'pivot_tablename' => null,
                 'morphs_to' => null,
                 'in_array' => true,
+                'enum_class' => null,
             ],
         ];
 

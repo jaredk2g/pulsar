@@ -2,20 +2,23 @@
 
 namespace Pulsar\Driver;
 
+use BackedEnum;
 use JAQB\Query\SelectQuery;
 use Pulsar\Query;
+use UnitEnum;
 
 abstract class AbstractDriver implements DriverInterface
 {
     /**
      * Marshals a value to storage.
-     *
-     * @param mixed $value
-     *
-     * @return mixed serialized value
      */
-    public function serializeValue($value)
+    public function serializeValue(mixed $value): mixed
     {
+        // encode backed enums as their backing type
+        if ($value instanceof BackedEnum) {
+            return $value->value;
+        }
+
         // encode arrays/objects as JSON
         if (is_array($value) || is_object($value)) {
             return json_encode($value);

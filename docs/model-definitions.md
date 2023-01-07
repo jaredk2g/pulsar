@@ -15,6 +15,7 @@ Standard Options:
 - [default](#default)
 - [encrypted](#encrypted)
 - [in_array](#in_array)
+- [enum_class](#enum_class)
 
 Relationships:
 - [belongs_to](#belongs_to)
@@ -33,13 +34,14 @@ Relationships:
 The data type of the property. This setting will type cast values when retrieved from the database to a PHP value. If the type is not specified then no type casting is performed and the value is returned as provided by the database driver. 
 
 Supported Types:
-- `string`
-- `float`
-- `integer`
+- `array`
 - `boolean`
 - `date`
-- `array`
+- `enum`
+- `float`
+- `integer`
 - `object`
+- `string`
 
 String, Optional, Default: `null`
 
@@ -95,6 +97,12 @@ Boolean, Optional, Default: `false`
 Indicates whether the property will be included in the array representation of the model via `Model::toArray()`.
 
 Boolean, Optional, Default: `true` (`false` for relationships)
+
+### enum_class
+
+This is required when the property type is `enum`. The value must be the class name of a `BackedEnum` class. Any values used for this property will be an instance of this enum class.
+
+String, Optional, Default: `null`
 
 ## Relationships
 

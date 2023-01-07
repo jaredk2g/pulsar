@@ -21,6 +21,8 @@ use PDOStatement;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
+use Pulsar\Tests\Enums\TestEnumInteger;
+use Pulsar\Tests\Enums\TestEnumString;
 use Pulsar\Tests\Models\Group;
 use Pulsar\Tests\Models\Person;
 use stdClass;
@@ -108,6 +110,9 @@ class DatabaseDriverTest extends MockeryTestCase
         $obj = new stdClass();
         $obj->test = true;
         $this->assertEquals('{"test":true}', $driver->serializeValue($obj));
+
+        $this->assertEquals('first', $driver->serializeValue(TestEnumString::First));
+        $this->assertEquals(1, $driver->serializeValue(TestEnumInteger::First));
     }
 
     public function testCreateModel()

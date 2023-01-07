@@ -59,6 +59,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Model::beforePersist()` and `Model::afterPersist()` shortcut to install lifecycle event listeners for all create, update, and delete.
 - Added `Model::getMassAssignmentWhitelist()` and `Model::getMassAssignmentBlacklist()` that can be overriden to define mass assignment rules.
 - Added `in_array` model definition setting to indicate whether a property is included in the array representation.
+- Added `enum` model property type.
 
 ### Changed
 - Make model internal properties private when possible.

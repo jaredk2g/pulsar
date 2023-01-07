@@ -11,33 +11,31 @@
 
 namespace Pulsar;
 
+use BackedEnum;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use stdClass;
 
 /**
  * Handles value type casting.
  */
 final class Type
 {
-    const STRING = 'string';
-    const INTEGER = 'integer';
-    const FLOAT = 'float';
+    const ARRAY = 'array';
     const BOOLEAN = 'boolean';
     const DATE = 'date';
+    const ENUM = 'enum';
+    const FLOAT = 'float';
+    const INTEGER = 'integer';
     const OBJECT = 'object';
-    const ARRAY = 'array';
+    const STRING = 'string';
 
-    /** @var Key|null */
-    private static $encryptionKey;
+    private static ?Key $encryptionKey = null;
 
     /**
      * Marshals a value for a given property from storage.
-     *
-     * @param mixed $value
-     *
-     * @return mixed type-casted value
      */
-    public static function cast(Property $property, $value)
+    public static function cast(Property $property, mixed $value): mixed
     {
         if (null === $value) {
             return null;
@@ -58,6 +56,10 @@ final class Type
             return $value;
         }
 
+        if ($type == self::ENUM) {
+            return self::to_enum($value, (string) $property->getEnumClass());
+        }
+
         $m = 'to_'.$property->getType();
 
         return self::$m($value);
@@ -65,50 +67,40 @@ final class Type
 
     /**
      * Casts a value to a string.
-     *
-     * @param mixed $value
      */
-    public static function to_string($value): string
+    public static function to_string(mixed $value): string
     {
         return (string) $value;
     }
 
     /**
      * Casts a value to an integer.
-     *
-     * @param mixed $value
      */
-    public static function to_integer($value): int
+    public static function to_integer(mixed $value): int
     {
         return (int) $value;
     }
 
     /**
      * Casts a value to a float.
-     *
-     * @param mixed $value
      */
-    public static function to_float($value): float
+    public static function to_float(mixed $value): float
     {
         return (float) $value;
     }
 
     /**
      * Casts a value to a boolean.
-     *
-     * @param mixed $value
      */
-    public static function to_boolean($value): bool
+    public static function to_boolean(mixed $value): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
     }
 
     /**
      * Casts a date value as a UNIX timestamp.
-     *
-     * @param mixed $value
      */
-    public static function to_date($value): int
+    public static function to_date(mixed $value): int
     {
         if (!is_numeric($value)) {
             return strtotime($value);
@@ -119,10 +111,8 @@ final class Type
 
     /**
      * Casts a value to an array.
-     *
-     * @param mixed $value
      */
-    public static function to_array($value): array
+    public static function to_array(mixed $value): array
     {
         // decode JSON strings into an array
         if (is_string($value)) {
@@ -134,12 +124,8 @@ final class Type
 
     /**
      * Casts a value to an object.
-     *
-     * @param mixed $value
-     *
-     * @return object
      */
-    public static function to_object($value): \stdClass
+    public static function to_object(mixed $value): stdClass
     {
         // decode JSON strings into an object
         if (is_string($value)) {
@@ -147,6 +133,15 @@ final class Type
         }
 
         return (object) $value;
+    }
+
+    public static function to_enum(mixed $value, string $enumClass): BackedEnum
+    {
+        if ($value instanceof $enumClass) {
+            return $value;
+        }
+
+        return $enumClass::from($value);
     }
 
     /**

@@ -15,12 +15,15 @@ use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Pulsar\Property;
+use Pulsar\Tests\Enums\TestEnumInteger;
+use Pulsar\Tests\Enums\TestEnumString;
 use Pulsar\Type;
 use stdClass;
+use ValueError;
 
 class TypeTest extends MockeryTestCase
 {
-    public function testCast()
+    public function testCast(): void
     {
         $property = new Property(null: true);
         $this->assertNull(Type::cast($property, ''));
@@ -61,9 +64,13 @@ class TypeTest extends MockeryTestCase
         $expected->test = true;
         $this->assertEquals($expected, Type::cast($property, '{"test":true}'));
         $this->assertEquals($expected, Type::cast($property, $expected));
+
+        $property = new Property(type: Type::ENUM, null: false, enum_class: TestEnumString::class);
+        $this->assertEquals(TestEnumString::First, Type::cast($property, 'first'));
+        $this->assertEquals(TestEnumString::First, Type::cast($property, TestEnumString::First));
     }
 
-    public function testCastEncrypted()
+    public function testCastEncrypted(): void
     {
         $key = Key::loadFromAsciiSafeString('def000008c6cd2d9a56c128d08773b38fe685c710f2bb7be08cc109c0841df42e8a9ed5995ac5f28354ff2ffaedffc9dd6d06bd6890fd12e44bef48c48b7a8a4bd94fe75');
         Type::setEncryptionKey($key);
@@ -83,39 +90,39 @@ class TypeTest extends MockeryTestCase
         $this->assertEquals($expected, Type::cast($property, $encrypted));
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $this->assertEquals('string', Type::to_string('string'));
         $this->assertEquals('123', Type::to_string(123));
     }
 
-    public function testToInteger()
+    public function testToInteger(): void
     {
         $this->assertEquals(123, Type::to_integer(123));
         $this->assertEquals(123, Type::to_integer('123'));
     }
 
-    public function testToFloat()
+    public function testToFloat(): void
     {
         $this->assertEquals(1.23, Type::to_float(1.23));
         $this->assertEquals(123.0, Type::to_float('123'));
     }
 
-    public function testToBoolean()
+    public function testToBoolean(): void
     {
         $this->assertTrue(Type::to_boolean(true));
         $this->assertTrue(Type::to_boolean('1'));
         $this->assertFalse(Type::to_boolean(false));
     }
 
-    public function testToDate()
+    public function testToDate(): void
     {
         $this->assertEquals(123, Type::to_date(123));
         $this->assertEquals(123, Type::to_date('123'));
         $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::to_date('Aug-20-2015'));
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $this->assertEquals(['test' => true], Type::to_array('{"test":true}'));
         $this->assertEquals(['test' => true], Type::to_array(['test' => true]));
@@ -123,7 +130,7 @@ class TypeTest extends MockeryTestCase
         $this->assertEquals([], Type::to_array(null));
     }
 
-    public function testToObject()
+    public function testToObject(): void
     {
         $expected = new stdClass();
         $expected->test = true;
@@ -133,5 +140,25 @@ class TypeTest extends MockeryTestCase
         $expected = new stdClass();
         $this->assertEquals($expected, Type::to_object(''));
         $this->assertEquals($expected, Type::to_object(null));
+    }
+
+    public function testToEnumString(): void
+    {
+        $this->assertEquals(TestEnumString::First, Type::to_enum('first', TestEnumString::class));
+        $this->assertEquals(TestEnumString::Second, Type::to_enum('second', TestEnumString::class));
+        $this->assertEquals(TestEnumString::Third, Type::to_enum('third', TestEnumString::class));
+    }
+
+    public function testToEnumInteger(): void
+    {
+        $this->assertEquals(TestEnumInteger::First, Type::to_enum(1, TestEnumInteger::class));
+        $this->assertEquals(TestEnumInteger::Second, Type::to_enum(2, TestEnumInteger::class));
+        $this->assertEquals(TestEnumInteger::Third, Type::to_enum(3, TestEnumInteger::class));
+    }
+
+    public function testToEnumInvalid(): void
+    {
+        $this->expectException(ValueError::class);
+        Type::to_enum('not valid', TestEnumString::class);
     }
 }
