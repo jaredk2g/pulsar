@@ -85,7 +85,7 @@ trait Cacheable
         return $this->cacheItem;
     }
 
-    public function refresh(): self
+    public function refresh(): static
     {
         if (!$this->hasId()) {
             return $this;
@@ -113,7 +113,7 @@ trait Cacheable
         return parent::refresh();
     }
 
-    public function refreshWith(array $values): self
+    public function refreshWith(array $values): static
     {
         return parent::refreshWith($values)->cache();
     }
@@ -123,7 +123,7 @@ trait Cacheable
      *
      * @return $this
      */
-    public function cache(): self
+    public function cache(): static
     {
         if (!self::$cachePool || 0 == count($this->_values)) {
             return $this;
@@ -139,7 +139,7 @@ trait Cacheable
         return $this;
     }
 
-    public function clearCache(): self
+    public function clearCache(): static
     {
         if (self::$cachePool) {
             $k = $this->getCacheKey();

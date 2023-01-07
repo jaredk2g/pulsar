@@ -57,7 +57,7 @@ abstract class ACLModel extends Model
      *
      * @return $this
      */
-    public function grantAllPermissions(): self
+    public function grantAllPermissions(): static
     {
         $this->permissionsDisabled = true;
 
@@ -69,7 +69,7 @@ abstract class ACLModel extends Model
      *
      * @return $this
      */
-    public function enforcePermissions(): self
+    public function enforcePermissions(): static
     {
         $this->permissionsDisabled = false;
 

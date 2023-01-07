@@ -658,7 +658,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function ignoreUnsaved(): self
+    public function ignoreUnsaved(): static
     {
         $this->ignoreUnsaved = true;
 
@@ -793,7 +793,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function setValues(array $values): self
+    public function setValues(array $values): static
     {
         if ($permitted = $this->getMassAssignmentWhitelist()) {
             // use a mass assignment whitelist
@@ -1171,7 +1171,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function refresh(): self
+    public function refresh(): static
     {
         if (!$this->hasId) {
             return $this;
@@ -1201,7 +1201,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function refreshWith(array $values): self
+    public function refreshWith(array $values): static
     {
         $this->loaded = true;
         $this->_persisted = true;
@@ -1215,7 +1215,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function clearCache(): self
+    public function clearCache(): static
     {
         $this->loaded = false;
         $this->_unsaved = [];
@@ -1325,7 +1325,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function setRelation(string $k, Model $model): self
+    public function setRelation(string $k, Model $model): static
     {
         $this->$k = $model->id();
         $this->_relationships[$k] = $model;
@@ -1340,7 +1340,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function setRelationCollection(string $k, iterable $models): self
+    public function setRelationCollection(string $k, iterable $models): static
     {
         $this->_relationships[$k] = $models;
 
@@ -1354,7 +1354,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function clearRelation(string $k): self
+    public function clearRelation(string $k): static
     {
         $this->$k = null;
         $this->_relationships[$k] = null;
