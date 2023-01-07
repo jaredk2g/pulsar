@@ -56,8 +56,8 @@ abstract class Model implements ArrayAccess
     private static array $accessors = [];
     private static array $mutators = [];
     private string $tablename;
-    private bool $hasId = true;
-    private array $idValues;
+    private bool $hasId = false;
+    private array $idValues = [];
     private bool $loaded = false;
     private Errors $errors;
     private bool $ignoreUnsaved = false;
@@ -74,6 +74,7 @@ abstract class Model implements ArrayAccess
         $this->init();
 
         $ids = [];
+        $this->hasId = true;
         foreach (static::getIDProperties() as $name) {
             $id = null;
             if (array_key_exists($name, $values)) {
