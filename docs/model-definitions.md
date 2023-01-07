@@ -36,7 +36,7 @@ The data type of the property. This setting will type cast values when retrieved
 Supported Types:
 - `array`
 - `boolean`
-- `date`
+- `date_unix`
 - `enum`
 - `float`
 - `integer`

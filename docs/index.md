@@ -105,7 +105,7 @@ class User extends Model
                 type: Type::FLOAT,
             ),
             'last_sign_in' => new Property(
-                type: Type::DATE,
+                type: Type::DATE_UNIX,
                 null: true,
             ),
         ];

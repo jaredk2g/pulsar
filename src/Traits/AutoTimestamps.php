@@ -24,11 +24,11 @@ trait AutoTimestamps
     {
         return [
             'created_at' => new Property(
-                type: Type::DATE,
+                type: Type::DATE_UNIX,
                 validate: 'timestamp|db_timestamp',
             ),
             'updated_at' => new Property(
-                type: Type::DATE,
+                type: Type::DATE_UNIX,
                 validate: 'timestamp|db_timestamp',
             ),
         ];

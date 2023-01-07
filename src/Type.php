@@ -23,7 +23,7 @@ final class Type
 {
     const ARRAY = 'array';
     const BOOLEAN = 'boolean';
-    const DATE = 'date';
+    const DATE_UNIX = 'date_unix';
     const ENUM = 'enum';
     const FLOAT = 'float';
     const INTEGER = 'integer';
@@ -100,7 +100,7 @@ final class Type
     /**
      * Casts a date value as a UNIX timestamp.
      */
-    public static function to_date(mixed $value): int
+    public static function to_date_unix(mixed $value): int
     {
         if (!is_numeric($value)) {
             return strtotime($value);

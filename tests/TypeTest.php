@@ -50,7 +50,7 @@ class TypeTest extends MockeryTestCase
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
 
-        $property = new Property(type: Type::DATE, null: false);
+        $property = new Property(type: Type::DATE_UNIX, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
         $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::cast($property, 'Aug-20-2015'));
@@ -117,9 +117,9 @@ class TypeTest extends MockeryTestCase
 
     public function testToDate(): void
     {
-        $this->assertEquals(123, Type::to_date(123));
-        $this->assertEquals(123, Type::to_date('123'));
-        $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::to_date('Aug-20-2015'));
+        $this->assertEquals(123, Type::to_date_unix(123));
+        $this->assertEquals(123, Type::to_date_unix('123'));
+        $this->assertEquals(mktime(0, 0, 0, 8, 20, 2015), Type::to_date_unix('Aug-20-2015'));
     }
 
     public function testToArray(): void

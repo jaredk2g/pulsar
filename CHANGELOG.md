@@ -31,6 +31,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Any `autoDefinition` methods should return an array of properties that will be added to the list of model properties
 - The constructor arguments to `Property` are now typed and promoted to constructor properties. An array of properties is no longer accepted.
 - Property definitions must return `Property` objects instead of arrays
+- Renamed the `date` type to `date_unix`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

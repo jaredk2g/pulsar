@@ -550,7 +550,7 @@ class ModelTest extends MockeryTestCase
                 'enum_class' => null,
             ],
             'created_at' => [
-                'type' => Type::DATE,
+                'type' => Type::DATE_UNIX,
                 'mutable' => Property::MUTABLE,
                 'null' => false,
                 'required' => false,
@@ -568,7 +568,7 @@ class ModelTest extends MockeryTestCase
                 'enum_class' => null,
             ],
             'updated_at' => [
-                'type' => Type::DATE,
+                'type' => Type::DATE_UNIX,
                 'mutable' => Property::MUTABLE,
                 'null' => false,
                 'required' => false,
@@ -667,7 +667,7 @@ class ModelTest extends MockeryTestCase
                 'enum_class' => null,
             ],
             'deleted_at' => [
-                'type' => Type::DATE,
+                'type' => Type::DATE_UNIX,
                 'mutable' => Property::MUTABLE,
                 'null' => true,
                 'required' => false,

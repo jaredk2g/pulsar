@@ -23,7 +23,7 @@ trait SoftDelete
                 type: Type::BOOLEAN,
             ),
             'deleted_at' => new Property(
-                type: Type::DATE,
+                type: Type::DATE_UNIX,
                 null: true,
                 validate: 'timestamp|db_timestamp',
             ),
