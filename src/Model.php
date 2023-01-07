@@ -1201,7 +1201,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function refreshWith(array $values): static
+    public function refreshWith(array $values): self
     {
         $this->loaded = true;
         $this->_persisted = true;
