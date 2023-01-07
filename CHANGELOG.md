@@ -22,15 +22,13 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Use @mixin instead of @method for query operations on model
 - `Query::first()` now returns an array of results when the limit is 1
 - Added return typehint to `AclModel::hasPermission()`
-- PHP 7.2 is required at minimum
-- Compatible with PHP 8.1
+- PHP 8.1 is required at minimum
 - Changed all `BadMethodCallException` to `ModelException`
 - `Query::set()` and `Query::delete()` now throw  an exception if any operation fails
 - Queries attempt to detect and prevent duplicate joins
 - Model ID properties are now provided by `Model::getIDProperties()` instead of `Model::$ids`. `Model::getIDProperties()` is now a protected method instead of public.
 - Model properties are now provided by `Model::getProperties()` instead of `Model::$properties`
 - Any `autoDefinition` methods should return an array of properties that will be added to the list of model properties
-- Minimum required version is PHP 8.0
 - The constructor arguments to `Property` are now typed and promoted to constructor properties. An array of properties is no longer accepted.
 - Property definitions must return `Property` objects instead of arrays
 
