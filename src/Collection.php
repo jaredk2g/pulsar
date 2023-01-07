@@ -14,10 +14,8 @@ use Traversable;
  */
 final class Collection implements ArrayAccess, Countable, IteratorAggregate
 {
-    /**
-     * @var Model[]
-     */
-    private $models;
+    /** @var Model[] */
+    private array $models;
 
     /**
      * @param Model[] $models

@@ -34,7 +34,7 @@ final class HasOne extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    public function getResults(): ?Model
     {
         $query = $this->getQuery();
         if ($this->empty) {
@@ -71,7 +71,7 @@ final class HasOne extends AbstractRelation
      *
      * @return $this
      */
-    public function attach(Model $model)
+    public function attach(Model $model): self
     {
         $model->{$this->foreignKey} = $this->localModel->{$this->localKey};
         $model->saveOrFail();
@@ -86,7 +86,7 @@ final class HasOne extends AbstractRelation
      *
      * @return $this
      */
-    public function detach()
+    public function detach(): self
     {
         $model = $this->getResults();
 

@@ -16,14 +16,9 @@ use Pulsar\Query;
 
 final class Polymorphic extends AbstractRelation
 {
-    /** @var string */
-    private $localTypeKey;
-
-    /** @var string */
-    private $localIdKey;
-
-    /** @var array */
-    private $modelMapping;
+    private string $localTypeKey;
+    private string $localIdKey;
+    private array $modelMapping;
 
     public function __construct(Model $localModel, string $localTypeKey, string $localIdKey, array $modelMapping, string $foreignKey)
     {
@@ -81,7 +76,7 @@ final class Polymorphic extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    public function getResults(): ?Model
     {
         $query = $this->getQuery();
         if ($this->empty) {

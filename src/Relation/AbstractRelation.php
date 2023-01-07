@@ -20,30 +20,11 @@ use Pulsar\Query;
  */
 abstract class AbstractRelation
 {
-    /**
-     * @var Model
-     */
-    protected $localModel;
-
-    /**
-     * @var string
-     */
-    protected $localKey;
-
-    /**
-     * @var string
-     */
-    protected $foreignModel;
-
-    /**
-     * @var string
-     */
-    protected $foreignKey;
-
-    /**
-     * @var bool
-     */
-    protected $empty;
+    protected Model $localModel;
+    protected string $localKey;
+    protected string $foreignModel;
+    protected string $foreignKey;
+    protected bool $empty = false;
 
     /**
      * @param string $localKey     identifying key on local model
@@ -109,10 +90,8 @@ abstract class AbstractRelation
 
     /**
      * Called to get the results of the relation query.
-     *
-     * @return mixed
      */
-    abstract public function getResults();
+    abstract public function getResults(): mixed;
 
     /**
      * Saves a new relationship model and attaches it to

@@ -24,9 +24,10 @@ class TestAbstractRelation extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    public function getResults(): mixed
     {
         // do nothing
+        return null;
     }
 
     public function save(Model $model): Model

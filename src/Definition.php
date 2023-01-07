@@ -7,10 +7,9 @@ use ArrayAccess;
 final class Definition implements ArrayAccess
 {
     /** @var string[] */
-    private $ids;
-
+    private array $ids;
     /** @var Property[] */
-    private $properties;
+    private array $properties;
 
     /**
      * @param Property[] $properties

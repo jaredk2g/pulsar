@@ -24,20 +24,16 @@ interface DriverInterface
      * Creates a model.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return mixed result
      */
-    public function createModel(Model $model, array $parameters);
+    public function createModel(Model $model, array $parameters): bool;
 
     /**
      * Gets the last inserted ID. Used for drivers that generate
      * IDs for models after creation.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return mixed
      */
-    public function getCreatedId(Model $model, string $propertyName);
+    public function getCreatedId(Model $model, string $propertyName): mixed;
 
     /**
      * Loads a model.
@@ -80,37 +76,29 @@ interface DriverInterface
      * Gets the sum matching the given query.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return number
      */
-    public function sum(Query $query, string $field);
+    public function sum(Query $query, string $field): float;
 
     /**
      * Gets the average matching the given query.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return number
      */
-    public function average(Query $query, string $field);
+    public function average(Query $query, string $field): float;
 
     /**
      * Gets the max matching the given query.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return number
      */
-    public function max(Query $query, string $field);
+    public function max(Query $query, string $field): float;
 
     /**
      * Gets the min matching the given query.
      *
      * @throws DriverException when an exception occurs within the driver
-     *
-     * @return number
      */
-    public function min(Query $query, string $field);
+    public function min(Query $query, string $field): float;
 
     /**
      * Starts a database transaction.

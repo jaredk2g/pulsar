@@ -33,7 +33,7 @@ final class BelongsTo extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    public function getResults(): ?Model
     {
         $query = $this->getQuery();
         if ($this->empty) {
@@ -69,7 +69,7 @@ final class BelongsTo extends AbstractRelation
      *
      * @return $this
      */
-    public function attach(Model $model)
+    public function attach(Model $model): self
     {
         $this->localModel->{$this->localKey} = $model->{$this->foreignKey};
         $this->localModel->saveOrFail();
@@ -82,7 +82,7 @@ final class BelongsTo extends AbstractRelation
      *
      * @return $this
      */
-    public function detach()
+    public function detach(): self
     {
         $this->localModel->{$this->localKey} = null;
         $this->localModel->saveOrFail();

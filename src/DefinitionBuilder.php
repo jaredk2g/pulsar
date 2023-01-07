@@ -8,7 +8,7 @@ use Pulsar\Relation\Relationship;
 final class DefinitionBuilder
 {
     /** @var Definition[] */
-    private static $definitions;
+    private static array $definitions = [];
 
     /**
      * Gets the definition for a model. If needed the

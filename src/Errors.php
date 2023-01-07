@@ -23,20 +23,14 @@ use Traversable;
  */
 final class Errors implements IteratorAggregate, Countable, ArrayAccess
 {
-    /**
-     * @var TranslatorInterface|null
-     */
-    private static $translator;
-
-    /**
-     * @var Error[]
-     */
-    private $stack = [];
+    private static ?TranslatorInterface $translator = null;
+    /** @var Error[] */
+    private array $stack = [];
 
     /**
      * Sets the global translator instance.
      */
-    public static function setTranslator(TranslatorInterface $translator)
+    public static function setTranslator(TranslatorInterface $translator): void
     {
         self::$translator = $translator;
     }
@@ -64,11 +58,9 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     /**
      * Adds an error message to the stack.
      *
-     * @param $error
-     *
      * @return $this
      */
-    public function add(string $error, array $context = [])
+    public function add(string $error, array $context = []): self
     {
         $message = $this->parse($error, $context);
         $this->stack[] = new Error($error, $context, $message);
@@ -77,7 +69,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
     }
 
     /**
-     * Gets all of the error messages on the stack.
+     * Gets all the error messages on the stack.
      *
      * @return string[]
      */
@@ -97,7 +89,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      * @param string $value value we are searching for
      * @param string $param parameter name
      */
-    public function find($value, $param = 'field'): ?Error
+    public function find(string $value, string $param = 'field'): ?Error
     {
         foreach ($this->stack as $error) {
             $stackValue = $error->getContext()[$param] ?? null;
@@ -115,7 +107,7 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      * @param string $value value we are searching for
      * @param string $param parameter name
      */
-    public function has($value, $param = 'field'): bool
+    public function has(string $value, string $param = 'field'): bool
     {
         foreach ($this->stack as $error) {
             $stackValue = $error->getContext()[$param] ?? null;
@@ -134,14 +126,14 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
      *
      * @return $this
      */
-    public function clear()
+    public function clear(): self
     {
         $this->stack = [];
 
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return implode("\n", $this->all());
     }
@@ -152,10 +144,8 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
 
     /**
      * Formats an incoming error message.
-     *
-     * @param array|string $input
      */
-    private function sanitize($input): Error
+    private function sanitize(array|string $input): Error
     {
         $error = is_array($input) ? $input['error'] : $input;
         $context = $input['context'] ?? [];

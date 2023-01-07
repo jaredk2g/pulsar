@@ -12,7 +12,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 class EventManager
 {
     /** @var array */
-    private static $dispatchers = [];
+    private static array $dispatchers = [];
 
     /**
      * Gets the event dispatcher.

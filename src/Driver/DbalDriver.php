@@ -14,10 +14,7 @@ use Pulsar\Query;
 
 final class DbalDriver extends AbstractDriver
 {
-    /**
-     * @var Connection
-     */
-    private $database;
+    private Connection $database;
 
     public function __construct(Connection $connection)
     {
@@ -33,7 +30,7 @@ final class DbalDriver extends AbstractDriver
         return $this->database;
     }
 
-    public function createModel(Model $model, array $parameters)
+    public function createModel(Model $model, array $parameters): bool
     {
         // build the SQL query
         $tablename = $model->getTablename();
@@ -53,7 +50,7 @@ final class DbalDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedId(Model $model, string $propertyName)
+    public function getCreatedId(Model $model, string $propertyName): mixed
     {
         try {
             return $this->getConnection($model->getConnection())->lastInsertId();
@@ -169,7 +166,7 @@ final class DbalDriver extends AbstractDriver
         return (int) $this->executeScalar($dbQuery, $model, 'count');
     }
 
-    public function sum(Query $query, string $field)
+    public function sum(Query $query, string $field): float
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -183,7 +180,7 @@ final class DbalDriver extends AbstractDriver
         return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function average(Query $query, string $field)
+    public function average(Query $query, string $field): float
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -197,7 +194,7 @@ final class DbalDriver extends AbstractDriver
         return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function max(Query $query, string $field)
+    public function max(Query $query, string $field): float
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -211,7 +208,7 @@ final class DbalDriver extends AbstractDriver
         return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    public function min(Query $query, string $field)
+    public function min(Query $query, string $field): float
     {
         // build the SQL query
         $modelClass = $query->getModel();
@@ -247,10 +244,8 @@ final class DbalDriver extends AbstractDriver
      * Executes a select query through DBAL and returns a scalar result.
      *
      * @throws DriverException
-     *
-     * @return false|mixed
      */
-    private function executeScalar(SelectQuery $query, Model $model, string $field)
+    private function executeScalar(SelectQuery $query, Model $model, string $field): mixed
     {
         $db = $this->getConnection($model->getConnection());
 

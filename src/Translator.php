@@ -15,10 +15,7 @@ use Pulsar\Interfaces\TranslatorInterface;
 
 final class Translator implements TranslatorInterface
 {
-    /**
-     * @var array
-     */
-    private static $messages = [
+    private static array $messages = [
         'pulsar.validation.alpha' => '{{field_name}} only allows letters',
         'pulsar.validation.alpha_numeric' => '{{field_name}} only allows letters and numbers',
         'pulsar.validation.alpha_dash' => '{{field_name}} only allows letters and dashes',
@@ -42,20 +39,9 @@ final class Translator implements TranslatorInterface
         'pulsar.validation.url' => '{{field_name}} only allows valid URLs',
     ];
 
-    /**
-     * @var string
-     */
-    private $locale;
-
-    /**
-     * @var string
-     */
-    private $dataDir;
-
-    /**
-     * @var array
-     */
-    private $data = [];
+    private string $locale;
+    private string $dataDir = '';
+    private array $data = [];
 
     public function __construct(?string $locale = 'en')
     {

@@ -19,12 +19,8 @@ use Pulsar\Property;
  */
 final class Pivot extends Model
 {
-    protected static $properties = [];
-
-    /**
-     * @var string
-     */
-    private $tablename;
+    protected static array $properties = [];
+    private string $tablename;
 
     public function setTablename($tablename)
     {

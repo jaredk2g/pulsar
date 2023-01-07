@@ -44,7 +44,10 @@ final class HasMany extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    /**
+     * @return Model[]|null
+     */
+    public function getResults(): ?array
     {
         $query = $this->getQuery();
         if ($this->empty) {
@@ -81,7 +84,7 @@ final class HasMany extends AbstractRelation
      *
      * @return $this
      */
-    public function attach(Model $model)
+    public function attach(Model $model): self
     {
         $model->{$this->foreignKey} = $this->localModel->{$this->localKey};
         $model->saveOrFail();
@@ -98,7 +101,7 @@ final class HasMany extends AbstractRelation
      *
      * @return $this
      */
-    public function detach(Model $model)
+    public function detach(Model $model): self
     {
         $model->{$this->foreignKey} = null;
         $model->saveOrFail();
@@ -114,7 +117,7 @@ final class HasMany extends AbstractRelation
      *
      * @return $this
      */
-    public function sync(array $ids)
+    public function sync(array $ids): self
     {
         $class = $this->foreignModel;
         $model = new $class();

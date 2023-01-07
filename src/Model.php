@@ -40,84 +40,27 @@ abstract class Model implements ArrayAccess
     // Model visible variables
     /////////////////////////////
 
-    /**
-     * @var array
-     */
-    protected $_values = [];
-
-    /**
-     * @var array
-     */
-    private $_unsaved = [];
-
-    /**
-     * @var bool
-     */
-    protected $_persisted = false;
-
-    /**
-     * @var array
-     */
-    protected $_relationships = [];
-
-    /**
-     * @var AbstractRelation[]
-     */
-    private $relationships = [];
+    protected array $_values = [];
+    private array $_unsaved = [];
+    protected bool $_persisted = false;
+    protected array $_relationships = [];
+    /** @var AbstractRelation[] */
+    private array $relationships = [];
 
     /////////////////////////////
     // Base model variables
     /////////////////////////////
 
-    /**
-     * @var array
-     */
-    private static $initialized = [];
-
-    /**
-     * @var DriverInterface
-     */
-    private static $driver;
-
-    /**
-     * @var array
-     */
-    private static $accessors = [];
-
-    /**
-     * @var array
-     */
-    private static $mutators = [];
-
-    /**
-     * @var string
-     */
-    private $tablename;
-
-    /**
-     * @var bool
-     */
-    private $hasId;
-
-    /**
-     * @var array
-     */
-    private $idValues;
-
-    /**
-     * @var bool
-     */
-    private $loaded = false;
-
-    /**
-     * @var Errors
-     */
-    private $errors;
-
-    /**
-     * @var bool
-     */
-    private $ignoreUnsaved = false;
+    private static array $initialized = [];
+    private static ?DriverInterface $driver = null;
+    private static array $accessors = [];
+    private static array $mutators = [];
+    private string $tablename;
+    private bool $hasId;
+    private array $idValues;
+    private bool $loaded = false;
+    private Errors $errors;
+    private bool $ignoreUnsaved = false;
 
     /**
      * Creates a new model object.
@@ -228,10 +171,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Gets the model ID.
-     *
-     * @return string|number|false ID
      */
-    public function id()
+    public function id(): string|int|false
     {
         if (!$this->hasId) {
             return false;
@@ -288,12 +229,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Shortcut to a get() call for a given property.
-     *
-     * @param string $name
-     *
-     * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         $result = $this->get([$name]);
 
@@ -302,11 +239,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Sets an unsaved value.
-     *
-     * @param string $name
-     * @param mixed  $value
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         // if changing property, remove relation model
         if (isset($this->_relationships[$name])) {
@@ -338,12 +272,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Checks if an unsaved value or property exists by this name.
-     *
-     * @param string $name
-     *
-     * @return bool
      */
-    public function __isset($name)
+    public function __isset(string $name): bool
     {
         // isset() must return true for any value that could be returned by offsetGet
         // because many callers will first check isset() to see if the value is accessible.
@@ -354,10 +284,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Unsets an unsaved value.
-     *
-     * @param string $name
      */
-    public function __unset($name)
+    public function __unset(string $name): void
     {
         if (array_key_exists($name, $this->_unsaved)) {
             // if changing property, remove relation model
@@ -523,7 +451,7 @@ abstract class Model implements ArrayAccess
      */
     public function getTablename(): string
     {
-        if (!$this->tablename) {
+        if (!isset($this->tablename)) {
             $inflector = Inflector::get();
 
             $this->tablename = $inflector->camelize($inflector->pluralize(static::modelName()));
@@ -730,7 +658,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function ignoreUnsaved()
+    public function ignoreUnsaved(): self
     {
         $this->ignoreUnsaved = true;
 
@@ -796,10 +724,8 @@ abstract class Model implements ArrayAccess
      *  2. local values
      *  3. default value
      *  4. null
-     *
-     * @return mixed
      */
-    private function getValue(string $name, bool $ignoreUnsaved)
+    private function getValue(string $name, bool $ignoreUnsaved): mixed
     {
         $value = null;
         if (!$ignoreUnsaved && array_key_exists($name, $this->_unsaved)) {
@@ -863,13 +789,11 @@ abstract class Model implements ArrayAccess
     /**
      * Sets a collection values on the model from an untrusted input.
      *
-     * @param array $values
-     *
      * @throws MassAssignmentException when assigning a value that is protected or not whitelisted
      *
      * @return $this
      */
-    public function setValues($values)
+    public function setValues(array $values): self
     {
         if ($permitted = $this->getMassAssignmentWhitelist()) {
             // use a mass assignment whitelist
@@ -1197,12 +1121,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Finds a single instance of a model given it's ID.
-     *
-     * @param mixed $id
-     *
-     * @return static|null
      */
-    public static function find($id)
+    public static function find(mixed $id): ?static
     {
         $ids = [];
         $id = (array) $id;
@@ -1224,13 +1144,9 @@ abstract class Model implements ArrayAccess
     /**
      * Finds a single instance of a model given it's ID or throws an exception.
      *
-     * @param mixed $id
-     *
      * @throws ModelNotFoundException when a model could not be found
-     *
-     * @return static
      */
-    public static function findOrFail($id)
+    public static function findOrFail(mixed $id): static
     {
         $model = static::find($id);
         if (!$model) {
@@ -1255,7 +1171,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function refresh()
+    public function refresh(): self
     {
         if (!$this->hasId) {
             return $this;
@@ -1283,11 +1199,9 @@ abstract class Model implements ArrayAccess
     /**
      * Loads values into the model.
      *
-     * @param array $values values
-     *
      * @return $this
      */
-    public function refreshWith(array $values)
+    public function refreshWith(array $values): self
     {
         $this->loaded = true;
         $this->_persisted = true;
@@ -1301,7 +1215,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function clearCache()
+    public function clearCache(): self
     {
         $this->loaded = false;
         $this->_unsaved = [];
@@ -1392,13 +1306,9 @@ abstract class Model implements ArrayAccess
      *
      * Gets the model(s) for a relationship
      *
-     * @param string $k property
-     *
      * @throws InvalidArgumentException when the relationship manager cannot be created
-     *
-     * @return Model|array|null
      */
-    public function relation(string $k)
+    public function relation(string $k): Model|array|null
     {
         if (!array_key_exists($k, $this->_relationships)) {
             $relation = Relationship::make($this, static::definition()->get($k));
@@ -1415,7 +1325,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function setRelation(string $k, Model $model)
+    public function setRelation(string $k, Model $model): self
     {
         $this->$k = $model->id();
         $this->_relationships[$k] = $model;
@@ -1430,7 +1340,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function setRelationCollection(string $k, iterable $models)
+    public function setRelationCollection(string $k, iterable $models): self
     {
         $this->_relationships[$k] = $models;
 
@@ -1444,7 +1354,7 @@ abstract class Model implements ArrayAccess
      *
      * @return $this
      */
-    public function clearRelation(string $k)
+    public function clearRelation(string $k): self
     {
         $this->$k = null;
         $this->_relationships[$k] = null;
@@ -1551,7 +1461,7 @@ abstract class Model implements ArrayAccess
      */
     public function getErrors(): Errors
     {
-        if (!$this->errors) {
+        if (!isset($this->errors)) {
             $this->errors = new Errors();
         }
 

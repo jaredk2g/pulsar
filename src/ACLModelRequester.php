@@ -8,15 +8,9 @@ namespace Pulsar;
  */
 final class ACLModelRequester
 {
-    /**
-     * @var callable
-     */
-    private static $requesterCallable;
-
-    /**
-     * @var Model
-     */
-    private static $requester;
+    /** @var callable|null */
+    private static mixed $requesterCallable = null;
+    private static ?Model $requester = null;
 
     /**
      * Sets the callable for getting the current requester.

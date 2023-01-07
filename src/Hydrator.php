@@ -7,11 +7,9 @@ use Pulsar\Relation\Relationship;
 class Hydrator
 {
     /**
-     * @property string|Model $modelClass
-     *
      * @return Model[]
      */
-    public static function hydrate(array $result, $modelClass, array $eagerLoaded): array
+    public static function hydrate(array $result, string|Model $modelClass, array $eagerLoaded): array
     {
         $ids = [];
         $eagerLoadedProperties = [];
@@ -113,12 +111,11 @@ class Hydrator
     /**
      * Hydrates the eager-loaded relationships for a given set of IDs.
      *
-     * @param string $modelClass
      * @param bool   $multiple   when true will condense
      *
      * @return Model[]
      */
-    private static function fetchRelationships($modelClass, array $ids, string $foreignKey, bool $multiple): array
+    private static function fetchRelationships(string $modelClass, array $ids, string $foreignKey, bool $multiple): array
     {
         $uniqueIds = array_unique($ids);
         if (0 === count($uniqueIds)) {

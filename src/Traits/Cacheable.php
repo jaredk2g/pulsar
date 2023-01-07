@@ -19,20 +19,9 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 trait Cacheable
 {
-    /**
-     * @var CacheItemPoolInterface
-     */
-    private static $cachePool;
-
-    /**
-     * @var array
-     */
-    private static $cachePrefix = [];
-
-    /**
-     * @var CacheItemInterface
-     */
-    private $cacheItem;
+    private static ?CacheItemPoolInterface $cachePool = null;
+    private static array $cachePrefix = [];
+    private ?CacheItemInterface $cacheItem = null;
 
     /**
      * Sets the default cache instance used by new models.
@@ -96,7 +85,7 @@ trait Cacheable
         return $this->cacheItem;
     }
 
-    public function refresh()
+    public function refresh(): self
     {
         if (!$this->hasId()) {
             return $this;
@@ -124,7 +113,7 @@ trait Cacheable
         return parent::refresh();
     }
 
-    public function refreshWith(array $values)
+    public function refreshWith(array $values): self
     {
         return parent::refreshWith($values)->cache();
     }
@@ -134,7 +123,7 @@ trait Cacheable
      *
      * @return $this
      */
-    public function cache()
+    public function cache(): self
     {
         if (!self::$cachePool || 0 == count($this->_values)) {
             return $this;
@@ -150,7 +139,7 @@ trait Cacheable
         return $this;
     }
 
-    public function clearCache()
+    public function clearCache(): self
     {
         if (self::$cachePool) {
             $k = $this->getCacheKey();

@@ -20,10 +20,7 @@ use Pulsar\Query;
  */
 final class BelongsToMany extends AbstractRelation
 {
-    /**
-     * @var string
-     */
-    protected $tablename;
+    protected string $tablename;
 
     /**
      * @param string $localKey     identifying key on local model
@@ -31,7 +28,7 @@ final class BelongsToMany extends AbstractRelation
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, ?string $localKey, ?string $tablename, ?string $foreignModel, ?string $foreignKey)
+    public function __construct(Model $localModel, string $localKey, string $tablename, string $foreignModel, string $foreignKey)
     {
         $this->tablename = $tablename;
 
@@ -56,7 +53,10 @@ final class BelongsToMany extends AbstractRelation
         return $query;
     }
 
-    public function getResults()
+    /**
+     * @return Model[]|null
+     */
+    public function getResults(): ?array
     {
         $query = $this->getQuery();
         if ($this->empty) {
@@ -101,7 +101,7 @@ final class BelongsToMany extends AbstractRelation
      *
      * @return $this
      */
-    public function attach(Model $model)
+    public function attach(Model $model): self
     {
         // create pivot relation
         $pivot = new Pivot();
@@ -134,7 +134,7 @@ final class BelongsToMany extends AbstractRelation
      *
      * @return $this
      */
-    public function detach(Model $model)
+    public function detach(Model $model): self
     {
         $model->pivot->delete();
         unset($model->pivot);
@@ -150,7 +150,7 @@ final class BelongsToMany extends AbstractRelation
      *
      * @return $this
      */
-    public function sync(array $ids)
+    public function sync(array $ids): self
     {
         $pivot = new Pivot();
         $pivot->setTablename($this->tablename);

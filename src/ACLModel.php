@@ -21,26 +21,16 @@ use Pulsar\Event\ModelUpdating;
 abstract class ACLModel extends Model
 {
     const ERROR_NO_PERMISSION = 'no_permission';
-
     const LISTENER_PRIORITY = 1000;
 
-    /**
-     * @var array
-     */
-    private $permissionsCache = [];
-
-    /**
-     * @var bool
-     */
-    private $permissionsDisabled = false;
+    private array $permissionsCache = [];
+    private bool $permissionsDisabled = false;
 
     /**
      * Checks if the requesting model has a specific permission
      * on this object.
-     *
-     * @param string $permission
      */
-    public function can($permission, Model $requester): bool
+    public function can(string $permission, Model $requester): bool
     {
         if ($this->permissionsDisabled) {
             return true;
@@ -57,10 +47,8 @@ abstract class ACLModel extends Model
 
     /**
      * Checks if a requester has a specific permission.
-     *
-     * @param string $permission
      */
-    abstract protected function hasPermission($permission, Model $requester): bool;
+    abstract protected function hasPermission(string $permission, Model $requester): bool;
 
     /**
      * Disables all permissions checking in can() for this object
@@ -69,7 +57,7 @@ abstract class ACLModel extends Model
      *
      * @return $this
      */
-    public function grantAllPermissions()
+    public function grantAllPermissions(): self
     {
         $this->permissionsDisabled = true;
 
@@ -81,7 +69,7 @@ abstract class ACLModel extends Model
      *
      * @return $this
      */
-    public function enforcePermissions()
+    public function enforcePermissions(): self
     {
         $this->permissionsDisabled = false;
 

@@ -25,27 +25,16 @@ use Pulsar\Query;
  */
 final class DatabaseDriver extends AbstractDriver
 {
-    /**
-     * @var ConnectionManager
-     */
-    private $connections;
-
-    /**
-     * @var QueryBuilder
-     */
-    private $connection;
-
-    /**
-     * @var int
-     */
-    private $transactionNestingLevel = 0;
+    private ConnectionManager $connections;
+    private QueryBuilder $connection;
+    private int $transactionNestingLevel = 0;
 
     /**
      * Sets the connection manager.
      *
      * @return $this
      */
-    public function setConnectionManager(ConnectionManager $manager)
+    public function setConnectionManager(ConnectionManager $manager): self
     {
         $this->connections = $manager;
 
@@ -65,7 +54,7 @@ final class DatabaseDriver extends AbstractDriver
      *
      * @return $this
      */
-    public function setConnection(QueryBuilder $db)
+    public function setConnection(QueryBuilder $db): self
     {
         $this->connection = $db;
 
@@ -81,7 +70,7 @@ final class DatabaseDriver extends AbstractDriver
      */
     public function getConnection(?string $id): QueryBuilder
     {
-        if ($this->connections) {
+        if (isset($this->connections)) {
             try {
                 if ($id) {
                     return $this->connections->get($id);
@@ -93,14 +82,14 @@ final class DatabaseDriver extends AbstractDriver
             }
         }
 
-        if (!$this->connection) {
+        if (!isset($this->connection)) {
             throw new DriverException('The database driver has not been given a connection!');
         }
 
         return $this->connection;
     }
 
-    public function createModel(Model $model, array $parameters)
+    public function createModel(Model $model, array $parameters): bool
     {
         $values = $this->serialize($parameters);
         $tablename = $model->getTablename();
@@ -115,7 +104,7 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function getCreatedId(Model $model, string $propertyName)
+    public function getCreatedId(Model $model, string $propertyName): mixed
     {
         try {
             return $this->getConnection($model->getConnection())->lastInsertId();
@@ -223,7 +212,7 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function sum(Query $query, string $field)
+    public function sum(Query $query, string $field): float
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -243,7 +232,7 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function average(Query $query, string $field)
+    public function average(Query $query, string $field): float
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -263,7 +252,7 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function max(Query $query, string $field)
+    public function max(Query $query, string $field): float
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();
@@ -283,7 +272,7 @@ final class DatabaseDriver extends AbstractDriver
         }
     }
 
-    public function min(Query $query, string $field)
+    public function min(Query $query, string $field): float
     {
         $modelClass = $query->getModel();
         $model = new $modelClass();

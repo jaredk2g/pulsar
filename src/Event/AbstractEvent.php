@@ -16,10 +16,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class AbstractEvent extends Event
 {
-    /**
-     * @var Model
-     */
-    protected $model;
+    protected Model $model;
 
     public function __construct(Model $model)
     {

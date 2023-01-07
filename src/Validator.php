@@ -11,6 +11,7 @@
 
 namespace Pulsar;
 
+use InvalidArgumentException;
 use Pulsar\Interfaces\ValidationRuleInterface;
 use Pulsar\Validation\Alpha;
 use Pulsar\Validation\AlphaDash;
@@ -46,7 +47,7 @@ final class Validator
     /**
      * @var string[]
      */
-    private static $validators = [
+    private static array $validators = [
         'alpha' => Alpha::class,
         'alpha_dash' => AlphaDash::class,
         'alpha_numeric' => AlphaNumeric::class,
@@ -70,25 +71,12 @@ final class Validator
         'url' => Url::class,
     ];
 
-    /**
-     * @var ValidationRuleInterface[]
-     */
-    private static $instances = [];
+    /** @var ValidationRuleInterface[] */
+    private static array $instances = [];
 
-    /**
-     * @var array
-     */
-    private $rules;
-
-    /**
-     * @var string|null
-     */
-    private $failingRule;
-
-    /**
-     * @var array
-     */
-    private $failingOptions;
+    private array $rules;
+    private ?string $failingRule = null;
+    private ?array $failingOptions = null;
 
     /**
      * Rules can be defined in these formats:
@@ -96,10 +84,8 @@ final class Validator
      * - ['matching', ['string', 'min' => '5']]
      * -  ['string', 'min' => '5']
      * - matching|password.
-     *
-     * @param array|string $rules
      */
-    public function __construct($rules)
+    public function __construct(array|string $rules)
     {
         // parses this format: matching|password_php
         if (!is_array($rules)) {
@@ -130,10 +116,8 @@ final class Validator
 
     /**
      * Validates the given value against the rules.
-     *
-     * @param mixed $value
      */
-    public function validate(&$value, Model $model): bool
+    public function validate(mixed &$value, Model $model): bool
     {
         foreach ($this->rules as $options) {
             $name = $options[0];
@@ -170,7 +154,7 @@ final class Validator
     {
         if (!isset(self::$instances[$name])) {
             if (!isset(self::$validators[$name])) {
-                throw new \InvalidArgumentException('Invalid validation rule: '.$name);
+                throw new InvalidArgumentException('Invalid validation rule: '.$name);
             }
 
             $class = self::$validators[$name];
@@ -182,11 +166,8 @@ final class Validator
 
     /**
      * Validates and marshals a property value prior to saving.
-     *
-     * @param Property $property property definition
-     * @param mixed    $value
      */
-    public static function validateProperty(Model $model, Property $property, &$value): bool
+    public static function validateProperty(Model $model, Property $property, mixed &$value): bool
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null

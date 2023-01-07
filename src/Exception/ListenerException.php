@@ -8,8 +8,7 @@ namespace Pulsar\Exception;
  */
 class ListenerException extends ModelException
 {
-    /** @var array */
-    private $context;
+    private array $context;
 
     /**
      * @param string $message the error message to be provided to the model

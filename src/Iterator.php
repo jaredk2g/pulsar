@@ -13,40 +13,13 @@ namespace Pulsar;
 
 final class Iterator implements \Iterator, \Countable, \ArrayAccess
 {
-    /**
-     * @var Query
-     */
-    private $query;
-
-    /**
-     * @var int
-     */
-    private $start;
-
-    /**
-     * @var int
-     */
-    private $pointer;
-
-    /**
-     * @var int
-     */
-    private $limit;
-
-    /**
-     * @var int|bool
-     */
-    private $loadedStart;
-
-    /**
-     * @var array
-     */
-    private $models;
-
-    /**
-     * @var int|bool
-     */
-    private $count;
+    private Query $query;
+    private int $start;
+    private int $pointer;
+    private int $limit;
+    private int|bool $loadedStart;
+    private array $models;
+    private int|bool $count;
 
     public function __construct(Query $query)
     {
@@ -90,11 +63,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Returns the current element.
-     *
-     * @return mixed
      */
     #[\ReturnTypeWillChange]
-    public function current()
+    public function current(): mixed
     {
         if ($this->pointer >= $this->count()) {
             return null;

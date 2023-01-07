@@ -6,14 +6,9 @@ use ArrayAccess;
 
 class Error implements ArrayAccess
 {
-    /** @var string */
-    private $error;
-
-    /** @var string */
-    private $message;
-
-    /** @var array */
-    private $context;
+    private string $error;
+    private string $message;
+    private array $context;
 
     public function __construct(string $error, array $context, string $message)
     {
@@ -22,7 +17,7 @@ class Error implements ArrayAccess
         $this->message = $message;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->message;
     }

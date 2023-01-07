@@ -23,61 +23,23 @@ class Query
     const DEFAULT_LIMIT = 100;
     const MAX_LIMIT = 1000;
 
-    /**
-     * @var Model|string
-     */
-    private $model;
+    private Model|string $model;
+    private array $joins = [];
+    private array $eagerLoaded = [];
+    private array $where = [];
+    private int $limit = self::DEFAULT_LIMIT;
+    private int $start = 0;
+    private array $sort = [];
 
-    /**
-     * @var array
-     */
-    private $joins;
-
-    /**
-     * @var array
-     */
-    private $eagerLoaded;
-
-    /**
-     * @var array
-     */
-    private $where;
-
-    /**
-     * @var int
-     */
-    private $limit;
-
-    /**
-     * @var int
-     */
-    private $start;
-
-    /**
-     * @var array
-     */
-    private $sort;
-
-    /**
-     * @param Model|string $model
-     */
-    public function __construct($model = '')
+    public function __construct(Model|string $model = '')
     {
         $this->model = $model;
-        $this->joins = [];
-        $this->eagerLoaded = [];
-        $this->where = [];
-        $this->start = 0;
-        $this->limit = self::DEFAULT_LIMIT;
-        $this->sort = [];
     }
 
     /**
      * Gets the model class associated with this query.
-     *
-     * @return Model|string
      */
-    public function getModel()
+    public function getModel(): Model|string
     {
         return $this->model;
     }
@@ -87,7 +49,7 @@ class Query
      *
      * @return $this
      */
-    public function limit(int $limit)
+    public function limit(int $limit): self
     {
         $this->limit = min($limit, self::MAX_LIMIT);
 
@@ -107,7 +69,7 @@ class Query
      *
      * @return $this
      */
-    public function start(int $start)
+    public function start(int $start): self
     {
         $this->start = max($start, 0);
 
@@ -125,11 +87,9 @@ class Query
     /**
      * Sets the sort pattern for the query.
      *
-     * @param array|string $sort
-     *
      * @return $this
      */
-    public function sort($sort)
+    public function sort(array|string $sort): self
     {
         $columns = explode(',', $sort);
 
@@ -177,7 +137,7 @@ class Query
      *
      * @return $this
      */
-    public function where($where, $value = null, $condition = null)
+    public function where(array|string $where, mixed $value = null, string|null $condition = null): self
     {
         // handles i.
         if (is_array($where)) {
@@ -218,12 +178,12 @@ class Query
      * Adds a join to the query. Matches a property on this model
      * to the ID of the model we are joining.
      *
-     * @param string $model  model being joined
+     * @param Model|string $model  model being joined
      * @param string $column name of local property
      *
      * @return $this
      */
-    public function join($model, string $column, string $foreignKey, string $type = 'JOIN')
+    public function join(Model|string $model, string $column, string $foreignKey, string $type = 'JOIN'): self
     {
         $join = [$model, $column, $foreignKey, $type];
         // Ensure there are no duplicate joins
@@ -252,7 +212,7 @@ class Query
      *
      * @return $this
      */
-    public function with(string $k)
+    public function with(string $k): self
     {
         if (!in_array($k, $this->eagerLoaded)) {
             $this->eagerLoaded[] = $k;
@@ -289,7 +249,7 @@ class Query
      *
      * @return Iterator
      */
-    public function all()
+    public function all(): mixed
     {
         return new Iterator($this);
     }
