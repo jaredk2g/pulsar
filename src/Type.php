@@ -23,6 +23,8 @@ final class Type
 {
     const ARRAY = 'array';
     const BOOLEAN = 'boolean';
+    const DATE = 'date';
+    const DATE_TIME = 'datetime';
     const DATE_UNIX = 'date_unix';
     const ENUM = 'enum';
     const FLOAT = 'float';
