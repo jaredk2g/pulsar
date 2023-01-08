@@ -30,7 +30,7 @@ use Pulsar\Relation\Relationship;
 use Throwable;
 
 /**
- * @mixin Query
+ * @mixin Query<static>
  */
 abstract class Model implements ArrayAccess
 {
@@ -1110,6 +1110,8 @@ abstract class Model implements ArrayAccess
 
     /**
      * Generates a new query instance.
+     *
+     * @return Query<static>
      */
     public static function query(): Query
     {

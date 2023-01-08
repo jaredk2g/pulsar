@@ -11,16 +11,24 @@
 
 namespace Pulsar;
 
+/**
+ * @template T
+ */
 final class Iterator implements \Iterator, \Countable, \ArrayAccess
 {
+    /** @var Query<T> */
     private Query $query;
     private int $start;
     private int $pointer;
     private int $limit;
     private int|bool $loadedStart = false;
+    /** @var T[] */
     private array $models = [];
     private int|bool $count = false;
 
+    /**
+     * @param Query<T>
+     */
     public function __construct(Query $query)
     {
         $this->query = $query;
@@ -40,6 +48,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         }
     }
 
+    /**
+     * @return Query<T>
+     */
     public function getQuery(): Query
     {
         return $this->query;
@@ -62,6 +73,8 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Returns the current element.
+     *
+     * @return T
      */
     #[\ReturnTypeWillChange]
     public function current(): mixed
@@ -132,6 +145,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         return is_numeric($offset) && $offset < $this->count();
     }
 
+    /**
+     * @return T
+     */
     #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
@@ -216,6 +232,8 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
 
     /**
      * Cast Iterator to array.
+     *
+     * @return T[]
      */
     public function toArray(): array
     {

@@ -17,6 +17,8 @@ use Pulsar\Relation\Relationship;
 
 /**
  * Represents a query against a model type.
+ *
+ * @template T
  */
 class Query
 {
@@ -154,10 +156,10 @@ class Query
             $args = func_num_args();
             if ($args > 2) {
                 $this->where[] = [$where, $value, $condition];
-            // handles ii.
+                // handles ii.
             } elseif (2 == $args) {
                 $this->where[$where] = $value;
-            // handles iv.
+                // handles iv.
             } else {
                 $this->where[] = $where;
             }
@@ -232,7 +234,7 @@ class Query
     /**
      * Executes the query against the model's driver.
      *
-     * @return Model[] results
+     * @return T[] results
      */
     public function execute(): array
     {
@@ -247,7 +249,7 @@ class Query
     /**
      * Creates an iterator for a search.
      *
-     * @return Iterator
+     * @return Iterator<T>
      */
     public function all(): mixed
     {
@@ -259,6 +261,8 @@ class Query
      * then this function will fail.
      *
      * @throws ModelNotFoundException when the result is not exactly one model
+     *
+     * @return T
      */
     public function one(): Model
     {
@@ -280,6 +284,8 @@ class Query
      * then this function will return null.
      *
      * @throws ModelNotFoundException when the result is not exactly one model
+     *
+     * @return T|null
      */
     public function oneOrNull(): ?Model
     {
@@ -291,7 +297,7 @@ class Query
     /**
      * Executes the query against the model's driver and returns the first result.
      *
-     * @return Model[]
+     * @return T[]
      */
     public function first(int $limit = 1): array
     {
@@ -311,10 +317,8 @@ class Query
 
     /**
      * Gets the sum of a property matching the query.
-     *
-     * @return number
      */
-    public function sum(string $property)
+    public function sum(string $property): float
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -324,10 +328,8 @@ class Query
 
     /**
      * Gets the average of a property matching the query.
-     *
-     * @return number
      */
-    public function average(string $property)
+    public function average(string $property): float
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -337,10 +339,8 @@ class Query
 
     /**
      * Gets the max of a property matching the query.
-     *
-     * @return number
      */
-    public function max(string $property)
+    public function max(string $property): float
     {
         $model = $this->model;
         $driver = $model::getDriver();
@@ -350,10 +350,8 @@ class Query
 
     /**
      * Gets the min of a property matching the query.
-     *
-     * @return number
      */
-    public function min(string $property)
+    public function min(string $property): float
     {
         $model = $this->model;
         $driver = $model::getDriver();
