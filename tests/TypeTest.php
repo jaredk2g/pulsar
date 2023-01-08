@@ -11,9 +11,11 @@
 
 namespace Pulsar\Tests;
 
+use DateTimeImmutable;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Pulsar\Exception\ModelException;
 use Pulsar\Property;
 use Pulsar\Tests\Enums\TestEnumInteger;
 use Pulsar\Tests\Enums\TestEnumString;
@@ -23,6 +25,12 @@ use ValueError;
 
 class TypeTest extends MockeryTestCase
 {
+    public static function setUpBeforeClass(): void
+    {
+        parent::setUpBeforeClass();
+        date_default_timezone_set('UTC');
+    }
+
     public function testCast(): void
     {
         $property = new Property(null: true);
@@ -49,6 +57,14 @@ class TypeTest extends MockeryTestCase
         $property = new Property(type: Type::INTEGER, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
         $this->assertEquals(123, Type::cast($property, '123'));
+
+        $property = new Property(type: Type::DATE, null: false);
+        $this->assertEquals(new DateTimeImmutable('2023-01-08'), Type::cast($property, '2023-01-08'));
+        $this->assertEquals(new DateTimeImmutable('2023-01-08'), Type::cast($property, new DateTimeImmutable('2023-01-08')));
+
+        $property = new Property(type: Type::DATETIME, null: false);
+        $this->assertEquals(new DateTimeImmutable('2010-01-28T17:00:00'), Type::cast($property, '2010-01-28 17:00:00'));
+        $this->assertEquals(new DateTimeImmutable('2010-01-28T17:00:00'), Type::cast($property, new DateTimeImmutable('2010-01-28T17:00:00')));
 
         $property = new Property(type: Type::DATE_UNIX, null: false);
         $this->assertEquals(123, Type::cast($property, 123));
@@ -116,6 +132,32 @@ class TypeTest extends MockeryTestCase
     }
 
     public function testToDate(): void
+    {
+        $this->assertEquals(new DateTimeImmutable('2023-01-08'), Type::to_date('2023-01-08', null));
+        $this->assertEquals(new DateTimeImmutable('2023-01-08'), Type::to_date(new DateTimeImmutable('2023-01-08'), null));
+        $this->assertEquals(new DateTimeImmutable('2015-08-20'), Type::to_date('Aug-20-2015', 'M-j-Y'));
+    }
+
+    public function testToDateInvalid(): void
+    {
+        $this->expectException(ModelException::class);
+        Type::to_date('not valid', null);
+    }
+
+    public function testToDateTime(): void
+    {
+        $this->assertEquals(new DateTimeImmutable('2023-01-08T01:02:03'), Type::to_datetime('2023-01-08 01:02:03', null));
+        $this->assertEquals(new DateTimeImmutable('2023-01-08T01:02:03'), Type::to_datetime(new DateTimeImmutable('2023-01-08 01:02:03'), null));
+        $this->assertEquals(new DateTimeImmutable('2015-08-20T01:02:03'), Type::to_datetime('Aug-20-2015 01:02:03', 'M-j-Y h:i:s'));
+    }
+
+    public function testToDateTimeInvalid(): void
+    {
+        $this->expectException(ModelException::class);
+        Type::to_datetime('not valid', null);
+    }
+
+    public function testToDateUnix(): void
     {
         $this->assertEquals(123, Type::to_date_unix(123));
         $this->assertEquals(123, Type::to_date_unix('123'));

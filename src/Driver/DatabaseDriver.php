@@ -91,7 +91,7 @@ final class DatabaseDriver extends AbstractDriver
 
     public function createModel(Model $model, array $parameters): bool
     {
-        $values = $this->serialize($parameters);
+        $values = $this->serialize($parameters, $model);
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 
@@ -140,7 +140,7 @@ final class DatabaseDriver extends AbstractDriver
             return true;
         }
 
-        $values = $this->serialize($parameters);
+        $values = $this->serialize($parameters, $model);
         $tablename = $model->getTablename();
         $db = $this->getConnection($model->getConnection());
 

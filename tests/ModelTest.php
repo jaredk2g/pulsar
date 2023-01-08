@@ -106,6 +106,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'relation' => [
                 'type' => Type::INTEGER,
@@ -124,6 +125,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'answer' => [
                 'type' => Type::STRING,
@@ -142,6 +144,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'test_hook' => [
                 'type' => Type::STRING,
@@ -160,6 +163,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'mutator' => [
                 'type' => null,
@@ -178,6 +182,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'accessor' => [
                 'type' => null,
@@ -196,6 +201,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'encrypted' => [
                 'type' => null,
@@ -214,6 +220,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'appended' => [
                 'type' => null,
@@ -232,6 +239,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
         ];
 
@@ -260,6 +268,7 @@ class ModelTest extends MockeryTestCase
             'morphs_to' => null,
             'in_array' => true,
             'enum_class' => null,
+            'date_format' => null,
         ];
 
         $this->assertEquals($expected, Person::definition()->get('id')->toArray());
@@ -284,6 +293,7 @@ class ModelTest extends MockeryTestCase
             'morphs_to' => null,
             'in_array' => true,
             'enum_class' => null,
+            'date_format' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('id')->toArray());
 
@@ -304,6 +314,7 @@ class ModelTest extends MockeryTestCase
             'morphs_to' => null,
             'in_array' => true,
             'enum_class' => null,
+            'date_format' => null,
         ];
         $this->assertEquals($expected, TestModel::definition()->get('relation')->toArray());
     }
@@ -328,6 +339,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'id2' => [
                 'type' => Type::INTEGER,
@@ -346,6 +358,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'default' => [
                 'type' => null,
@@ -364,6 +377,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'validate' => [
                 'type' => null,
@@ -382,6 +396,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'validate2' => [
                 'type' => null,
@@ -400,6 +415,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'unique' => [
                 'type' => null,
@@ -418,6 +434,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'required' => [
                 'type' => Type::INTEGER,
@@ -436,6 +453,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'hidden' => [
                 'type' => Type::BOOLEAN,
@@ -454,6 +472,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'person' => [
                 'type' => Type::INTEGER,
@@ -472,6 +491,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'array' => [
                 'type' => Type::ARRAY,
@@ -494,6 +514,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'object' => [
                 'type' => Type::OBJECT,
@@ -512,6 +533,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'mutable_create_only' => [
                 'type' => null,
@@ -530,6 +552,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'protected' => [
                 'type' => null,
@@ -548,6 +571,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'created_at' => [
                 'type' => Type::DATE_UNIX,
@@ -566,6 +590,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'updated_at' => [
                 'type' => Type::DATE_UNIX,
@@ -584,6 +609,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
         ];
         $model = new TestModel2(); // forces initialize()
@@ -611,6 +637,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'name' => [
                 'type' => Type::STRING,
@@ -629,6 +656,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'email' => [
                 'type' => Type::STRING,
@@ -647,6 +675,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'deleted' => [
                 'type' => Type::BOOLEAN,
@@ -665,6 +694,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'deleted_at' => [
                 'type' => Type::DATE_UNIX,
@@ -683,6 +713,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'garage' => [
                 'type' => null,
@@ -701,6 +732,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
         ];
 
@@ -2319,6 +2351,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'customer' => [
                 'type' => null,
@@ -2337,6 +2370,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => false,
                 'enum_class' => null,
+                'date_format' => null,
             ],
             'customer_id' => [
                 'type' => 'integer',
@@ -2355,6 +2389,7 @@ class ModelTest extends MockeryTestCase
                 'morphs_to' => null,
                 'in_array' => true,
                 'enum_class' => null,
+                'date_format' => null,
             ],
         ];
 

@@ -16,6 +16,7 @@ Standard Options:
 - [encrypted](#encrypted)
 - [in_array](#in_array)
 - [enum_class](#enum_class)
+- [date_format](#date_format)
 
 Relationships:
 - [belongs_to](#belongs_to)
@@ -36,6 +37,8 @@ The data type of the property. This setting will type cast values when retrieved
 Supported Types:
 - `array`
 - `boolean`
+- `date`
+- `date_time`
 - `date_unix`
 - `enum`
 - `float`
@@ -101,6 +104,12 @@ Boolean, Optional, Default: `true` (`false` for relationships)
 ### enum_class
 
 This is required when the property type is `enum`. The value must be the class name of a `BackedEnum` class. Any values used for this property will be an instance of this enum class.
+
+String, Optional, Default: `null`
+
+### date_format
+
+When using a `date` or `datetime` property type, you can specify the string format for representing these values in the database. If this setting is not used then the default format for `date` is `Y-m-d` and the default format for `datetime` is `Y-m-d H:i:s`.
 
 String, Optional, Default: `null`
 

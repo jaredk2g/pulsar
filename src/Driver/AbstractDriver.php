@@ -3,8 +3,12 @@
 namespace Pulsar\Driver;
 
 use BackedEnum;
+use DateTimeInterface;
 use JAQB\Query\SelectQuery;
+use Pulsar\Model;
+use Pulsar\Property;
 use Pulsar\Query;
+use Pulsar\Type;
 use UnitEnum;
 
 abstract class AbstractDriver implements DriverInterface
@@ -12,11 +16,21 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Marshals a value to storage.
      */
-    public function serializeValue(mixed $value): mixed
+    public function serializeValue(mixed $value, ?Property $property): mixed
     {
         // encode backed enums as their backing type
         if ($value instanceof BackedEnum) {
             return $value->value;
+        }
+
+        // encode datetime objects
+        if ($value instanceof DateTimeInterface) {
+            $format = $property?->date_format;
+            if (!$format) {
+                $format = $property?->type == Type::DATE ? 'Y-m-d' : 'Y-m-d H:i:s';
+            }
+
+            return $value->format($format);
         }
 
         // encode arrays/objects as JSON
@@ -30,10 +44,10 @@ abstract class AbstractDriver implements DriverInterface
     /**
      * Serializes an array of values.
      */
-    protected function serialize(array $values): array
+    protected function serialize(array $values, Model $model): array
     {
-        foreach ($values as &$value) {
-            $value = $this->serializeValue($value);
+        foreach ($values as $k => &$value) {
+            $value = $this->serializeValue($value, $model::definition()->get($k));
         }
 
         return $values;

@@ -21,16 +21,16 @@ use PDOStatement;
 use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Exception\DriverException;
 use Pulsar\Query;
-use Pulsar\Tests\Enums\TestEnumInteger;
-use Pulsar\Tests\Enums\TestEnumString;
 use Pulsar\Tests\Models\Group;
 use Pulsar\Tests\Models\Person;
-use stdClass;
 
 class DatabaseDriverTest extends MockeryTestCase
 {
-    private function getDriver($connection): DatabaseDriver
+    use SerializeValueTestTrait;
+
+    private function getDriver($connection = null): DatabaseDriver
     {
+        $connection = $connection ?: Mockery::mock(QueryBuilder::class);
         $driver = new DatabaseDriver();
         $driver->setConnection($connection);
 
@@ -96,23 +96,6 @@ class DatabaseDriverTest extends MockeryTestCase
         $this->expectException(DriverException::class);
         $driver = new DatabaseDriver();
         $driver->getConnection(false);
-    }
-
-    public function testSerializeValue()
-    {
-        $driver = new DatabaseDriver();
-
-        $this->assertEquals('string', $driver->serializeValue('string'));
-
-        $arr = ['test' => true];
-        $this->assertEquals('{"test":true}', $driver->serializeValue($arr));
-
-        $obj = new stdClass();
-        $obj->test = true;
-        $this->assertEquals('{"test":true}', $driver->serializeValue($obj));
-
-        $this->assertEquals('first', $driver->serializeValue(TestEnumString::First));
-        $this->assertEquals(1, $driver->serializeValue(TestEnumInteger::First));
     }
 
     public function testCreateModel()

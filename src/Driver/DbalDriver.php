@@ -34,7 +34,7 @@ final class DbalDriver extends AbstractDriver
     {
         // build the SQL query
         $tablename = $model->getTablename();
-        $values = $this->serialize($parameters);
+        $values = $this->serialize($parameters, $model);
         $dbQuery = new InsertQuery();
         $dbQuery->into($tablename)->values($values);
 
@@ -114,7 +114,7 @@ final class DbalDriver extends AbstractDriver
 
         // build the SQL query
         $tablename = $model->getTablename();
-        $values = $this->serialize($parameters);
+        $values = $this->serialize($parameters, $model);
         $dbQuery = new UpdateQuery();
         $dbQuery->table($tablename)
             ->values($values)

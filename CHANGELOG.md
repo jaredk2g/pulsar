@@ -14,6 +14,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Doctrine 3 compatibility if using the DBAL driver
 - Added `Model::deleteOrFail()` method.
 - The model ID property names can be obtained with `Definition::getIds()`
+- Use PHPDoc generics when possible
+- Added `enum` model property type.
+- Added `date` and `datetime` property types that use `DateTimeInterface` objects.
 
 ### Changed
 - Moved adding event listeners and dispatching events to `EventManager`
@@ -32,7 +35,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The constructor arguments to `Property` are now typed and promoted to readonly constructor properties. An array of properties is no longer accepted.
 - Property definitions must return `Property` objects instead of arrays
 - Renamed the `date` type to `date_unix`
-- Use PHPDoc generics when possible
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.
@@ -61,7 +63,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Added `Model::beforePersist()` and `Model::afterPersist()` shortcut to install lifecycle event listeners for all create, update, and delete.
 - Added `Model::getMassAssignmentWhitelist()` and `Model::getMassAssignmentBlacklist()` that can be overriden to define mass assignment rules.
 - Added `in_array` model definition setting to indicate whether a property is included in the array representation.
-- Added `enum` model property type.
 
 ### Changed
 - Make model internal properties private when possible.

@@ -12,8 +12,11 @@
 namespace Pulsar;
 
 use BackedEnum;
+use DateTimeImmutable;
+use DateTimeInterface;
 use Defuse\Crypto\Crypto;
 use Defuse\Crypto\Key;
+use Pulsar\Exception\ModelException;
 use stdClass;
 
 /**
@@ -24,7 +27,7 @@ final class Type
     const ARRAY = 'array';
     const BOOLEAN = 'boolean';
     const DATE = 'date';
-    const DATE_TIME = 'datetime';
+    const DATETIME = 'datetime';
     const DATE_UNIX = 'date_unix';
     const ENUM = 'enum';
     const FLOAT = 'float';
@@ -62,6 +65,14 @@ final class Type
             return self::to_enum($value, (string) $property->enum_class);
         }
 
+        if ($type == self::DATE) {
+            return self::to_date($value, $property->date_format);
+        }
+
+        if ($type == self::DATETIME) {
+            return self::to_datetime($value, $property->date_format);
+        }
+
         $m = 'to_'.$property->type;
 
         return self::$m($value);
@@ -97,6 +108,42 @@ final class Type
     public static function to_boolean(mixed $value): bool
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+    }
+
+    /**
+     * Casts a date value as a Date object.
+     */
+    public static function to_date(mixed $value, ?string $format): DateTimeInterface
+    {
+        if ($value instanceof DateTimeInterface) {
+            return $value;
+        }
+
+        $format = $format ?? 'Y-m-d';
+        $date = DateTimeImmutable::createFromFormat($format, $value);
+        if (!$date) {
+            throw new ModelException('Could not parse date: '.$value);
+        }
+
+        return $date->setTime(0, 0);
+    }
+
+    /**
+     * Casts a datetime value as a Date object.
+     */
+    public static function to_datetime(mixed $value, ?string $format): DateTimeInterface
+    {
+        if ($value instanceof DateTimeInterface) {
+            return $value;
+        }
+
+        $format = $format ?? 'Y-m-d H:i:s';
+        $date = DateTimeImmutable::createFromFormat($format, $value);
+        if (!$date) {
+            throw new ModelException('Could not parse datetime: '.$value);
+        }
+
+        return $date;
     }
 
     /**

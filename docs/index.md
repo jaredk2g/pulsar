@@ -105,7 +105,7 @@ class User extends Model
                 type: Type::FLOAT,
             ),
             'last_sign_in' => new Property(
-                type: Type::DATE_UNIX,
+                type: Type::DATETIME,
                 null: true,
             ),
         ];
@@ -155,7 +155,7 @@ $user = new User([
 ]);
 $user->save(); // creates a new row in Users table
 
-$user->last_sign_in = time();
+$user->last_sign_in = new DateTimeImmutable();
 $user->balance = 1000;
 $user->save(); // changes the `last_sign_in` and `balance` columns 
 ``` 

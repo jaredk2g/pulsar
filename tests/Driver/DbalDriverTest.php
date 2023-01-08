@@ -20,10 +20,11 @@ use Pulsar\Exception\DriverException;
 use Pulsar\Query;
 use Pulsar\Tests\Models\Group;
 use Pulsar\Tests\Models\Person;
-use stdClass;
 
 class DbalDriverTest extends MockeryTestCase
 {
+    use SerializeValueTestTrait;
+
     private function getDriver($connection = null): DbalDriver
     {
         $connection = $connection ?: Mockery::mock(Connection::class);
@@ -42,20 +43,6 @@ class DbalDriverTest extends MockeryTestCase
     {
         $this->expectException(DriverException::class);
         $this->getDriver()->getConnection('not_supported');
-    }
-
-    public function testSerializeValue()
-    {
-        $driver = $this->getDriver();
-
-        $this->assertEquals('string', $driver->serializeValue('string'));
-
-        $arr = ['test' => true];
-        $this->assertEquals('{"test":true}', $driver->serializeValue($arr));
-
-        $obj = new stdClass();
-        $obj->test = true;
-        $this->assertEquals('{"test":true}', $driver->serializeValue($obj));
     }
 
     public function testCreateModel()

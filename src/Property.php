@@ -42,6 +42,7 @@ final class Property
         ?string $has_one = null,
         ?string $has_many = null,
         public readonly ?string $enum_class = null,
+        public readonly ?string $date_format = null,
     )
     {
         $this->hasDefault = $default !== self::MISSING_DEFAULT;
@@ -115,6 +116,7 @@ final class Property
             'pivot_tablename' => $this->pivot_tablename,
             'morphs_to' => $this->morphs_to,
             'enum_class' => $this->enum_class,
+            'date_format' => $this->date_format,
         ];
     }
 }
