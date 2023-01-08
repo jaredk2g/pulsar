@@ -44,25 +44,25 @@ final class Type
         }
 
         // handle empty strings as null
-        if ($property->isNullable() && '' === $value) {
+        if ($property->null && '' === $value) {
             return null;
         }
 
         // perform decryption, if enabled
-        if ($property->isEncrypted()) {
+        if ($property->encrypted) {
             $value = Crypto::decrypt($value, self::$encryptionKey);
         }
 
-        $type = $property->getType();
+        $type = $property->type;
         if (!$type) {
             return $value;
         }
 
         if ($type == self::ENUM) {
-            return self::to_enum($value, (string) $property->getEnumClass());
+            return self::to_enum($value, (string) $property->enum_class);
         }
 
-        $m = 'to_'.$property->getType();
+        $m = 'to_'.$property->type;
 
         return self::$m($value);
     }

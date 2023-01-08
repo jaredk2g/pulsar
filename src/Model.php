@@ -258,11 +258,11 @@ abstract class Model implements ArrayAccess
         // set local ID property on belongs_to relationship
         if (static::definition()->has($name)) {
             $property = static::definition()->get($name);
-            if (Relationship::BELONGS_TO == $property->getRelationshipType() && !$property->isPersisted()) {
+            if (Relationship::BELONGS_TO == $property->relation_type && !$property->persisted) {
                 if ($value instanceof self) {
-                    $this->_unsaved[$property->getLocalKey()] = $value->{$property->getForeignKey()};
+                    $this->_unsaved[$property->local_key] = $value->{$property->foreign_key};
                 } elseif (null === $value) {
-                    $this->_unsaved[$property->getLocalKey()] = null;
+                    $this->_unsaved[$property->local_key] = null;
                 } else {
                     throw new ModelException('The value set on the "'.$name.'" property must be a model or null.');
                 }
@@ -541,13 +541,13 @@ abstract class Model implements ArrayAccess
             $requiredProperties = [];
             foreach (static::definition()->all() as $name => $property) {
                 // build a list of the required properties
-                if ($property->isRequired()) {
+                if ($property->required) {
                     $requiredProperties[] = $property;
                 }
 
                 // add in default values
-                if (!array_key_exists($name, $this->_unsaved) && $property->hasDefault()) {
-                    $this->_unsaved[$name] = $property->getDefault();
+                if (!array_key_exists($name, $this->_unsaved) && $property->hasDefault) {
+                    $this->_unsaved[$name] = $property->default;
                 }
             }
 
@@ -568,14 +568,14 @@ abstract class Model implements ArrayAccess
                 }
 
                 // check if this property is persisted to the DB
-                if (!$property->isPersisted()) {
+                if (!$property->persisted) {
                     $preservedValues[$name] = $value;
                     continue;
                 }
 
                 // cannot insert immutable values
                 // (unless using the default value)
-                if ($property->isImmutable() && $value !== $property->getDefault()) {
+                if ($property->isImmutable() && $value !== $property->default) {
                     continue;
                 }
 
@@ -585,7 +585,7 @@ abstract class Model implements ArrayAccess
 
             // check for required fields
             foreach ($requiredProperties as $property) {
-                $name = $property->getName();
+                $name = $property->name;
                 if (!isset($insertArray[$name]) && !isset($preservedValues[$name])) {
                     $context = [
                         'field' => $name,
@@ -707,7 +707,7 @@ abstract class Model implements ArrayAccess
         foreach ($properties as $k) {
             if (!isset($this->_values[$k]) && ($ignoreUnsaved || !isset($this->_unsaved[$k]))) {
                 $property = static::definition()->get($k);
-                if ($property && $property->isPersisted()) {
+                if ($property && $property->persisted) {
                     $this->refresh();
 
                     return;
@@ -733,11 +733,11 @@ abstract class Model implements ArrayAccess
         } elseif (array_key_exists($name, $this->_values)) {
             $value = $this->_values[$name];
         } elseif ($property = static::definition()->get($name)) {
-            if ($property->getRelationshipType() && !$property->isPersisted()) {
+            if ($property->relation_type && !$property->persisted) {
                 $relationship = $this->getRelationship($property);
                 $value = $this->_values[$name] = $relationship->getResults();
             } else {
-                $value = $this->_values[$name] = $property->getDefault();
+                $value = $this->_values[$name] = $property->default;
             }
         }
 
@@ -833,8 +833,8 @@ abstract class Model implements ArrayAccess
         // build the list of properties to return
         $properties = [];
         foreach (static::definition()->all() as $property) {
-            if ($property->isInArray()) {
-                $properties[] = $property->getName();
+            if ($property->in_array) {
+                $properties[] = $property->name;
             }
         }
 
@@ -944,7 +944,7 @@ abstract class Model implements ArrayAccess
                 $property = static::definition()->get($name);
 
                 // check if this property is persisted to the DB
-                if (!$property->isPersisted()) {
+                if (!$property->persisted) {
                     $preservedValues[$name] = $value;
                     continue;
                 }
@@ -1238,7 +1238,7 @@ abstract class Model implements ArrayAccess
      */
     private function getRelationship(Property $property): AbstractRelation
     {
-        $name = $property->getName();
+        $name = $property->name;
         if (!isset($this->relationships[$name])) {
             $this->relationships[$name] = Relationship::make($this, $property);
         }
@@ -1256,7 +1256,7 @@ abstract class Model implements ArrayAccess
             foreach ($this->_unsaved as $k => $value) {
                 if ($value instanceof self && !$value->persisted()) {
                     $property = static::definition()->get($k);
-                    if ($property && !$property->isPersisted()) {
+                    if ($property && !$property->persisted) {
                         $value->saveOrFail();
                         // set the model again to update any ID properties
                         $this->$k = $value;
@@ -1265,7 +1265,7 @@ abstract class Model implements ArrayAccess
                     foreach ($value as $subValue) {
                         if ($subValue instanceof self && !$subValue->persisted()) {
                             $property = static::definition()->get($k);
-                            if ($property && !$property->isPersisted()) {
+                            if ($property && !$property->persisted) {
                                 $subValue->saveOrFail();
                             }
                         }

@@ -34,7 +34,7 @@ class Hydrator
 
             // capture any local ids for eager loading relationships
             foreach ($eagerLoaded as $k) {
-                $localKey = $eagerLoadedProperties[$k]['local_key'];
+                $localKey = $eagerLoadedProperties[$k]->local_key;
                 if (isset($row[$localKey])) {
                     $ids[$k][$j] = $row[$localKey];
                 }
@@ -44,15 +44,15 @@ class Hydrator
         // hydrate the eager loaded relationships
         foreach ($eagerLoaded as $k) {
             $property = $eagerLoadedProperties[$k];
-            $relationModelClass = $property->getForeignModelClass();
-            $type = $property->getRelationshipType();
+            $relationModelClass = $property->relation;
+            $type = $property->relation_type;
 
             if (Relationship::BELONGS_TO == $type) {
-                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), false);
+                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->foreign_key, false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
-                        if ($property->isPersisted()) {
+                        if ($property->persisted) {
                             $models[$j]->setRelation($k, $relationships[$id]);
                         // older style properties do not support this type of hydration
                         } else {
@@ -61,11 +61,11 @@ class Hydrator
                     }
                 }
             } elseif (Relationship::HAS_ONE == $type) {
-                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), false);
+                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->foreign_key, false);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
-                        if ($property->isPersisted()) {
+                        if ($property->persisted) {
                             $models[$j]->setRelation($k, $relationships[$id]);
                         // older style properties do not support this type of hydration
                         } else {
@@ -79,25 +79,25 @@ class Hydrator
                         $models[$j]->clearRelation($k);
 
                         // older style properties do not support this type of hydration
-                        if (!$property->isPersisted()) {
+                        if (!$property->persisted) {
                             $models[$j]->hydrateValue($k, null);
                         }
                     }
                 }
             } elseif (Relationship::HAS_MANY == $type) {
-                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->getForeignKey(), true);
+                $relationships = self::fetchRelationships($relationModelClass, $ids[$k], $property->foreign_key, true);
 
                 foreach ($ids[$k] as $j => $id) {
                     if (isset($relationships[$id])) {
                         $models[$j]->setRelationCollection($k, $relationships[$id]);
                         // older style properties do not support this type of hydration
-                        if (!$property->isPersisted()) {
+                        if (!$property->persisted) {
                             $models[$j]->hydrateValue($k, $relationships[$id]);
                         }
                     } else {
                         $models[$j]->setRelationCollection($k, []);
                         // older style properties do not support this type of hydration
-                        if (!$property->isPersisted()) {
+                        if (!$property->persisted) {
                             $models[$j]->hydrateValue($k, []);
                         }
                     }

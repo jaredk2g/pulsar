@@ -44,7 +44,7 @@ final class DefinitionBuilder
         $result = [];
         foreach ($properties as $k => $property) {
             // convert to an array in order to fill in additional settings
-            $hasDefault = $property->hasDefault();
+            $hasDefault = $property->hasDefault;
             $property = $property->toArray();
             if (!$hasDefault) {
                 unset($property['default']);

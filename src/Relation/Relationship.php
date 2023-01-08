@@ -19,21 +19,21 @@ final class Relationship
      */
     public static function make(Model $model, Property $property): AbstractRelation
     {
-        $type = $property->getRelationshipType();
+        $type = $property->relation_type;
         if (!$type) {
-            throw new InvalidArgumentException('Property "'.$property->getName().'" does not have a relationship.');
+            throw new InvalidArgumentException('Property "'.$property->name.'" does not have a relationship.');
         }
 
-        $foreignModel = $property->getForeignModelClass();
-        $foreignKey = $property->getForeignKey();
-        $localKey = $property->getLocalKey();
+        $foreignModel = $property->relation;
+        $foreignKey = $property->foreign_key;
+        $localKey = $property->local_key;
 
         if (self::BELONGS_TO == $type) {
             return new BelongsTo($model, $localKey, $foreignModel, $foreignKey);
         }
 
         if (self::BELONGS_TO_MANY == $type) {
-            $pivotTable = $property->getPivotTablename();
+            $pivotTable = $property->pivot_tablename;
 
             return new BelongsToMany($model, $localKey, $pivotTable, $foreignModel, $foreignKey);
         }
@@ -49,11 +49,11 @@ final class Relationship
         if (self::POLYMORPHIC == $type) {
             $localTypeKey = $localKey.'_type';
             $localIdKey = $localKey.'_id';
-            $morphsTo = $property->getMorphsTo();
+            $morphsTo = $property->morphs_to;
 
             return new Polymorphic($model, $localTypeKey, $localIdKey, $morphsTo, $foreignKey);
         }
 
-        throw new InvalidArgumentException('Relationship type on "'.$property->getName().'" property not supported: '.$type);
+        throw new InvalidArgumentException('Relationship type on "'.$property->name.'" property not supported: '.$type);
     }
 }

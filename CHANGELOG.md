@@ -29,7 +29,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Model ID properties are now provided by `Model::getIDProperties()` instead of `Model::$ids`. `Model::getIDProperties()` is now a protected method instead of public.
 - Model properties are now provided by `Model::getProperties()` instead of `Model::$properties`
 - Any `autoDefinition` methods should return an array of properties that will be added to the list of model properties
-- The constructor arguments to `Property` are now typed and promoted to constructor properties. An array of properties is no longer accepted.
+- The constructor arguments to `Property` are now typed and promoted to readonly constructor properties. An array of properties is no longer accepted.
 - Property definitions must return `Property` objects instead of arrays
 - Renamed the `date` type to `date_unix`
 - Use PHPDoc generics when possible

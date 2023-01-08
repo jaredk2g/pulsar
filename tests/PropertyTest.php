@@ -7,54 +7,28 @@ use Pulsar\Property;
 
 class PropertyTest extends TestCase
 {
-    public function testArrayAccess()
-    {
-        $property = new Property(required: true);
-        $this->assertFalse(isset($property['does_not_exist']));
-        $this->assertNull($property['does_not_exist']);
-
-        $this->assertTrue(isset($property['required']));
-        $this->assertTrue($property['required']);
-
-        $e = null;
-        try {
-            $property['test'] = ['required' => true];
-        } catch (\Exception $ex) {
-            $e = $ex;
-        }
-        $this->assertNotNull($e);
-
-        $e = null;
-        try {
-            unset($property['test']);
-        } catch (\Exception $ex) {
-            $e = $ex;
-        }
-        $this->assertNotNull($e);
-    }
-
     public function testDefault()
     {
         $property = new Property();
-        $this->assertFalse($property->hasDefault());
+        $this->assertFalse($property->hasDefault);
 
         $property = new Property(default: 'test');
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
 
         $property = new Property(default: null);
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
 
         $property = new Property(default: false);
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
 
         $property = new Property(default: 0);
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
 
         $property = new Property(default: '');
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
 
         $property = new Property(default: []);
-        $this->assertTrue($property->hasDefault());
+        $this->assertTrue($property->hasDefault);
     }
 
     public function testMutable()

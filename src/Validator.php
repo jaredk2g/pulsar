@@ -171,13 +171,13 @@ final class Validator
     {
         // assume empty string is a null value for properties
         // that are marked as optionally-null
-        if ($property->isNullable() && ('' === $value || null === $value)) {
+        if ($property->null && ('' === $value || null === $value)) {
             $value = null;
 
             return true;
         }
 
-        $validationRules = $property->getValidationRules();
+        $validationRules = $property->validate;
         if (!$validationRules) {
             return true;
         }
@@ -189,9 +189,9 @@ final class Validator
 
         // add a validation error message if one was not already added
         $errors = $model->getErrors();
-        if (!$errors->has($property->getName())) {
+        if (!$errors->has($property->name)) {
             $params = [
-                'field' => $property->getName(),
+                'field' => $property->name,
                 'field_name' => $property->getTitle($model),
                 'rule' => $validator->getFailingRule(),
             ];

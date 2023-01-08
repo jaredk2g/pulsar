@@ -2,10 +2,9 @@
 
 namespace Pulsar;
 
-use ArrayAccess;
 use ICanBoogie\Inflector;
 
-final class Property implements ArrayAccess
+final class Property
 {
     const IMMUTABLE = 'immutable';
     const MUTABLE_CREATE_ONLY = 'mutable_create_only';
@@ -14,51 +13,54 @@ final class Property implements ArrayAccess
     private const RELATIONSHIP_SHORTCUTS = ['belongs_to', 'belongs_to_many', 'has_one', 'has_many'];
     private const MISSING_DEFAULT = '_____missing_default_____';
 
-    private bool $hasDefault;
+    public readonly mixed $default;
+    public readonly bool $persisted;
+    public readonly bool $in_array;
+    public readonly ?string $relation;
+    public readonly ?string $relation_type;
+    public readonly bool $hasDefault;
 
     public function __construct(
-        private string $name = '',
-        private ?string $type = null,
-        private string $mutable = self::MUTABLE,
-        private bool $null = false,
-        private bool $required = false,
-        private array|string|null $validate = null,
-        private mixed $default = self::MISSING_DEFAULT,
-        private bool $encrypted = false,
-        private bool $persisted = true,
-        private bool $in_array = true,
-        private ?string $relation = null,
-        private ?string $relation_type = null,
-        private ?string $foreign_key = null,
-        private ?string $local_key = null,
-        private ?string $pivot_tablename = null,
-        private ?array $morphs_to = null,
+        public readonly string $name = '',
+        public readonly ?string $type = null,
+        public readonly string $mutable = self::MUTABLE,
+        public readonly bool $null = false,
+        public readonly bool $required = false,
+        public readonly array|string|null $validate = null,
+        mixed $default = self::MISSING_DEFAULT,
+        public readonly bool $encrypted = false,
+        bool $persisted = true,
+        bool $in_array = true,
+        ?string $relation = null,
+        ?string $relation_type = null,
+        public readonly ?string $foreign_key = null,
+        public readonly ?string $local_key = null,
+        public readonly ?string $pivot_tablename = null,
+        public readonly ?array $morphs_to = null,
         ?string $belongs_to = null,
         ?string $belongs_to_many = null,
         ?string $has_one = null,
         ?string $has_many = null,
-        private ?string $enum_class = null,
+        public readonly ?string $enum_class = null,
     )
     {
+        $this->hasDefault = $default !== self::MISSING_DEFAULT;
+        $this->default = $this->hasDefault ? $default : null;
+
         // Relationship shortcuts
         foreach (self::RELATIONSHIP_SHORTCUTS as $k) {
             if ($$k) {
-                $this->persisted = false;
-                $this->in_array = false;
-                $this->relation = $$k;
-                $this->relation_type = $k;
+                $persisted = false;
+                $in_array = false;
+                $relation = $$k;
+                $relation_type = $k;
             }
         }
 
-        $this->hasDefault = $this->default !== self::MISSING_DEFAULT;
-        if (!$this->hasDefault) {
-            $this->default = null;
-        }
-    }
-
-    public function getName(): string
-    {
-        return $this->name;
+        $this->persisted = $persisted;
+        $this->in_array = $in_array;
+        $this->relation = $relation;
+        $this->relation_type = $relation_type;
     }
 
     /**
@@ -79,11 +81,6 @@ final class Property implements ArrayAccess
         return Inflector::get()->titleize($this->name);
     }
 
-    public function getType(): ?string
-    {
-        return $this->type;
-    }
-
     public function isMutable(): bool
     {
         return self::MUTABLE == $this->mutable;
@@ -97,81 +94,6 @@ final class Property implements ArrayAccess
     public function isImmutable(): bool
     {
         return self::IMMUTABLE == $this->mutable;
-    }
-
-    public function isNullable(): bool
-    {
-        return $this->null;
-    }
-
-    public function isRequired(): bool
-    {
-        return $this->required;
-    }
-
-    public function getValidationRules(): array|string|null
-    {
-        return $this->validate;
-    }
-
-    public function getDefault(): mixed
-    {
-        return $this->default;
-    }
-
-    public function hasDefault(): bool
-    {
-        return $this->hasDefault;
-    }
-
-    public function isPersisted(): bool
-    {
-        return $this->persisted;
-    }
-
-    public function isEncrypted(): bool
-    {
-        return $this->encrypted;
-    }
-
-    public function isInArray(): bool
-    {
-        return $this->in_array;
-    }
-
-    public function getForeignModelClass(): ?string
-    {
-        return $this->relation;
-    }
-
-    public function getRelationshipType(): ?string
-    {
-        return $this->relation_type;
-    }
-
-    public function getForeignKey(): ?string
-    {
-        return $this->foreign_key;
-    }
-
-    public function getLocalKey(): ?string
-    {
-        return $this->local_key;
-    }
-
-    public function getPivotTablename(): ?string
-    {
-        return $this->pivot_tablename;
-    }
-
-    public function getMorphsTo(): ?array
-    {
-        return $this->morphs_to;
-    }
-
-    public function getEnumClass(): ?string
-    {
-        return $this->enum_class;
     }
 
     public function toArray(): array
@@ -194,31 +116,5 @@ final class Property implements ArrayAccess
             'morphs_to' => $this->morphs_to,
             'enum_class' => $this->enum_class,
         ];
-    }
-
-    public function offsetExists($offset): bool
-    {
-        return property_exists($this, $offset) && $this->$offset !== null;
-    }
-
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
-    {
-        if (!property_exists($this, $offset)) {
-            return null;
-        }
-
-        return $this->$offset;
-    }
-
-    public function offsetSet($offset, $value): void
-    {
-        throw new \RuntimeException('Modifying a model property is not allowed.');
-    }
-
-    #[\ReturnTypeWillChange]
-    public function offsetUnset($offset)
-    {
-        throw new \RuntimeException('Modifying a model property is not allowed.');
     }
 }
