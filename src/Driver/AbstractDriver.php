@@ -10,7 +10,6 @@ use Pulsar\Property;
 use Pulsar\Query;
 use Pulsar\Relation\Pivot;
 use Pulsar\Type;
-use UnitEnum;
 
 abstract class AbstractDriver implements DriverInterface
 {
@@ -28,7 +27,7 @@ abstract class AbstractDriver implements DriverInterface
         if ($value instanceof DateTimeInterface) {
             $format = $property?->date_format;
             if (!$format) {
-                $format = $property?->type == Type::DATE ? 'Y-m-d' : 'Y-m-d H:i:s';
+                $format = Type::DATE == $property?->type ? 'Y-m-d' : 'Y-m-d H:i:s';
             }
 
             return $value->format($format);
@@ -122,7 +121,6 @@ abstract class AbstractDriver implements DriverInterface
     {
         foreach ($query->getJoins() as $join) {
             [$foreignModelClass, $column, $foreignKey, $type] = $join;
-
 
             $foreignModel = $foreignModelClass instanceof Pivot ? $foreignModelClass : new $foreignModelClass();
             $foreignTablename = $foreignModel->getTablename();
