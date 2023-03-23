@@ -34,8 +34,9 @@ final class Relationship
 
         if (self::BELONGS_TO_MANY == $type) {
             $pivotTable = $property->pivot_tablename;
+            $idKey = $property->id_key;
 
-            return new BelongsToMany($model, $localKey, $pivotTable, $foreignModel, $foreignKey);
+            return new BelongsToMany($model, $localKey, $pivotTable, $foreignModel, $foreignKey, $idKey);
         }
 
         if (self::HAS_ONE == $type) {
