@@ -40,8 +40,9 @@ final class BelongsToMany extends AbstractRelation
         $pivot = new Pivot();
         $pivot->setTablename($this->tablename);
 
-        //known issue - this will work only on single join  column
-        foreach ($this->localModel->ids() as $idProperty => $id) {
+        $ids = $this->localModel->ids();
+        // known issue - this will work only on single join  column
+        foreach ($ids as $idProperty => $id) {
             if (null === $id) {
                 $this->empty = true;
             }
