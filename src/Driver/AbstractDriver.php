@@ -8,8 +8,8 @@ use JAQB\Query\SelectQuery;
 use Pulsar\Model;
 use Pulsar\Property;
 use Pulsar\Query;
+use Pulsar\Relation\Pivot;
 use Pulsar\Type;
-use UnitEnum;
 
 abstract class AbstractDriver implements DriverInterface
 {
@@ -27,7 +27,7 @@ abstract class AbstractDriver implements DriverInterface
         if ($value instanceof DateTimeInterface) {
             $format = $property?->date_format;
             if (!$format) {
-                $format = $property?->type == Type::DATE ? 'Y-m-d' : 'Y-m-d H:i:s';
+                $format = Type::DATE == $property?->type ? 'Y-m-d' : 'Y-m-d H:i:s';
             }
 
             return $value->format($format);
@@ -122,9 +122,11 @@ abstract class AbstractDriver implements DriverInterface
         foreach ($query->getJoins() as $join) {
             [$foreignModelClass, $column, $foreignKey, $type] = $join;
 
-            $foreignModel = new $foreignModelClass();
+            $foreignModel = $foreignModelClass instanceof Pivot ? $foreignModelClass : new $foreignModelClass();
             $foreignTablename = $foreignModel->getTablename();
-            $condition = $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
+            $condition = $foreignModelClass instanceof Pivot
+                ? $this->prefixColumn($column, $foreignTablename).'='.$this->prefixColumn($foreignKey, $tablename)
+                : $this->prefixColumn($column, $tablename).'='.$this->prefixColumn($foreignKey, $foreignTablename);
 
             $dbQuery->join($foreignTablename, $condition, null, $type);
         }
