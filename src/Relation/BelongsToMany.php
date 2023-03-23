@@ -28,7 +28,7 @@ final class BelongsToMany extends AbstractRelation
      * @param string $foreignModel foreign model class
      * @param string $foreignKey   identifying key on foreign model
      */
-    public function __construct(Model $localModel, string $localKey, string $tablename, string $foreignModel, string $foreignKey, private readonly string|null $idKey)
+    public function __construct(Model $localModel, string $localKey, string $tablename, string $foreignModel, string $foreignKey)
     {
         $this->tablename = $tablename;
 
@@ -40,10 +40,8 @@ final class BelongsToMany extends AbstractRelation
         $pivot = new Pivot();
         $pivot->setTablename($this->tablename);
 
-        $ids = $this->localModel->ids();
-        $ids = $this->idKey ? [$this->idKey => array_shift($ids)] : $ids ;
         //known issue - this will work only on single join  column
-        foreach ($ids as $idProperty => $id) {
+        foreach ($this->localModel->ids() as $idProperty => $id) {
             if (null === $id) {
                 $this->empty = true;
             }
