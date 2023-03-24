@@ -41,15 +41,23 @@ final class BelongsToMany extends AbstractRelation
         $pivot->setTablename($this->tablename);
 
         $ids = $this->localModel->ids();
+        $foreignIds = $query->getModel()->ids();
         // known issue - this will work only on single join  column
-        foreach ($ids as $idProperty => $id) {
-            if (null === $id) {
-                $this->empty = true;
-            }
+        if (1 !== count($foreignIds) && 1 != count($ids)) {
+            $this->empty = true;
 
-            $query->where("$this->tablename.$this->localKey = $id");
-            $query->join($pivot, $this->foreignKey, $idProperty);
+            return $query;
         }
+        $id = array_shift($ids);
+        $firstForeignKey = array_key_first($foreignIds);
+        if (!$id || !is_string($firstForeignKey)) {
+            $this->empty = true;
+
+            return $query;
+        }
+
+        $query->where("$this->tablename.$this->localKey = $id");
+        $query->join($pivot, $this->foreignKey, $firstForeignKey);
 
         return $query;
     }
