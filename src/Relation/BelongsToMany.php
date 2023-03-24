@@ -14,7 +14,6 @@ namespace Pulsar\Relation;
 use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
-use function _PHPStan_9dde7d81b\React\Promise\Stream\first;
 
 /**
  * Represents a belongs-to-many relationship.
