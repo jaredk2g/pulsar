@@ -14,6 +14,7 @@ namespace Pulsar\Relation;
 use Pulsar\Exception\ModelException;
 use Pulsar\Model;
 use Pulsar\Query;
+use function _PHPStan_9dde7d81b\React\Promise\Stream\first;
 
 /**
  * Represents a belongs-to-many relationship.
@@ -41,15 +42,21 @@ final class BelongsToMany extends AbstractRelation
         $pivot->setTablename($this->tablename);
 
         $ids = $this->localModel->ids();
+        $foreignIds = $query->getModel()->ids();
         // known issue - this will work only on single join  column
-        foreach ($ids as $idProperty => $id) {
-            if (null === $id) {
-                $this->empty = true;
-            }
-
-            $query->where("$this->tablename.$this->localKey = $id");
-            $query->join($pivot, $this->foreignKey, $idProperty);
+        if (count($foreignIds) !== 1 && count($ids) != 1) {
+            $this->empty = true;
+            return $query;
         }
+        $id = array_shift($ids);
+        if (!$id) {
+            $this->empty = true;
+            return $query;
+        }
+        $firstForeignKey = array_key_first($foreignIds);
+
+        $query->where("$this->tablename.$this->localKey = $id");
+        $query->join($pivot, $this->foreignKey, $firstForeignKey);
 
         return $query;
     }
