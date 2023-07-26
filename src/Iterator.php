@@ -56,9 +56,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         return $this->query;
     }
 
-    // ////////////////////////
+    //
     // Iterator Interface
-    // ////////////////////////
+    //
 
     /**
      * Rewind the Iterator to the first element.
@@ -122,9 +122,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         return null !== $this->current();
     }
 
-    // ////////////////////////
+    //
     // Countable Interface
-    // ////////////////////////
+    //
 
     /**
      * Get total number of models matching query.
@@ -136,9 +136,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         return $this->count;
     }
 
-    // ////////////////////////
+    //
     // ArrayAccess Interface
-    // ////////////////////////
+    //
 
     public function offsetExists($offset): bool
     {
@@ -173,9 +173,9 @@ final class Iterator implements \Iterator, \Countable, \ArrayAccess
         throw new \Exception('Cannot perform unset on immutable Iterator');
     }
 
-    // ////////////////////////
+    //
     // Private Methods
-    // ////////////////////////
+    //
 
     /**
      * Load the next round of models.

@@ -82,9 +82,9 @@ final class DefinitionBuilder
         return new Definition($ids, $result);
     }
 
-    // ///////////////////////////////
+    //
     // Relationship Shortcuts
-    // ///////////////////////////////
+    //
 
     /**
      * This is added for BC with older versions of pulsar

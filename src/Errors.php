@@ -138,9 +138,9 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
         return implode("\n", $this->all());
     }
 
-    // ////////////////////////
+    //
     // Helpers
-    // ////////////////////////
+    //
 
     /**
      * Formats an incoming error message.
@@ -162,18 +162,18 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
         return $this->getTranslator()->translate($error, $context, null);
     }
 
-    // ////////////////////////
+    //
     // IteratorAggregate Interface
-    // ////////////////////////
+    //
 
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->stack);
     }
 
-    // ////////////////////////
+    //
     // Countable Interface
-    // ////////////////////////
+    //
 
     /**
      * Get total number of models matching query.
@@ -183,9 +183,9 @@ final class Errors implements IteratorAggregate, Countable, ArrayAccess
         return count($this->stack);
     }
 
-    // ///////////////////////////
+    //
     // ArrayAccess Interface
-    // ///////////////////////////
+    //
 
     public function offsetExists($offset): bool
     {

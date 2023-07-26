@@ -36,9 +36,9 @@ abstract class Model implements ArrayAccess
 {
     const DEFAULT_ID_NAME = 'id';
 
-    // ///////////////////////////
+    //
     // Model visible variables
-    // ///////////////////////////
+    //
 
     protected array $_values = [];
     private array $_unsaved = [];
@@ -47,9 +47,9 @@ abstract class Model implements ArrayAccess
     /** @var AbstractRelation[] */
     private array $relationships = [];
 
-    // ///////////////////////////
+    //
     // Base model variables
-    // ///////////////////////////
+    //
 
     private static array $initialized = [];
     private static ?DriverInterface $driver = null;
@@ -210,9 +210,9 @@ abstract class Model implements ArrayAccess
         return $this->hasId;
     }
 
-    // ///////////////////////////
+    //
     // Magic Methods
-    // ///////////////////////////
+    //
 
     /**
      * Converts the model into a string.
@@ -297,9 +297,9 @@ abstract class Model implements ArrayAccess
         }
     }
 
-    // ///////////////////////////
+    //
     // ArrayAccess Interface
-    // ///////////////////////////
+    //
 
     public function offsetExists($offset): bool
     {
@@ -331,9 +331,9 @@ abstract class Model implements ArrayAccess
         return call_user_func_array([static::query(), $name], $parameters);
     }
 
-    // ///////////////////////////
+    //
     // Property Definitions
-    // ///////////////////////////
+    //
 
     /**
      * Gets the model definition.
@@ -442,9 +442,9 @@ abstract class Model implements ArrayAccess
         return self::$accessors[$k];
     }
 
-    // ///////////////////////////
+    //
     // CRUD Operations
-    // ///////////////////////////
+    //
 
     /**
      * Gets the table name for storing this model.
@@ -1104,9 +1104,9 @@ abstract class Model implements ArrayAccess
         return !$this->_persisted;
     }
 
-    // ///////////////////////////
+    //
     // Queries
-    // ///////////////////////////
+    //
 
     /**
      * Generates a new query instance.
@@ -1227,9 +1227,9 @@ abstract class Model implements ArrayAccess
         return $this;
     }
 
-    // ///////////////////////////
+    //
     // Relationships
-    // ///////////////////////////
+    //
 
     /**
      * Gets the relationship manager for a property.
@@ -1362,9 +1362,9 @@ abstract class Model implements ArrayAccess
         return $this;
     }
 
-    // ///////////////////////////
+    //
     // Events
-    // ///////////////////////////
+    //
 
     /**
      * Adds a listener to the model.creating and model.updating events.
@@ -1452,9 +1452,9 @@ abstract class Model implements ArrayAccess
         EventManager::listen(static::class, ModelDeleted::NAME, $listener, $priority);
     }
 
-    // ///////////////////////////
+    //
     // Validation
-    // ///////////////////////////
+    //
 
     /**
      * Gets the error stack for this model.

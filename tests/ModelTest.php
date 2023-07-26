@@ -1077,9 +1077,9 @@ class ModelTest extends MockeryTestCase
         $this->assertTrue($model->dirty('test', true));
     }
 
-    // ///////////////////////////
+    //
     // CREATE
-    // ///////////////////////////
+    //
 
     public function testCreate()
     {
@@ -1561,9 +1561,9 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals('encrypted value', $newModel->encrypted);
     }
 
-    // ///////////////////////////
+    //
     // SET
-    // ///////////////////////////
+    //
 
     public function testSet()
     {
@@ -1927,9 +1927,9 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals('encrypted value', $model->encrypted);
     }
 
-    // ///////////////////////////
+    //
     // DELETE
-    // ///////////////////////////
+    //
 
     public function testDelete()
     {
@@ -2167,9 +2167,9 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse($model->restore());
     }
 
-    // ///////////////////////////
+    //
     // Queries
-    // ///////////////////////////
+    //
 
     public function testQuery()
     {
@@ -2262,9 +2262,9 @@ class ModelTest extends MockeryTestCase
         $this->assertFalse(TestModel::findOrFail(101));
     }
 
-    // ///////////////////////////
+    //
     // Relationships
-    // ///////////////////////////
+    //
 
     public function testRelation()
     {
@@ -2327,9 +2327,9 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals('2,3', $model->relation);
     }
 
-    // ///////////////////////////
+    //
     // Belongs To Relationship
-    // ///////////////////////////
+    //
 
     public function testGetPropertiesBelongsTo()
     {
@@ -2578,9 +2578,9 @@ class ModelTest extends MockeryTestCase
         $this->assertEquals('Bob Loblaw', $invoice->customer->name);
     }
 
-    // ///////////////////////////
+    //
     // Storage
-    // ///////////////////////////
+    //
 
     public function testRefresh()
     {
@@ -2624,9 +2624,9 @@ class ModelTest extends MockeryTestCase
         $this->assertTrue($model->persisted());
     }
 
-    // ///////////////////////////
+    //
     // Validations
-    // ///////////////////////////
+    //
 
     public function testValid()
     {
