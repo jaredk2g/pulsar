@@ -133,9 +133,8 @@ class Query
      *   iii) where('balance', 100, '>')
      *   iv)  where('balance > 100').
      *
-     * @param array|string $where
-     * @param mixed        $value     optional value
-     * @param string|null  $condition optional condition
+     * @param mixed       $value     optional value
+     * @param string|null $condition optional condition
      *
      * @return $this
      */
@@ -181,7 +180,7 @@ class Query
      * to the ID of the model we are joining.
      *
      * @param Model|string $model  model being joined
-     * @param string $column name of local property
+     * @param string       $column name of local property
      *
      * @return $this
      */

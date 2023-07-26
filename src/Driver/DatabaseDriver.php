@@ -13,7 +13,6 @@ namespace Pulsar\Driver;
 
 use JAQB\ConnectionManager;
 use JAQB\Exception\JAQBException;
-use JAQB\Query\SelectQuery;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;

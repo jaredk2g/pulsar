@@ -76,11 +76,11 @@ abstract class AbstractDriver implements DriverInterface
             // handles $where[property] = value
             if (!is_numeric($key)) {
                 $return[] = [$this->prefixColumn($key, $tablename), $condition];
-            // handles $where[] = [property, value, '=']
+                // handles $where[] = [property, value, '=']
             } elseif (is_array($condition)) {
                 $condition[0] = $this->prefixColumn($condition[0], $tablename);
                 $return[] = $condition;
-            // handles raw SQL - do nothing
+                // handles raw SQL - do nothing
             } else {
                 $return[] = [$condition];
             }

@@ -3,7 +3,6 @@
 namespace Pulsar\Tests\Driver;
 
 use DateTimeImmutable;
-use Pulsar\Driver\DatabaseDriver;
 use Pulsar\Property;
 use Pulsar\Tests\Enums\TestEnumInteger;
 use Pulsar\Tests\Enums\TestEnumString;

@@ -61,15 +61,15 @@ final class Type
             return $value;
         }
 
-        if ($type == self::ENUM) {
+        if (self::ENUM == $type) {
             return self::to_enum($value, (string) $property->enum_class);
         }
 
-        if ($type == self::DATE) {
+        if (self::DATE == $type) {
             return self::to_date($value, $property->date_format);
         }
 
-        if ($type == self::DATETIME) {
+        if (self::DATETIME == $type) {
             return self::to_datetime($value, $property->date_format);
         }
 

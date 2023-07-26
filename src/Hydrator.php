@@ -54,7 +54,7 @@ class Hydrator
                     if (isset($relationships[$id])) {
                         if ($property->persisted) {
                             $models[$j]->setRelation($k, $relationships[$id]);
-                        // older style properties do not support this type of hydration
+                            // older style properties do not support this type of hydration
                         } else {
                             $models[$j]->hydrateValue($k, $relationships[$id]);
                         }
@@ -67,7 +67,7 @@ class Hydrator
                     if (isset($relationships[$id])) {
                         if ($property->persisted) {
                             $models[$j]->setRelation($k, $relationships[$id]);
-                        // older style properties do not support this type of hydration
+                            // older style properties do not support this type of hydration
                         } else {
                             $models[$j]->hydrateValue($k, $relationships[$id]);
                         }
@@ -111,7 +111,7 @@ class Hydrator
     /**
      * Hydrates the eager-loaded relationships for a given set of IDs.
      *
-     * @param bool   $multiple   when true will condense
+     * @param bool $multiple when true will condense
      *
      * @return Model[]
      */

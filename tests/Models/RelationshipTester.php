@@ -13,7 +13,7 @@ class RelationshipTester extends Model
             'belongs_to_legacy' => new Property(
                 relation: TestModel2::class,
             ),
-            'belongs_to' =>  new Property(
+            'belongs_to' => new Property(
                 belongs_to: TestModel2::class,
             ),
             'belongs_to_many' => new Property(

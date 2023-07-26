@@ -43,9 +43,8 @@ final class Property
         ?string $has_many = null,
         public readonly ?string $enum_class = null,
         public readonly ?string $date_format = null,
-    )
-    {
-        $this->hasDefault = $default !== self::MISSING_DEFAULT;
+    ) {
+        $this->hasDefault = self::MISSING_DEFAULT !== $default;
         $this->default = $this->hasDefault ? $default : null;
 
         // Relationship shortcuts

@@ -222,9 +222,9 @@ final class DbalDriver extends AbstractDriver
         return (float) $this->executeScalar($dbQuery, $model, $field);
     }
 
-    //////////////////////////
-    /// Helpers
-    //////////////////////////
+    // ////////////////////////
+    // / Helpers
+    // ////////////////////////
 
     /**
      * Builds a new select query.
