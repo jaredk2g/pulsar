@@ -138,6 +138,7 @@ class DbalDriverTest extends MockeryTestCase
             ->where(['city' => 'Austin'])
             ->where('RAW SQL')
             ->where('People.alreadyDotted', true)
+            ->where('name', ['Alice', 'Bob'])
             ->join(Group::class, 'group', 'id')
             ->sort('name asc')
             ->limit(5)
@@ -146,7 +147,7 @@ class DbalDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(Connection::class);
         $db->shouldReceive('fetchAllAssociative')
-            ->withArgs(['SELECT `People`.* FROM `People` JOIN `Groups` ON People.group=Groups.id WHERE `People`.`id` > ? AND `People`.`city` = ? AND RAW SQL AND `People`.`alreadyDotted` = ? ORDER BY `People`.`name` asc LIMIT 10,5', [0 => 50, 1 => 'Austin', 2 => true]])
+            ->withArgs(['SELECT `People`.* FROM `People` JOIN `Groups` ON People.group=Groups.id WHERE `People`.`id` > ? AND `People`.`city` = ? AND RAW SQL AND `People`.`alreadyDotted` = ? AND `People`.`name` IN (?,?) ORDER BY `People`.`name` asc LIMIT 10,5', [0 => 50, 1 => 'Austin', 2 => true, 'Alice', 'Bob']])
             ->andReturn([['test' => true]]);
 
         $driver = $this->getDriver($db);

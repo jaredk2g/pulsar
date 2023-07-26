@@ -232,9 +232,8 @@ final class DbalDriver extends AbstractDriver
     private function buildSelectQuery(Query $query, string $tablename): SelectQuery
     {
         $dbQuery = new SelectQuery();
-        $dbQuery->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
-
+        $dbQuery->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         return $dbQuery;

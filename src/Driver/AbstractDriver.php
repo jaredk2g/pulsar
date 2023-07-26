@@ -75,14 +75,14 @@ abstract class AbstractDriver implements DriverInterface
         foreach ($where as $key => $condition) {
             // handles $where[property] = value
             if (!is_numeric($key)) {
-                $return[$this->prefixColumn($key, $tablename)] = $condition;
+                $return[] = [$this->prefixColumn($key, $tablename), $condition];
             // handles $where[] = [property, value, '=']
             } elseif (is_array($condition)) {
                 $condition[0] = $this->prefixColumn($condition[0], $tablename);
                 $return[] = $condition;
             // handles raw SQL - do nothing
             } else {
-                $return[] = $condition;
+                $return[] = [$condition];
             }
         }
 
@@ -112,6 +112,16 @@ abstract class AbstractDriver implements DriverInterface
         }
 
         return $column;
+    }
+
+    /**
+     * Adds where conditions to a select query.
+     */
+    protected function addWhere(Query $query, string $tablename, SelectQuery $dbQuery): void
+    {
+        foreach ($this->prefixWhere($query->getWhere(), $tablename) as $args) {
+            call_user_func_array([$dbQuery, 'where'], $args);
+        }
     }
 
     /**

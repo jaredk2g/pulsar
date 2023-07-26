@@ -13,6 +13,7 @@ namespace Pulsar\Driver;
 
 use JAQB\ConnectionManager;
 use JAQB\Exception\JAQBException;
+use JAQB\Query\SelectQuery;
 use JAQB\QueryBuilder;
 use PDOException;
 use PDOStatement;
@@ -178,11 +179,10 @@ final class DatabaseDriver extends AbstractDriver
         $dbQuery = $this->getConnection($model->getConnection())
             ->select($this->prefixSelect('*', $tablename))
             ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename))
             ->limit($query->getLimit(), $query->getStart())
             ->orderBy($this->prefixSort($query->getSort(), $tablename));
 
-        // join conditions
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -201,8 +201,8 @@ final class DatabaseDriver extends AbstractDriver
 
         $dbQuery = $db->select()
             ->count()
-            ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
+            ->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -221,8 +221,8 @@ final class DatabaseDriver extends AbstractDriver
 
         $dbQuery = $db->select()
             ->sum($this->prefixColumn($field, $tablename))
-            ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
+            ->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -241,8 +241,8 @@ final class DatabaseDriver extends AbstractDriver
 
         $dbQuery = $db->select()
             ->average($this->prefixColumn($field, $tablename))
-            ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
+            ->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -261,8 +261,8 @@ final class DatabaseDriver extends AbstractDriver
 
         $dbQuery = $db->select()
             ->max($this->prefixColumn($field, $tablename))
-            ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
+            ->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {
@@ -281,8 +281,8 @@ final class DatabaseDriver extends AbstractDriver
 
         $dbQuery = $db->select()
             ->min($this->prefixColumn($field, $tablename))
-            ->from($tablename)
-            ->where($this->prefixWhere($query->getWhere(), $tablename));
+            ->from($tablename);
+        $this->addWhere($query, $tablename, $dbQuery);
         $this->addJoins($query, $tablename, $dbQuery);
 
         try {

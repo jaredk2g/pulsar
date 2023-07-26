@@ -41,6 +41,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The return types of average, min, max, and sum in the database drivers was incorrect.
 - The model is unmarked as persisted if the post-create listener fails.
 - The iterator no longer returns null values in a foreach loop.
+- Model queries with an IN condition and no operator did not generate the correct SQL.
 
 ### Removed
 - `Model::getDispatcher()` was removed and replaced with the `EventManager` class.

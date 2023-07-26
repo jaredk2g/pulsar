@@ -303,7 +303,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
         $select = Mockery::mock(SelectQuery::class);
-        $db->shouldReceive('select->count->from->where')->andReturn($select);
+        $db->shouldReceive('select->count->from')->andReturn($select);
         $select->shouldReceive('scalar')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
@@ -343,7 +343,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
         $select = Mockery::mock(SelectQuery::class);
-        $db->shouldReceive('select->sum->from->where')->andReturn($select);
+        $db->shouldReceive('select->sum->from')->andReturn($select);
         $select->shouldReceive('scalar')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
@@ -383,7 +383,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
         $select = Mockery::mock(SelectQuery::class);
-        $db->shouldReceive('select->average->from->where')->andReturn($select);
+        $db->shouldReceive('select->average->from')->andReturn($select);
         $select->shouldReceive('scalar')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
@@ -423,7 +423,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
         $select = Mockery::mock(SelectQuery::class);
-        $db->shouldReceive('select->max->from->where')->andReturn($select);
+        $db->shouldReceive('select->max->from')->andReturn($select);
         $select->shouldReceive('scalar')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
@@ -463,7 +463,7 @@ class DatabaseDriverTest extends MockeryTestCase
         // select query mock
         $db = Mockery::mock(QueryBuilder::class);
         $select = Mockery::mock(SelectQuery::class);
-        $db->shouldReceive('select->min->from->where')->andReturn($select);
+        $db->shouldReceive('select->min->from')->andReturn($select);
         $select->shouldReceive('scalar')
             ->andThrow(new PDOException('error'));
         $driver = $this->getDriver($db);
@@ -498,7 +498,16 @@ class DatabaseDriverTest extends MockeryTestCase
             ->withArgs([5, 10])
             ->andReturn($select);
         $select->shouldReceive('where')
-            ->withArgs([[['People.id', 50, '>'], 'People.city' => 'Austin', 'RAW SQL', 'People.alreadyDotted' => true]])
+            ->withArgs(['People.id', 50, '>'])
+            ->andReturn($select);
+        $select->shouldReceive('where')
+            ->withArgs(['People.city', 'Austin'])
+            ->andReturn($select);
+        $select->shouldReceive('where')
+            ->withArgs(['RAW SQL'])
+            ->andReturn($select);
+        $select->shouldReceive('where')
+            ->withArgs(['People.alreadyDotted', true])
             ->andReturn($select);
         $select->shouldReceive('from')
             ->withArgs(['People'])

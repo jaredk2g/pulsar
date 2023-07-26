@@ -46,7 +46,7 @@ class BelongsToManyTest extends MockeryTestCase
         $this->assertEquals('group_person', $joins[0][0]->getTablename());
         $this->assertEquals('group_id', $joins[0][1]);
         $this->assertEquals('id', $joins[0][2]);
-        $this->assertEquals(['person_id' => 10], $query->getWhere());
+        $this->assertEquals(['group_person.person_id = 10'], $query->getWhere());
     }
 
     public function testGetResults()
