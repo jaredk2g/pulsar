@@ -28,7 +28,7 @@ final class DefinitionBuilder
     /**
      * Builds a model definition given certain parameters.
      *
-     * @param string[] $ids
+     * @param string[]   $ids
      * @param Property[] $properties
      */
     public static function build(array $ids, array $properties, string $modelClass): Definition
@@ -54,13 +54,13 @@ final class DefinitionBuilder
             $relationType = $property['relation_type'] ?? null;
             if (isset($property['relation']) && !$relationType) {
                 self::buildBelongsToLegacy($k, $property);
-            } elseif (isset($property['belongs_to']) || $relationType == Relationship::BELONGS_TO) {
+            } elseif (isset($property['belongs_to']) || Relationship::BELONGS_TO == $relationType) {
                 self::buildBelongsTo($k, $property, $result);
-            } elseif (isset($property['has_one']) || $relationType == Relationship::HAS_ONE) {
+            } elseif (isset($property['has_one']) || Relationship::HAS_ONE == $relationType) {
                 self::buildHasOne($property, $modelClass);
-            } elseif (isset($property['belongs_to_many']) || $relationType == Relationship::BELONGS_TO_MANY) {
+            } elseif (isset($property['belongs_to_many']) || Relationship::BELONGS_TO_MANY == $relationType) {
                 self::buildBelongsToMany($property, $modelClass);
-            } elseif (isset($property['has_many']) || $relationType == Relationship::HAS_MANY) {
+            } elseif (isset($property['has_many']) || Relationship::HAS_MANY == $relationType) {
                 self::buildHasMany($property, $modelClass);
             } elseif (isset($property['morphs_to'])) {
                 self::buildPolymorphic($property, $k);
@@ -82,9 +82,9 @@ final class DefinitionBuilder
         return new Definition($ids, $result);
     }
 
-    /////////////////////////////////
+    // ///////////////////////////////
     // Relationship Shortcuts
-    /////////////////////////////////
+    // ///////////////////////////////
 
     /**
      * This is added for BC with older versions of pulsar

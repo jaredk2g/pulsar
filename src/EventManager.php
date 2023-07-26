@@ -11,7 +11,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class EventManager
 {
-    /** @var array */
     private static array $dispatchers = [];
 
     /**
