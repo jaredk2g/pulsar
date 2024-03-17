@@ -26,7 +26,7 @@
 		"icanboogie/inflector": "^2.0",
 		"symfony/event-dispatcher": ">=4.3",
 		"jaqb/jaqb": "^1.6",
-		"psr/cache": "~1.0"
+		"psr/cache": "^1 | ^2 | ^3"
 	},
 	"require-dev": {
 		"phpunit/phpunit": "^9.0",
