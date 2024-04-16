@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.12 - 2024-04-16
 ### Added
 - The new `ListenerException` class can be thrown from event listeners as a shortcut to stop events.
 - A `deleted` property has been added to soft deleted models.
