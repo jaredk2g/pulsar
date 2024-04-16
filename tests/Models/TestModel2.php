@@ -32,12 +32,12 @@ class TestModel2 extends Model
                 default: 'some default value',
             ),
             'validate' => new Property(
-                validate: ['email', ['string', 'min' => 5]],
                 null: true,
+                validate: ['email', ['string', 'min' => 5]],
             ),
             'validate2' => new Property(
-                validate: ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
                 null: true,
+                validate: ['callable', 'fn' => 'modelValidate', 'field' => 'validate2'],
                 in_array: false,
             ),
             'unique' => new Property(
@@ -54,9 +54,9 @@ class TestModel2 extends Model
             ),
             'person' => new Property(
                 type: Type::INTEGER,
-                relation: Person::class,
                 default: 20,
                 in_array: false,
+                relation: Person::class,
             ),
             'array' => new Property(
                 type: Type::ARRAY,
@@ -95,7 +95,7 @@ class TestModel2 extends Model
         self::$query = $query;
     }
 
-    protected function getMassAssignmentBlacklist(): ?array
+    protected function getMassAssignmentProtected(): ?array
     {
         return ['protected'];
     }

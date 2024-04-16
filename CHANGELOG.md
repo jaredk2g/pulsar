@@ -35,6 +35,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - The constructor arguments to `Property` are now typed and promoted to readonly constructor properties. An array of properties is no longer accepted.
 - Property definitions must return `Property` objects instead of arrays
 - Renamed the `date` type to `date_unix`
+- Renamed `getMassAssignmentWhitelist()` and `getMassAssignmentBlacklist()`
 
 ### Fixed
 - Rollback database transaction after uncaught exception during model persistence.

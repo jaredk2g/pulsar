@@ -776,12 +776,12 @@ abstract class Model implements ArrayAccess
         $this->_values = array_replace($this->_values, $namedIds);
     }
 
-    protected function getMassAssignmentWhitelist(): ?array
+    protected function getMassAssignmentAllowed(): ?array
     {
         return null;
     }
 
-    protected function getMassAssignmentBlacklist(): ?array
+    protected function getMassAssignmentBlocked(): ?array
     {
         return null;
     }
@@ -789,14 +789,14 @@ abstract class Model implements ArrayAccess
     /**
      * Sets a collection values on the model from an untrusted input.
      *
-     * @throws MassAssignmentException when assigning a value that is protected or not whitelisted
+     * @throws MassAssignmentException when a mass assignment rule is violated
      *
      * @return $this
      */
     public function setValues(array $values): static
     {
-        if ($permitted = $this->getMassAssignmentWhitelist()) {
-            // use a mass assignment whitelist
+        if ($permitted = $this->getMassAssignmentAllowed()) {
+            // allow mass assignment only to permitted properties
             foreach ($values as $k => $value) {
                 // check for mass assignment violations
                 if (!in_array($k, $permitted)) {
@@ -805,8 +805,8 @@ abstract class Model implements ArrayAccess
 
                 $this->$k = $value;
             }
-        } elseif ($protected = $this->getMassAssignmentBlacklist()) {
-            // use a mass assignment blacklist
+        } elseif ($protected = $this->getMassAssignmentBlocked()) {
+            // prevent mass assignment on any properties that are protected
             foreach ($values as $k => $value) {
                 // check for mass assignment violations
                 if (in_array($k, $protected)) {

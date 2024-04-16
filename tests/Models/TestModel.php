@@ -52,7 +52,7 @@ class TestModel extends Model
         ], self::$properties);
     }
 
-    protected function getMassAssignmentWhitelist(): ?array
+    protected function getMassAssignmentAllowed(): ?array
     {
         return ['id', 'relation', 'answer', 'mutator', 'accessor', 'fail'];
     }
