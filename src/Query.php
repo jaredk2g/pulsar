@@ -155,10 +155,10 @@ class Query
             $args = func_num_args();
             if ($args > 2) {
                 $this->where[] = [$where, $value, $condition];
-                // handles ii.
+            // handles ii.
             } elseif (2 == $args) {
                 $this->where[$where] = $value;
-                // handles iv.
+            // handles iv.
             } else {
                 $this->where[] = $where;
             }

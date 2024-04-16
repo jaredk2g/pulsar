@@ -169,7 +169,7 @@ class IteratorTest extends MockeryTestCase
             if (51 == $i) {
                 self::$count = 300;
                 $this->assertCount(300, self::$iterator);
-                // simulate decreasing the # of records midway
+            // simulate decreasing the # of records midway
             } elseif (101 == $i) {
                 self::$count = 26;
                 $this->assertCount(26, self::$iterator);
